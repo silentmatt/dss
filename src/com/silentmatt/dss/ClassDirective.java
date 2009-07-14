@@ -1,11 +1,18 @@
 package com.silentmatt.dss;
 
+import java.util.List;
+
 /**
  *
  * @author matt
  */
 public class ClassDirective extends DeclarationDirective {
     private String id;
+
+    public ClassDirective(String id, List<Declaration> declarations) {
+        super(declarations);
+        setID(id);
+    }
 
     public String getName() {
         return "@class";

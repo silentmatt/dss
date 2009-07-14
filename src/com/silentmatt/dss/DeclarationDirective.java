@@ -10,7 +10,8 @@ import java.util.List;
 public abstract class DeclarationDirective implements Directive, DeclarationContainer {
     private List<Declaration> declarations = new ArrayList<Declaration>();
 
-    public DeclarationDirective() {
+    public DeclarationDirective(List<Declaration> declarations) {
+        this.declarations = declarations;
     }
 
     public List<Declaration> getDeclarations() {

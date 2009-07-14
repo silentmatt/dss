@@ -7,7 +7,8 @@ package com.silentmatt.dss;
 public abstract class ExpressionDirective implements Directive {
     private Expression expression;
 
-    public ExpressionDirective() {
+    public ExpressionDirective(Expression expression) {
+        setExpression(expression);
     }
 
     public Expression getExpression() {

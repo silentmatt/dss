@@ -1,11 +1,18 @@
 package com.silentmatt.dss;
 
+import java.util.List;
+
 /**
  *
  * @author matt
  */
 public class PageDirective extends DeclarationDirective {
     private SimpleSelector ss;
+
+    public PageDirective(SimpleSelector pseudo, List<Declaration> declarations) {
+        super(declarations);
+        setSelector(pseudo);
+    }
 
     public String getName() {
         return "@class";

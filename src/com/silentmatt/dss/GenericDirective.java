@@ -7,13 +7,14 @@ import java.util.List;
  *
  * @author matt
  */
-public class GenericDirective extends ExpressionDirective implements  RuleSetContainer, DirectiveContainer {
+public class GenericDirective implements Directive, RuleSetContainer, DirectiveContainer {
     private List<Declaration> declarations = new ArrayList<Declaration>();
     private List<RuleSet> ruleSet = new ArrayList<RuleSet>();
     private List<Directive> directives = new ArrayList<Directive>();
     private DirectiveType type;
     private String name;
     private List<Medium> mediums = new ArrayList<Medium>();
+    private Expression expression;
 
     public List<RuleSet> getRuleSets() {
         return ruleSet;
@@ -55,6 +56,14 @@ public class GenericDirective extends ExpressionDirective implements  RuleSetCon
         this.mediums = mediums;
     }
 
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public void setExpression(Expression expression) {
+        this.expression = expression;
+    }
+
     public List<Declaration> getDeclarations() {
         return declarations;
     }
@@ -68,7 +77,6 @@ public class GenericDirective extends ExpressionDirective implements  RuleSetCon
         return toString(0, false);
     }
 
-    @Override
     public String toCompactString() {
         return toString(0, true);
     }

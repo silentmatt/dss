@@ -7,6 +7,11 @@ package com.silentmatt.dss;
 public class NamespaceDirective extends ExpressionDirective {
     private String prefix;
 
+    public NamespaceDirective(String prefix, Expression namespace) {
+        super(namespace);
+        setPrefix(prefix);
+    }
+
     public String getName() {
         return "@namespace";
     }

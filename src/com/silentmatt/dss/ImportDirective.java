@@ -7,6 +7,11 @@ package com.silentmatt.dss;
 public class ImportDirective extends ExpressionDirective {
     private Medium medium;
 
+    public ImportDirective(Expression url, Medium medium) {
+        super(url);
+        setMedium(medium);
+    }
+
     public String getName() {
         return "@import";
     }

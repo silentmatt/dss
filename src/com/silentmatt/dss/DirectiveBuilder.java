@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class DirectiveBuilder {
     private List<Declaration> declarations = new ArrayList<Declaration>();
-    private List<RuleSet> ruleSet = new ArrayList<RuleSet>();
+    private List<RuleSet> ruleSets = new ArrayList<RuleSet>();
     private List<Directive> directives = new ArrayList<Directive>();
     private DirectiveType type;
     private String name;
@@ -28,11 +28,11 @@ public class DirectiveBuilder {
     }
 
     public List<RuleSet> getRuleSets() {
-        return ruleSet;
+        return ruleSets;
     }
 
-    public void setRuleSets(List<RuleSet> ruleSet) {
-        this.ruleSet = ruleSet;
+    public void setRuleSets(List<RuleSet> ruleSets) {
+        this.ruleSets = ruleSets;
     }
 
     public List<Directive> getDirectives() {
@@ -136,28 +136,19 @@ public class DirectiveBuilder {
     }
 
     public CharsetDirective buildCharsetDirective() {
-        CharsetDirective d = new CharsetDirective();
-        d.setExpression(expression);
-        return d;
+        return new CharsetDirective(expression);
     }
 
     public ClassDirective buildClassDirective() {
-        ClassDirective d = new ClassDirective();
-        d.setID(id);
-        d.setDeclarations(declarations);
-        return d;
+        return new ClassDirective(id, declarations);
     }
 
     public DefineDirective buildDefineDirective() {
-        DefineDirective d = new DefineDirective();
-        d.setDeclarations(declarations);
-        return d;
+        return new DefineDirective(declarations);
     }
 
     public FontFaceDirective buildFontFaceDirective() {
-        FontFaceDirective d = new FontFaceDirective();
-        d.setDeclarations(declarations);
-        return d;
+        return new FontFaceDirective(declarations);
     }
 
     public Directive buildGenericDirective() {
@@ -168,48 +159,31 @@ public class DirectiveBuilder {
         d.setDirectives(directives);
         d.setExpression(expression);
         d.setMediums(mediums);
-        d.setRuleSets(ruleSet);
+        d.setRuleSets(ruleSets);
         return d;
     }
 
     public ImportDirective buildImportDirective() {
-        ImportDirective d = new ImportDirective();
-        d.setExpression(expression);
-        if (mediums.size() == 0) {
-            d.setMedium(Medium.all);
+        Medium m = Medium.all;
+        if (mediums.size() > 0) {
+            m = mediums.get(0);
         }
-        else {
-            d.setMedium(mediums.get(0));
-        }
-        return d;
+        return new ImportDirective(expression, m);
     }
 
     public IncludeDirective buildIncludeDirective() {
-        IncludeDirective d = new IncludeDirective();
-        d.setExpression(expression);
-        return d;
+        return new IncludeDirective(expression);
     }
 
-    public Directive buildMediaDirective() {
-        GenericDirective d = new GenericDirective();
-        d.setType(DirectiveType.Media);
-        d.setName("@media");
-        d.setMediums(mediums);
-        d.setRuleSets(ruleSet);
-        return d;
+    public MediaDirective buildMediaDirective() {
+        return new MediaDirective(mediums, ruleSets);
     }
 
     public NamespaceDirective buildNamespaceDirective() {
-        NamespaceDirective d = new NamespaceDirective();
-        d.setPrefix(id);
-        d.setExpression(expression);
-        return d;
+        return new NamespaceDirective(id, expression);
     }
 
     public PageDirective buildPageDirective() {
-        PageDirective d = new PageDirective();
-        d.setSelector(ss);
-        d.setDeclarations(declarations);
-        return d;
+        return new PageDirective(ss, declarations);
     }
 }
