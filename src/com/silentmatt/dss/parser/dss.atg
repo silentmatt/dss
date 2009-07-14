@@ -44,11 +44,13 @@ CHARACTERS
 	regularStringChar  = ANY - '"' - '\\' - newLine.
 	notNewLine         = ANY - newLine .
 	ws                 = " " + tab + '\u000b' + '\u000c'. /* Any character with Unicode class Zs */
-	identchar		   = letter + digit + '-'.
+    nonascii           = '\u0080' .. '\ud7ff' + '\ue000' .. '\ufffd' /* + '\u10000' .. '#x10ffff' */ .
+    wc                 = tab + eol + '\u000c' + cr + ' '.
+    escape_chars       = ' ' .. '\u007e' + '\u0080' .. '\ud7ff' + '\ue000' .. '\ufffd' /* + '\u10000' .. '\u10FFFF'*/ .
 
 TOKENS
 
-	ident = (letter | '-') { identchar }.
+    ident = ['-'] (letter | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars))) { letter | digit | '-' | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars)) }.
 	newline = newLine.
 	digit = digit.
 	whitespace = ws.
