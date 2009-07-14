@@ -1,0 +1,570 @@
+import java.util.*;
+import com.silentmatt.dss.*;
+
+COMPILER CSS3
+
+	public CSSDocument CSSDoc;
+
+		boolean PartOfHex(String value) {
+			if (value.length() == 7) { return false; }
+			if (value.length() + la.val.length() > 7) { return false; }
+			List<String> hexes = Arrays.asList(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "a", "b", "c", "d", "e", "f" });
+			for (int i = 0; i < la.val.length(); i++) {
+				char c = la.val.charAt(i);
+				if (!hexes.contains(String.valueOf(c))) {
+					return false;
+				}
+			}
+			return true;
+		}
+		boolean IsUnit() {
+			if (la.kind != 1) { return false; }
+			List<String> units = Arrays.asList(new String[] { "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz" });
+			return units.contains(la.val);
+		}
+
+/*------------------------------------------------------------------------*
+ *----- SCANNER DESCRIPTION ----------------------------------------------*
+ *------------------------------------------------------------------------*/
+
+CHARACTERS
+
+	tab                = '\u0009'. /*  9 = tabulator */
+	eol                = '\u000a'. /* 10 = line feed */
+	cr                 = '\u000d'. /* 13 = carriage return */
+	newLine            = cr + eol. /* Line separator character (U+2028) + Paragraph separator character (U+2029) */
+
+	letter             = 'A' .. 'Z' + 'a' .. 'z' + '_'.
+	digit              = "0123456789".
+	hexDigit           = digit + "ABCDEFabcdef".
+	notDigit           = ANY - digit.
+
+	char               = ANY - "'" - '\\' - newLine.
+	verbatimStringChar = ANY - '"'.
+	regularStringChar  = ANY - '"' - '\\' - newLine.
+	notNewLine         = ANY - newLine .
+	ws                 = " " + tab + '\u000b' + '\u000c'. /* Any character with Unicode class Zs */
+	identchar		   = letter + digit + '-'.
+
+TOKENS
+
+	ident = (letter | '-') { identchar }.
+	newline = newLine.
+	digit = digit.
+	whitespace = ws.
+
+PRAGMAS
+
+COMMENTS FROM "/*" TO "*/"
+
+IGNORE eol + cr + tab + " "
+
+PRODUCTIONS
+
+/*------------------------------------------------------------------------*
+ *--------------------------- Declarations -------------------------------*
+ *------------------------------------------------------------------------*/
+
+CSS3 =							(. CSSDoc = new CSSDocument();
+									String cset = null;
+									RuleSet rset = null;
+									Directive dir = null;
+								.)
+    {("<!--" | "-->")}
+    {
+		( ruleset<out rset>		(. CSSDoc.getRuleSets().add(rset); .)
+		| directive<out dir>	(. CSSDoc.getDirectives().add(dir); .)
+		)
+		{("<!--" | "-->")}
+	}
+.
+QuotedString<out String qs> =	(. qs = ""; char quote = '\n'; .)
+	( "'"						(. quote = '\''; .)
+		{ANY					(. qs += t.val; .)
+								(. if (la.val.equals("'") && !t.val.equals("\\")) { break; } .)
+		}
+		"'"
+	| '"'						(. quote = '"'; .)
+		{ANY					(. qs += t.val; .)
+								(. if (la.val.equals("\"") && !t.val.equals("\\")) { break; } .)
+		}
+		'"'
+	)							(. /*if (quote != '\n') { qs = quote + qs + quote; }*/ .)
+.
+URI<out String url> =			(. url = ""; .)
+	"url" [ "(" ] (
+		QuotedString<out url>
+		| {ANY					(. url += t.val; .)
+								(. if (la.val.equals(")")) { break; } .)
+		}
+	) [ ")" ]
+.
+medium<out Medium m> =		(. m = Medium.all; .)
+	(
+		"all"			(. m = Medium.all; .)
+		| "aural"		(. m = Medium.aural; .)
+		| "braille"		(. m = Medium.braille; .)
+		| "embossed"	(. m = Medium.embossed; .)
+		| "handheld"	(. m = Medium.handheld; .)
+		| "print"		(. m = Medium.print; .)
+		| "projection"	(. m = Medium.projection; .)
+		| "screen"		(. m = Medium.screen; .)
+		| "tty"			(. m = Medium.tty; .)
+		| "tv"			(. m = Medium.tv; .)
+	)
+.
+identity<out String ident> =	(. ident = null; .)
+	(
+		ident
+		| "n"
+		| "url"
+		| "all"
+		| "aural"
+		| "braille"
+		| "embossed"
+		| "handheld"
+		| "print"
+		| "projection"
+		| "screen"
+		| "tty"
+		| "tv"
+	)					(. ident = t.val; .)
+.
+
+mediaDirective<out DirectiveBuilder dirb> =
+                            (.
+                                dirb = new DirectiveBuilder();
+                                Medium m;
+                                RuleSet rset = new RuleSet();
+                                dirb.setName("@media");
+                                dirb.setType(DirectiveType.Media);
+                            .)
+    "@media"
+    medium<out m>           (. dirb.getMediums().add(m); .)
+    '{' [ ruleset<out rset>		(. dirb.getRuleSets().add(rset); .)
+	{
+        ruleset<out rset>		(. dirb.getRuleSets().add(rset); .)
+	} ] '}'
+.
+
+classDirective<out DirectiveBuilder dirb> =
+                                    (.  dirb = new DirectiveBuilder();
+                                        Declaration dec = null;
+                                        String ident;
+                                        RuleSet rset = new RuleSet();
+                                        dirb.setType(DirectiveType.Class);
+                                    .)
+    "@class"
+    identity<out ident>             (. dirb.setID(ident); .)
+    '{' [ declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
+          { ';'						(. if (la.val.equals("}")) { Get(); return dirb; } .)
+            declaration<out dec>    (. dirb.getDeclarations().add(dec); .)
+          } [ ';' ]
+        ]
+    '}'
+.
+
+defineDirective<out DirectiveBuilder dirb> =
+                                    (.  dirb = new DirectiveBuilder();
+                                        Declaration dec = null;
+                                        RuleSet rset = new RuleSet();
+                                        dirb.setType(DirectiveType.Define);
+                                    .)
+    "@define"
+    '{' [ declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
+          { ';'						(. if (la.val.equals("}")) { Get(); return dirb; } .)
+            declaration<out dec>    (. dirb.getDeclarations().add(dec); .)
+          } [ ';' ]
+        ]
+    '}'
+.
+
+fontFaceDirective<out DirectiveBuilder dirb> =
+                                    (.  dirb = new DirectiveBuilder();
+                                        Declaration dec = null;
+                                        RuleSet rset = new RuleSet();
+                                        dirb.setType(DirectiveType.FontFace);
+                                    .)
+    "@font-face"
+    '{' [ declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
+          { ';'						(. if (la.val.equals("}")) { Get(); return dirb; } .)
+            declaration<out dec>    (. dirb.getDeclarations().add(dec); .)
+          } [ ';' ]
+        ]
+    '}'
+.
+
+pageDirective<out DirectiveBuilder dirb> =
+                                    (.  dirb = new DirectiveBuilder();
+                                        Declaration dec = null;
+                                        SimpleSelector ss;
+                                        String psd;
+                                        dirb.setType(DirectiveType.Page);
+                                    .)
+    "@page"
+    [ pseudo<out psd>               (.
+                                        ss = new SimpleSelector();
+                                        ss.setPseudo(psd);
+                                        dirb.setSimpleSelector(ss);
+                                    .)
+    ]
+    '{' [ declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
+          { ';'						(. if (la.val.equals("}")) { Get(); return dirb; } .)
+            declaration<out dec>    (. dirb.getDeclarations().add(dec); .)
+          } [ ';' ]
+        ]
+    '}'
+.
+
+importDirective<out DirectiveBuilder dirb> =
+                    (.  dirb = new DirectiveBuilder();
+                        Declaration dec = null;
+                        RuleSet rset = new RuleSet();
+                        Term trm = new Term();
+                        Expression expr = new Expression();
+                        dirb.setType(DirectiveType.Import);
+                        Medium m;
+                        String url;
+                    .)
+    "@import"
+    URI<out url>    (.
+                        trm.setValue(url);
+                        trm.setType(TermType.Url);
+                        expr.getTerms().add(trm);
+                        dirb.setExpression(expr); .)
+    [
+        medium<out m>   (. dirb.getMediums().add(m); .)
+    ]
+    ';'
+.
+
+includeDirective<out DirectiveBuilder dirb> =
+                    (.  dirb = new DirectiveBuilder();
+                        Declaration dec = null;
+                        RuleSet rset = new RuleSet();
+                        Term trm = new Term();
+                        Expression expr = new Expression();
+                        dirb.setType(DirectiveType.Include);
+                        String url;
+                    .)
+    "@include"
+    URI<out url>    (.
+                        trm.setValue(url);
+                        trm.setType(TermType.Url);
+                        expr.getTerms().add(trm);
+                        dirb.setExpression(expr); .)
+    ';'
+.
+
+charsetDirective<out DirectiveBuilder dirb> =
+                    (.  dirb = new DirectiveBuilder();
+                        Declaration dec = null;
+                        RuleSet rset = new RuleSet();
+                        Term trm;
+                        Expression expr = new Expression();
+                        dirb.setType(DirectiveType.Charset);
+                    .)
+    "@charset"
+    term<out trm>    (.
+                        expr.getTerms().add(trm);
+                        dirb.setExpression(expr); .)
+    ';'
+.
+
+namespaceDirective<out DirectiveBuilder dirb> =
+                                (.  dirb = new DirectiveBuilder();
+                                    Declaration dec = null;
+                                    RuleSet rset = new RuleSet();
+                                    Term trm = new Term();
+                                    Expression expr = new Expression();
+                                    dirb.setType(DirectiveType.Namespace);
+                                    String ident;
+                                    String url;
+                                .)
+    "@namespace"
+    [
+        identity<out ident>     (. dirb.setID(ident); .)
+    ]
+    (
+        URI<out url>            (.
+                                    trm.setValue(url);
+                                    trm.setType(TermType.Url);
+                                    expr.getTerms().add(trm);
+                                    dirb.setExpression(expr);
+                                .)
+        |
+        QuotedString<out url>   (.
+                                    trm.setValue(url);
+                                    trm.setType(TermType.Url);
+                                    expr.getTerms().add(trm);
+                                    dirb.setExpression(expr);
+                                .)
+    )
+    ';'
+.
+
+directive<out Directive dir> =	(.  dir = null; //new GenericDirective();
+									Declaration dec = null;
+									RuleSet rset = null;
+									Expression exp = null;
+									Directive dr = null;
+									String ident = null;
+									Medium m;
+                                    DirectiveBuilder dirb = new DirectiveBuilder();
+								.)
+    (
+        mediaDirective<out dirb>
+        |
+        classDirective<out dirb>
+        |
+        defineDirective<out dirb>
+        |
+        fontFaceDirective<out dirb>
+        |
+        importDirective<out dirb> // TODO: Look up where @import can be
+        |
+        includeDirective<out dirb>
+        |
+        charsetDirective<out dirb> // TODO: Look up where @charset can be
+        |
+        pageDirective<out dirb>
+        |
+        namespaceDirective<out dirb> // TODO: Look up where @charset can be
+        |
+        ( '@' identity<out ident>               (. dirb.setName("@" + ident);
+                                                    String lcName = ident.toLowerCase();
+                                                    dirb.setType(DirectiveType.Other);
+                                                .)
+          [ expr<out exp>                       (. dirb.setExpression(exp); .)
+            |
+            medium<out m>                       (. dirb.getMediums().add(m); .)
+          ]
+          ( '{'
+                [ {
+                    ((declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
+                        { ';'						(. if (la.val.equals("}")) { Get(); return dirb.build(); } .)
+                          declaration<out dec>  (. dirb.getDeclarations().add(dec); .)
+                        }
+                        [ ';' ])
+                      |
+                      ruleset<out rset>			(. dirb.getRuleSets().add(rset); .)
+                      |
+                      directive<out dr>			(. dirb.getDirectives().add(dr); .)
+                    )
+                  } ]
+            '}'
+            |
+            ';'
+          )
+        )
+    ) (. dir = dirb.build(); .)
+.
+/*
++c GenericDirective : DeclarationContainer, RuleSetContainer, DirectiveContainer {
+	+DirectiveType Type;
+	+string Name;
+	+Expression Expression;
+	+Medium[] Mediums;
+	+Directive[] Directives;
+	+RuleSet[] RuleSets;
+	+Declaration[] Declarations;
+}
++e DirectiveType {
+	Media, Import, Charset, Page, FontFace, Namespace, Other
+}
++e Unit {
+	em, ex, px, gd, rem, vw, vh, vm, mm, cm, in, pt, pc, deg, grad, rad, ms, s, Hz, kHz
+}
+*/
+ruleset<out RuleSet rset> =		(. rset = new RuleSet();
+									Selector sel = null;
+									Declaration dec = null;
+								.)
+	selector<out sel>			(. rset.getSelectors().add(sel); .)
+	{ ',' selector<out sel>		(. rset.getSelectors().add(sel); .)
+	}
+    '{' [ declaration<out dec>	(. rset.getDeclarations().add(dec); .)
+	{ ';'						(. /* ';' may not be the begining of another declaration */
+									if (la.val.equals("}")) { Get(); return rset; }
+								.)
+	declaration<out dec>		(. rset.getDeclarations().add(dec); .)
+	} [ ';' ] ] '}'
+.
+selector<out Selector sel> =	(. sel = new Selector();
+									SimpleSelector ss = null;
+									Combinator cb = null;
+								.)
+	simpleselector<out ss>		(. sel.getSimpleSelectors().add(ss); .)
+	{ [ ('+'					(. cb = Combinator.PrecededImmediatelyBy; .)
+		| '>'					(. cb = Combinator.ChildOf; .)
+		| '~'					(. cb = Combinator.PrecededBy; .)
+		) ]
+		simpleselector<out ss>	(. if (cb != null) { ss.setCombinator(cb); }
+									sel.getSimpleSelectors().add(ss);
+								.)
+								(. cb = null; .)
+	}
+.
+simpleselector<out SimpleSelector ss> =		(. ss = new SimpleSelector();
+											String psd = null;
+											Attribute atb = null;
+											SimpleSelector parent = ss;
+											String ident = null;
+											.)
+	(identity<out ident>			(. ss.setElementName(ident); .)
+	| '*'							(. ss.setElementName("*"); .)
+	| ('#' identity<out ident>		(. ss.setID(ident); .)
+		| '.' identity<out ident>	(. ss.setClassName(ident); .)
+		| attrib<out atb>			(. ss.setAttribute(atb); .)
+		| pseudo<out psd>			(. ss.setPseudo(psd); .)
+		)
+	)
+	{								(. SimpleSelector child = new SimpleSelector(); .)
+		('#' identity<out ident>	(. child.setID(ident); .)
+		| '.' identity<out ident>	(. child.setClassName(ident); .)
+		| attrib<out atb>			(. child.setAttribute(atb); .)
+		| pseudo<out psd>			(. child.setPseudo(psd); .)
+		)							(. parent.setChild(child);
+										parent = child;
+									.)
+	}
+.
+attrib<out Attribute atb> =
+									(. atb = new Attribute();
+										String quote = null;
+										String ident = null;
+									.)
+	'[' identity<out ident>			(. atb.setOperand(ident); .)
+	[
+		( '='						(. atb.setOperator(AttributeOperator.Equals); .)
+		| "~="						(. atb.setOperator(AttributeOperator.InList); .)
+		| "|="						(. atb.setOperator(AttributeOperator.Hyphenated); .)
+		| "$="						(. atb.setOperator(AttributeOperator.EndsWith); .)
+		| "^="						(. atb.setOperator(AttributeOperator.BeginsWith); .)
+		| "*="						(. atb.setOperator(AttributeOperator.Contains); .)
+		)
+    	( identity<out ident>		(. atb.setValue(ident); .)
+		| QuotedString<out quote>	(. atb.setValue(quote); .)
+		)
+	] ']'
+.
+pseudo<out String pseudo> =	(. pseudo = "";
+								Expression exp = null;
+								String ident = null;
+							.)
+	':' [ ':' ]
+	identity<out ident>		(. pseudo = ident; .)
+	[ '('					(. pseudo += t.val; .)
+	expr<out exp>			(. pseudo += exp.toString(); .)
+	')'						(. pseudo += t.val; .)
+	]
+.
+declaration<out Declaration dec> =
+						(. dec = new Declaration();
+							Expression exp = null;
+							String ident = null;
+						.)
+	identity<out ident>	(. dec.setName(ident); .)
+	':' expr<out exp>	(. dec.setExpression(exp); .)
+		[ "!important"	(. dec.setImportant(true); .)
+	]
+.
+expr<out Expression exp> =	(. exp = new Expression();
+								Character sep = null;
+								Term trm = null;
+							.)
+	term<out trm>			(. exp.getTerms().add(trm); .)
+	{ [ ('/'				(. sep = '/'; .)
+		| ','				(. sep = ','; .)
+		) ]
+		term<out trm>		(.
+								if (sep != null) { trm.setSeperator(sep); }
+								exp.getTerms().add(trm);
+								sep = null;
+							.)
+	}
+.
+term<out Term trm> =				(. trm = new Term();
+										String val = "";
+										Expression exp = null;
+										String ident = null;
+									.)
+	(
+		QuotedString<out val>		(. trm.setValue(val); trm.setType(TermType.String); .)
+	|
+		URI<out val>				(. trm.setValue(val); trm.setType(TermType.Url); .)
+	|
+		"U\\" identity<out ident>	(. trm.setValue("U\\" + ident); trm.setType(TermType.Unicode); .)
+	|
+		HexValue<out val>			(. trm.setValue(val); trm.setType(TermType.Hex); .)
+	|
+		identity<out ident>			(. trm.setValue(ident); trm.setType(TermType.String); .)
+		[ { ( ':'					(. trm.setValue(trm.getValue() + t.val); .)
+			[ ':'					(. trm.setValue(trm.getValue() + t.val); .)
+			]
+			identity<out ident>		(. trm.setValue(trm.getValue() + ident); .)
+		  |
+			'.'						(. trm.setValue(trm.getValue() + t.val); .)
+			identity<out ident>		(. trm.setValue(trm.getValue() + ident); .)
+		  |
+			'='						(. trm.setValue(trm.getValue() + t.val); .)
+			(identity<out ident>	(. trm.setValue(trm.getValue() + ident); .)
+			| { digit				(. trm.setValue(trm.getValue() + t.val); .)
+				}
+			)
+		) } ]
+		[ '(' expr<out exp>			(. Function func = new Function();
+										func.setName(trm.getValue());
+										func.setExpression(exp);
+										trm.setValue(null);
+										trm.setFunction(func);
+										trm.setType(TermType.Function);
+									.)
+		')' ]
+	|
+		[ ('-'						(. trm.setSign('-'); .)
+		| '+'						(. trm.setSign('+'); .)
+		) ]
+		{ digit						(. val += t.val; .)
+		} [ '.'						(. val += t.val; .)
+			{ digit					(. val += t.val; .)
+			}
+		]
+		[ (
+			IF(la.val.toLowerCase().equals("n"))
+			/* func(4n+1) */
+				"n"					(. val += t.val; .)
+				[ ("+"				(. val += t.val; .)
+				| "-"				(. val += t.val; .)
+				) digit				(. val += t.val; .)
+				{ digit				(. val += t.val; .)
+				} ]
+			| "%"					(. trm.setUnit(Unit.Percent); .)
+			| [ IF(IsUnit())
+				identity<out ident>	(. try {
+										trm.setUnit(Unit.parse(ident));
+									} catch (Exception ex) {
+										errors.SemErr(t.line, t.col, "Unrecognized unit '" + ident + "'");
+									}
+									.)
+				]
+		) ]							(. trm.setValue(val); trm.setType(TermType.Number); .)
+	)
+.
+HexValue<out String val> =		(. val = "";
+									boolean found = false;
+								.)
+	'#'							(. val += t.val; .)
+	(
+		{ digit					(. val += t.val; .)
+		}
+	|
+		IF(PartOfHex(val))
+			ident				(. val += t.val; found = true; .)
+	)
+	[ IF(!found && PartOfHex(val))
+		ident					(. val += t.val; .)
+	]
+.
+
+END CSS3.

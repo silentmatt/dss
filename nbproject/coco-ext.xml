@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." default="default" name="dssCocoExt">
+    <target description="This element performs the initialization of ant variables that defines paths." name="-coco-init-props">
+        <property location="coco\coco.jar" name="coco.jarPath"/>
+    </target>
+    <target description="This element performs the automatic Coco/R compilation of the file dss." name="src/com/silentmatt/dss/parser/dss.atg">
+        <java errorproperty="coco.error.src/com/silentmatt/dss/parser/dss.atg" failonerror="true" fork="true" jar="${coco.jarPath}" outputproperty="coco.output.src/com/silentmatt/dss/parser/dss.atg" resultproperty="coco.result.src/com/silentmatt/dss/parser/dss.atg">
+            <arg line="src/com/silentmatt/dss/parser/dss.atg -package com.silentmatt.dss.parser"/>
+        </java>
+    </target>
+</project>
