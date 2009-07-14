@@ -51,9 +51,8 @@ CHARACTERS
 TOKENS
 
     ident = ['-'] (letter | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars))) { letter | digit | '-' | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars)) }.
-	newline = newLine.
 	digit = digit.
-	whitespace = ws.
+    s = wc { wc }.
 
 PRAGMAS
 
@@ -67,19 +66,21 @@ PRODUCTIONS
  *--------------------------- Declarations -------------------------------*
  *------------------------------------------------------------------------*/
 
-CSS3 =							(. CSSDoc = new CSSDocument();
-									String cset = null;
-									RuleSet rset = null;
-									Directive dir = null;
-								.)
+CSS3 =                          (.  CSSDoc = new CSSDocument();
+                                    String cset = null;
+                                    RuleSet rset = null;
+                                    Directive dir = null;
+                                .)
     {("<!--" | "-->")}
     {
-		( ruleset<out rset>		(. CSSDoc.getRuleSets().add(rset); .)
-		| directive<out dir>	(. CSSDoc.getDirectives().add(dir); .)
+		( ruleset<out rset>     (. CSSDoc.getRuleSets().add(rset); .)
+          |
+          directive<out dir>    (. CSSDoc.getDirectives().add(dir); .)
 		)
 		{("<!--" | "-->")}
 	}
 .
+
 QuotedString<out String qs> =	(. qs = ""; char quote = '\n'; .)
 	( "'"						(. quote = '\''; .)
 		{ANY					(. qs += t.val; .)
