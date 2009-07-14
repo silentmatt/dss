@@ -56,7 +56,7 @@ public abstract class DeclarationDirective implements Directive, DeclarationCont
             txt.append(compact ? dec.toCompactString() : dec.toString());
         }
 
-        txt.append(compact ? "}" : (start + "\t\r\n}"));
+        txt.append(compact ? "}" : "\r\n}");
 
         return txt.toString();
     }

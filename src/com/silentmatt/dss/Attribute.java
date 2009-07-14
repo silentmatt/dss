@@ -42,8 +42,8 @@ public class Attribute {
             case Equals: txt.append("="); break;
             case InList: txt.append("~="); break;
             case Hyphenated: txt.append("|="); break;
-            case BeginsWith: txt.append("$="); break;
-            case EndsWith: txt.append("^="); break;
+            case BeginsWith: txt.append("^="); break;
+            case EndsWith: txt.append("$="); break;
             case Contains: txt.append("*="); break;
             }
             txt.append(value);

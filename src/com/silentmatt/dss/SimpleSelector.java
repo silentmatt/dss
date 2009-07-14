@@ -83,9 +83,9 @@ public class SimpleSelector {
         StringBuilder txt = new StringBuilder();
         if (combinator != null) {
             switch (combinator) {
-            case PrecededImmediatelyBy: txt.append(" + "); break;
-            case ChildOf: txt.append(" > "); break;
-            case PrecededBy: txt.append(" ~ "); break;
+            case PrecededImmediatelyBy: txt.append("+ "); break;
+            case ChildOf: txt.append("> "); break;
+            case PrecededBy: txt.append("~ "); break;
             }
         }
         if (elementName != null) { txt.append(elementName); }

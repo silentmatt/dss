@@ -74,7 +74,6 @@ public class RuleSet implements DeclarationContainer {
             txt.append(compact ? sel.toCompactString() : sel.toString());
         }
         txt.append(compact ? "{" : " {");
-        txt.append(start);
 
         first = true;
         for (Declaration dec : declarations) {

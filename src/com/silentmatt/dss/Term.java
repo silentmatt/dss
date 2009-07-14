@@ -71,7 +71,12 @@ public class Term {
 
     private String toString(boolean compact) {
         StringBuilder txt = new StringBuilder();
-        if (seperator != null) { txt.append(seperator); if (!compact) txt.append(" "); }
+        if (seperator != null) {
+            txt.append(seperator);
+            if (!compact) {
+                txt.append(" ");
+            }
+        }
 
         if (type == TermType.Function) {
             txt.append(compact ? function.toCompactString() : function.toString());
