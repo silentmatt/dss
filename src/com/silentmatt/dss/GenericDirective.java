@@ -132,8 +132,7 @@ public class GenericDirective implements Directive, RuleSetContainer, DirectiveC
         txt.append((compact ? "{" : " {") + start);
 
         for (Directive dir : directives) {
-            // FIXME:
-            //txt.append(dir.toCharSetString(start + "\t", compact));
+            txt.append(compact ? dir.toCompactString() : dir.toString());
             if (!compact) {
                 txt.append("\r\n");
             }
