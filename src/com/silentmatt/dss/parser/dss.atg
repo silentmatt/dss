@@ -33,6 +33,7 @@ CHARACTERS
 	eol                = '\u000a'. /* 10 = line feed */
 	cr                 = '\u000d'. /* 13 = carriage return */
 	newLine            = cr + eol. /* Line separator character (U+2028) + Paragraph separator character (U+2029) */
+    space              = ' '.
 
 	letter             = 'A' .. 'Z' + 'a' .. 'z' + '_'.
 	digit              = "0123456789".
@@ -47,16 +48,40 @@ CHARACTERS
     nonascii           = '\u0080' .. '\ud7ff' + '\ue000' .. '\ufffd' /* + '\u10000' .. '#x10ffff' */ .
     wc                 = tab + eol + '\u000c' + cr + ' '.
     escape_chars       = ' ' .. '\u007e' + '\u0080' .. '\ud7ff' + '\ue000' .. '\ufffd' /* + '\u10000' .. '\u10FFFF'*/ .
+    dqStringChar         = ANY - '\"' - '\\' - '\u000d' - '\u000a'.
+    sqStringChar         = ANY - '\'' - '\\' - '\u000d' - '\u000a'.
+    zeroToThree        = "0123".
+    octalDigit         = "01234567".
 
 TOKENS
 
     ident = ['-'] (letter | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars))) { letter | digit | '-' | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars)) }.
 	digit = digit.
     s = wc { wc }.
+    stringLit =
+      ("\"" { dqStringChar
+           | "\\" ( "b" | "t" | "n" | "f" | "r" | "\"" | "\'" | "\\" | "\n"
+                  | "u" { "u" } hexDigit hexDigit hexDigit hexDigit
+                  | zeroToThree [ octalDigit ] [ octalDigit ]
+                  | octalDigit [ octalDigit ]
+                  )
+           }
+      "\"")
+    |
+      ("\'" { sqStringChar
+           | "\\" ( "b" | "t" | "n" | "f" | "r" | "\"" | "\'" | "\\" | "\n"
+                  | "u" { "u" } hexDigit hexDigit hexDigit hexDigit
+                  | zeroToThree [ octalDigit ] [ octalDigit ]
+                  | octalDigit [ octalDigit ]
+                  )
+           }
+      "\'").
 
 PRAGMAS
 
 COMMENTS FROM "/*" TO "*/"
+
+IGNORE eol + cr + tab + space
 
 PRODUCTIONS
 
@@ -79,19 +104,8 @@ CSS3 =                          (.  CSSDoc = new CSSDocument();
 	}
 .
 
-QuotedString<out String qs> =	(. qs = ""; char quote = '\n'; .)
-	( "'"						(. quote = '\''; .)
-		{ANY					(. qs += t.val; .)
-								(. if (la.val.equals("'") && !t.val.equals("\\")) { break; } .)
-		}
-		"'"
-	| '"'						(. quote = '"'; .)
-		{ANY					(. qs += t.val; .)
-								(. if (la.val.equals("\"") && !t.val.equals("\\")) { break; } .)
-		}
-		'"'
-	)							(. /*if (quote != '\n') { qs = quote + qs + quote; }*/ .)
-.
+QuotedString<out String qs> = stringLit (. qs = t.val; .) .
+
 URI<out String url> =			(. url = ""; .)
 	"url" [ "(" ] (
 		QuotedString<out url>
@@ -140,12 +154,12 @@ mediaDirective<out DirectiveBuilder dirb> =
                                 dirb.setName("@media");
                                 dirb.setType(DirectiveType.Media);
                             .)
-    "@media" [s]
+    "@media"
     medium<out m>           (. dirb.getMediums().add(m); .)
-    [s] '{' [s] [ ruleset<out rset>		(. dirb.getRuleSets().add(rset); .)
-	{ [s]
+    '{' [ ruleset<out rset>		(. dirb.getRuleSets().add(rset); .)
+	{
       ruleset<out rset>		(. dirb.getRuleSets().add(rset); .)
-	[s] } ] '}'
+	} ] '}'
 .
 
 classDirective<out DirectiveBuilder dirb> =
@@ -155,10 +169,10 @@ classDirective<out DirectiveBuilder dirb> =
                                         RuleSet rset = new RuleSet();
                                         dirb.setType(DirectiveType.Class);
                                     .)
-    "@class" [s]
+    "@class"
     identity<out ident>             (. dirb.setID(ident); .)
-    [s] '{' [s] [ declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
-          { [s] ';'	[s]					(. if (la.val.equals("}")) { Get(); return dirb; } .)
+    '{' [ declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
+          { ';'     				(. if (la.val.equals("}")) { Get(); return dirb; } .)
             declaration<out dec>    (. dirb.getDeclarations().add(dec); .)
           } [ ';' ]
         ]
@@ -171,9 +185,9 @@ defineDirective<out DirectiveBuilder dirb> =
                                         RuleSet rset = new RuleSet();
                                         dirb.setType(DirectiveType.Define);
                                     .)
-    "@define" [s]
-    '{' [s] [ declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
-          { [s] ';'	[s]					(. if (la.val.equals("}")) { Get(); return dirb; } .)
+    "@define"
+    '{' [ declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
+          { ';'     				(. if (la.val.equals("}")) { Get(); return dirb; } .)
             declaration<out dec>    (. dirb.getDeclarations().add(dec); .)
           } [ ';' ]
         ]
@@ -186,9 +200,9 @@ fontFaceDirective<out DirectiveBuilder dirb> =
                                         RuleSet rset = new RuleSet();
                                         dirb.setType(DirectiveType.FontFace);
                                     .)
-    "@font-face" [s]
-    '{' [s] [ declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
-          { [s] ';'	[s]					(. if (la.val.equals("}")) { Get(); return dirb; } .)
+    "@font-face"
+    '{' [ declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
+          { ';'     				(. if (la.val.equals("}")) { Get(); return dirb; } .)
             declaration<out dec>    (. dirb.getDeclarations().add(dec); .)
           } [ ';' ]
         ]
@@ -202,15 +216,15 @@ pageDirective<out DirectiveBuilder dirb> =
                                         String psd;
                                         dirb.setType(DirectiveType.Page);
                                     .)
-    "@page" [s]
+    "@page"
     [ pseudo<out psd>               (.
                                         ss = new SimpleSelector();
                                         ss.setPseudo(psd);
                                         dirb.setSimpleSelector(ss);
                                     .)
     ]
-    [s] '{' [s] [ declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
-          { [s] ';'	[s]					(. if (la.val.equals("}")) { Get(); return dirb; } .)
+    '{' [ declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
+          { ';'     				(. if (la.val.equals("}")) { Get(); return dirb; } .)
             declaration<out dec>    (. dirb.getDeclarations().add(dec); .)
           } [ ';' ]
         ]
@@ -227,15 +241,15 @@ importDirective<out DirectiveBuilder dirb> =
                         Medium m;
                         String url;
                     .)
-    "@import" [s]
+    "@import"
     URI<out url>    (.
                         trm.setValue(url);
                         trm.setType(TermType.Url);
                         expr.getTerms().add(trm);
                         dirb.setExpression(expr); .)
-    [s] [
+    [
         medium<out m>   (. dirb.getMediums().add(m); .)
-    ] [s]
+    ]
     ';'
 .
 
@@ -248,13 +262,13 @@ includeDirective<out DirectiveBuilder dirb> =
                         dirb.setType(DirectiveType.Include);
                         String url;
                     .)
-    "@include" [s]
+    "@include"
     URI<out url>    (.
                         trm.setValue(url);
                         trm.setType(TermType.Url);
                         expr.getTerms().add(trm);
                         dirb.setExpression(expr); .)
-    [s] ';'
+    ';'
 .
 
 charsetDirective<out DirectiveBuilder dirb> =
@@ -265,11 +279,11 @@ charsetDirective<out DirectiveBuilder dirb> =
                         Expression expr = new Expression();
                         dirb.setType(DirectiveType.Charset);
                     .)
-    "@charset" [s]
+    "@charset"
     term<out trm>    (.
                         expr.getTerms().add(trm);
                         dirb.setExpression(expr); .)
-    [s] ';'
+    ';'
 .
 
 namespaceDirective<out DirectiveBuilder dirb> =
@@ -282,10 +296,10 @@ namespaceDirective<out DirectiveBuilder dirb> =
                                     String ident;
                                     String url;
                                 .)
-    "@namespace" [s]
+    "@namespace"
     [
         identity<out ident>     (. dirb.setID(ident); .)
-    ] [s]
+    ]
     (
         URI<out url>            (.
                                     trm.setValue(url);
@@ -301,7 +315,7 @@ namespaceDirective<out DirectiveBuilder dirb> =
                                     dirb.setExpression(expr);
                                 .)
     )
-    [s] ';'
+    ';'
 .
 
 directive<out Directive dir> =	(.  dir = null; //new GenericDirective();
@@ -336,14 +350,14 @@ directive<out Directive dir> =	(.  dir = null; //new GenericDirective();
                                                     String lcName = ident.toLowerCase();
                                                     dirb.setType(DirectiveType.Other);
                                                 .)
-          [s] [ expr<out exp>                   (. dirb.setExpression(exp); .)
+          [ expr<out exp>                   (. dirb.setExpression(exp); .)
             |
             medium<out m>                       (. dirb.getMediums().add(m); .)
           ]
-          ( [s] '{' [s]
+          ( '{'
                 [ {
                     ((declaration<out dec>		(. dirb.getDeclarations().add(dec); .)
-                        { [s] ';' [s]			(. if (la.val.equals("}")) { Get(); return dirb.build(); } .)
+                        { ';'       			(. if (la.val.equals("}")) { Get(); return dirb.build(); } .)
                           declaration<out dec>  (. dirb.getDeclarations().add(dec); .)
                         }
                         [ ';' ])
@@ -355,7 +369,7 @@ directive<out Directive dir> =	(.  dir = null; //new GenericDirective();
                   } ]
             '}'
             |
-            [s] ';' [s]
+            ';'
           )
         )
     ) (. dir = dirb.build(); .)
@@ -382,10 +396,10 @@ ruleset<out RuleSet rset> =		(. rset = new RuleSet();
 									Declaration dec = null;
 								.)
 	selector<out sel>			(. rset.getSelectors().add(sel); .)
-	[s] { ',' [s] selector<out sel>		(. rset.getSelectors().add(sel); .)
-	[s] }
-    '{' [s] [ declaration<out dec>	(. rset.getDeclarations().add(dec); .)
-	{ [s] ';' [s]				(. /* ';' may not be the begining of another declaration */
+	{ ',' selector<out sel>		(. rset.getSelectors().add(sel); .)
+	}
+    '{' [ declaration<out dec>	(. rset.getDeclarations().add(dec); .)
+	{ ';'       				(. /* ';' may not be the begining of another declaration */
 									if (la.val.equals("}")) { Get(); return rset; }
 								.)
 	declaration<out dec>		(. rset.getDeclarations().add(dec); .)
@@ -396,10 +410,10 @@ selector<out Selector sel> =	(. sel = new Selector();
 									Combinator cb = null;
 								.)
 	simpleselector<out ss>		(. sel.getSimpleSelectors().add(ss); .)
-	[s] { [s] [ ('+'			(. cb = Combinator.PrecededImmediatelyBy; .)
+	{ [ ('+'        			(. cb = Combinator.PrecededImmediatelyBy; .)
 		| '>'					(. cb = Combinator.ChildOf; .)
 		| '~'					(. cb = Combinator.PrecededBy; .)
-		) ] [s]
+		) ]
 		simpleselector<out ss>	(. if (cb != null) { ss.setCombinator(cb); }
 									sel.getSimpleSelectors().add(ss);
 								.)
@@ -435,18 +449,18 @@ attrib<out Attribute atb> =
 										String quote = null;
 										String ident = null;
 									.)
-	'[' [s] identity<out ident>			(. atb.setOperand(ident); .)
-	[s] [
+	'[' identity<out ident>			(. atb.setOperand(ident); .)
+	[
 		( '='						(. atb.setOperator(AttributeOperator.Equals); .)
 		| "~="						(. atb.setOperator(AttributeOperator.InList); .)
 		| "|="						(. atb.setOperator(AttributeOperator.Hyphenated); .)
 		| "$="						(. atb.setOperator(AttributeOperator.EndsWith); .)
 		| "^="						(. atb.setOperator(AttributeOperator.BeginsWith); .)
 		| "*="						(. atb.setOperator(AttributeOperator.Contains); .)
-		) [s]
+		)
     	( identity<out ident>		(. atb.setValue(ident); .)
 		| QuotedString<out quote>	(. atb.setValue(quote); .)
-		) [s]
+		)
 	] ']'
 .
 pseudo<out String pseudo> =	(. pseudo = "";
@@ -466,18 +480,18 @@ declaration<out Declaration dec> =
 							String ident = null;
 						.)
 	identity<out ident>	(. dec.setName(ident); .)
-	[s] ':' [s] expr<out exp>	(. dec.setExpression(exp); .)
-		[s] [ "!important"	(. dec.setImportant(true); .)
-	] [s]
+	':' expr<out exp>	(. dec.setExpression(exp); .)
+		[ "!important"	(. dec.setImportant(true); .)
+	]
 .
 expr<out Expression exp> =	(. exp = new Expression();
 								Character sep = null;
 								Term trm = null;
 							.)
 	term<out trm>			(. exp.getTerms().add(trm); .)
-	{ [s] [ ('/'				(. sep = '/'; .)
+	{ [ ('/'				(. sep = '/'; .)
 		| ','				(. sep = ','; .)
-		) [s] ]
+		) ]
 		term<out trm>		(.
 								if (sep != null) { trm.setSeperator(sep); }
 								exp.getTerms().add(trm);
@@ -550,7 +564,7 @@ term<out Term trm> =				(. trm = new Term();
 									.)
 				]
 		) ]							(. trm.setValue(val); trm.setType(TermType.Number); .)
-	) [s]
+	)
 .
 HexValue<out String val> =		(. val = "";
 									boolean found = false;

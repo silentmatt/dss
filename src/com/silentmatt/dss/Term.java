@@ -81,7 +81,7 @@ public class Term {
         if (type == TermType.Function) {
             txt.append(compact ? function.toCompactString() : function.toString());
         } else if (type == TermType.Url) {
-            txt.append("url('").append(value).append("')");
+            txt.append("url(").append(value).append(")");
         } else if (type == TermType.Unicode) {
             txt.append("U\\").append(value.toUpperCase());
         } else if (type == TermType.Hex) {
