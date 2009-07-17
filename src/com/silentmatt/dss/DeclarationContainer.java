@@ -9,6 +9,7 @@ import java.util.List;
 public interface DeclarationContainer {
     List<Declaration> getDeclarations();
     void setDeclarations(List<Declaration> declarations);
+    void addDeclaration(Declaration declaration);
 
     Declaration getDeclaration(String name);
     Expression getValue(String name);

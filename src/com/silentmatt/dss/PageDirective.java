@@ -15,11 +15,11 @@ public class PageDirective extends DeclarationDirective {
     }
 
     public String getName() {
-        return "@class";
+        return "@page";
     }
 
     public DirectiveType getType() {
-        return DirectiveType.Class;
+        return DirectiveType.Page;
     }
 
     public SimpleSelector getSelector() {

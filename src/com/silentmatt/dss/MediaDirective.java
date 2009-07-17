@@ -1,5 +1,7 @@
 package com.silentmatt.dss;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -8,11 +10,25 @@ import java.util.List;
  */
 public class MediaDirective implements Directive, RuleSetContainer {
     private List<Medium> mediums;
+    private List<Rule> allRules;
     private List<RuleSet> ruleSets;
+    private List<Directive> directives;
 
-    public MediaDirective(List<Medium> mediums, List<RuleSet> ruleSets) {
+    public MediaDirective(List<Medium> mediums, List<Rule> rules) {
         this.mediums = mediums;
-        this.ruleSets = ruleSets;
+        this.allRules = rules;
+        this.ruleSets = new ArrayList<RuleSet>();
+        this.directives = new ArrayList<Directive>();
+        for (Rule r : rules) {
+            switch (r.getRuleType()) {
+            case Directive:
+                directives.add((Directive) r);
+                break;
+            case RuleSet:
+                ruleSets.add((RuleSet) r);
+                break;
+            }
+        }
     }
 
     public List<Medium> getMediums() {
@@ -24,11 +40,15 @@ public class MediaDirective implements Directive, RuleSetContainer {
     }
 
     public List<RuleSet> getRuleSets() {
-        return ruleSets;
+        return Collections.unmodifiableList(ruleSets);
     }
 
-    public void setRuleSets(List<RuleSet> ruleSets) {
-        this.ruleSets = ruleSets;
+    public List<Directive> getDirectives() {
+        return Collections.unmodifiableList(directives);
+    }
+
+    public List<Rule> getRules() {
+        return allRules;
     }
 
     public String getName() {
@@ -39,6 +59,11 @@ public class MediaDirective implements Directive, RuleSetContainer {
         return DirectiveType.Media;
     }
 
+    public RuleType getRuleType() {
+        return RuleType.Directive;
+    }
+
+    @Override
     public String toString() {
         return toString(0, false);
     }
@@ -47,7 +72,17 @@ public class MediaDirective implements Directive, RuleSetContainer {
         return toString(0, true);
     }
 
-    private String toString(int nesting, boolean compact) {
+    public void addDirective(Directive directive) {
+        allRules.add(directive);
+        directives.add(directive);
+    }
+
+    public void addRuleSet(RuleSet ruleSet) {
+        allRules.add(ruleSet);
+        ruleSets.add(ruleSet);
+    }
+
+    public String toString(int nesting, boolean compact) {
         StringBuilder txt = new StringBuilder();
         txt.append("@media");
         if (!compact) { txt.append(" "); }
@@ -63,8 +98,8 @@ public class MediaDirective implements Directive, RuleSetContainer {
         }
         txt.append(compact ? "{" : " {\r\n");
 
-        for (RuleSet rules : ruleSets) {
-            txt.append(rules.toString(nesting + 1, compact));
+        for (Rule rule : allRules) {
+            txt.append(rule.toString(nesting + 1, compact));
             if (!compact) {
                 txt.append("\r\n");
             }
@@ -73,5 +108,4 @@ public class MediaDirective implements Directive, RuleSetContainer {
         txt.append("}");
         return txt.toString();
     }
-
 }

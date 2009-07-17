@@ -13,7 +13,7 @@ public class FontFaceDirective extends DeclarationDirective {
 
     @Override
     public DirectiveType getType() {
-        return DirectiveType.Define;
+        return DirectiveType.FontFace;
     }
 
     public String getName() {

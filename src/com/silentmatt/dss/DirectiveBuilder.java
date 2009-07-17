@@ -8,6 +8,7 @@ import java.util.List;
  * @author matt
  */
 public class DirectiveBuilder {
+    private List<Rule> allRules = new ArrayList<Rule>();
     private List<Declaration> declarations = new ArrayList<Declaration>();
     private List<RuleSet> ruleSets = new ArrayList<RuleSet>();
     private List<Directive> directives = new ArrayList<Directive>();
@@ -27,6 +28,10 @@ public class DirectiveBuilder {
         this.declarations = declarations;
     }
 
+    public void addDeclaration(Declaration declaration) {
+        this.declarations.add(declaration);
+    }
+
     public List<RuleSet> getRuleSets() {
         return ruleSets;
     }
@@ -35,12 +40,22 @@ public class DirectiveBuilder {
         this.ruleSets = ruleSets;
     }
 
+    public void addRuleSet(RuleSet ruleSet) {
+        this.allRules.add(ruleSet);
+        this.ruleSets.add(ruleSet);
+    }
+
     public List<Directive> getDirectives() {
         return directives;
     }
 
     public void setDirectives(List<Directive> directives) {
         this.directives = directives;
+    }
+
+    public void addDirective(Directive directive) {
+        this.allRules.add(directive);
+        this.directives.add(directive);
     }
 
     public DirectiveType getType() {
@@ -144,7 +159,7 @@ public class DirectiveBuilder {
     }
 
     public DefineDirective buildDefineDirective() {
-        return new DefineDirective(declarations);
+        return new DefineDirective(declarations, id != null && id.equals("global"));
     }
 
     public FontFaceDirective buildFontFaceDirective() {
@@ -155,11 +170,19 @@ public class DirectiveBuilder {
         GenericDirective d = new GenericDirective();
         d.setType(type);
         d.setName(this.name);
+        for (Rule r : allRules) {
+            switch (r.getRuleType()) {
+            case Directive:
+                d.addDirective((Directive) r);
+                break;
+            case RuleSet:
+                d.addRuleSet((RuleSet) r);
+                break;
+            }
+        }
         d.setDeclarations(declarations);
-        d.setDirectives(directives);
         d.setExpression(expression);
         d.setMediums(mediums);
-        d.setRuleSets(ruleSets);
         return d;
     }
 
@@ -176,7 +199,7 @@ public class DirectiveBuilder {
     }
 
     public MediaDirective buildMediaDirective() {
-        return new MediaDirective(mediums, ruleSets);
+        return new MediaDirective(mediums, allRules);
     }
 
     public NamespaceDirective buildNamespaceDirective() {

@@ -30,6 +30,6 @@ public class NamespaceDirective extends ExpressionDirective {
 
     @Override
     public String toString() {
-        return getName() + " " + (prefix != null ? (prefix + " ") : "") + getExpression().toString();
+        return getName() + " " + (prefix != null ? (prefix + " ") : "") + getExpression().toString() + ";";
     }
 }

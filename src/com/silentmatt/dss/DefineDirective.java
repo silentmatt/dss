@@ -7,8 +7,11 @@ import java.util.List;
  * @author matt
  */
 public class DefineDirective extends DeclarationDirective {
-    DefineDirective(List<Declaration> declarations) {
+    private boolean global;
+
+    DefineDirective(List<Declaration> declarations, boolean global) {
         super(declarations);
+        this.global = global;
     }
 
     @Override
@@ -17,7 +20,10 @@ public class DefineDirective extends DeclarationDirective {
     }
 
     public String getName() {
-        return "@define";
+        return "@define" + (global ? " global" : "");
     }
 
+    public boolean isGlobal() {
+        return global;
+    }
 }

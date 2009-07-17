@@ -8,5 +8,4 @@ import java.util.List;
  */
 public interface RuleSetContainer {
     List<RuleSet> getRuleSets();
-    void setRuleSets(List<RuleSet> ruleSets);
 }

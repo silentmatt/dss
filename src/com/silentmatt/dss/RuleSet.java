@@ -7,9 +7,14 @@ import java.util.List;
  *
  * @author matt
  */
-public class RuleSet implements DeclarationContainer {
+public class RuleSet implements DeclarationContainer, Rule {
+    private List<Directive> directives = new ArrayList<Directive>();
     private List<Declaration> declarations = new ArrayList<Declaration>();
     private List<Selector> selectors = new ArrayList<Selector>();
+
+    public RuleType getRuleType() {
+        return RuleType.RuleSet;
+    }
 
     public List<Declaration> getDeclarations() {
         return declarations;
@@ -19,12 +24,28 @@ public class RuleSet implements DeclarationContainer {
         this.declarations = declarations;
     }
 
+    public void addDeclaration(Declaration declaration) {
+        declarations.add(declaration);
+    }
+
     public List<Selector> getSelectors() {
         return selectors;
     }
 
     public void setSelectors(List<Selector> selectors) {
         this.selectors = selectors;
+    }
+
+    public List<Directive> getDirectives() {
+        return directives;
+    }
+
+    public void setDirectives(List<Directive> directives) {
+        this.directives = directives;
+    }
+
+    public void addDirective(Directive directive) {
+        directives.add(directive);
     }
 
     public Declaration getDeclaration(String name) {
@@ -75,11 +96,14 @@ public class RuleSet implements DeclarationContainer {
         }
         txt.append(compact ? "{" : " {");
 
-        first = true;
+        for (Directive dir : directives) {
+            if (!compact) { txt.append("\r\n\t" + start); }
+            txt.append(dir.toString(nesting + 1, compact));
+        }
         for (Declaration dec : declarations) {
-            if (first) { first = false; } else { txt.append(";"); }
             if (!compact) { txt.append("\r\n\t" + start); }
             txt.append(compact ? dec.toCompactString() : dec.toString());
+            txt.append(";");
         }
 
         txt.append(compact ? "}" : ("\r\n" + start + "}"));

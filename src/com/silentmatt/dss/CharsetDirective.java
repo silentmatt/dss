@@ -16,4 +16,8 @@ public class CharsetDirective extends ExpressionDirective {
     public DirectiveType getType() {
         return DirectiveType.Charset;
     }
+
+    public String toString(int nesting, boolean compact) {
+        return super.toString(nesting, compact);
+    }
 }

@@ -32,12 +32,24 @@ public class ClassDirective extends DeclarationDirective {
 
     @Override
     public String toString(int nesting, boolean compact) {
-        StringBuilder txt = new StringBuilder("@class ");
+        String start = "";
+        if (!compact) {
+            for (int i = 0; i < nesting; i++) {
+                start += "\t";
+            }
+        }
+
+        StringBuilder txt = new StringBuilder(start);
+        txt.append("@class ");
         txt.append(getID());
         if (!compact) {
             txt.append(" ");
         }
         txt.append(getDeclarationsString(nesting, compact));
         return txt.toString();
+    }
+
+    public void addDeclartion(Declaration declaration) {
+        getDeclarations().add(declaration);
     }
 }

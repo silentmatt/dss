@@ -1,14 +1,16 @@
 package com.silentmatt.dss;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  *
  * @author matt
  */
-public class GenericDirective implements Directive, RuleSetContainer, DirectiveContainer {
+public class GenericDirective implements Directive, RuleSetContainer {
     private List<Declaration> declarations = new ArrayList<Declaration>();
+    private List<Rule> allRules = new ArrayList<Rule>();
     private List<RuleSet> ruleSet = new ArrayList<RuleSet>();
     private List<Directive> directives = new ArrayList<Directive>();
     private DirectiveType type;
@@ -17,19 +19,21 @@ public class GenericDirective implements Directive, RuleSetContainer, DirectiveC
     private Expression expression;
 
     public List<RuleSet> getRuleSets() {
-        return ruleSet;
-    }
-
-    public void setRuleSets(List<RuleSet> ruleSet) {
-        this.ruleSet = ruleSet;
+        return Collections.unmodifiableList(ruleSet);
     }
 
     public List<Directive> getDirectives() {
-        return directives;
+        return Collections.unmodifiableList(directives);
     }
 
-    public void setDirectives(List<Directive> directives) {
-        this.directives = directives;
+    public void addRuleSet(RuleSet rs) {
+        allRules.add(rs);
+        ruleSet.add(rs);
+    }
+
+    public void addDirective(Directive dir) {
+        allRules.add(dir);
+        directives.add(dir);
     }
 
     public DirectiveType getType() {
@@ -38,6 +42,10 @@ public class GenericDirective implements Directive, RuleSetContainer, DirectiveC
 
     public void setType(DirectiveType type) {
         this.type = type;
+    }
+
+    public RuleType getRuleType() {
+        return RuleType.Directive;
     }
 
     public String getName() {
@@ -152,7 +160,7 @@ public class GenericDirective implements Directive, RuleSetContainer, DirectiveC
             txt.append(compact ? dec.toCompactString() : dec.toString());
         }
 
-        txt.append(compact ? "}" : (start + "\t\r\n}"));
+        txt.append(compact ? "}" : ("\r\n" + start + "}"));
 
         return txt.toString();
     }
@@ -186,7 +194,7 @@ public class GenericDirective implements Directive, RuleSetContainer, DirectiveC
 
         if (getExpression() != null) {
             txt.append(compact ? getExpression().toCompactString() : getExpression().toString());
-            if (!compact) txt.append(" ");
+            if (!compact) { txt.append(" "); }
         }
         boolean first = true;
         for (Medium m : mediums) {

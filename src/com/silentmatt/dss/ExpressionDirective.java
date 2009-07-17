@@ -7,6 +7,10 @@ package com.silentmatt.dss;
 public abstract class ExpressionDirective implements Directive {
     private Expression expression;
 
+    public RuleType getRuleType() {
+        return RuleType.Directive;
+    }
+
     public ExpressionDirective(Expression expression) {
         setExpression(expression);
     }
@@ -24,8 +28,14 @@ public abstract class ExpressionDirective implements Directive {
         return getName() + " " + getExpression() + ";";
     }
 
-    public String toString(String start) {
-        return start + toString();
+    public String toString(int nesting, boolean compact) {
+        String start = "";
+        if (!compact) {
+            for (int i = 0; i < nesting; i++) {
+                start += "\t";
+            }
+        }
+        return start + (compact ? toCompactString() : toString());
     }
 
     public String toCompactString() {

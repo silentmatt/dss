@@ -1,5 +1,8 @@
 package com.silentmatt.dss;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  *
  * @author matt
@@ -36,6 +39,14 @@ public class ImportDirective extends ExpressionDirective {
     @Override
     public String toCompactString() {
         return getName() + " " + getExpression().toCompactString() + medium + ";";
+    }
+
+    public String getURLString() {
+        return getExpression().getTerms().get(0).getValue();
+    }
+
+    public URL getURL() throws MalformedURLException {
+        return new URL(getURLString());
     }
 
 }

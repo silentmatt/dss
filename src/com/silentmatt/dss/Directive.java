@@ -9,7 +9,7 @@ package com.silentmatt.dss;
  *
  * @author matt
  */
-public interface Directive extends Statement {
+public interface Directive extends Statement, Rule {
     String getName();
     DirectiveType getType();
 }

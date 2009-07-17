@@ -14,12 +14,20 @@ public abstract class DeclarationDirective implements Directive, DeclarationCont
         this.declarations = declarations;
     }
 
+    public RuleType getRuleType() {
+        return RuleType.Directive;
+    }
+
     public List<Declaration> getDeclarations() {
         return declarations;
     }
 
     public void setDeclarations(List<Declaration> declarations) {
         this.declarations = declarations;
+    }
+
+    public void addDeclaration(Declaration declaration) {
+        declarations.add(declaration);
     }
 
     public Expression getValue(String name) {
@@ -49,14 +57,13 @@ public abstract class DeclarationDirective implements Directive, DeclarationCont
 
         StringBuilder txt = new StringBuilder("{");
 
-        boolean first = true;
         for (Declaration dec : declarations) {
-            if (first) { first = false; } else { txt.append(";"); }
             if (!compact) { txt.append("\r\n\t" + start); }
             txt.append(compact ? dec.toCompactString() : dec.toString());
+            txt.append(";");
         }
 
-        txt.append(compact ? "}" : "\r\n}");
+        txt.append(compact ? "}" : "\r\n" + start + "}");
 
         return txt.toString();
     }
