@@ -62,24 +62,14 @@ public class Term {
 
     @Override
     public String toString() {
-        return toString(false);
-    }
-
-    public String toCompactString() {
-        return toString(true);
-    }
-
-    private String toString(boolean compact) {
         StringBuilder txt = new StringBuilder();
         if (seperator != null) {
             txt.append(seperator);
-            if (!compact) {
-                txt.append(" ");
-            }
+            txt.append(" ");
         }
 
         if (type == TermType.Function) {
-            txt.append(compact ? function.toCompactString() : function.toString());
+            txt.append(function.toString());
         } else if (type == TermType.Url) {
             txt.append("url(").append(value).append(")");
         } else if (type == TermType.Unicode) {

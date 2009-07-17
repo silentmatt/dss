@@ -36,11 +36,6 @@ public class ImportDirective extends ExpressionDirective {
         return getName() + " " + getExpression() + " " + medium + ";";
     }
 
-    @Override
-    public String toCompactString() {
-        return getName() + " " + getExpression().toCompactString() + medium + ";";
-    }
-
     public String getURLString() {
         return getExpression().getTerms().get(0).getValue();
     }

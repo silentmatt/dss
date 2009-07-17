@@ -7,7 +7,7 @@ import java.util.List;
  *
  * @author matt
  */
-public class RuleSet implements DeclarationContainer, Rule {
+public class RuleSet implements Rule {
     private List<Directive> directives = new ArrayList<Directive>();
     private List<Declaration> declarations = new ArrayList<Declaration>();
     private List<Selector> selectors = new ArrayList<Selector>();
@@ -67,19 +67,13 @@ public class RuleSet implements DeclarationContainer, Rule {
 
     @Override
     public String toString() {
-        return toString(0, false);
+        return toString(0);
     }
 
-    public String toCompactString() {
-        return toString(0, false);
-    }
-
-    public String toString(int nesting, boolean compact) {
+    public String toString(int nesting) {
         String start = "";
-        if (!compact) {
-            for (int i = 0; i < nesting; i++) {
-                start += "\t";
-            }
+        for (int i = 0; i < nesting; i++) {
+            start += "\t";
         }
 
         StringBuilder txt = new StringBuilder();
@@ -90,23 +84,23 @@ public class RuleSet implements DeclarationContainer, Rule {
                 txt.append(start);
             }
             else {
-                txt.append(compact ? "," : ", ");
+                txt.append(", ");
             }
-            txt.append(compact ? sel.toCompactString() : sel.toString());
+            txt.append(sel.toString());
         }
-        txt.append(compact ? "{" : " {");
+        txt.append(" {");
 
         for (Directive dir : directives) {
-            if (!compact) { txt.append("\r\n\t" + start); }
-            txt.append(dir.toString(nesting + 1, compact));
+            txt.append("\r\n\t" + start);
+            txt.append(dir.toString(nesting + 1));
         }
         for (Declaration dec : declarations) {
-            if (!compact) { txt.append("\r\n\t" + start); }
-            txt.append(compact ? dec.toCompactString() : dec.toString());
+            txt.append("\r\n\t" + start);
+            txt.append(dec.toString());
             txt.append(";");
         }
 
-        txt.append(compact ? "}" : ("\r\n" + start + "}"));
+        txt.append("\r\n" + start + "}");
 
         return txt.toString();
     }

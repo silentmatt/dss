@@ -26,19 +26,11 @@ public class Function {
 
     @Override
     public String toString() {
-        return toString(false);
-    }
-
-    public String toCompactString() {
-        return toString(true);
-    }
-
-    private String toString(boolean compact) {
         StringBuilder txt = new StringBuilder();
         txt.append(name).append("(");
         if (expression != null) {
             for (Term t : expression.getTerms()) {
-                txt.append(compact ? t.toCompactString() : t.toString());
+                txt.append(t.toString());
             }
         }
         txt.append(")");

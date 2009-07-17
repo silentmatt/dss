@@ -31,21 +31,17 @@ public class ClassDirective extends DeclarationDirective {
     }
 
     @Override
-    public String toString(int nesting, boolean compact) {
+    public String toString(int nesting) {
         String start = "";
-        if (!compact) {
-            for (int i = 0; i < nesting; i++) {
-                start += "\t";
-            }
+        for (int i = 0; i < nesting; i++) {
+            start += "\t";
         }
 
         StringBuilder txt = new StringBuilder(start);
         txt.append("@class ");
         txt.append(getID());
-        if (!compact) {
-            txt.append(" ");
-        }
-        txt.append(getDeclarationsString(nesting, compact));
+        txt.append(" ");
+        txt.append(getDeclarationsString(nesting));
         return txt.toString();
     }
 

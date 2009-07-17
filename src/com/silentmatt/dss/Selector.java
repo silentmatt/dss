@@ -28,9 +28,4 @@ public class Selector {
         }
         return txt.toString();
     }
-
-    public String toCompactString() {
-        // TODO: get compact form
-        return toString();
-    }
 }

@@ -7,7 +7,7 @@ import java.util.List;
  *
  * @author matt
  */
-public abstract class DeclarationDirective implements Directive, DeclarationContainer {
+public abstract class DeclarationDirective implements Directive {
     private List<Declaration> declarations = new ArrayList<Declaration>();
 
     public DeclarationDirective(List<Declaration> declarations) {
@@ -47,42 +47,34 @@ public abstract class DeclarationDirective implements Directive, DeclarationCont
         return null;
     }
 
-    public String getDeclarationsString(int nesting, boolean compact) {
+    public String getDeclarationsString(int nesting) {
         String start = "";
-        if (!compact) {
-            for (int i = 0; i < nesting; i++) {
-                start += "\t";
-            }
+        for (int i = 0; i < nesting; i++) {
+            start += "\t";
         }
 
         StringBuilder txt = new StringBuilder("{");
 
         for (Declaration dec : declarations) {
-            if (!compact) { txt.append("\r\n\t" + start); }
-            txt.append(compact ? dec.toCompactString() : dec.toString());
+            txt.append("\r\n\t" + start);
+            txt.append(dec.toString());
             txt.append(";");
         }
 
-        txt.append(compact ? "}" : "\r\n" + start + "}");
+        txt.append("\r\n" + start + "}");
 
         return txt.toString();
     }
 
     @Override
     public String toString() {
-        return toString(0, false);
+        return toString(0);
     }
 
-    public String toCompactString() {
-        return toString(0, true);
-    }
-
-    public String toString(int nesting, boolean compact) {
+    public String toString(int nesting) {
         StringBuilder txt = new StringBuilder(getName());
-        if (!compact) {
-            txt.append(" ");
-        }
-        txt.append(getDeclarationsString(nesting, compact));
+        txt.append(" ");
+        txt.append(getDeclarationsString(nesting));
         return txt.toString();
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author matt
  */
-public class CSSDocument implements RuleSetContainer, Statement {
+public class CSSDocument {
     private List<RuleSet> ruleSet = new ArrayList<RuleSet>();
     private String charset;
     private List<Directive> directives = new ArrayList<Directive>();
@@ -86,26 +86,8 @@ public class CSSDocument implements RuleSetContainer, Statement {
     @Override
     public String toString() {
         StringBuilder txt = new StringBuilder();
-//        for (Directive dr : directives) {
-//            txt.append(dr).append("\r\n");
-//        }
-//        if (txt.length() > 0) { txt.append("\r\n"); }
-//        for (RuleSet rules : ruleSet) {
-//            txt.append(rules).append("\r\n");
-//        }
         for (Rule r : allRules) {
             txt.append(r).append("\r\n");
-        }
-        return txt.toString();
-    }
-
-    public String toCompactString() {
-        StringBuilder txt = new StringBuilder();
-        for (Directive dr : directives) {
-            txt.append(dr.toCompactString());
-        }
-        for (RuleSet rules : ruleSet) {
-            txt.append(rules.toCompactString());
         }
         return txt.toString();
     }

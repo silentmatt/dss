@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author matt
  */
-public class MediaDirective implements Directive, RuleSetContainer {
+public class MediaDirective implements Directive {
     private List<Medium> mediums;
     private List<Rule> allRules;
     private List<RuleSet> ruleSets;
@@ -65,11 +65,7 @@ public class MediaDirective implements Directive, RuleSetContainer {
 
     @Override
     public String toString() {
-        return toString(0, false);
-    }
-
-    public String toCompactString() {
-        return toString(0, true);
+        return toString(0);
     }
 
     public void addDirective(Directive directive) {
@@ -82,27 +78,24 @@ public class MediaDirective implements Directive, RuleSetContainer {
         ruleSets.add(ruleSet);
     }
 
-    public String toString(int nesting, boolean compact) {
+    public String toString(int nesting) {
         StringBuilder txt = new StringBuilder();
-        txt.append("@media");
-        if (!compact) { txt.append(" "); }
+        txt.append("@media ");
 
         boolean first = true;
         for (Medium m : mediums) {
             if (first) {
                 first = false;
             } else {
-                txt.append(compact ? "," : ", ");
+                txt.append(", ");
             }
             txt.append(m.toString());
         }
-        txt.append(compact ? "{" : " {\r\n");
+        txt.append(" {\r\n");
 
         for (Rule rule : allRules) {
-            txt.append(rule.toString(nesting + 1, compact));
-            if (!compact) {
-                txt.append("\r\n");
-            }
+            txt.append(rule.toString(nesting + 1));
+            txt.append("\r\n");
         }
 
         txt.append("}");

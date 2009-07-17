@@ -4,7 +4,7 @@ package com.silentmatt.dss;
  *
  * @author matt
  */
-public class Declaration implements Statement {
+public class Declaration {
     private String name;
     private boolean important;
     private Expression expression;
@@ -37,12 +37,6 @@ public class Declaration implements Statement {
     public String toString() {
         StringBuilder txt = new StringBuilder();
         txt.append(name).append(": ").append(expression).append(important ? " !important" : "");
-        return txt.toString();
-    }
-
-    public String toCompactString() {
-        StringBuilder txt = new StringBuilder();
-        txt.append(name).append(":").append(expression.toCompactString()).append(important ? " !important" : "");
         return txt.toString();
     }
 }

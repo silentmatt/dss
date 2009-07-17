@@ -28,17 +28,11 @@ public abstract class ExpressionDirective implements Directive {
         return getName() + " " + getExpression() + ";";
     }
 
-    public String toString(int nesting, boolean compact) {
+    public String toString(int nesting) {
         String start = "";
-        if (!compact) {
-            for (int i = 0; i < nesting; i++) {
-                start += "\t";
-            }
+        for (int i = 0; i < nesting; i++) {
+            start += "\t";
         }
-        return start + (compact ? toCompactString() : toString());
-    }
-
-    public String toCompactString() {
-        return getName() + " " + getExpression().toCompactString() + ";";
+        return start + (toString());
     }
 }

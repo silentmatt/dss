@@ -20,26 +20,15 @@ public class Expression {
 
     @Override
     public String toString() {
-        return toString(false);
-    }
-
-    public String toCompactString() {
-        return toString(false);
-    }
-
-    private String toString(boolean compact) {
         StringBuilder txt = new StringBuilder();
         boolean first = true;
         for (Term t : terms) {
             if (first) {
                 first = false;
             } else {
-                txt.append(t.getSeperator() != null ? t.getSeperator().toString() : "");
-                if (!compact || t.getSeperator() == null) {
-                    txt.append(" ");
-                }
+                txt.append(t.getSeperator() != null ? t.getSeperator().toString() : " ");
             }
-            txt.append(compact ? t.toCompactString() : t.toString());
+            txt.append(t.toString());
         }
         return txt.toString();
     }

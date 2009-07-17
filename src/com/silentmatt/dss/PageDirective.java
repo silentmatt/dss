@@ -31,16 +31,15 @@ public class PageDirective extends DeclarationDirective {
     }
 
     @Override
-    public String toString(int nesting, boolean compact) {
+    public String toString(int nesting) {
         StringBuilder txt = new StringBuilder("@page");
         if (ss != null) {
             txt.append(" ");
             txt.append(ss.toString());
         }
-        if (!compact) {
-            txt.append(" ");
-        }
-        txt.append(getDeclarationsString(nesting, compact));
+        txt.append(" ");
+
+        txt.append(getDeclarationsString(nesting));
         return txt.toString();
     }
 }

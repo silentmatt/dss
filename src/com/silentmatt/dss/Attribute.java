@@ -51,8 +51,4 @@ public class Attribute {
         txt.append("]");
         return txt.toString();
     }
-
-    public String toCompactString() {
-        return toString();
-    }
 }
