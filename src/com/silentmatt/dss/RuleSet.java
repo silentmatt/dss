@@ -104,4 +104,42 @@ public class RuleSet implements Rule {
 
         return txt.toString();
     }
+
+    public String toCssString(int nesting) {
+        String start = "";
+        for (int i = 0; i < nesting; i++) {
+            start += "\t";
+        }
+
+        StringBuilder txt = new StringBuilder();
+        boolean first = true;
+        for (Selector sel : selectors) {
+            if (first) {
+                first = false;
+                txt.append(start);
+            }
+            else {
+                txt.append(", ");
+            }
+            txt.append(sel.toString());
+        }
+        txt.append(" {");
+
+        for (Directive dir : directives) {
+            String dirString = dir.toCssString(nesting + 1);
+            if (dirString.length() > 0) {
+                txt.append("\r\n\t" + start);
+                txt.append(dirString);
+            }
+        }
+        for (Declaration dec : declarations) {
+            txt.append("\r\n\t" + start);
+            txt.append(dec.toString());
+            txt.append(";");
+        }
+
+        txt.append("\r\n" + start + "}");
+
+        return txt.toString();
+    }
 }

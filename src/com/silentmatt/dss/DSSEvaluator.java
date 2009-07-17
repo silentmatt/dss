@@ -186,7 +186,10 @@ public class DSSEvaluator {
             pushScope();
             URL baseURL = options.getBaseURL();
             try {
-                //evaluate(included);
+                // Evaluate the first rule, since it's in the same index as the include
+                if (included.getRules().size() > 0) {
+                    evaluateRules(included.getRules().subList(0, 1));
+                }
                 rule.setIncludedDocument(included);
             }
             finally {
@@ -212,24 +215,6 @@ public class DSSEvaluator {
             }
         }
         return false;
-    }
-
-    private static Declaration getPropertyByName(List<Declaration> style, String property) {
-        for (Declaration dec : style) {
-            if (dec.getName().equals(property)) {
-                return dec;
-            }
-        }
-        return null;
-    }
-
-    private static void setPropertyByName(List<Declaration> style, String property, Expression value, boolean important) {
-        for (Declaration dec : style) {
-            if (dec.getName().equals(property)) {
-                dec.setExpression(value);
-                dec.setImportant(important);
-            }
-        }
     }
 
     private void addInheritedProperties(List<Declaration> style, String className) {

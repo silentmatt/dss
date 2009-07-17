@@ -35,4 +35,8 @@ public abstract class ExpressionDirective implements Directive {
         }
         return start + (toString());
     }
+
+    public String toCssString(int nesting) {
+        return toString(nesting);
+    }
 }

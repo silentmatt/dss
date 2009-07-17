@@ -48,4 +48,8 @@ public class ClassDirective extends DeclarationDirective {
     public void addDeclartion(Declaration declaration) {
         getDeclarations().add(declaration);
     }
+
+    public String toCssString(int nesting) {
+        return "";
+    }
 }

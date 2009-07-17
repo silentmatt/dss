@@ -143,4 +143,8 @@ public class GenericDirective implements Directive {
         return txt.toString();
     }
 
+    public String toCssString(int nesting) {
+        return toString(nesting);
+    }
+
 }

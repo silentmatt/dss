@@ -7,4 +7,5 @@ package com.silentmatt.dss;
 public interface Rule {
     RuleType getRuleType();
     String toString(int nesting);
+    String toCssString(int nesting);
 }

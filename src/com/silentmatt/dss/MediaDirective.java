@@ -101,4 +101,31 @@ public class MediaDirective implements Directive {
         txt.append("}");
         return txt.toString();
     }
+
+    public String toCssString(int nesting) {
+        StringBuilder txt = new StringBuilder();
+        txt.append("@media ");
+
+        boolean first = true;
+        for (Medium m : mediums) {
+            if (first) {
+                first = false;
+            } else {
+                txt.append(", ");
+            }
+            txt.append(m.toString());
+        }
+        txt.append(" {\r\n");
+
+        for (Rule rule : allRules) {
+            String ruleString = rule.toCssString(nesting + 1);
+            if (ruleString.length() > 0) {
+                txt.append(ruleString);
+                txt.append("\r\n");
+            }
+        }
+
+        txt.append("}");
+        return txt.toString();
+    }
 }

@@ -26,4 +26,8 @@ public class DefineDirective extends DeclarationDirective {
     public boolean isGlobal() {
         return global;
     }
+
+    public String toCssString(int nesting) {
+        return "";
+    }
 }

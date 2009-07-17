@@ -22,6 +22,12 @@ public class Scope<T> implements Map<String, T> {
         }
     }
 
+    // XXX: Share the Map?
+    Scope(Map<String, T> initial) {
+        this(null);
+        table.putAll(initial);
+    }
+
     public Scope<T> parent() {
         return parent;
     }

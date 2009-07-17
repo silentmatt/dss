@@ -77,4 +77,8 @@ public abstract class DeclarationDirective implements Directive {
         txt.append(getDeclarationsString(nesting));
         return txt.toString();
     }
+
+    public String toCssString(int nesting) {
+        return toString(nesting);
+    }
 }
