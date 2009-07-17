@@ -26,7 +26,15 @@ public class Expression {
             if (first) {
                 first = false;
             } else {
-                txt.append(t.getSeperator() != null ? t.getSeperator().toString() : " ");
+                if (t.getSeperator() == null) {
+                    txt.append(" ");
+                }
+                else {
+                    txt.append(t.getSeperator());
+                    if (!t.getSeperator().equals(' ')) {
+                        txt.append(" ");
+                    }
+                }
             }
             txt.append(t.toString());
         }

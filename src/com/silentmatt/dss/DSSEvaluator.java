@@ -221,6 +221,7 @@ public class DSSEvaluator {
         ClassDirective clazz = classes.get(className);
         if (clazz == null) {
             options.errors.SemErr("no such class: " + className);
+            return;
         }
 
         List<Declaration> properties = clazz.getDeclarations();

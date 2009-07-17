@@ -63,10 +63,6 @@ public class Term {
     @Override
     public String toString() {
         StringBuilder txt = new StringBuilder();
-        if (seperator != null) {
-            txt.append(seperator);
-            txt.append(" ");
-        }
 
         if (type == TermType.Function) {
             txt.append(function.toString());

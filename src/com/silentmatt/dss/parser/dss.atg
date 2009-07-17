@@ -56,7 +56,8 @@ CHARACTERS
 TOKENS
 
     ident = ['-'] (letter | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars))) { letter | digit | '-' | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars)) }.
-	digit = digit.
+    integer = digit {digit}.
+    decimal = digit {digit} '.' {digit}.
     s = wc { wc }.
     stringLit =
       ("\"" { dqStringChar
@@ -532,8 +533,7 @@ term<out Term trm> =				(. trm = new Term();
 		  |
 			'='						(. trm.setValue(trm.getValue() + t.val); .)
 			(identity<out ident>	(. trm.setValue(trm.getValue() + ident); .)
-			| { digit				(. trm.setValue(trm.getValue() + t.val); .)
-				}
+			| integer				(. trm.setValue(trm.getValue() + t.val); .)
 			)
 		) } ]
 		[ '(' expr<out exp>			(. Function func = new Function();
@@ -548,20 +548,15 @@ term<out Term trm> =				(. trm = new Term();
 		[ ('-'						(. trm.setSign('-'); .)
 		| '+'						(. trm.setSign('+'); .)
 		) ]
-		{ digit						(. val += t.val; .)
-		} [ '.'						(. val += t.val; .)
-			{ digit					(. val += t.val; .)
-			}
-		]
+		( integer | decimal )       (. val = t.val; .)
 		[ (
 			IF(la.val.toLowerCase().equals("n"))
 			/* func(4n+1) */
 				"n"					(. val += t.val; .)
 				[ ("+"				(. val += t.val; .)
 				| "-"				(. val += t.val; .)
-				) digit				(. val += t.val; .)
-				{ digit				(. val += t.val; .)
-				} ]
+				) integer			(. val += t.val; .)
+				]
 			| "%"					(. trm.setUnit(Unit.Percent); .)
 			| [ IF(IsUnit())
 				identity<out ident>	(. try {
@@ -579,8 +574,7 @@ HexValue<out String val> =		(. val = "";
 								.)
 	'#'							(. val += t.val; .)
 	(
-		{ digit					(. val += t.val; .)
-		}
+		integer                 (. val += t.val; .)
 	|
 		IF(PartOfHex(val))
 			ident				(. val += t.val; found = true; .)
