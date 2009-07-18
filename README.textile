@@ -1,0 +1,33 @@
+DSS stands for Dynamic Style Sheets.
+
+h3. Features
+
+* defined constants
+* "classes" (groups of properties/values that can be inserted into a rule)
+* includes (@import, but not restricted to the beginning of the stylesheet, and DSS does the inclusion, not the browser).
+
+h3. Planned Features
+
+Currently planned features are:
+* expressions, e.g. <code>border: 1px solid; width: expr(100px - 2px); /* subtract the border size */</code>
+* conditional rules
+
+Eventually, it will probably support minimized output, and some automatic cross-browser properties. For example:
+
+<pre>
+.semitransparent {
+    opacity: 0.5;
+}
+</pre>
+
+Would turn into:
+
+<pre>.semitransparent{opacity:0.5;-moz-opacity:0.5;-khtml-opacity:0.5;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";filter:alpha(opacity=50);}</pre>
+
+h3. Usage
+
+There's no documentation in the code (yet), but the Main class is very simple, so it should be easy to figure out how to use the library.
+
+There's a simple command-line DSS processor included with the library. You can run it like this:
+
+<pre>java -jar dss.jar [-o|--out <output-file>] <input-url></pre>
