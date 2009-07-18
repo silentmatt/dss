@@ -87,7 +87,7 @@ public class CSSDocument {
     public String toString() {
         StringBuilder txt = new StringBuilder();
         for (Rule r : allRules) {
-            txt.append(r).append("\r\n");
+            txt.append(r).append("\n");
         }
         return txt.toString();
     }
@@ -97,7 +97,7 @@ public class CSSDocument {
         for (Rule r : allRules) {
             String ruleString = r.toCssString(0);
             if (ruleString.length() > 0) {
-                txt.append(ruleString).append("\r\n");
+                txt.append(ruleString).append("\n");
             }
         }
         return txt.toString();

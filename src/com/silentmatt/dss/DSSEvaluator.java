@@ -160,6 +160,7 @@ public class DSSEvaluator {
 
     private void evaluateDefine(DefineDirective define, boolean global) {
         List<Declaration> properties = define.getDeclarations();
+        evaluateStyle(properties);
 
         Scope<Expression> scope = variables;
         if (global) {

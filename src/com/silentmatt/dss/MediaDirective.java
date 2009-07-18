@@ -91,11 +91,11 @@ public class MediaDirective implements Directive {
             }
             txt.append(m.toString());
         }
-        txt.append(" {\r\n");
+        txt.append(" {\n");
 
         for (Rule rule : allRules) {
             txt.append(rule.toString(nesting + 1));
-            txt.append("\r\n");
+            txt.append("\n");
         }
 
         txt.append("}");
@@ -115,13 +115,13 @@ public class MediaDirective implements Directive {
             }
             txt.append(m.toString());
         }
-        txt.append(" {\r\n");
+        txt.append(" {\n");
 
         for (Rule rule : allRules) {
             String ruleString = rule.toCssString(nesting + 1);
             if (ruleString.length() > 0) {
                 txt.append(ruleString);
-                txt.append("\r\n");
+                txt.append("\n");
             }
         }
 

@@ -56,12 +56,12 @@ public abstract class DeclarationDirective implements Directive {
         StringBuilder txt = new StringBuilder("{");
 
         for (Declaration dec : declarations) {
-            txt.append("\r\n\t" + start);
+            txt.append("\n\t" + start);
             txt.append(dec.toString());
             txt.append(";");
         }
 
-        txt.append("\r\n" + start + "}");
+        txt.append("\n" + start + "}");
 
         return txt.toString();
     }

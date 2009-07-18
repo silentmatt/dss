@@ -123,22 +123,22 @@ public class GenericDirective implements Directive {
 
         for (Directive dir : directives) {
             txt.append(dir.toString());
-            txt.append("\r\n");
+            txt.append("\n");
         }
 
         for (RuleSet rules : getRuleSets()) {
             txt.append(rules.toString(nesting + 1));
-            txt.append("\r\n");
+            txt.append("\n");
         }
 
         first = true;
         for (Declaration dec : declarations) {
             if (first) { first = false; } else { txt.append(";"); }
-            txt.append("\r\n\t" + start);
+            txt.append("\n\t" + start);
             txt.append(dec.toString());
         }
 
-        txt.append("\r\n" + start + "}");
+        txt.append("\n" + start + "}");
 
         return txt.toString();
     }

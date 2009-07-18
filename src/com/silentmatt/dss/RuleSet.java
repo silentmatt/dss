@@ -91,16 +91,16 @@ public class RuleSet implements Rule {
         txt.append(" {");
 
         for (Directive dir : directives) {
-            txt.append("\r\n\t" + start);
+            txt.append("\n\t" + start);
             txt.append(dir.toString(nesting + 1));
         }
         for (Declaration dec : declarations) {
-            txt.append("\r\n\t" + start);
+            txt.append("\n\t" + start);
             txt.append(dec.toString());
             txt.append(";");
         }
 
-        txt.append("\r\n" + start + "}");
+        txt.append("\n" + start + "}");
 
         return txt.toString();
     }
@@ -128,17 +128,17 @@ public class RuleSet implements Rule {
         for (Directive dir : directives) {
             String dirString = dir.toCssString(nesting + 1);
             if (dirString.length() > 0) {
-                txt.append("\r\n\t" + start);
+                txt.append("\n\t" + start);
                 txt.append(dirString);
             }
         }
         for (Declaration dec : declarations) {
-            txt.append("\r\n\t" + start);
+            txt.append("\n\t" + start);
             txt.append(dec.toString());
             txt.append(";");
         }
 
-        txt.append("\r\n" + start + "}");
+        txt.append("\n" + start + "}");
 
         return txt.toString();
     }
