@@ -4,6 +4,14 @@ h3. Features
 
 * defined constants
 * "classes" (groups of properties/values that can be inserted into a rule)
+  Classes can have parameters, with optional default values.
+
+<pre>
+@class centered<width; margin: 0px> {
+    width: param(width);
+    margin: param(margin) auto;
+}
+</pre>
 * includes (@import, but not restricted to the beginning of the stylesheet, and DSS does the inclusion, not the browser).
 
 h3. Planned Features
