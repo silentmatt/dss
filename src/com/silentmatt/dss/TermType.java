@@ -10,5 +10,6 @@ public enum TermType {
     String,
     Url,
     Unicode,
-    Hex
+    Hex,
+    ClassReference
 }

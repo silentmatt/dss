@@ -51,6 +51,10 @@ public class Scope<T> implements Map<String, T> {
         return table.containsKey(key) || (parent != null && parent.containsKey(key));
     }
 
+    public boolean declaresKey(String key) {
+        return table.containsKey(key);
+    }
+
     public boolean containsValue(Object value) {
         if (table.containsValue(value)) {
             return true;

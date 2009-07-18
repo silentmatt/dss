@@ -11,6 +11,7 @@ public class Term {
     private String value;
     private Unit unit;
     private Function function;
+    private ClassReference classReference;
 
     public Character getSeperator() {
         return seperator;
@@ -58,6 +59,14 @@ public class Term {
 
     public void setFunction(Function Function) {
         this.function = Function;
+    }
+
+    public ClassReference getClassReference() {
+        return classReference;
+    }
+
+    public void setClassReference(ClassReference classReference) {
+        this.classReference = classReference;
     }
 
     @Override

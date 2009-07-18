@@ -81,6 +81,7 @@ TOKENS
 PRAGMAS
 
 COMMENTS FROM "/*" TO "*/"
+COMMENTS FROM "//" TO '\n'
 
 IGNORE eol + cr + tab + space
 
@@ -169,18 +170,41 @@ mediaDirective<out DirectiveBuilder dirb> =             (.
     '}'
 .
 
+parameter<out Declaration dec> =
+                            (.  dec = new Declaration();
+                                Expression exp = null;
+                                String ident = null;
+                            .)
+    identity<out ident>     (. dec.setName(ident); .)
+    [
+        ':' expr<out exp>   (. dec.setExpression(exp); .)
+    ]
+.
+
 classDirective<out DirectiveBuilder dirb> =
-                                    (.  dirb = new DirectiveBuilder();
-                                        Declaration dec = null;
-                                        String ident;
-                                        RuleSet rset = new RuleSet();
-                                        dirb.setType(DirectiveType.Class);
-                                    .)
+                                        (.  dirb = new DirectiveBuilder();
+                                            Declaration dec = null;
+                                            String ident;
+                                            Declaration param;
+                                            RuleSet rset = new RuleSet();
+                                            dirb.setType(DirectiveType.Class);
+                                        .)
     "@class"
-    identity<out ident>             (. dirb.setID(ident); .)
-    '{' [ declaration<out dec>		(. dirb.addDeclaration(dec); .)
-          { ';'     				(. if (la.val.equals("}")) { Get(); return dirb; } .)
-            declaration<out dec>    (. dirb.addDeclaration(dec); .)
+    identity<out ident>                 (. dirb.setID(ident); .)
+    [
+        '<'
+            [
+                parameter<out param>     (. dirb.addParameter(param); .)
+                {
+                    ';'
+                    parameter<out param> (. dirb.addParameter(param); .)
+                }
+            ]
+        '>'
+    ]
+    '{' [ declaration<out dec>          (. dirb.addDeclaration(dec); .)
+          { ';'                         (. if (la.val.equals("}")) { Get(); return dirb; } .)
+            declaration<out dec>        (. dirb.addDeclaration(dec); .)
           } [ ';' ]
         ]
     '}'
@@ -484,14 +508,15 @@ pseudo<out String pseudo> =	(. pseudo = "";
 	]
 .
 declaration<out Declaration dec> =
-						(. dec = new Declaration();
-							Expression exp = null;
-							String ident = null;
-						.)
-	identity<out ident>	(. dec.setName(ident); .)
-	':' expr<out exp>	(. dec.setExpression(exp); .)
-		[ "!important"	(. dec.setImportant(true); .)
-	]
+                        (.  dec = new Declaration();
+                            Expression exp = null;
+                            String ident = null;
+                        .)
+    identity<out ident> (. dec.setName(ident); .)
+    ':' expr<out exp>   (. dec.setExpression(exp); .)
+    [
+        "!important"    (. dec.setImportant(true); .)
+    ]
 .
 expr<out Expression exp> =	(. exp = new Expression();
 								Character sep = null;
@@ -536,14 +561,28 @@ term<out Term trm> =				(. trm = new Term();
 			| integer				(. trm.setValue(trm.getValue() + t.val); .)
 			)
 		) } ]
-		[ '(' expr<out exp>			(. Function func = new Function();
-										func.setName(trm.getValue());
-										func.setExpression(exp);
-										trm.setValue(null);
-										trm.setFunction(func);
-										trm.setType(TermType.Function);
-									.)
-		')' ]
+        [
+            ('(' expr<out exp>       (. Function func = new Function();
+                                        func.setName(trm.getValue());
+                                        func.setExpression(exp);
+                                        trm.setValue(null);
+                                        trm.setFunction(func);
+                                        trm.setType(TermType.Function);
+                                    .)
+            ')')
+            |
+            ('<'                                (.  ClassReference cls = new ClassReference();
+                                                    Declaration dec;
+                                                    cls.setName(trm.getValue());
+                                                    trm.setValue(null);
+                                                    trm.setClassReference(cls);
+                                                    trm.setType(TermType.ClassReference);
+                                                .)
+                [ declaration<out dec>          (. cls.addArgument(dec); .)
+                  { ';' declaration<out dec>    (. cls.addArgument(dec); .) }
+                ]
+            '>')
+        ]
 	|
 		[ ('-'						(. trm.setSign('-'); .)
 		| '+'						(. trm.setSign('+'); .)

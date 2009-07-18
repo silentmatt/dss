@@ -5,6 +5,7 @@ import com.silentmatt.dss.parser.PrintStreamErrorReporter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class DSSEvaluator {
     private Options options;
     private Scope<ClassDirective> classes;
     private Scope<Expression> variables;
+    private Scope<Expression> parameters;
 
     public DSSEvaluator(Options opts) {
         this.options = opts;
@@ -218,28 +220,72 @@ public class DSSEvaluator {
         return false;
     }
 
-    private void addInheritedProperties(List<Declaration> style, String className) {
+    private void addInheritedProperties(List<Declaration> style, ClassReference classReference) {
+        String className = classReference.getName();
         ClassDirective clazz = classes.get(className);
         if (clazz == null) {
             options.errors.SemErr("no such class: " + className);
             return;
         }
 
-        List<Declaration> properties = clazz.getDeclarations();
+        // Make a copy of the properties, to substitute parameters into
+        List<Declaration> properties = new ArrayList<Declaration>(clazz.getDeclarations().size());
+        for (Declaration prop : clazz.getDeclarations()) {
+            Declaration copy = new Declaration();
+            copy.setName(prop.getName());
+            copy.setExpression(prop.getExpression());
+            copy.setImportant(prop.isImportant());
+            properties.add(copy);
+        }
 
-        for (int i = 0; i < properties.size(); i++) {
+        // Fill in the parameter values
+        parameters = new Scope<Expression>(parameters);
+        try {
+            // Defaults
+            for (Declaration param : clazz.getParameters()) {
+                parameters.declare(param.getName(), param.getExpression());
+            }
+            // Arguments
+            for (Declaration arg : classReference.getArguments()) {
+                if (parameters.declaresKey(arg.getName())) {
+                    parameters.put(arg.getName(), arg.getExpression());
+                }
+            }
+
+            for (Declaration dec : properties) {
+                substituteValue(dec, true);
+            }
+        }
+        finally {
+            parameters = parameters.parent();
+        }
+
+        inheritProperties(style, properties);
+    }
+
+    private void addInheritedProperties(List<Declaration> style, String className) {
+        addInheritedProperties(style, new ClassReference(className));
+    }
+
+    private void inheritProperties(List<Declaration> style, List<Declaration> properties) {
+        for (int i = properties.size() - 1; i >= 0; i--) {
             Declaration declaration = properties.get(i);
             String property = declaration.getName();
             // Don't overwrite existing properties
             if (!hasProperty(style, property)) {
-                style.add(declaration);
+                style.add(0, declaration);
             }
         }
     }
 
     private void addInheritedProperties(List<Declaration> style, Expression inherits) {
         for (Term inherit : inherits.getTerms()) {
-            addInheritedProperties(style, inherit.getValue());
+            if (inherit.getType() == TermType.ClassReference) {
+                addInheritedProperties(style, inherit.getClassReference());
+            }
+            else {
+                addInheritedProperties(style, inherit.getValue());
+            }
         }
     }
 
@@ -247,14 +293,41 @@ public class DSSEvaluator {
         return variables.get(name.trim());
     }
 
+    private Expression getParameterValue(String name) {
+        if (parameters == null) {
+            options.errors.SemErr("param is only valid inside a class");
+            return null;
+        }
+        Expression value = parameters.get(name);
+        if (value == null) {
+            if (parameters.containsKey(name)) {
+                options.errors.SemErr("Missing required class parameter: " + name);
+            }
+            else {
+                options.errors.SemErr("Invalid class parameter: " + name);
+            }
+        }
+        return value;
+    }
+
     private void substituteValue(Declaration property) {
+        substituteValue(property, false);
+    }
+
+    private static boolean isReference(Function function, boolean withParams) {
+        String name = function.getName();
+        return name.equals("const") || (withParams && name.equals("param"));
+    }
+
+    private void substituteValue(Declaration property, boolean withParams) {
         Expression value = property.getExpression();
         Expression newValue = new Expression();
 
         for (Term primitiveValue : value.getTerms()) {
             Function function = primitiveValue.getFunction();
-            if (function != null && function.getName().equals("const")) {
-                Expression sub = getConstantValue(function.getExpression().toString());
+            if (function != null && isReference(function, withParams)) {
+                String name = function.getExpression().toString();
+                Expression sub = function.getName().equals("const") ? getConstantValue(name) : getParameterValue(name);
                 if (sub != null) {
                     for (Term t : sub.getTerms()) {
                         newValue.getTerms().add(t);

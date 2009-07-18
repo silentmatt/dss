@@ -8,10 +8,12 @@ import java.util.List;
  */
 public class ClassDirective extends DeclarationDirective {
     private String id;
+    private List<Declaration> parameters;
 
-    public ClassDirective(String id, List<Declaration> declarations) {
+    public ClassDirective(String id, List<Declaration> parameters, List<Declaration> declarations) {
         super(declarations);
         setID(id);
+        setParameters(parameters);
     }
 
     public String getName() {
@@ -30,6 +32,18 @@ public class ClassDirective extends DeclarationDirective {
         this.id = id;
     }
 
+    public List<Declaration> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(List<Declaration> parameters) {
+        this.parameters = parameters;
+    }
+
+    public void addParameter(Declaration param) {
+        parameters.add(param);
+    }
+
     @Override
     public String toString(int nesting) {
         String start = "";
@@ -40,6 +54,18 @@ public class ClassDirective extends DeclarationDirective {
         StringBuilder txt = new StringBuilder(start);
         txt.append("@class ");
         txt.append(getID());
+        if (parameters.size() > 0) {
+            txt.append("<");
+            boolean first = true;
+            for (Declaration param : parameters) {
+                if (!first) {
+                    txt.append("; ");
+                }
+                first = false;
+                txt.append(param.getExpression() == null ? param.getName() : param.toString());
+            }
+            txt.append(">");
+        }
         txt.append(" ");
         txt.append(getDeclarationsString(nesting));
         return txt.toString();
@@ -49,6 +75,7 @@ public class ClassDirective extends DeclarationDirective {
         getDeclarations().add(declaration);
     }
 
+    @Override
     public String toCssString(int nesting) {
         return "";
     }

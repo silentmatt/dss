@@ -19,6 +19,7 @@ public class DirectiveBuilder {
     private String id;
     private String url;
     private SimpleSelector ss;
+    private List<Declaration> parameters = new ArrayList<Declaration>();
 
     public List<Declaration> getDeclarations() {
         return declarations;
@@ -123,6 +124,10 @@ public class DirectiveBuilder {
         this.ss = ss;
     }
 
+    public void addParameter(Declaration param) {
+        parameters.add(param);
+    }
+
     public Directive build() {
         switch (type) {
             case Charset:
@@ -155,7 +160,7 @@ public class DirectiveBuilder {
     }
 
     public ClassDirective buildClassDirective() {
-        return new ClassDirective(id, declarations);
+        return new ClassDirective(id, parameters, declarations);
     }
 
     public DefineDirective buildDefineDirective() {
