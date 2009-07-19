@@ -87,7 +87,6 @@ public class Value {
 
     @Override
     public String toString() {
-        // XXX: Throw a custom exception for non-css unit? (NPE now)
         return scalar + unit.toString();
     }
 }
