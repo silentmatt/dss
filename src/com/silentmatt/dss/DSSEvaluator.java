@@ -11,8 +11,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class DSSEvaluator {
 
@@ -127,7 +125,7 @@ public class DSSEvaluator {
     }
 
     private void evaluateFontFaceDirective(FontFaceDirective rule) {
-        evaluateStyle(rule.getDeclarations());
+        evaluateStyle(rule.getDeclarations(), true);
     }
 
     private void evaluateGenericDirective(GenericDirective rule) {
@@ -153,7 +151,7 @@ public class DSSEvaluator {
     }
 
     private void evaluatePageDirective(PageDirective rule) {
-        evaluateStyle(rule.getDeclarations());
+        evaluateStyle(rule.getDeclarations(), true);
     }
 
     private void evaluateRuleSet(RuleSet rule) throws MalformedURLException, IOException {
@@ -161,13 +159,13 @@ public class DSSEvaluator {
         for (Directive dir : rule.getDirectives()) {
             evaluateDirective(dir, null);
         }
-        evaluateStyle(rule.getDeclarations());
+        evaluateStyle(rule.getDeclarations(), true);
         popScope();
     }
 
     private void evaluateDefine(DefineDirective define, boolean global) {
         List<Declaration> properties = define.getDeclarations();
-        evaluateStyle(properties);
+        evaluateStyle(properties, true);
 
         Scope<Expression> scope = variables;
         if (global) {
@@ -183,7 +181,7 @@ public class DSSEvaluator {
 
     private void evaluateClass(ClassDirective cssClass) {
         String className = cssClass.getID();
-        evaluateStyle(cssClass.getDeclarations());
+        evaluateStyle(cssClass.getDeclarations(), false);
         classes.declare(className, cssClass);
     }
 
@@ -315,8 +313,8 @@ public class DSSEvaluator {
         return value;
     }
 
-    private void substituteValue(Declaration property) {
-        substituteValue(property, false);
+    private void substituteValue(Declaration property, boolean doCalculations) {
+        substituteValue(property, false, doCalculations);
     }
 
     private static boolean isReference(Function function, boolean withParams) {
@@ -324,7 +322,7 @@ public class DSSEvaluator {
         return name.equals("const") || (withParams && name.equals("param"));
     }
 
-    private void substituteValue(Declaration property, boolean withParams) {
+    private void substituteValue(Declaration property, boolean withParams, boolean doCalculations) {
         Expression value = property.getExpression();
         Expression newValue = new Expression();
 
@@ -344,8 +342,14 @@ public class DSSEvaluator {
             CalcExpression expression = primitiveValue.getCalculation();
             if (expression != null) {
                 try {
-                    Value calc = expression.calculateValue(variables, withParams ? parameters : null);
-                    newValue.getTerms().add(calc.toTerm());
+                    expression.substituteValues(variables, withParams ? parameters : null);
+                    if (doCalculations) {
+                        Value calc = expression.calculateValue(variables, parameters);
+                        newValue.getTerms().add(calc.toTerm());
+                    }
+                    else {
+                        newValue.getTerms().add(primitiveValue);
+                    }
                 } catch (CalculationException ex) {
                     options.errors.SemErr(ex.getMessage());
                 }
@@ -368,7 +372,7 @@ public class DSSEvaluator {
         }
     }
 
-    private void evaluateStyle(List<Declaration> style) {
+    private void evaluateStyle(List<Declaration> style, boolean doCalculations) {
         pushScope();
         try {
             for (int i = 0; i < style.size(); i++) {
@@ -379,7 +383,7 @@ public class DSSEvaluator {
                     addInheritedProperties(style, inherit);
                 }
                 else {
-                    substituteValue(property);
+                    substituteValue(property, doCalculations);
                 }
             }
             removeProperty(style, "extend");

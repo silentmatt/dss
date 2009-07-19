@@ -39,6 +39,11 @@ public class BinaryExpression implements CalcExpression {
         }
     }
 
+    public void substituteValues(Scope<Expression> variables, Scope<Expression> parameters) throws CalculationException {
+        left.substituteValues(variables, parameters);
+        right.substituteValues(variables, parameters);
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
