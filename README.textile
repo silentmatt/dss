@@ -13,11 +13,21 @@ h3. Features
 }
 </pre>
 * includes (@import, but not restricted to the beginning of the stylesheet, and DSS does the inclusion, not the browser).
+* calculated values
+<pre>
+@define {
+    border-size: 1px;
+}
+
+.box {
+    border: const(border-size) solid;
+    width: calc(100px - 2 * const(border-size)); /* subtract the border size */
+}
+</pre>
 
 h3. Planned Features
 
 Currently planned features are:
-* expressions, e.g. <code>border: 1px solid; width: expr(100px - 2px); /* subtract the border size */</code>
 * conditional rules
 
 Eventually, it will probably support minimized output, and some automatic cross-browser properties. For example:
