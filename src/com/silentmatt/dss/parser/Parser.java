@@ -2,6 +2,7 @@ package com.silentmatt.dss.parser;
 
 import java.util.*;
 import com.silentmatt.dss.*;
+import com.silentmatt.dss.expression.*;
 
 public class Parser {
 	public static final int _EOF = 0;
@@ -10,7 +11,7 @@ public class Parser {
 	public static final int _decimal = 3;
 	public static final int _s = 4;
 	public static final int _stringLit = 5;
-	public static final int maxT = 58;
+	public static final int maxT = 59;
 
 	static final boolean T = true;
 	static final boolean x = false;
@@ -255,10 +256,10 @@ public class Parser {
 				Expect(24);
 			} else if (la.kind == 28) {
 				Get();
-			} else SynErr(59);
+			} else SynErr(60);
 			break;
 		}
-		default: SynErr(60); break;
+		default: SynErr(61); break;
 		}
 		dir = dirb.build(); 
 		return dir;
@@ -286,7 +287,7 @@ public class Parser {
 				url += t.val; 
 				if (la.val.equals(")")) { break; } 
 			}
-		} else SynErr(61);
+		} else SynErr(62);
 		if (la.kind == 10) {
 			Get();
 		}
@@ -347,7 +348,7 @@ public class Parser {
 			m = Medium.tv; 
 			break;
 		}
-		default: SynErr(62); break;
+		default: SynErr(63); break;
 		}
 		return m;
 	}
@@ -408,7 +409,7 @@ public class Parser {
 			Get();
 			break;
 		}
-		default: SynErr(63); break;
+		default: SynErr(64); break;
 		}
 		ident = t.val; 
 		return ident;
@@ -722,6 +723,7 @@ public class Parser {
 		String val = "";
 		Expression exp = null;
 		String ident = null;
+		                              CalcExpression expression = null;
 		
 		if (la.kind == 5) {
 			val = QuotedString();
@@ -729,13 +731,16 @@ public class Parser {
 		} else if (la.kind == 8) {
 			val = URI();
 			trm.setValue(val); trm.setType(TermType.Url); 
-		} else if (la.kind == 55) {
+		} else if (la.kind == 57) {
 			Get();
 			ident = identity();
 			trm.setValue("U\\" + ident); trm.setType(TermType.Unicode); 
 		} else if (la.kind == 43) {
 			val = HexValue();
 			trm.setValue(val); trm.setType(TermType.Hex); 
+		} else if (la.kind == 56) {
+			expression = calculation();
+			trm.setCalculation(expression); trm.setType(TermType.Calculation); 
 		} else if (StartOf(4)) {
 			ident = identity();
 			trm.setValue(ident); trm.setType(TermType.String); 
@@ -764,7 +769,7 @@ public class Parser {
 						} else if (la.kind == 2) {
 							Get();
 							trm.setValue(trm.getValue() + t.val); 
-						} else SynErr(64);
+						} else SynErr(65);
 					}
 				}
 			}
@@ -802,8 +807,8 @@ public class Parser {
 				}
 			}
 		} else if (StartOf(12)) {
-			if (la.kind == 40 || la.kind == 56) {
-				if (la.kind == 56) {
+			if (la.kind == 40 || la.kind == 55) {
+				if (la.kind == 55) {
 					Get();
 					trm.setSign('-'); 
 				} else {
@@ -815,13 +820,13 @@ public class Parser {
 				Get();
 			} else if (la.kind == 3) {
 				Get();
-			} else SynErr(65);
+			} else SynErr(66);
 			val = t.val; 
 			if (StartOf(13)) {
 				if (la.val.toLowerCase().equals("n")) {
 					Expect(21);
 					val += t.val; 
-					if (la.kind == 40 || la.kind == 56) {
+					if (la.kind == 40 || la.kind == 55) {
 						if (la.kind == 40) {
 							Get();
 							val += t.val; 
@@ -832,7 +837,7 @@ public class Parser {
 						Expect(2);
 						val += t.val; 
 					}
-				} else if (la.kind == 57) {
+				} else if (la.kind == 58) {
 					Get();
 					trm.setUnit(Unit.Percent); 
 				} else {
@@ -848,7 +853,7 @@ public class Parser {
 				}
 			}
 			trm.setValue(val); trm.setType(TermType.Number); 
-		} else SynErr(66);
+		} else SynErr(67);
 		return trm;
 	}
 
@@ -882,7 +887,7 @@ public class Parser {
 			expr.getTerms().add(trm);
 			dirb.setExpression(expr);
 			
-		} else SynErr(67);
+		} else SynErr(68);
 		Expect(28);
 		return dirb;
 	}
@@ -947,7 +952,7 @@ public class Parser {
 				psd = pseudo();
 				ss.setPseudo(psd); 
 			}
-		} else SynErr(68);
+		} else SynErr(69);
 		while (StartOf(15)) {
 			SimpleSelector child = new SimpleSelector(); 
 			if (la.kind == 43) {
@@ -1020,10 +1025,92 @@ public class Parser {
 			} else if (la.kind == 5) {
 				quote = QuotedString();
 				atb.setValue(quote); 
-			} else SynErr(69);
+			} else SynErr(70);
 		}
 		Expect(52);
 		return atb;
+	}
+
+	CalcExpression  lengthExpression() {
+		CalcExpression  expr;
+		expr = additiveExpression();
+		return expr;
+	}
+
+	CalcExpression  additiveExpression() {
+		CalcExpression  expr;
+		CalcExpression left, right; Operation op; 
+		left = multiplicativeExpression();
+		expr = left; 
+		while (la.kind == 40 || la.kind == 55) {
+			op = addop();
+			right = multiplicativeExpression();
+			expr = new BinaryExpression(op, expr, right); 
+		}
+		return expr;
+	}
+
+	Operation  addop() {
+		Operation  op;
+		op = null; 
+		if (la.kind == 40) {
+			Get();
+			op = Operation.Add; 
+		} else if (la.kind == 55) {
+			Get();
+			op = Operation.Subtract; 
+		} else SynErr(71);
+		return op;
+	}
+
+	Operation  mulop() {
+		Operation  op;
+		op = null; 
+		if (la.kind == 42) {
+			Get();
+			op = Operation.Multiply; 
+		} else if (la.kind == 54) {
+			Get();
+			op = Operation.Divide; 
+		} else SynErr(72);
+		return op;
+	}
+
+	CalcExpression  multiplicativeExpression() {
+		CalcExpression  expr;
+		CalcExpression left, right; Term trm; Operation op; 
+		left = termExpression();
+		expr = left; 
+		while (la.kind == 42 || la.kind == 54) {
+			op = mulop();
+			right = termExpression();
+			expr = new BinaryExpression(op, expr, right); 
+		}
+		return expr;
+	}
+
+	CalcExpression  termExpression() {
+		CalcExpression  expr;
+		expr = null; Term trm; CalcExpression exp; 
+		if (la.kind == 9) {
+			Get();
+			exp = lengthExpression();
+			Expect(10);
+			expr = exp; 
+		} else if (StartOf(5)) {
+			trm = term();
+			expr = new TermExpression(trm); 
+		} else SynErr(73);
+		return expr;
+	}
+
+	CalcExpression  calculation() {
+		CalcExpression  expr;
+		Expect(56);
+		Expect(9);
+		expr = lengthExpression();
+		Expect(10);
+		return expr;
 	}
 
 	String  HexValue() {
@@ -1039,7 +1126,7 @@ public class Parser {
 		} else if (PartOfHex(val)) {
 			Expect(1);
 			val += t.val; found = true; 
-		} else SynErr(70);
+		} else SynErr(74);
 		if (!found && PartOfHex(val)) {
 			Expect(1);
 			val += t.val; 
@@ -1059,23 +1146,23 @@ public class Parser {
 	}
 
 	private static final boolean[][] set = {
-		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,T,x, x,T,T,x, x,x,T,x, T,T,T,T, T,T,T,x, x,x,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,x,T,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-		{x,T,T,T, x,T,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,T, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x},
-		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x},
-		{x,T,T,T, T,x,T,T, T,T,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x},
-		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,T,T,x, x,x,T,x, x,x,x,T, x,x,x,x, x,x,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-		{x,T,T,T, x,T,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,T, x,x,x,x, x,x,x,x, x,x,T,T, T,x,x,x},
-		{x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-		{x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x},
-		{x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x},
-		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x},
-		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,T,x,x, x,T,x,x, x,x,x,x, x,x,x,x, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x},
-		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,T,T, x,x,x,x, x,x,x,x}
+		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,T,x, x,T,T,x, x,x,T,x, T,T,T,T, T,T,T,x, x,x,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,x,T,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+		{x,T,T,T, x,T,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,T, x,x,x,x, x,x,x,x, x,x,x,T, T,T,x,x, x},
+		{x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x},
+		{x,T,T,T, T,x,T,T, T,T,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x},
+		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,T,T,x, x,x,T,x, x,x,x,T, x,x,x,x, x,x,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+		{x,T,T,T, x,T,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,T, x,x,x,x, x,x,x,x, x,x,T,T, T,T,x,x, x},
+		{x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+		{x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+		{x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x},
+		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x},
+		{x,T,x,x, x,x,x,x, T,x,x,T, T,T,T,T, T,T,T,T, T,T,x,x, x,T,x,x, x,T,x,x, x,x,x,x, x,x,x,x, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x},
+		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x}
 
 	};
 
@@ -1137,22 +1224,26 @@ public class Parser {
 			case 52: s = "\"]\" expected"; break;
 			case 53: s = "\"!important\" expected"; break;
 			case 54: s = "\"/\" expected"; break;
-			case 55: s = "\"U\\\\\" expected"; break;
-			case 56: s = "\"-\" expected"; break;
-			case 57: s = "\"%\" expected"; break;
-			case 58: s = "??? expected"; break;
-			case 59: s = "invalid directive"; break;
+			case 55: s = "\"-\" expected"; break;
+			case 56: s = "\"calc\" expected"; break;
+			case 57: s = "\"U\\\\\" expected"; break;
+			case 58: s = "\"%\" expected"; break;
+			case 59: s = "??? expected"; break;
 			case 60: s = "invalid directive"; break;
-			case 61: s = "invalid URI"; break;
-			case 62: s = "invalid medium"; break;
-			case 63: s = "invalid identity"; break;
-			case 64: s = "invalid term"; break;
+			case 61: s = "invalid directive"; break;
+			case 62: s = "invalid URI"; break;
+			case 63: s = "invalid medium"; break;
+			case 64: s = "invalid identity"; break;
 			case 65: s = "invalid term"; break;
 			case 66: s = "invalid term"; break;
-			case 67: s = "invalid namespaceDirective"; break;
-			case 68: s = "invalid simpleselector"; break;
-			case 69: s = "invalid attrib"; break;
-			case 70: s = "invalid HexValue"; break;
+			case 67: s = "invalid term"; break;
+			case 68: s = "invalid namespaceDirective"; break;
+			case 69: s = "invalid simpleselector"; break;
+			case 70: s = "invalid attrib"; break;
+			case 71: s = "invalid addop"; break;
+			case 72: s = "invalid mulop"; break;
+			case 73: s = "invalid termExpression"; break;
+			case 74: s = "invalid HexValue"; break;
 			default: s = "error " + n; break;
 		}
 		return s;

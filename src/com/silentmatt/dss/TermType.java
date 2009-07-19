@@ -11,5 +11,6 @@ public enum TermType {
     Url,
     Unicode,
     Hex,
-    ClassReference
+    ClassReference,
+    Calculation
 }

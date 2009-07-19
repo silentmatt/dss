@@ -1,5 +1,6 @@
 import java.util.*;
 import com.silentmatt.dss.*;
+import com.silentmatt.dss.expression.*;
 
 COMPILER CSS3
 
@@ -533,10 +534,43 @@ expr<out Expression exp> =	(. exp = new Expression();
 							.)
 	}
 .
+
+lengthExpression<out CalcExpression expr> =
+    additiveExpression<out expr>
+.
+
+addop<out Operation op> (. op = null; .) = '+' (. op = Operation.Add; .) | '-' (. op = Operation.Subtract; .).
+mulop<out Operation op> (. op = null; .) = '*' (. op = Operation.Multiply; .) | '/' (. op = Operation.Divide; .).
+
+additiveExpression<out CalcExpression expr> = (. CalcExpression left, right; Operation op; .)
+    multiplicativeExpression<out left> (. expr = left; .)
+    {
+        addop<out op> multiplicativeExpression<out right> (. expr = new BinaryExpression(op, expr, right); .)
+    }
+.
+
+multiplicativeExpression<out CalcExpression expr> = (. CalcExpression left, right; Term trm; Operation op; .)
+    termExpression<out left> (. expr = left; .)
+    {
+        mulop<out op> termExpression<out right> (. expr = new BinaryExpression(op, expr, right); .)
+    }
+.
+
+termExpression<out CalcExpression expr> (. expr = null; Term trm; CalcExpression exp; .) =
+    '(' lengthExpression<out exp> ')' (. expr = exp; .)
+    |
+    term<out trm> (. expr = new TermExpression(trm); .)
+.
+
+calculation<out CalcExpression expr> =
+"calc" "(" lengthExpression<out expr> ")"
+.
+
 term<out Term trm> =				(. trm = new Term();
 										String val = "";
 										Expression exp = null;
 										String ident = null;
+                                        CalcExpression expression = null;
 									.)
 	(
 		QuotedString<out val>		(. trm.setValue(val); trm.setType(TermType.String); .)
@@ -546,6 +580,8 @@ term<out Term trm> =				(. trm = new Term();
 		"U\\" identity<out ident>	(. trm.setValue("U\\" + ident); trm.setType(TermType.Unicode); .)
 	|
 		HexValue<out val>			(. trm.setValue(val); trm.setType(TermType.Hex); .)
+    |
+        calculation<out expression> (. trm.setCalculation(expression); trm.setType(TermType.Calculation); .)
 	|
 		identity<out ident>			(. trm.setValue(ident); trm.setType(TermType.String); .)
 		[ { ( ':'					(. trm.setValue(trm.getValue() + t.val); .)

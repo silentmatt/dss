@@ -1,5 +1,8 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.expression.CalcExpression;
+import com.silentmatt.dss.expression.CalculationException;
+import com.silentmatt.dss.expression.Value;
 import com.silentmatt.dss.parser.ErrorReporter;
 import com.silentmatt.dss.parser.PrintStreamErrorReporter;
 import java.io.IOException;
@@ -8,6 +11,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DSSEvaluator {
 
@@ -333,10 +338,21 @@ public class DSSEvaluator {
                         newValue.getTerms().add(t);
                     }
                 }
+                continue;
             }
-            else {
-                newValue.getTerms().add(primitiveValue);
+
+            CalcExpression expression = primitiveValue.getCalculation();
+            if (expression != null) {
+                try {
+                    Value calc = expression.calculateValue(variables, withParams ? parameters : null);
+                    newValue.getTerms().add(calc.toTerm());
+                } catch (CalculationException ex) {
+                    options.errors.SemErr(ex.getMessage());
+                }
+                continue;
             }
+
+            newValue.getTerms().add(primitiveValue);
         }
 
         property.setExpression(newValue);

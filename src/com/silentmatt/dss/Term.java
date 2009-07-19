@@ -1,5 +1,7 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.expression.CalcExpression;
+
 /**
  *
  * @author matt
@@ -12,6 +14,7 @@ public class Term {
     private Unit unit;
     private Function function;
     private ClassReference classReference;
+    private CalcExpression calculation;
 
     public Character getSeperator() {
         return seperator;
@@ -69,19 +72,40 @@ public class Term {
         this.classReference = classReference;
     }
 
+    public CalcExpression getCalculation() {
+        return calculation;
+    }
+
+    public void setCalculation(CalcExpression calculation) {
+        this.calculation = calculation;
+    }
+
     @Override
     public String toString() {
         StringBuilder txt = new StringBuilder();
 
-        if (type == TermType.Function) {
+        switch (type) {
+        case Function:
             txt.append(function.toString());
-        } else if (type == TermType.Url) {
+            break;
+        case Url:
             txt.append("url(").append(value).append(")");
-        } else if (type == TermType.Unicode) {
+            break;
+        case Unicode:
             txt.append("U\\").append(value.toUpperCase());
-        } else if (type == TermType.Hex) {
+            break;
+        case Hex:
             txt.append(value.toUpperCase());
-        } else {
+            break;
+        case ClassReference:
+            txt.append(classReference.toString());
+            break;
+        case Calculation:
+            txt.append("calc(" + calculation.toString() + ")");
+            break;
+        case Number:
+        case String:
+        default:
             if (sign != null) { txt.append(sign); }
             txt.append(value);
             if (unit != null) {
@@ -91,6 +115,7 @@ public class Term {
                     txt.append(unit.toString());
                 }
             }
+            break;
         }
 
         return txt.toString();
