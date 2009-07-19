@@ -8,26 +8,28 @@ import java.util.Map;
  * @author matt
  */
 public class CalculationUnit implements Comparable<CalculationUnit> {
-    public static CalculationUnit None = new CalculationUnit(1, 0,0,0,0, com.silentmatt.dss.Unit.None);
+    public static CalculationUnit None = new CalculationUnit(1, 0,0,0,0,0, com.silentmatt.dss.Unit.None);
 
-    public static CalculationUnit PX  = new CalculationUnit( 1, 1,0,0,0, com.silentmatt.dss.Unit.PX);
+    public static CalculationUnit PX = new CalculationUnit( 1, 1,0,0,0,0, com.silentmatt.dss.Unit.PX);
 
-    public static CalculationUnit IN = new CalculationUnit(            72, 0,1,0,0, com.silentmatt.dss.Unit.IN);
-    public static CalculationUnit MM = new CalculationUnit(.0393700787*72, 0,1,0,0, com.silentmatt.dss.Unit.MM);
-    public static CalculationUnit CM = new CalculationUnit(0.393700787*72, 0,1,0,0, com.silentmatt.dss.Unit.CM);
-    public static CalculationUnit PT = new CalculationUnit(             1, 0,1,0,0, com.silentmatt.dss.Unit.PT);
-    public static CalculationUnit PC = new CalculationUnit(            12, 0,1,0,0, com.silentmatt.dss.Unit.PC);
+    public static CalculationUnit Percent = new CalculationUnit( 1, 0,1,0,0,0, com.silentmatt.dss.Unit.Percent);
 
-    public static CalculationUnit DEG  = new CalculationUnit(          1, 0,0,1,0, com.silentmatt.dss.Unit.DEG);
-    public static CalculationUnit GRAD = new CalculationUnit(       9/10, 0,0,1,0, com.silentmatt.dss.Unit.GRAD);
-    public static CalculationUnit RAD  = new CalculationUnit(180/Math.PI, 0,0,1,0, com.silentmatt.dss.Unit.RAD);
-    public static CalculationUnit TURN = new CalculationUnit(        360, 0,0,1,0, com.silentmatt.dss.Unit.TURN);
+    public static CalculationUnit IN = new CalculationUnit(            72, 0,0,1,0,0, com.silentmatt.dss.Unit.IN);
+    public static CalculationUnit MM = new CalculationUnit(.0393700787*72, 0,0,1,0,0, com.silentmatt.dss.Unit.MM);
+    public static CalculationUnit CM = new CalculationUnit(0.393700787*72, 0,0,1,0,0, com.silentmatt.dss.Unit.CM);
+    public static CalculationUnit PT = new CalculationUnit(             1, 0,0,1,0,0, com.silentmatt.dss.Unit.PT);
+    public static CalculationUnit PC = new CalculationUnit(            12, 0,0,1,0,0, com.silentmatt.dss.Unit.PC);
 
-    public static CalculationUnit MS = new CalculationUnit(   1, 0,0,0,1, com.silentmatt.dss.Unit.MS);
-    public static CalculationUnit S  = new CalculationUnit(1000, 0,0,0,1, com.silentmatt.dss.Unit.S);
+    public static CalculationUnit DEG  = new CalculationUnit(          1, 0,0,0,1,0, com.silentmatt.dss.Unit.DEG);
+    public static CalculationUnit GRAD = new CalculationUnit(       9/10, 0,0,0,1,0, com.silentmatt.dss.Unit.GRAD);
+    public static CalculationUnit RAD  = new CalculationUnit(180/Math.PI, 0,0,0,1,0, com.silentmatt.dss.Unit.RAD);
+    public static CalculationUnit TURN = new CalculationUnit(        360, 0,0,0,1,0, com.silentmatt.dss.Unit.TURN);
 
-    public static CalculationUnit Hz  = new CalculationUnit(   1, 0,0,0,-1, com.silentmatt.dss.Unit.Hz);
-    public static CalculationUnit kHz = new CalculationUnit(1000, 0,0,0,-1, com.silentmatt.dss.Unit.kHz);
+    public static CalculationUnit MS = new CalculationUnit(   1, 0,0,0,0,1, com.silentmatt.dss.Unit.MS);
+    public static CalculationUnit S  = new CalculationUnit(1000, 0,0,0,0,1, com.silentmatt.dss.Unit.S);
+
+    public static CalculationUnit Hz  = new CalculationUnit(   1, 0,0,0,0,-1, com.silentmatt.dss.Unit.Hz);
+    public static CalculationUnit kHz = new CalculationUnit(1000, 0,0,0,0,-1, com.silentmatt.dss.Unit.kHz);
 
     private static Map<com.silentmatt.dss.Unit, CalculationUnit> cssToUnitMap;
     private static Map<CalculationUnit, com.silentmatt.dss.Unit> unitToCssMap;
@@ -39,7 +41,10 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
         canonicalUnit = new HashMap<CalculationUnit, CalculationUnit>();
 
         cssToUnitMap.put(com.silentmatt.dss.Unit.None, CalculationUnit.None);
+
         cssToUnitMap.put(com.silentmatt.dss.Unit.PX, CalculationUnit.PX);
+
+        cssToUnitMap.put(com.silentmatt.dss.Unit.Percent, CalculationUnit.Percent);
 
         cssToUnitMap.put(com.silentmatt.dss.Unit.IN, CalculationUnit.IN);
         cssToUnitMap.put(com.silentmatt.dss.Unit.MM, CalculationUnit.MM);
@@ -60,6 +65,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
 
         canonicalUnit.put(None, None);
         canonicalUnit.put(PX, PX);
+        canonicalUnit.put(Percent, Percent);
         canonicalUnit.put(PT, PT);
         canonicalUnit.put(DEG, DEG);
         canonicalUnit.put(MS, MS);
@@ -68,6 +74,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
 
         unitToCssMap.put(None, com.silentmatt.dss.Unit.None);
         unitToCssMap.put(PX, com.silentmatt.dss.Unit.PX);
+        unitToCssMap.put(Percent, com.silentmatt.dss.Unit.Percent);
         unitToCssMap.put(PT, com.silentmatt.dss.Unit.PT);
         unitToCssMap.put(DEG, com.silentmatt.dss.Unit.DEG);
         unitToCssMap.put(MS, com.silentmatt.dss.Unit.MS);
@@ -76,6 +83,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     }
 
     private double scale;
+    private int percent;
     private int pxLength;
     private int length;
     private int angle;
@@ -98,9 +106,10 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
         return res == null ? unit : res;
     }
 
-    private CalculationUnit(double scale, int pxLength, int length, int angle, int time, com.silentmatt.dss.Unit cssUnit) {
+    private CalculationUnit(double scale, int pxLength, int percent, int length, int angle, int time, com.silentmatt.dss.Unit cssUnit) {
         this.scale = scale;
         this.pxLength = pxLength;
+        this.percent = percent;
         this.length = length;
         this.angle = angle;
         this.time = time;
@@ -108,7 +117,8 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     }
 
     public boolean isAddCompatible(CalculationUnit other) {
-        return pxLength == other.pxLength &&
+        return  pxLength == other.pxLength &&
+                percent == other.percent &&
                 length == other.length &&
                 angle == other.angle &&
                 time == other.time;
@@ -117,6 +127,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     public CalculationUnit multiply(CalculationUnit other) {
         return new CalculationUnit(1,
                 pxLength + other.pxLength,
+                percent + other.percent,
                 length + other.length,
                 angle + other.angle,
                 time + other.time,
@@ -126,6 +137,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     public CalculationUnit divide(CalculationUnit other) {
         return new CalculationUnit(1,
                 pxLength - other.pxLength,
+                percent - other.percent,
                 length - other.length,
                 angle - other.angle,
                 time - other.time,
@@ -135,6 +147,9 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     public int compareTo(CalculationUnit other) {
         if (pxLength != other.pxLength) {
             return pxLength - other.pxLength;
+        }
+        if (percent != other.percent) {
+            return percent - other.percent;
         }
         if (length != other.length) {
             return length - other.length;
@@ -150,7 +165,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
 
     @Override
     public int hashCode() {
-        return angle * 1000 + length * 100 + pxLength * 10 + time;
+        return percent * 10000 + angle * 1000 + length * 100 + pxLength * 10 + time;
     }
 
     @Override
@@ -163,6 +178,9 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
         }
         final CalculationUnit other = (CalculationUnit) obj;
         if (this.pxLength != other.pxLength) {
+            return false;
+        }
+        if (this.percent != other.percent) {
             return false;
         }
         if (this.length != other.length) {
@@ -188,6 +206,13 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
         }
         else if (pxLength == 1) {
             sb.append(" px");
+        }
+
+        if (percent > 1) {
+            sb.append(" %^" + percent);
+        }
+        else if (percent == 1) {
+            sb.append(" %");
         }
 
         if (length > 1) {
@@ -218,6 +243,13 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
         }
         else if (pxLength == -1) {
             sb.append("px ");
+        }
+
+        if (percent < -1) {
+            sb.append("%^" + -percent + " ");
+        }
+        else if (percent == -1) {
+            sb.append("% ");
         }
 
         if (length < -1) {

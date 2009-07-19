@@ -22,6 +22,9 @@ public class TermExpression implements CalcExpression {
         if (value.getType() == TermType.Number) {
             return new Value(value);
         }
+        else if (value.getType() == TermType.Calculation) {
+            return value.getCalculation().calculateValue(variables, parameters);
+        }
         else {
             throw new CalculationException("Invalid term type: " + value.getType());
         }
