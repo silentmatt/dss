@@ -132,36 +132,37 @@ QuotedString<out String qs> = stringLit (. qs = t.val; .) .
 
 URI<out String url> = url (. url = t.val.substring(4, t.val.length() - 1); .) .
 
-medium<out Medium m> =		(. m = Medium.all; .)
-	(
-		"all"			(. m = Medium.all; .)
-		| "aural"		(. m = Medium.aural; .)
-		| "braille"		(. m = Medium.braille; .)
-		| "embossed"	(. m = Medium.embossed; .)
-		| "handheld"	(. m = Medium.handheld; .)
-		| "print"		(. m = Medium.print; .)
-		| "projection"	(. m = Medium.projection; .)
-		| "screen"		(. m = Medium.screen; .)
-		| "tty"			(. m = Medium.tty; .)
-		| "tv"			(. m = Medium.tv; .)
-	)
+medium<out Medium m> =  (. m = Medium.all; .)
+    (
+        "all"           (. m = Medium.all; .)
+        | "aural"       (. m = Medium.aural; .)
+        | "braille"     (. m = Medium.braille; .)
+        | "embossed"    (. m = Medium.embossed; .)
+        | "handheld"    (. m = Medium.handheld; .)
+        | "print"       (. m = Medium.print; .)
+        | "projection"  (. m = Medium.projection; .)
+        | "screen"      (. m = Medium.screen; .)
+        | "tty"         (. m = Medium.tty; .)
+        | "tv"          (. m = Medium.tv; .)
+    )
 .
-identity<out String ident> =	(. ident = null; .)
-	(
-		ident
-		| "n"
-		| "url"
-		| "all"
-		| "aural"
-		| "braille"
-		| "embossed"
-		| "handheld"
-		| "print"
-		| "projection"
-		| "screen"
-		| "tty"
-		| "tv"
-	)					(. ident = t.val; .)
+
+identity<out String ident> =    (. ident = null; .)
+    (
+        ident
+        | "n"
+        | "url"
+        | "all"
+        | "aural"
+        | "braille"
+        | "embossed"
+        | "handheld"
+        | "print"
+        | "projection"
+        | "screen"
+        | "tty"
+        | "tv"
+    )                           (. ident = t.val; .)
 .
 
 mediaDirective<out DirectiveBuilder dirb> =             (.
@@ -172,16 +173,16 @@ mediaDirective<out DirectiveBuilder dirb> =             (.
                                                             dirb.setType(DirectiveType.Media);
                                                         .)
     "@media"
-    medium<out m>                                       (. dirb.getMediums().add(m); .)
+    medium<out m>                                       (.  dirb.getMediums().add(m); .)
     '{'
         {
-            ruleset<out rset>                           (. dirb.addRuleSet(rset); .)
+            ruleset<out rset>                           (.  dirb.addRuleSet(rset); .)
             |
-            classDirective<out DirectiveBuilder dir>    (. dirb.addDirective(dir.build()); .)
+            classDirective<out DirectiveBuilder dir>    (.  dirb.addDirective(dir.build()); .)
             |
-            defineDirective<out DirectiveBuilder dir>   (. dirb.addDirective(dir.build()); .)
+            defineDirective<out DirectiveBuilder dir>   (.  dirb.addDirective(dir.build()); .)
             |
-            includeDirective<out DirectiveBuilder dir>  (. dirb.addDirective(dir.build()); .)
+            includeDirective<out DirectiveBuilder dir>  (.  dirb.addDirective(dir.build()); .)
         }
     '}'
 .
@@ -191,9 +192,9 @@ parameter<out Declaration dec> =
                                 Expression exp = null;
                                 String ident = null;
                             .)
-    identity<out ident>     (. dec.setName(ident); .)
+    identity<out ident>     (.  dec.setName(ident); .)
     [
-        ':' expr<out exp>   (. dec.setExpression(exp); .)
+        ':' expr<out exp>   (.  dec.setExpression(exp); .)
     ]
 .
 
@@ -216,7 +217,7 @@ classDirective<out DirectiveBuilder dirb> =
             ]
         '>'
     ]
-    '{' { declaration<out dec> ';'          (. dirb.addDeclaration(dec); .) } '}'
+    '{' { declaration<out dec> ';'          (.  dirb.addDeclaration(dec); .) } '}'
 .
 
 defineDirective<out DirectiveBuilder dirb> =
@@ -227,7 +228,7 @@ defineDirective<out DirectiveBuilder dirb> =
                                     .)
     "@define"
     [
-        "global"                    (. dirb.setID("global"); .)
+        "global"                    (.  dirb.setID("global"); .)
     ]
     '{'
         { declaration<out dec> ';'  (.  dirb.addDeclaration(dec); .) }
@@ -328,7 +329,7 @@ namespaceDirective<out DirectiveBuilder dirb> =
                                 .)
     "@namespace"
     [
-        identity<out ident>     (. dirb.setID(ident); .)
+        identity<out ident>     (.  dirb.setID(ident); .)
     ]
     (
         URI<out url>            (.
@@ -377,30 +378,30 @@ directive<out Directive dir> =	(.  dir = null; //new GenericDirective();
         namespaceDirective<out dirb> // TODO: Look up where @charset can be
         |
         (
-            '@' identity<out ident>                 (. dirb.setName("@" + ident);
+            '@' identity<out ident>                 (.  dirb.setName("@" + ident);
                                                         String lcName = ident.toLowerCase();
                                                         dirb.setType(DirectiveType.Other);
                                                     .)
             [
-                expr<out exp>                       (. dirb.setExpression(exp); .)
+                expr<out exp>                       (.  dirb.setExpression(exp); .)
                 |
-                medium<out m>                       (. dirb.getMediums().add(m); .)
+                medium<out m>                       (.  dirb.getMediums().add(m); .)
             ]
             (
                 '{'
                     {
-                        declaration<out dec> ';'    (. dirb.addDeclaration(dec); .)
+                        declaration<out dec> ';'    (.  dirb.addDeclaration(dec); .)
                         |
-                        ruleset<out rset>           (. dirb.addRuleSet(rset); .)
+                        ruleset<out rset>           (.  dirb.addRuleSet(rset); .)
                         |
-                        directive<out dr>           (. dirb.addDirective(dr); .)
+                        directive<out dr>           (.  dirb.addDirective(dr); .)
                     }
                 '}'
                 |
                 ';'
             )
         )
-    )                                               (. dir = dirb.build(); .)
+    )                                               (.  dir = dirb.build(); .)
 .
 /*
 +c GenericDirective : DeclarationContainer, RuleSetContainer, DirectiveContainer {
@@ -419,24 +420,26 @@ directive<out Directive dir> =	(.  dir = null; //new GenericDirective();
 	em, ex, px, gd, rem, vw, vh, vm, mm, cm, in, pt, pc, deg, grad, rad, ms, s, Hz, kHz
 }
 */
-ruleset<out RuleSet rset> =		(. rset = new RuleSet();
-									Selector sel = null;
-									Declaration dec = null;
-								.)
+ruleset<out RuleSet rset> =             (.  rset = new RuleSet();
+                                            Selector sel = null;
+                                            Declaration dec = null;
+                                            DirectiveBuilder dir;
+                                        .)
 
-	selector<out sel>			(. rset.getSelectors().add(sel); .)
-	{ ',' selector<out sel>		(. rset.getSelectors().add(sel); .)
-	}
+    selector<out sel>                   (.  rset.getSelectors().add(sel); .)
+    { ',' selector<out sel>             (.  rset.getSelectors().add(sel); .)
+    }
     '{'
         {
-            declaration<out dec> ';'    (. rset.addDeclaration(dec); .)
+            declaration<out dec> ';'    (.  rset.addDeclaration(dec); .)
             |
-            classDirective<out DirectiveBuilder dir> (. rset.addDirective(dir.build()); .)
+            classDirective<out dir>     (.  rset.addDirective(dir.build()); .)
             |
-            defineDirective<out DirectiveBuilder dir> (. rset.addDirective(dir.build()); .)
+            defineDirective<out dir>    (.  rset.addDirective(dir.build()); .)
         }
     '}'
 .
+
 selector<out Selector sel> =	(. sel = new Selector();
 									SimpleSelector ss = null;
 									Combinator cb = null;

@@ -149,6 +149,7 @@ public class Parser {
 		rset = new RuleSet();
 		Selector sel = null;
 		Declaration dec = null;
+		DirectiveBuilder dir;
 		
 		sel = selector();
 		rset.getSelectors().add(sel); 
@@ -164,10 +165,10 @@ public class Parser {
 				Expect(27);
 				rset.addDeclaration(dec); 
 			} else if (la.kind == 25) {
-				DirectiveBuilder dir = classDirective();
+				dir = classDirective();
 				rset.addDirective(dir.build()); 
 			} else {
-				DirectiveBuilder dir = defineDirective();
+				dir = defineDirective();
 				rset.addDirective(dir.build()); 
 			}
 		}
