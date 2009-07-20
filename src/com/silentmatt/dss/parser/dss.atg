@@ -49,10 +49,11 @@ CHARACTERS
     nonascii           = '\u0080' .. '\ud7ff' + '\ue000' .. '\ufffd' /* + '\u10000' .. '#x10ffff' */ .
     wc                 = tab + eol + '\u000c' + cr + ' '.
     escape_chars       = ' ' .. '\u007e' + '\u0080' .. '\ud7ff' + '\ue000' .. '\ufffd' /* + '\u10000' .. '\u10FFFF'*/ .
-    dqStringChar         = ANY - '\"' - '\\' - '\u000d' - '\u000a'.
-    sqStringChar         = ANY - '\'' - '\\' - '\u000d' - '\u000a'.
+    dqStringChar       = ANY - '\"' - '\\' - '\u000d' - '\u000a'.
+    sqStringChar       = ANY - '\'' - '\\' - '\u000d' - '\u000a'.
     zeroToThree        = "0123".
     octalDigit         = "01234567".
+    not_rp             = ANY - ')'.
 
 TOKENS
 
@@ -78,6 +79,26 @@ TOKENS
                   )
            }
       "\'").
+
+    url = "url(" ( ("\"" { dqStringChar
+           | "\\" ( "b" | "t" | "n" | "f" | "r" | "\"" | "\'" | "\\" | "\n"
+                  | "u" { "u" } hexDigit hexDigit hexDigit hexDigit
+                  | zeroToThree [ octalDigit ] [ octalDigit ]
+                  | octalDigit [ octalDigit ]
+                  )
+           }
+      "\"")
+    |
+      ("\'" { sqStringChar
+           | "\\" ( "b" | "t" | "n" | "f" | "r" | "\"" | "\'" | "\\" | "\n"
+                  | "u" { "u" } hexDigit hexDigit hexDigit hexDigit
+                  | zeroToThree [ octalDigit ] [ octalDigit ]
+                  | octalDigit [ octalDigit ]
+                  )
+           }
+      "\'")
+    |
+      { not_rp } ) ")".
 
 PRAGMAS
 
@@ -109,14 +130,8 @@ CSS3 =                          (.  CSSDoc = new CSSDocument();
 
 QuotedString<out String qs> = stringLit (. qs = t.val; .) .
 
-URI<out String url> =			(. url = ""; .)
-	"url" [ "(" ] (
-		QuotedString<out url>
-		| {ANY					(. url += t.val; .)
-								(. if (la.val.equals(")")) { break; } .)
-		}
-	) [ ")" ]
-.
+URI<out String url> = url (. url = t.val.substring(4, t.val.length() - 1); .) .
+
 medium<out Medium m> =		(. m = Medium.all; .)
 	(
 		"all"			(. m = Medium.all; .)
@@ -183,32 +198,25 @@ parameter<out Declaration dec> =
 .
 
 classDirective<out DirectiveBuilder dirb> =
-                                        (.  dirb = new DirectiveBuilder();
-                                            Declaration dec = null;
-                                            String ident;
-                                            Declaration param;
-                                            RuleSet rset = new RuleSet();
-                                            dirb.setType(DirectiveType.Class);
-                                        .)
+                                            (.  dirb = new DirectiveBuilder();
+                                                Declaration dec = null;
+                                                String ident;
+                                                Declaration param;
+                                                RuleSet rset = new RuleSet();
+                                                dirb.setType(DirectiveType.Class);
+                                            .)
     "@class"
-    identity<out ident>                 (. dirb.setID(ident); .)
+    identity<out ident>                     (.  dirb.setID(ident); .)
     [
         '<'
-            [
-                parameter<out param>     (. dirb.addParameter(param); .)
-                {
-                    ';'
-                    parameter<out param> (. dirb.addParameter(param); .)
+            [   parameter<out param>        (.  dirb.addParameter(param); .)
+                {   ';'
+                    parameter<out param>    (.  dirb.addParameter(param); .)
                 }
             ]
         '>'
     ]
-    '{' [ declaration<out dec>          (. dirb.addDeclaration(dec); .)
-          { ';'                         (. if (la.val.equals("}")) { Get(); return dirb; } .)
-            declaration<out dec>        (. dirb.addDeclaration(dec); .)
-          } [ ';' ]
-        ]
-    '}'
+    '{' { declaration<out dec> ';'          (. dirb.addDeclaration(dec); .) } '}'
 .
 
 defineDirective<out DirectiveBuilder dirb> =
@@ -233,12 +241,7 @@ fontFaceDirective<out DirectiveBuilder dirb> =
                                         dirb.setType(DirectiveType.FontFace);
                                     .)
     "@font-face"
-    '{' [ declaration<out dec>		(. dirb.addDeclaration(dec); .)
-          { ';'     				(. if (la.val.equals("}")) { Get(); return dirb; } .)
-            declaration<out dec>    (. dirb.addDeclaration(dec); .)
-          } [ ';' ]
-        ]
-    '}'
+    '{' { declaration<out dec> ';'  (.  dirb.addDeclaration(dec); .) } '}'
 .
 
 pageDirective<out DirectiveBuilder dirb> =
@@ -255,12 +258,7 @@ pageDirective<out DirectiveBuilder dirb> =
                                         dirb.setSimpleSelector(ss);
                                     .)
     ]
-    '{' [ declaration<out dec>		(. dirb.addDeclaration(dec); .)
-          { ';'     				(. if (la.val.equals("}")) { Get(); return dirb; } .)
-            declaration<out dec>    (. dirb.addDeclaration(dec); .)
-          } [ ';' ]
-        ]
-    '}'
+    '{' { declaration<out dec> ';'  (.  dirb.addDeclaration(dec); .) } '}'
 .
 
 importDirective<out DirectiveBuilder dirb> =
@@ -566,97 +564,108 @@ calculation<out CalcExpression expr> =
 "calc" "(" lengthExpression<out expr> ")"
 .
 
-term<out Term trm> =				(. trm = new Term();
-										String val = "";
-										Expression exp = null;
-										String ident = null;
-                                        CalcExpression expression = null;
-									.)
-	(
-		QuotedString<out val>		(. trm.setValue(val); trm.setType(TermType.String); .)
-	|
-		URI<out val>				(. trm.setValue(val); trm.setType(TermType.Url); .)
-	|
-		"U\\" identity<out ident>	(. trm.setValue("U\\" + ident); trm.setType(TermType.Unicode); .)
-	|
-		HexValue<out val>			(. trm.setValue(val); trm.setType(TermType.Hex); .)
-    |
-        calculation<out expression> (. trm.setCalculation(expression); trm.setType(TermType.Calculation); .)
-	|
-		identity<out ident>			(. trm.setValue(ident); trm.setType(TermType.String); .)
-		[ { ( ':'					(. trm.setValue(trm.getValue() + t.val); .)
-			[ ':'					(. trm.setValue(trm.getValue() + t.val); .)
-			]
-			identity<out ident>		(. trm.setValue(trm.getValue() + ident); .)
-		  |
-			'.'						(. trm.setValue(trm.getValue() + t.val); .)
-			identity<out ident>		(. trm.setValue(trm.getValue() + ident); .)
-		  |
-			'='						(. trm.setValue(trm.getValue() + t.val); .)
-			(identity<out ident>	(. trm.setValue(trm.getValue() + ident); .)
-			| integer				(. trm.setValue(trm.getValue() + t.val); .)
-			)
-		) } ]
-        [
-            ('(' expr<out exp>       (. Function func = new Function();
-                                        func.setName(trm.getValue());
-                                        func.setExpression(exp);
-                                        trm.setValue(null);
-                                        trm.setFunction(func);
-                                        trm.setType(TermType.Function);
-                                    .)
-            ')')
+term<out Term trm> =                        (.  trm = new Term();
+                                                String val = "";
+                                                Expression exp = null;
+                                                String ident = null;
+                                                CalcExpression expression = null;
+                                            .)
+    (
+        QuotedString<out val>               (.  trm.setValue(val); trm.setType(TermType.String); .)
+        |
+        URI<out val>                        (.  trm.setValue(val); trm.setType(TermType.Url); .)
+        |
+        "U\\" identity<out ident>           (.  trm.setValue("U\\" + ident); trm.setType(TermType.Unicode); .)
+        |
+        HexValue<out val>                   (.  trm.setValue(val); trm.setType(TermType.Hex); .)
+        |
+        calculation<out expression>         (.  trm.setCalculation(expression);
+                                                trm.setType(TermType.Calculation); .)
+        |
+        identity<out ident>                 (.  trm.setValue(ident); trm.setType(TermType.String); .)
+        { ':'                               (.  trm.setValue(trm.getValue() + t.val); .)
+            [ ':'                           (.  trm.setValue(trm.getValue() + t.val); .)
+            ]
+            identity<out ident>             (.  trm.setValue(trm.getValue() + ident); .)
             |
-            ('<'                                (.  ClassReference cls = new ClassReference();
-                                                    Declaration dec;
-                                                    cls.setName(trm.getValue());
-                                                    trm.setValue(null);
-                                                    trm.setClassReference(cls);
-                                                    trm.setType(TermType.ClassReference);
-                                                .)
-                [ declaration<out dec>          (. cls.addArgument(dec); .)
-                  { ';' declaration<out dec>    (. cls.addArgument(dec); .) }
+            '.'                             (.  trm.setValue(trm.getValue() + t.val); .)
+            identity<out ident>             (.  trm.setValue(trm.getValue() + ident); .)
+            |
+            '='                             (.  trm.setValue(trm.getValue() + t.val); .)
+            (   identity<out ident>         (.  trm.setValue(trm.getValue() + ident); .)
+                |
+                integer                     (.  trm.setValue(trm.getValue() + t.val); .)
+            )
+        }
+        [
+            '(' expr<out exp>               (.  Function func = new Function();
+                                                func.setName(trm.getValue());
+                                                func.setExpression(exp);
+                                                trm.setValue(null);
+                                                trm.setFunction(func);
+                                                trm.setType(TermType.Function);
+                                            .)
+            ')'
+            |
+            ('<'                            (.  ClassReference cls = new ClassReference();
+                                                Declaration dec;
+                                                cls.setName(trm.getValue());
+                                                trm.setValue(null);
+                                                trm.setClassReference(cls);
+                                                trm.setType(TermType.ClassReference);
+                                            .)
+                [ declaration<out dec>      (.  cls.addArgument(dec); .)
+                  { ';'
+                    declaration<out dec>    (.  cls.addArgument(dec); .) }
                 ]
             '>')
         ]
-	|
-		[ ('-'						(. trm.setSign('-'); .)
-		| '+'						(. trm.setSign('+'); .)
-		) ]
-		( integer | decimal )       (. val = t.val; .)
-		[ (
-			IF(la.val.toLowerCase().equals("n"))
-			/* func(4n+1) */
-				"n"					(. val += t.val; .)
-				[ ("+"				(. val += t.val; .)
-				| "-"				(. val += t.val; .)
-				) integer			(. val += t.val; .)
-				]
-			| "%"					(. trm.setUnit(Unit.Percent); .)
-			| [ IF(IsUnit())
-				identity<out ident>	(. try {
-										trm.setUnit(Unit.parse(ident));
-									} catch (Exception ex) {
-										errors.SemErr(t.line, t.col, "Unrecognized unit '" + ident + "'");
-									}
-									.)
-				]
-		) ]							(. trm.setValue(val); trm.setType(TermType.Number); .)
-	)
+        |
+        [   '-'                             (.  trm.setSign('-'); .)
+            |
+            '+'                             (.  trm.setSign('+'); .)
+        ]
+        ( integer | decimal )               (.  val = t.val; .)
+        (
+            IF(la.val.toLowerCase().equals("n"))
+            (
+            /* func(4n+1) */
+                "n"                         (.  val += t.val; .)
+                [ ( "+"                     (.  val += t.val; .)
+                    |
+                    "-"                     (.  val += t.val; .)
+                  )
+                    integer                 (.  val += t.val; .)
+                ]
+            )
+            |
+            "%"                             (.  trm.setUnit(Unit.Percent); .)
+            |
+            [
+                IF(IsUnit())
+                    identity<out ident>     (.  try {
+                                                    trm.setUnit(Unit.parse(ident));
+                                                } catch (Exception ex) {
+                                                    errors.SemErr(t.line, t.col, "Unrecognized unit '" + ident + "'");
+                                                }
+                                            .)
+            ]
+        )                                   (.  trm.setValue(val); trm.setType(TermType.Number); .)
+    )
 .
-HexValue<out String val> =		(. val = "";
-									boolean found = false;
-								.)
-	'#'							(. val += t.val; .)
-	(
-		integer                 (. val += t.val; .)
-	|
-		IF(PartOfHex(val))
-			ident				(. val += t.val; found = true; .)
-	)
-	[ IF(!found && PartOfHex(val))
-		ident					(. val += t.val; .)
-	]
+
+HexValue<out String val> =  (.  val = "";
+                                boolean found = false;
+                            .)
+    '#'                     (.  val += t.val; .)
+    (
+        integer             (.  val += t.val; .)
+        |
+        ident               (.  val += t.val; found = true; .)
+    )
+    [   IF(!found && PartOfHex(val))
+            ident           (.  val += t.val; .)
+    ]
 .
 
 END CSS3.

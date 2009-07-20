@@ -29,9 +29,7 @@ public class Function {
         StringBuilder txt = new StringBuilder();
         txt.append(name).append("(");
         if (expression != null) {
-            for (Term t : expression.getTerms()) {
-                txt.append(t.toString());
-            }
+            txt.append(expression.toString());
         }
         txt.append(")");
         return txt.toString();
