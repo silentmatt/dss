@@ -27,23 +27,23 @@ public class Parser {
 
 	public CSSDocument CSSDoc;
 
-		boolean PartOfHex(String value) {
-			if (value.length() == 7) { return false; }
-			if (value.length() + la.val.length() > 7) { return false; }
-			List<String> hexes = Arrays.asList(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "a", "b", "c", "d", "e", "f" });
-			for (int i = 0; i < la.val.length(); i++) {
-				char c = la.val.charAt(i);
-				if (!hexes.contains(String.valueOf(c))) {
-					return false;
-				}
-			}
-			return true;
-		}
-		boolean IsUnit() {
-			if (la.kind != 1) { return false; }
-			List<String> units = Arrays.asList(new String[] { "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz" });
-			return units.contains(la.val);
-		}
+        boolean PartOfHex(String value) {
+            if (value.length() == 7) { return false; }
+            if (value.length() + la.val.length() > 7) { return false; }
+            List<String> hexes = Arrays.asList(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "a", "b", "c", "d", "e", "f" });
+            for (int i = 0; i < la.val.length(); i++) {
+                char c = la.val.charAt(i);
+                if (!hexes.contains(String.valueOf(c))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        boolean IsUnit() {
+            if (la.kind != 1) { return false; }
+            List<String> units = Arrays.asList(new String[] { "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz" });
+            return units.contains(la.val);
+        }
 
 /*------------------------------------------------------------------------*
  *----- SCANNER DESCRIPTION ----------------------------------------------*
@@ -185,7 +185,7 @@ public class Parser {
 		Directive dr = null;
 		String ident = null;
 		Medium m;
-		                           DirectiveBuilder dirb = new DirectiveBuilder();
+		DirectiveBuilder dirb = new DirectiveBuilder();
 		
 		switch (la.kind) {
 		case 21: {
