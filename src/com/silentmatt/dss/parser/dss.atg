@@ -118,13 +118,13 @@ CSS3 =                          (.  CSSDoc = new CSSDocument();
                                     RuleSet rset = null;
                                     Directive dir = null;
                                 .)
-    {("<!--" | "-->" | s)}
+    {"<!--" | "-->" | s}
     {
-        ( ruleset<out rset>     (. CSSDoc.addRuleSet(rset); .)
+        ( ruleset<out rset>     (.  CSSDoc.addRuleSet(rset); .)
           |
-          directive<out dir>    (. CSSDoc.addDirective(dir); .)
+          directive<out dir>    (.  CSSDoc.addDirective(dir); .)
         )
-        {("<!--" | "-->" | s )}
+        {"<!--" | "-->" | s}
     }
 .
 
@@ -278,9 +278,7 @@ importDirective<out DirectiveBuilder dirb> =
                         trm.setType(TermType.Url);
                         expr.getTerms().add(trm);
                         dirb.setExpression(expr); .)
-    [
-        medium<out m>   (. dirb.getMediums().add(m); .)
-    ]
+    [ medium<out m> (.  dirb.getMediums().add(m); .) ]
     ';'
 .
 
@@ -294,8 +292,7 @@ includeDirective<out DirectiveBuilder dirb> =
                         String url;
                     .)
     "@include"
-    URI<out url>    (.
-                        trm.setValue(url);
+    URI<out url>    (.  trm.setValue(url);
                         trm.setType(TermType.Url);
                         expr.getTerms().add(trm);
                         dirb.setExpression(expr); .)
