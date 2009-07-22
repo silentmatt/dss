@@ -1,73 +1,143 @@
 package com.silentmatt.dss.expression;
 
+import com.silentmatt.dss.Unit;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Represents a CSS unit that can be used in calculations.
  * @author matt
  */
 public class CalculationUnit implements Comparable<CalculationUnit> {
-    public static CalculationUnit None = new CalculationUnit(1, 0,0,0,0,0,0, com.silentmatt.dss.Unit.None);
+    /**
+     * a scalar (dimensionless) unit
+     */
+    public static CalculationUnit None = new CalculationUnit(1, 0,0,0,0,0,0, Unit.None);
 
-    public static CalculationUnit PX = new CalculationUnit( 1, 1,0,0,0,0,0, com.silentmatt.dss.Unit.PX);
+    /**
+     * pixels
+     */
+    public static CalculationUnit PX = new CalculationUnit( 1, 1,0,0,0,0,0, Unit.PX);
 
-    public static CalculationUnit Percent = new CalculationUnit( 1, 0,1,0,0,0,0, com.silentmatt.dss.Unit.Percent);
+    /**
+     * percentage
+     */
+    public static CalculationUnit Percent = new CalculationUnit( 1, 0,1,0,0,0,0, Unit.Percent);
 
-    public static CalculationUnit IN = new CalculationUnit(            72, 0,0,1,0,0,0, com.silentmatt.dss.Unit.IN);
-    public static CalculationUnit MM = new CalculationUnit(.0393700787*72, 0,0,1,0,0,0, com.silentmatt.dss.Unit.MM);
-    public static CalculationUnit CM = new CalculationUnit(0.393700787*72, 0,0,1,0,0,0, com.silentmatt.dss.Unit.CM);
-    public static CalculationUnit PT = new CalculationUnit(             1, 0,0,1,0,0,0, com.silentmatt.dss.Unit.PT);
-    public static CalculationUnit PC = new CalculationUnit(            12, 0,0,1,0,0,0, com.silentmatt.dss.Unit.PC);
+    /**
+     * inches
+     */
+    public static CalculationUnit IN = new CalculationUnit(            72, 0,0,1,0,0,0, Unit.IN);
+    /**
+     * millimeters
+     */
+    public static CalculationUnit MM = new CalculationUnit(.0393700787*72, 0,0,1,0,0,0, Unit.MM);
+    /**
+     * centimeters
+     */
+    public static CalculationUnit CM = new CalculationUnit(0.393700787*72, 0,0,1,0,0,0, Unit.CM);
+    /**
+     * points (1/72 of an inch)
+     */
+    public static CalculationUnit PT = new CalculationUnit(             1, 0,0,1,0,0,0, Unit.PT);
+    /**
+     * picas
+     */
+    public static CalculationUnit PC = new CalculationUnit(            12, 0,0,1,0,0,0, Unit.PC);
 
-    public static CalculationUnit DEG  = new CalculationUnit(          1, 0,0,0,1,0,0, com.silentmatt.dss.Unit.DEG);
-    public static CalculationUnit GRAD = new CalculationUnit(       9/10, 0,0,0,1,0,0, com.silentmatt.dss.Unit.GRAD);
-    public static CalculationUnit RAD  = new CalculationUnit(180/Math.PI, 0,0,0,1,0,0, com.silentmatt.dss.Unit.RAD);
-    public static CalculationUnit TURN = new CalculationUnit(        360, 0,0,0,1,0,0, com.silentmatt.dss.Unit.TURN);
+    /**
+     * degrees
+     */
+    public static CalculationUnit DEG  = new CalculationUnit(          1, 0,0,0,1,0,0, Unit.DEG);
+    /**
+     * grads/grades/gradians
+     */
+    public static CalculationUnit GRAD = new CalculationUnit(       9/10, 0,0,0,1,0,0, Unit.GRAD);
+    /**
+     * radians
+     */
+    public static CalculationUnit RAD  = new CalculationUnit(180/Math.PI, 0,0,0,1,0,0, Unit.RAD);
+    /**
+     * turns/revolutions
+     */
+    public static CalculationUnit TURN = new CalculationUnit(        360, 0,0,0,1,0,0, Unit.TURN);
 
-    public static CalculationUnit MS = new CalculationUnit(   1, 0,0,0,0,1,0, com.silentmatt.dss.Unit.MS);
-    public static CalculationUnit S  = new CalculationUnit(1000, 0,0,0,0,1,0, com.silentmatt.dss.Unit.S);
+    /**
+     * milliseconds
+     */
+    public static CalculationUnit MS = new CalculationUnit(   1, 0,0,0,0,1,0, Unit.MS);
+    /**
+     * seconds
+     */
+    public static CalculationUnit S  = new CalculationUnit(1000, 0,0,0,0,1,0, Unit.S);
 
-    public static CalculationUnit Hz  = new CalculationUnit(   1, 0,0,0,0,-1,0, com.silentmatt.dss.Unit.Hz);
-    public static CalculationUnit kHz = new CalculationUnit(1000, 0,0,0,0,-1,0, com.silentmatt.dss.Unit.kHz);
+    /**
+     * Hertz (1/s)
+     */
+    public static CalculationUnit Hz  = new CalculationUnit(   1, 0,0,0,0,-1,0, Unit.Hz);
+    /**
+     * kilohertz
+     */
+    public static CalculationUnit kHz = new CalculationUnit(1000, 0,0,0,0,-1,0, Unit.kHz);
 
-    public static CalculationUnit EM = new CalculationUnit(  1, 0,0,0,0,0,1, com.silentmatt.dss.Unit.EM);
-    public static CalculationUnit EX = new CalculationUnit(0.5, 0,0,0,0,0,1, com.silentmatt.dss.Unit.EX);
+    /**
+     * em
+     */
+    public static CalculationUnit EM = new CalculationUnit(  1, 0,0,0,0,0,1, Unit.EM);
+    /**
+     * ex (1/2 em)
+     */
+    public static CalculationUnit EX = new CalculationUnit(0.5, 0,0,0,0,0,1, Unit.EX);
 
-    private static Map<com.silentmatt.dss.Unit, CalculationUnit> cssToUnitMap;
-    private static Map<CalculationUnit, com.silentmatt.dss.Unit> unitToCssMap;
+    /**
+     * Mapping from a CSS {@link Unit} to the corresponding CalculationUnit.
+     *
+     * @see #fromCssUnit(cssUnit)
+     */
+    private static Map<Unit, CalculationUnit> cssToUnitMap;
+    /**
+     * Mapping from a CalculationUnit to the corresponding CSS {@link Unit}.
+     *
+     * @see #toCssUnit(com.silentmatt.dss.expression.CalculationUnit)
+     */
+    private static Map<CalculationUnit, Unit> unitToCssMap;
+    /**
+     * Mapping from a CalculationUnit to it's corresponding canonical unit.
+     *
+     * @see #getCanonicalUnit(com.silentmatt.dss.expression.CalculationUnit)
+     */
     private static Map<CalculationUnit, CalculationUnit> canonicalUnit;
 
     {
-        cssToUnitMap = new HashMap<com.silentmatt.dss.Unit, CalculationUnit>();
-        unitToCssMap = new HashMap<CalculationUnit, com.silentmatt.dss.Unit>();
+        cssToUnitMap = new HashMap<Unit, CalculationUnit>();
+        unitToCssMap = new HashMap<CalculationUnit, Unit>();
         canonicalUnit = new HashMap<CalculationUnit, CalculationUnit>();
 
-        cssToUnitMap.put(com.silentmatt.dss.Unit.None, CalculationUnit.None);
+        cssToUnitMap.put(Unit.None, CalculationUnit.None);
 
-        cssToUnitMap.put(com.silentmatt.dss.Unit.PX, CalculationUnit.PX);
+        cssToUnitMap.put(Unit.PX, CalculationUnit.PX);
 
-        cssToUnitMap.put(com.silentmatt.dss.Unit.Percent, CalculationUnit.Percent);
+        cssToUnitMap.put(Unit.Percent, CalculationUnit.Percent);
 
-        cssToUnitMap.put(com.silentmatt.dss.Unit.IN, CalculationUnit.IN);
-        cssToUnitMap.put(com.silentmatt.dss.Unit.MM, CalculationUnit.MM);
-        cssToUnitMap.put(com.silentmatt.dss.Unit.CM, CalculationUnit.CM);
-        cssToUnitMap.put(com.silentmatt.dss.Unit.PT, CalculationUnit.PT);
-        cssToUnitMap.put(com.silentmatt.dss.Unit.PC, CalculationUnit.PC);
+        cssToUnitMap.put(Unit.IN, CalculationUnit.IN);
+        cssToUnitMap.put(Unit.MM, CalculationUnit.MM);
+        cssToUnitMap.put(Unit.CM, CalculationUnit.CM);
+        cssToUnitMap.put(Unit.PT, CalculationUnit.PT);
+        cssToUnitMap.put(Unit.PC, CalculationUnit.PC);
 
-        cssToUnitMap.put(com.silentmatt.dss.Unit.DEG, CalculationUnit.DEG);
-        cssToUnitMap.put(com.silentmatt.dss.Unit.GRAD, CalculationUnit.GRAD);
-        cssToUnitMap.put(com.silentmatt.dss.Unit.RAD, CalculationUnit.RAD);
-        cssToUnitMap.put(com.silentmatt.dss.Unit.TURN, CalculationUnit.TURN);
+        cssToUnitMap.put(Unit.DEG, CalculationUnit.DEG);
+        cssToUnitMap.put(Unit.GRAD, CalculationUnit.GRAD);
+        cssToUnitMap.put(Unit.RAD, CalculationUnit.RAD);
+        cssToUnitMap.put(Unit.TURN, CalculationUnit.TURN);
 
-        cssToUnitMap.put(com.silentmatt.dss.Unit.MS, CalculationUnit.MS);
-        cssToUnitMap.put(com.silentmatt.dss.Unit.S, CalculationUnit.S);
+        cssToUnitMap.put(Unit.MS, CalculationUnit.MS);
+        cssToUnitMap.put(Unit.S, CalculationUnit.S);
 
-        cssToUnitMap.put(com.silentmatt.dss.Unit.Hz, CalculationUnit.Hz);
-        cssToUnitMap.put(com.silentmatt.dss.Unit.kHz, CalculationUnit.kHz);
+        cssToUnitMap.put(Unit.Hz, CalculationUnit.Hz);
+        cssToUnitMap.put(Unit.kHz, CalculationUnit.kHz);
 
-        cssToUnitMap.put(com.silentmatt.dss.Unit.EM, CalculationUnit.EM);
-        cssToUnitMap.put(com.silentmatt.dss.Unit.EX, CalculationUnit.EX);
+        cssToUnitMap.put(Unit.EM, CalculationUnit.EM);
+        cssToUnitMap.put(Unit.EX, CalculationUnit.EX);
 
         canonicalUnit.put(None, None);
         canonicalUnit.put(PX, PX);
@@ -79,15 +149,15 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
         canonicalUnit.put(Hz, Hz);
         canonicalUnit.put(EM, EM);
 
-        unitToCssMap.put(None, com.silentmatt.dss.Unit.None);
-        unitToCssMap.put(PX, com.silentmatt.dss.Unit.PX);
-        unitToCssMap.put(Percent, com.silentmatt.dss.Unit.Percent);
-        unitToCssMap.put(PT, com.silentmatt.dss.Unit.PT);
-        unitToCssMap.put(DEG, com.silentmatt.dss.Unit.DEG);
-        unitToCssMap.put(MS, com.silentmatt.dss.Unit.MS);
-        unitToCssMap.put(S, com.silentmatt.dss.Unit.S);
-        unitToCssMap.put(Hz, com.silentmatt.dss.Unit.Hz);
-        unitToCssMap.put(EM, com.silentmatt.dss.Unit.EM);
+        unitToCssMap.put(None, Unit.None);
+        unitToCssMap.put(PX, Unit.PX);
+        unitToCssMap.put(Percent, Unit.Percent);
+        unitToCssMap.put(PT, Unit.PT);
+        unitToCssMap.put(DEG, Unit.DEG);
+        unitToCssMap.put(MS, Unit.MS);
+        unitToCssMap.put(S, Unit.S);
+        unitToCssMap.put(Hz, Unit.Hz);
+        unitToCssMap.put(EM, Unit.EM);
     }
 
     private double scale;
@@ -97,25 +167,60 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     private int length;
     private int angle;
     private int time;
-    private com.silentmatt.dss.Unit cssUnit;
+    private Unit cssUnit;
 
-    public static CalculationUnit fromCssUnit(com.silentmatt.dss.Unit cssUnit) {
+    /**
+     * Get the CalculationUnit that corresponds to a given {@link Unit}.
+     *
+     * @param cssUnit The CSS Unit to convert.
+     * @return The corresponding Calculation Unit or null if none exists.
+     */
+    public static CalculationUnit fromCssUnit(Unit cssUnit) {
         if (cssUnit == null) {
             return None;
         }
         return cssToUnitMap.get(cssUnit);
     }
 
-    public static com.silentmatt.dss.Unit toCssUnit(CalculationUnit unit) {
+    /**
+     * Convert a CalculationUnit to a CSS {@link Unit}.
+     *
+     * @param unit the CalculationUnit to convert.
+     * @return The corresponding CSS {@link Unit}.
+     */
+    public static Unit toCssUnit(CalculationUnit unit) {
         return unitToCssMap.get(unit);
     }
 
-    public static CalculationUnit getCanonicalUnit(CalculationUnit unit) {
+    /**
+     * Get the base CalculationUnit with the same dimension as a given CalculationUnit.
+     * The canonical unit for a given dimension is the unit the others are based on.
+     * For example, all absolute lengths are converted into points, so
+     * {@code CalculationUnit.getCanonicalUnit(CalculationUnit.IN)} would return CalculationUnit.PT.
+     *
+     * If no canonical unit is defined, getCanonicalUnit returns the original unit.
+     *
+     * @param unit The CalculationUnit to convert.
+     * @return The Canonical CalculationUnit.
+     */
+    static CalculationUnit getCanonicalUnit(CalculationUnit unit) {
         CalculationUnit res = canonicalUnit.get(unit);
         return res == null ? unit : res;
     }
 
-    private CalculationUnit(double scale, int pxLength, int percent, int length, int angle, int time, int fontLength, com.silentmatt.dss.Unit cssUnit) {
+    /**
+     * Construct a new CalculationUnit.
+     *
+     * @param scale How many of this unit are in the canonical unit.
+     * @param pxLength Pixel length
+     * @param percent Percentage
+     * @param length Absolute length (inches, points, etc.)
+     * @param angle Angle
+     * @param time Time (negative for frequency)
+     * @param fontLength Font-relative dimension em/ex
+     * @param cssUnit The corresponding CSS unit, if applicable
+     */
+    private CalculationUnit(double scale, int pxLength, int percent, int length, int angle, int time, int fontLength, Unit cssUnit) {
         this.scale = scale;
         this.pxLength = pxLength;
         this.percent = percent;
@@ -126,6 +231,16 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
         this.cssUnit = cssUnit;
     }
 
+    /**
+     * Ensure this unit and other can be added or subtracted.
+     *
+     * To be compatible, two units must have the same dimensions.
+     * Note that pixel length, percentage length, font-relative length, and absolute
+     * length are separate dimensions, so you cannot, for example, add pixels and ems.
+     *
+     * @param other The CalculationUnit to check compatibility with
+     * @return true iff this and other have the same dimensions.
+     */
     public boolean isAddCompatible(CalculationUnit other) {
         return  pxLength == other.pxLength &&
                 percent == other.percent &&
@@ -135,6 +250,14 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
                 fontLength == other.fontLength;
     }
 
+    /**
+     * Multiply this unit by another unit.
+     * The resulting unit is the pair-wise sum of the dimensions in each unit.
+     * The scale of the resulting unit is 1, since values should already be scaled.
+     *
+     * @param other The unit to multiply this by.
+     * @return The product of this and other
+     */
     public CalculationUnit multiply(CalculationUnit other) {
         return new CalculationUnit(1,
                 pxLength + other.pxLength,
@@ -146,6 +269,14 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
                 null);
     }
 
+    /**
+     * Divide this unit by another unit.
+     * The resulting unit is the pair-wise difference between the dimensions in each unit.
+     * The scale of the resulting unit is 1, since values should already be scaled.
+     *
+     * @param other The unit to divide this by.
+     * @return The quotient of this and other.
+     */
     public CalculationUnit divide(CalculationUnit other) {
         return new CalculationUnit(1,
                 pxLength - other.pxLength,
@@ -157,6 +288,19 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
                 null);
     }
 
+    /**
+     * Compare two units using a lexographic ordering.
+     *
+     * The scale of the unit is not used in comparison, so different units with
+     * the same dimension will compare equal.
+     *
+     * For purposes of ordering units, the dimensions are compared in this order:
+     * pixel length, percentage length, absolute length, angle, time, font-relative length.
+     *
+     * @param other The unit to compare with this.
+     * @return A negative integer, zero, or a positive integer corresponding to
+     * less than, equal, or greater than.
+     */
     public int compareTo(CalculationUnit other) {
         if (pxLength != other.pxLength) {
             return pxLength - other.pxLength;
@@ -179,11 +323,23 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
         return 0;
     }
 
+    /**
+     * Get the hash code for this unit.
+     * The hash code is determined only by its dimensions.
+     *
+     * @return The hash code for this unit.
+     */
     @Override
     public int hashCode() {
         return fontLength * 100000 + percent * 10000 + angle * 1000 + length * 100 + pxLength * 10 + time;
     }
 
+    /**
+     * Check CalculationUnits for equality.
+     *
+     * @param obj The object to compare to this.
+     * @return true iff obj is a CalculationUnit with the same dimensions as this.
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -214,6 +370,17 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
         return true;
     }
 
+    /**
+     * Convert this CalculationUnit to a String.
+     *
+     * Unit strings are of the form "px^a em^b %^c pt^d deg^e s^f / px^g em^h %^i pt^j deg^k s^l".
+     * Any dimensions with a zero exponent are left out, and the exponent is left out if it is one.
+     * If the denominator is one (no dimensions are negative), the trailing " /" is removed.
+     *
+     * Any unit that corresponds to a CSS {@link Unit} will be a valid CSS unit string.
+     *
+     * @return A string representation of this unit.
+     */
     @Override
     public String toString() {
         CalculationUnit cu = getCanonicalUnit(this);
@@ -313,6 +480,13 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
         return res;
     }
 
+    /**
+     * Get the factor a value must be multiplied by to be converted to the canonical unit.
+     *
+     * If this is the canonical unit for its dimensions, {@code getScale()} will always return 1.
+     *
+     * @return The CalculationUnit's scale.
+     */
     double getScale() {
         return this.scale;
     }
