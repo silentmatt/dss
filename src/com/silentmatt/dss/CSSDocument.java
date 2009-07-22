@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class CSSDocument {
     private List<RuleSet> ruleSet = new ArrayList<RuleSet>();

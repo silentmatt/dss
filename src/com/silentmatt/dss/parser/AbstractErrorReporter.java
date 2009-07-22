@@ -2,7 +2,7 @@ package com.silentmatt.dss.parser;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public abstract class AbstractErrorReporter implements ErrorReporter {
     private String errMsgFormat = "-- {type}: line {line} col {column}: {message}";

@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class RuleSet implements Rule {
     private List<Directive> directives = new ArrayList<Directive>();

@@ -2,7 +2,7 @@ package com.silentmatt.dss.parser;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public interface ErrorReporter {
     void setMessageFormat(String fmt);

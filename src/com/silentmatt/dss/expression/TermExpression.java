@@ -8,7 +8,7 @@ import com.silentmatt.dss.TermType;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class TermExpression implements CalcExpression {
     private Term value;

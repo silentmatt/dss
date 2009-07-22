@@ -4,7 +4,7 @@ import java.io.PrintStream;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class ListPrintStream extends PrintStream {
     public ListPrintStream() {

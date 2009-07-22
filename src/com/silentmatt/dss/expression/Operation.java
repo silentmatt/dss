@@ -2,7 +2,7 @@ package com.silentmatt.dss.expression;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public enum Operation {
     Add,

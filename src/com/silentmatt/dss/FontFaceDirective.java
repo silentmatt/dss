@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class FontFaceDirective extends DeclarationDirective {
     public FontFaceDirective(List<Declaration> declarations) {

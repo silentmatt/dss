@@ -2,7 +2,7 @@ package com.silentmatt.dss;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class Attribute {
     private String operand;

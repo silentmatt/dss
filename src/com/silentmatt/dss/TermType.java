@@ -2,7 +2,7 @@ package com.silentmatt.dss;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public enum TermType {
     Number,

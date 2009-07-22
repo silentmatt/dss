@@ -2,7 +2,7 @@ package com.silentmatt.dss.expression;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class CalculationException extends Exception {
     private static final long serialVersionUID = 198304051234L;

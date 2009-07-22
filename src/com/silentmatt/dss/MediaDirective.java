@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class MediaDirective implements Directive {
     private List<Medium> mediums;

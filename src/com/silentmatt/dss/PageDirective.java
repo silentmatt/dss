@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class PageDirective extends DeclarationDirective {
     private SimpleSelector ss;

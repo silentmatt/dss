@@ -5,7 +5,7 @@ import com.silentmatt.dss.TermType;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class Value {
     private double scalar;

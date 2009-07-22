@@ -4,7 +4,7 @@ import com.silentmatt.dss.expression.CalcExpression;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class Term {
     private Character seperator;

@@ -5,7 +5,7 @@ import com.silentmatt.dss.Scope;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public interface CalcExpression {
     Value calculateValue(Scope<Expression> variables, Scope<Expression> parameters) throws CalculationException;

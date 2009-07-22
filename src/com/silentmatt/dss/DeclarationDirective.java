@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public abstract class DeclarationDirective implements Directive {
     private List<Declaration> declarations = new ArrayList<Declaration>();

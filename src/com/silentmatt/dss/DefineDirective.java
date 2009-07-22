@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class DefineDirective extends DeclarationDirective {
     private boolean global;
@@ -27,6 +27,7 @@ public class DefineDirective extends DeclarationDirective {
         return global;
     }
 
+    @Override
     public String toCssString(int nesting) {
         return "";
     }

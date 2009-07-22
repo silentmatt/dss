@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class Expression {
     private List<Term> terms = new ArrayList<Term>();

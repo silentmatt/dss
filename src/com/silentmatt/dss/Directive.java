@@ -7,7 +7,7 @@ package com.silentmatt.dss;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public interface Directive extends Rule {
     String getName();

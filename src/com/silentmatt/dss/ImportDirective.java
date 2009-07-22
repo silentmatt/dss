@@ -5,7 +5,7 @@ import java.net.URL;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class ImportDirective extends ExpressionDirective {
     private Medium medium;

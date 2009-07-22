@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * Represents a CSS unit that can be used in calculations.
- * @author matt
+ * @author Matthew Crumley
  */
 public class CalculationUnit implements Comparable<CalculationUnit> {
     /**

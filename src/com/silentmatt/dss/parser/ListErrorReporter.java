@@ -2,7 +2,7 @@ package com.silentmatt.dss.parser;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class ListErrorReporter extends AbstractErrorReporter {
     public java.util.List<String> errors = new java.util.LinkedList<String>();

@@ -5,7 +5,7 @@ import com.silentmatt.dss.Scope;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class BinaryExpression implements CalcExpression {
     private Operation op;

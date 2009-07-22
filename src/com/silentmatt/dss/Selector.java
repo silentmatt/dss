@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class Selector {
     private List<SimpleSelector> simpleSelectors = new ArrayList<SimpleSelector>();

@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class DirectiveBuilder {
     private List<Rule> allRules = new ArrayList<Rule>();
