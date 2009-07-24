@@ -7,12 +7,18 @@ import com.silentmatt.dss.Term;
 import com.silentmatt.dss.TermType;
 
 /**
+ * A CalcExpression that evaluates to a simple CSS {@link Term}.
  *
  * @author Matthew Crumley
  */
 public class TermExpression implements CalcExpression {
     private Term value;
 
+    /**
+     * Constructs a TermExpression from a CSS Term.
+     *
+     * @param value The Term this expression will return.
+     */
     public TermExpression(Term value) {
         this.value = value;
     }
@@ -34,6 +40,11 @@ public class TermExpression implements CalcExpression {
         return 3;
     }
 
+    /**
+     * Gets the Term's string representation.
+     *
+     * @return The Term as a String.
+     */
     @Override
     public String toString() {
         return this.value.toString();

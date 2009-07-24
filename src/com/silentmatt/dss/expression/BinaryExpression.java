@@ -4,6 +4,7 @@ import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Scope;
 
 /**
+ * A CalcExpression that represents a binary operation.
  *
  * @author Matthew Crumley
  */
@@ -12,6 +13,13 @@ public class BinaryExpression implements CalcExpression {
     private CalcExpression left;
     private CalcExpression right;
 
+    /**
+     * Constructs a BinaryExpression with an operator and the two operands.
+     *
+     * @param op The oparation to perform.
+     * @param left The left operand.
+     * @param right The right operand.
+     */
     public BinaryExpression(Operation op, CalcExpression left, CalcExpression right) {
         this.op = op;
         this.left = left;
@@ -44,6 +52,13 @@ public class BinaryExpression implements CalcExpression {
         right.substituteValues(variables, parameters);
     }
 
+    /**
+     * Gets the expression as a string.
+     *
+     * The resulting String will be parsable to an identical BinaryExpression.
+     *
+     * @return The String repressentation of this expression.
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
