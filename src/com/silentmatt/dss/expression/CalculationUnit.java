@@ -170,7 +170,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     private Unit cssUnit;
 
     /**
-     * Get the CalculationUnit that corresponds to a given {@link Unit}.
+     * Gets the CalculationUnit that corresponds to a given {@link Unit}.
      *
      * @param cssUnit The CSS Unit to convert.
      * @return The corresponding Calculation Unit or null if none exists.
@@ -183,7 +183,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     }
 
     /**
-     * Convert a CalculationUnit to a CSS {@link Unit}.
+     * Converts a CalculationUnit to a CSS {@link Unit}.
      *
      * @param unit the CalculationUnit to convert.
      * @return The corresponding CSS {@link Unit}.
@@ -193,7 +193,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     }
 
     /**
-     * Get the base CalculationUnit with the same dimension as a given CalculationUnit.
+     * Gets the base CalculationUnit with the same dimension as a given CalculationUnit.
      * The canonical unit for a given dimension is the unit the others are based on.
      * For example, all absolute lengths are converted into points, so
      * {@code CalculationUnit.getCanonicalUnit(CalculationUnit.IN)} would return CalculationUnit.PT.
@@ -209,7 +209,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     }
 
     /**
-     * Construct a new CalculationUnit.
+     * Constructs a new CalculationUnit.
      *
      * @param scale How many of this unit are in the canonical unit.
      * @param pxLength Pixel length
@@ -232,7 +232,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     }
 
     /**
-     * Ensure this unit and other can be added or subtracted.
+     * Checks if this unit and <code>other</code> can be added or subtracted.
      *
      * To be compatible, two units must have the same dimensions.
      * Note that pixel length, percentage length, font-relative length, and absolute
@@ -251,7 +251,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     }
 
     /**
-     * Multiply this unit by another unit.
+     * Multiplies this unit by another unit.
      * The resulting unit is the pair-wise sum of the dimensions in each unit.
      * The scale of the resulting unit is 1, since values should already be scaled.
      *
@@ -270,7 +270,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     }
 
     /**
-     * Divide this unit by another unit.
+     * Divides this unit by another unit.
      * The resulting unit is the pair-wise difference between the dimensions in each unit.
      * The scale of the resulting unit is 1, since values should already be scaled.
      *
@@ -289,7 +289,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     }
 
     /**
-     * Compare two units using a lexographic ordering.
+     * Compares two units using a lexographic ordering.
      *
      * The scale of the unit is not used in comparison, so different units with
      * the same dimension will compare equal.
@@ -297,7 +297,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
      * For purposes of ordering units, the dimensions are compared in this order:
      * pixel length, percentage length, absolute length, angle, time, font-relative length.
      *
-     * @param other The unit to compare with this.
+     * @param other The unit to compare with <code>this</code>.
      * @return A negative integer, zero, or a positive integer corresponding to
      * less than, equal, or greater than.
      */
@@ -324,7 +324,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     }
 
     /**
-     * Get the hash code for this unit.
+     * Gets the hash code for this unit.
      * The hash code is determined only by its dimensions.
      *
      * @return The hash code for this unit.
@@ -335,10 +335,11 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     }
 
     /**
-     * Check CalculationUnits for equality.
+     * Checks CalculationUnits for equality.
      *
-     * @param obj The object to compare to this.
-     * @return true iff obj is a CalculationUnit with the same dimensions as this.
+     * @param obj The object to compare to <code>this</code>.
+     * @return true iff <code>obj</code> is a <code>CalculationUnit</code> with
+     * the same dimensions as <code>this</code>.
      */
     @Override
     public boolean equals(Object obj) {
@@ -371,7 +372,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     }
 
     /**
-     * Convert this CalculationUnit to a String.
+     * Converts this <code>CalculationUnit</code> to a <code>String</code>.
      *
      * Unit strings are of the form "px^a em^b %^c pt^d deg^e s^f / px^g em^h %^i pt^j deg^k s^l".
      * Any dimensions with a zero exponent are left out, and the exponent is left out if it is one.
@@ -481,11 +482,11 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
     }
 
     /**
-     * Get the factor a value must be multiplied by to be converted to the canonical unit.
+     * Gets the factor a value must be multiplied by to be converted to the canonical unit.
      *
      * If this is the canonical unit for its dimensions, {@code getScale()} will always return 1.
      *
-     * @return The CalculationUnit's scale.
+     * @return The <code>CalculationUnit</code>'s scale.
      */
     double getScale() {
         return this.scale;
