@@ -1,11 +1,24 @@
 package com.silentmatt.dss;
 
 /**
+ * Specifies the type relationship between {@link SimpleSelector}s (child, sibling, etc.).
+ * The Combinator is attached to the right-hand selector.
  *
  * @author Matthew Crumley
  */
 public enum Combinator {
-    ChildOf,               // >
-    PrecededImmediatelyBy, // +
-    PrecededBy             // ~
+    /**
+     * Child selector (immediate descendent): parent > child
+     */
+    ChildOf,
+
+    /**
+     * Immediate sibling: element + next
+     */
+    PrecededImmediatelyBy,
+
+    /**
+     * Sibling: element ~ later
+     */
+    PrecededBy
 }

@@ -2,6 +2,7 @@ package com.silentmatt.dss.expression;
 
 import com.silentmatt.dss.Term;
 import com.silentmatt.dss.TermType;
+import com.silentmatt.dss.Unit;
 
 /**
  * Represents a dimensioned value.
@@ -25,7 +26,7 @@ public class Value {
 
     /**
      * Constructs a Value from a CSS {@link Term}.
-     * The Term's {@link TermTypemust} be {@link TermType#Number}.
+     * The Term's {@link TermType} must be {@link TermType#Number}.
      *
      * @param term The CSS Term to convert.
      * @throws IllegalArgumentException <code>term</term> is not a number.
@@ -49,7 +50,7 @@ public class Value {
      * @param scalar The scalar (numeric) part of the value.
      * @param unit The associated CSS Unit.
      */
-    public Value(double scalar, com.silentmatt.dss.Unit unit) {
+    public Value(double scalar, Unit unit) {
         this.unit = CalculationUnit.fromCssUnit(unit);
         this.scalar = scalar * this.unit.getScale();
         this.unit = CalculationUnit.getCanonicalUnit(this.unit);
@@ -129,10 +130,10 @@ public class Value {
     /**
      * Converts a Value into a CSS {@link Term}.
      *
-     * The Value's unit must be compatible with a valid CSS <code>Unit</code>
+     * The Value's unit must be compatible with a valid CSS unit.
+     *
      * @return A CSS Term that represents this Value.
-     * @throws CalculationException
-     * <code>this</code> cannot be represented by a valid CSS unit.
+     * @throws CalculationException <code>this</code> cannot be represented by a valid CSS unit.
      */
     public Term toTerm() throws CalculationException {
         Term t = new Term();

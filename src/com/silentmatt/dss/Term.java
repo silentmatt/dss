@@ -3,6 +3,7 @@ package com.silentmatt.dss;
 import com.silentmatt.dss.expression.CalcExpression;
 
 /**
+ * @todo Separate different {@link TermType}s into subclasses of Term.
  *
  * @author Matthew Crumley
  */

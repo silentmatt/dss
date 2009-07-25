@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * @todo Remove this class, and just construct the directives directly (pun not intended).
  * @author Matthew Crumley
  */
 public class DirectiveBuilder {
