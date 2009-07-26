@@ -17,6 +17,8 @@ public class DSSEvaluator {
     public static class Options {
         private URL baseURL;
         private ErrorReporter errors = new PrintStreamErrorReporter();
+        private Scope<ClassDirective> classes = new Scope<ClassDirective>(null);
+        private Scope<Expression> variables = new Scope<Expression>(null);
 
         public Options(URL url) {
             baseURL = url;
@@ -37,6 +39,22 @@ public class DSSEvaluator {
         public void setErrors(ErrorReporter errors) {
             this.errors = errors;
         }
+
+        public Scope<ClassDirective> getClasses() {
+            return classes;
+        }
+
+        public void setClasses(Scope<ClassDirective> classes) {
+            this.classes = classes;
+        }
+
+        public Scope<Expression> getVariables() {
+            return variables;
+        }
+
+        public void setVariables(Scope<Expression> variables) {
+            this.variables = variables;
+        }
     }
 
     private Options options;
@@ -46,8 +64,8 @@ public class DSSEvaluator {
 
     public DSSEvaluator(Options opts) {
         this.options = opts;
-        this.classes = new Scope<ClassDirective>(null);
-        this.variables = new Scope<Expression>(null);
+        this.classes = new Scope<ClassDirective>(opts.getClasses());
+        this.variables = new Scope<Expression>(opts.getVariables());
     }
 
     public void evaluate(CSSDocument css) throws MalformedURLException, IOException {
