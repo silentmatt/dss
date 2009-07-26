@@ -3,7 +3,9 @@
  * and open the template in the editor.
  */
 
-package com.silentmatt.dss;
+package com.silentmatt.dss.directive;
+
+import com.silentmatt.dss.*;
 
 /**
  *

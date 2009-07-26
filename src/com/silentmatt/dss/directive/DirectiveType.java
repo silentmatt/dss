@@ -1,4 +1,4 @@
-package com.silentmatt.dss;
+package com.silentmatt.dss.directive;
 
 /**
  * The type of a directive ({@literal @-rule}).

@@ -1,5 +1,16 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.directive.PageDirective;
+import com.silentmatt.dss.directive.NamespaceDirective;
+import com.silentmatt.dss.directive.MediaDirective;
+import com.silentmatt.dss.directive.IncludeDirective;
+import com.silentmatt.dss.directive.ImportDirective;
+import com.silentmatt.dss.directive.GenericDirective;
+import com.silentmatt.dss.directive.CharsetDirective;
+import com.silentmatt.dss.directive.ClassDirective;
+import com.silentmatt.dss.directive.FontFaceDirective;
+import com.silentmatt.dss.directive.DefineDirective;
+import com.silentmatt.dss.directive.Directive;
 import com.silentmatt.dss.term.Term;
 import com.silentmatt.dss.expression.CalcExpression;
 import com.silentmatt.dss.expression.CalculationException;

@@ -1,5 +1,8 @@
-package com.silentmatt.dss;
+package com.silentmatt.dss.directive;
 
+import com.silentmatt.dss.*;
+import com.silentmatt.dss.directive.ExpressionDirective;
+import com.silentmatt.dss.directive.DirectiveType;
 import com.silentmatt.dss.term.UrlTerm;
 import java.net.MalformedURLException;
 import java.net.URL;

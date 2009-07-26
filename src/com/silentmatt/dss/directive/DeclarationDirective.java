@@ -1,5 +1,7 @@
-package com.silentmatt.dss;
+package com.silentmatt.dss.directive;
 
+import com.silentmatt.dss.*;
+import com.silentmatt.dss.directive.Directive;
 import java.util.ArrayList;
 import java.util.List;
 

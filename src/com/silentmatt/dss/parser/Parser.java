@@ -2,6 +2,7 @@ package com.silentmatt.dss.parser;
 
 import java.util.*;
 import com.silentmatt.dss.*;
+import com.silentmatt.dss.directive.*;
 import com.silentmatt.dss.term.*;
 import com.silentmatt.dss.expression.*;
 
