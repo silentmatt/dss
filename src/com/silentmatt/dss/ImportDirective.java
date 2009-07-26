@@ -37,7 +37,7 @@ public class ImportDirective extends ExpressionDirective {
     }
 
     public String getURLString() {
-        return getExpression().getTerms().get(0).getValue();
+        return getExpression().getTerms().get(0).toString();
     }
 
     public URL getURL() throws MalformedURLException {

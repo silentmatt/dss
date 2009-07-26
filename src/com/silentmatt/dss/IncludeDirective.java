@@ -1,5 +1,6 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.term.UrlTerm;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -23,7 +24,8 @@ public class IncludeDirective extends ExpressionDirective {
     }
 
     public String getURLString() {
-        return getExpression().getTerms().get(0).getValue();
+        // TODO: Remove need for cast
+        return ((UrlTerm) getExpression().getTerms().get(0)).getValue();
     }
 
     public URL getURL() throws MalformedURLException {

@@ -1,10 +1,14 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.term.Term;
 import com.silentmatt.dss.expression.CalcExpression;
 import com.silentmatt.dss.expression.CalculationException;
 import com.silentmatt.dss.expression.Value;
 import com.silentmatt.dss.parser.ErrorReporter;
 import com.silentmatt.dss.parser.PrintStreamErrorReporter;
+import com.silentmatt.dss.term.CalculationTerm;
+import com.silentmatt.dss.term.ClassReferenceTerm;
+import com.silentmatt.dss.term.FunctionTerm;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -301,11 +305,11 @@ public class DSSEvaluator {
 
     private void addInheritedProperties(List<Declaration> style, Expression inherits) {
         for (Term inherit : inherits.getTerms()) {
-            if (inherit.getType() == TermType.ClassReference) {
-                addInheritedProperties(style, inherit.getClassReference());
+            if (inherit instanceof ClassReferenceTerm) {
+                addInheritedProperties(style, ((ClassReferenceTerm) inherit).getClassReference());
             }
             else {
-                addInheritedProperties(style, inherit.getValue());
+                addInheritedProperties(style, inherit.toString());
             }
         }
     }
@@ -345,20 +349,22 @@ public class DSSEvaluator {
         Expression newValue = new Expression();
 
         for (Term primitiveValue : value.getTerms()) {
-            Function function = primitiveValue.getFunction();
-            if (function != null && isReference(function, withParams)) {
-                String name = function.getExpression().toString();
-                Expression sub = function.getName().equals("const") ? getConstantValue(name) : getParameterValue(name);
-                if (sub != null) {
-                    for (Term t : sub.getTerms()) {
-                        newValue.getTerms().add(t);
+            if (primitiveValue instanceof FunctionTerm) {
+                Function function = ((FunctionTerm) primitiveValue).getFunction();
+                if (isReference(function, withParams)) {
+                    String name = function.getExpression().toString();
+                    Expression sub = function.getName().equals("const") ? getConstantValue(name) : getParameterValue(name);
+                    if (sub != null) {
+                        for (Term t : sub.getTerms()) {
+                            newValue.getTerms().add(t);
+                        }
                     }
+                    continue;
                 }
-                continue;
             }
 
-            CalcExpression expression = primitiveValue.getCalculation();
-            if (expression != null) {
+            if (primitiveValue instanceof CalculationTerm) {
+                CalcExpression expression = ((CalculationTerm) primitiveValue).getCalculation();
                 try {
                     expression.substituteValues(variables, withParams ? parameters : null);
                     if (doCalculations) {

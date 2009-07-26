@@ -3,8 +3,10 @@ package com.silentmatt.dss.expression;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Function;
 import com.silentmatt.dss.Scope;
-import com.silentmatt.dss.Term;
-import com.silentmatt.dss.TermType;
+import com.silentmatt.dss.term.CalculationTerm;
+import com.silentmatt.dss.term.FunctionTerm;
+import com.silentmatt.dss.term.NumberTerm;
+import com.silentmatt.dss.term.Term;
 
 /**
  * A CalcExpression that evaluates to a simple CSS {@link Term}.
@@ -25,14 +27,14 @@ public class TermExpression implements CalcExpression {
 
     public Value calculateValue(Scope<Expression> variables, Scope<Expression> parameters) throws CalculationException {
         substituteValues(variables, parameters);
-        if (value.getType() == TermType.Number) {
-            return new Value(value);
+        if (value instanceof NumberTerm) {
+            return new Value((NumberTerm) value);
         }
-        else if (value.getType() == TermType.Calculation) {
-            return value.getCalculation().calculateValue(variables, parameters);
+        else if (value instanceof CalculationTerm) {
+            return ((CalculationTerm) value).getCalculation().calculateValue(variables, parameters);
         }
         else {
-            throw new CalculationException("Invalid term type: " + value.getType());
+            throw new CalculationException("Invalid term in calculation: '" + value + "'");
         }
     }
 
@@ -51,8 +53,8 @@ public class TermExpression implements CalcExpression {
     }
 
     public void substituteValues(Scope<Expression> variables, Scope<Expression> parameters) throws CalculationException {
-        if (value.getType() == TermType.Function) {
-            Function fn = value.getFunction();
+        if (value instanceof FunctionTerm) {
+            Function fn = ((FunctionTerm) value).getFunction();
             Expression variable = null;
             if (fn.getName().equals("const")) {
                 variable = variables.get(fn.getExpression().toString());

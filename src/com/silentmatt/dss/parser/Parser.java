@@ -2,6 +2,7 @@ package com.silentmatt.dss.parser;
 
 import java.util.*;
 import com.silentmatt.dss.*;
+import com.silentmatt.dss.term.*;
 import com.silentmatt.dss.expression.*;
 
 public class Parser {
@@ -495,15 +496,13 @@ public class Parser {
 		dirb = new DirectiveBuilder();
 		Declaration dec = null;
 		RuleSet rset = new RuleSet();
-		Term trm = new Term();
 		Expression expr = new Expression();
 		dirb.setType(DirectiveType.Include);
 		String url;
 		
 		Expect(34);
 		url = URI();
-		trm.setValue(url);
-		trm.setType(TermType.Url);
+		UrlTerm trm = new UrlTerm(url);
 		expr.getTerms().add(trm);
 		dirb.setExpression(expr); 
 		Expect(27);
@@ -643,7 +642,6 @@ public class Parser {
 		dirb = new DirectiveBuilder();
 		Declaration dec = null;
 		RuleSet rset = new RuleSet();
-		Term trm = new Term();
 		Expression expr = new Expression();
 		dirb.setType(DirectiveType.Import);
 		Medium m;
@@ -651,8 +649,7 @@ public class Parser {
 		
 		Expect(33);
 		url = URI();
-		trm.setValue(url);
-		trm.setType(TermType.Url);
+		UrlTerm trm = new UrlTerm(url);
 		expr.getTerms().add(trm);
 		dirb.setExpression(expr); 
 		if (StartOf(8)) {
@@ -682,67 +679,66 @@ public class Parser {
 
 	Term  term() {
 		Term  trm;
-		trm = new Term();
 		String val = "";
 		Expression exp = null;
 		String ident = null;
 		CalcExpression expression = null;
+		trm = null;
 		
 		switch (la.kind) {
 		case 5: {
 			val = QuotedString();
-			trm.setValue(val); trm.setType(TermType.String); 
+			trm = new StringTerm(val); 
 			break;
 		}
 		case 6: {
 			val = URI();
-			trm.setValue(val); trm.setType(TermType.Url); 
+			trm = new UrlTerm(val); 
 			break;
 		}
 		case 58: {
 			Get();
 			ident = identity();
-			trm.setValue("U\\" + ident); trm.setType(TermType.Unicode); 
+			trm = new UnicodeTerm("U\\" + ident); 
 			break;
 		}
 		case 42: {
 			val = HexValue();
-			trm.setValue(val); trm.setType(TermType.Hex); 
+			trm = new HexTerm(val); 
 			break;
 		}
 		case 57: {
 			expression = calculation();
-			trm.setCalculation(expression);
-			trm.setType(TermType.Calculation); 
+			trm = new CalculationTerm(expression); 
 			break;
 		}
 		case 1: case 9: case 10: case 11: case 12: case 13: case 14: case 15: case 16: case 17: case 18: case 19: case 20: {
 			ident = identity();
-			trm.setValue(ident); trm.setType(TermType.String); 
+			trm = new StringTerm(ident); 
 			while (la.kind == 24 || la.kind == 43 || la.kind == 45) {
 				if (la.kind == 24) {
 					Get();
-					trm.setValue(trm.getValue() + t.val); 
+					((StringTerm) trm).setValue(trm.toString() + t.val); 
 					if (la.kind == 24) {
 						Get();
-						trm.setValue(trm.getValue() + t.val); 
+						((StringTerm) trm).setValue(trm.toString() + t.val); 
 					}
 					ident = identity();
-					trm.setValue(trm.getValue() + ident); 
+					((StringTerm) trm).setValue(trm.toString() + ident); 
 				} else if (la.kind == 43) {
 					Get();
-					trm.setValue(trm.getValue() + t.val); 
+					((StringTerm) trm).setValue(trm.toString() + t.val); 
 					ident = identity();
-					trm.setValue(trm.getValue() + ident); 
+					((StringTerm) trm).setValue(trm.toString() + ident); 
 				} else {
 					Get();
-					trm.setValue(trm.getValue() + t.val); 
+					((StringTerm) trm).setValue(trm.toString() + t.val); 
 					if (StartOf(4)) {
 						ident = identity();
-						trm.setValue(trm.getValue() + ident); 
+						((StringTerm) trm).setValue(trm.toString() + ident); 
 					} else if (la.kind == 2) {
 						Get();
-						trm.setValue(trm.getValue() + t.val); 
+						((StringTerm) trm).setValue(trm.toString() + t.val); 
 					} else SynErr(65);
 				}
 			}
@@ -751,21 +747,17 @@ public class Parser {
 					Get();
 					exp = expr();
 					Function func = new Function();
-					func.setName(trm.getValue());
+					func.setName(trm.toString());
 					func.setExpression(exp);
-					trm.setValue(null);
-					trm.setFunction(func);
-					trm.setType(TermType.Function);
+					trm = new FunctionTerm(func);
 					
 					Expect(53);
 				} else {
 					Get();
 					ClassReference cls = new ClassReference();
 					Declaration dec;
-					cls.setName(trm.getValue());
-					trm.setValue(null);
-					trm.setClassReference(cls);
-					trm.setType(TermType.ClassReference);
+					cls.setName(trm.toString());
+					trm = new ClassReferenceTerm(cls);
 					
 					if (StartOf(4)) {
 						dec = declaration();
@@ -785,10 +777,10 @@ public class Parser {
 			if (la.kind == 39 || la.kind == 56) {
 				if (la.kind == 56) {
 					Get();
-					trm.setSign('-'); 
+					trm = new NumberTerm(0); ((NumberTerm) trm).setSign('-'); 
 				} else {
 					Get();
-					trm.setSign('+'); 
+					trm = new NumberTerm(0); ((NumberTerm) trm).setSign('+'); 
 				}
 			}
 			if (la.kind == 2) {
@@ -796,7 +788,7 @@ public class Parser {
 			} else if (la.kind == 3) {
 				Get();
 			} else SynErr(66);
-			val = t.val; 
+			if (trm == null) trm = new NumberTerm(Double.parseDouble(t.val)); val = t.val; 
 			if (la.val.toLowerCase().equals("n")) {
 				Expect(19);
 				val += t.val; 
@@ -813,19 +805,20 @@ public class Parser {
 				}
 			} else if (la.kind == 59) {
 				Get();
-				trm.setUnit(Unit.Percent); 
+				((NumberTerm) trm).setUnit(Unit.Percent); 
 			} else if (StartOf(9)) {
 				if (IsUnit()) {
 					ident = identity();
 					try {
-					   trm.setUnit(Unit.parse(ident));
+					   // TODO: What if trm isn't a NumberTerm?
+					   ((NumberTerm) trm).setUnit(Unit.parse(ident));
 					} catch (Exception ex) {
 					    errors.SemErr(t.line, t.col, "Unrecognized unit '" + ident + "'");
 					}
 					
 				}
 			} else SynErr(67);
-			trm.setValue(val); trm.setType(TermType.Number); 
+			if (trm == null) { trm = new NumberTerm(0); } ((NumberTerm) trm).setValue(Double.parseDouble(val)); 
 			break;
 		}
 		default: SynErr(68); break;
@@ -838,7 +831,6 @@ public class Parser {
 		dirb = new DirectiveBuilder();
 		Declaration dec = null;
 		RuleSet rset = new RuleSet();
-		Term trm = new Term();
 		Expression expr = new Expression();
 		dirb.setType(DirectiveType.Namespace);
 		String ident;
@@ -851,15 +843,13 @@ public class Parser {
 		}
 		if (la.kind == 6) {
 			url = URI();
-			trm.setValue(url);
-			trm.setType(TermType.Url);
+			UrlTerm trm = new UrlTerm(url);
 			expr.getTerms().add(trm);
 			dirb.setExpression(expr);
 			
 		} else if (la.kind == 5) {
 			url = QuotedString();
-			trm.setValue(url);
-			trm.setType(TermType.Url);
+			UrlTerm trm = new UrlTerm(url);
 			expr.getTerms().add(trm);
 			dirb.setExpression(expr);
 			

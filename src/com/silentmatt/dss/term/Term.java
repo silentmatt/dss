@@ -1,5 +1,6 @@
-package com.silentmatt.dss;
+package com.silentmatt.dss.term;
 
+import com.silentmatt.dss.*;
 import com.silentmatt.dss.expression.CalcExpression;
 
 /**
@@ -7,15 +8,8 @@ import com.silentmatt.dss.expression.CalcExpression;
  *
  * @author Matthew Crumley
  */
-public class Term {
+public abstract class Term {
     private Character seperator;
-    private Character sign;
-    private TermType type;
-    private String value;
-    private Unit unit;
-    private Function function;
-    private ClassReference classReference;
-    private CalcExpression calculation;
 
     public Character getSeperator() {
         return seperator;
@@ -23,103 +17,6 @@ public class Term {
 
     public void setSeperator(Character Seperator) {
         this.seperator = Seperator;
-    }
-
-    public Character getSign() {
-        return sign;
-    }
-
-    public void setSign(Character Sign) {
-        this.sign = Sign;
-    }
-
-    public TermType getType() {
-        return type;
-    }
-
-    public void setType(TermType Type) {
-        this.type = Type;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String Value) {
-        this.value = Value;
-    }
-
-    public Unit getUnit() {
-        return unit;
-    }
-
-    public void setUnit(Unit Unit) {
-        this.unit = Unit;
-    }
-
-    public Function getFunction() {
-        return function;
-    }
-
-    public void setFunction(Function Function) {
-        this.function = Function;
-    }
-
-    public ClassReference getClassReference() {
-        return classReference;
-    }
-
-    public void setClassReference(ClassReference classReference) {
-        this.classReference = classReference;
-    }
-
-    public CalcExpression getCalculation() {
-        return calculation;
-    }
-
-    public void setCalculation(CalcExpression calculation) {
-        this.calculation = calculation;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder txt = new StringBuilder();
-
-        switch (type) {
-        case Function:
-            txt.append(function.toString());
-            break;
-        case Url:
-            txt.append("url(").append(value).append(")");
-            break;
-        case Unicode:
-            txt.append("U\\").append(value.toUpperCase());
-            break;
-        case Hex:
-            txt.append(value.toUpperCase());
-            break;
-        case ClassReference:
-            txt.append(classReference.toString());
-            break;
-        case Calculation:
-            txt.append("calc(" + calculation.toString() + ")");
-            break;
-        case Number:
-        case String:
-        default:
-            if (sign != null) { txt.append(sign); }
-            txt.append(value);
-            if (unit != null) {
-                if (unit == unit.Percent) {
-                    txt.append("%");
-                } else {
-                    txt.append(unit.toString());
-                }
-            }
-            break;
-        }
-
-        return txt.toString();
     }
 
 // TODO: Implement these methods

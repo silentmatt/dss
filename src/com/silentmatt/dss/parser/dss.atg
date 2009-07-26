@@ -1,5 +1,6 @@
 import java.util.*;
 import com.silentmatt.dss.*;
+import com.silentmatt.dss.term.*;
 import com.silentmatt.dss.expression.*;
 
 COMPILER CSS3
@@ -266,7 +267,6 @@ importDirective<out DirectiveBuilder dirb> =
                     (.  dirb = new DirectiveBuilder();
                         Declaration dec = null;
                         RuleSet rset = new RuleSet();
-                        Term trm = new Term();
                         Expression expr = new Expression();
                         dirb.setType(DirectiveType.Import);
                         Medium m;
@@ -274,8 +274,7 @@ importDirective<out DirectiveBuilder dirb> =
                     .)
     "@import"
     URI<out url>    (.
-                        trm.setValue(url);
-                        trm.setType(TermType.Url);
+                        UrlTerm trm = new UrlTerm(url);
                         expr.getTerms().add(trm);
                         dirb.setExpression(expr); .)
     [ medium<out m> (.  dirb.getMediums().add(m); .) ]
@@ -286,14 +285,12 @@ includeDirective<out DirectiveBuilder dirb> =
                     (.  dirb = new DirectiveBuilder();
                         Declaration dec = null;
                         RuleSet rset = new RuleSet();
-                        Term trm = new Term();
                         Expression expr = new Expression();
                         dirb.setType(DirectiveType.Include);
                         String url;
                     .)
     "@include"
-    URI<out url>    (.  trm.setValue(url);
-                        trm.setType(TermType.Url);
+    URI<out url>    (.  UrlTerm trm = new UrlTerm(url);
                         expr.getTerms().add(trm);
                         dirb.setExpression(expr); .)
     ';'
@@ -318,7 +315,6 @@ namespaceDirective<out DirectiveBuilder dirb> =
                                 (.  dirb = new DirectiveBuilder();
                                     Declaration dec = null;
                                     RuleSet rset = new RuleSet();
-                                    Term trm = new Term();
                                     Expression expr = new Expression();
                                     dirb.setType(DirectiveType.Namespace);
                                     String ident;
@@ -330,15 +326,13 @@ namespaceDirective<out DirectiveBuilder dirb> =
     ]
     (
         URI<out url>            (.
-                                    trm.setValue(url);
-                                    trm.setType(TermType.Url);
+                                    UrlTerm trm = new UrlTerm(url);
                                     expr.getTerms().add(trm);
                                     dirb.setExpression(expr);
                                 .)
         |
         QuotedString<out url>   (.
-                                    trm.setValue(url);
-                                    trm.setType(TermType.Url);
+                                    UrlTerm trm = new UrlTerm(url);
                                     expr.getTerms().add(trm);
                                     dirb.setExpression(expr);
                                 .)
@@ -547,55 +541,50 @@ calculation<out CalcExpression expr> =
 "calc" "(" lengthExpression<out expr> ")"
 .
 
-term<out Term trm> =                        (.  trm = new Term();
-                                                String val = "";
+term<out Term trm> =                        (.  String val = "";
                                                 Expression exp = null;
                                                 String ident = null;
                                                 CalcExpression expression = null;
+                                                trm = null;
                                             .)
     (
-        QuotedString<out val>               (.  trm.setValue(val); trm.setType(TermType.String); .)
+        QuotedString<out val>               (.  trm = new StringTerm(val); .)
         |
-        URI<out val>                        (.  trm.setValue(val); trm.setType(TermType.Url); .)
+        URI<out val>                        (.  trm = new UrlTerm(val); .)
         |
-        "U\\" identity<out ident>           (.  trm.setValue("U\\" + ident); trm.setType(TermType.Unicode); .)
+        "U\\" identity<out ident>           (.  trm = new UnicodeTerm("U\\" + ident); .)
         |
-        HexValue<out val>                   (.  trm.setValue(val); trm.setType(TermType.Hex); .)
+        HexValue<out val>                   (.  trm = new HexTerm(val); .)
         |
-        calculation<out expression>         (.  trm.setCalculation(expression);
-                                                trm.setType(TermType.Calculation); .)
+        calculation<out expression>         (.  trm = new CalculationTerm(expression); .)
         |
-        identity<out ident>                 (.  trm.setValue(ident); trm.setType(TermType.String); .)
-        { ':'                               (.  trm.setValue(trm.getValue() + t.val); .)
-            [ ':'                           (.  trm.setValue(trm.getValue() + t.val); .)
+        identity<out ident>                 (.  trm = new StringTerm(ident); .)
+        { ':'                               (.  ((StringTerm) trm).setValue(trm.toString() + t.val); .)
+            [ ':'                           (.  ((StringTerm) trm).setValue(trm.toString() + t.val); .)
             ]
-            identity<out ident>             (.  trm.setValue(trm.getValue() + ident); .)
+            identity<out ident>             (.  ((StringTerm) trm).setValue(trm.toString() + ident); .)
             |
-            '.'                             (.  trm.setValue(trm.getValue() + t.val); .)
-            identity<out ident>             (.  trm.setValue(trm.getValue() + ident); .)
+            '.'                             (.  ((StringTerm) trm).setValue(trm.toString() + t.val); .)
+            identity<out ident>             (.  ((StringTerm) trm).setValue(trm.toString() + ident); .)
             |
-            '='                             (.  trm.setValue(trm.getValue() + t.val); .)
-            (   identity<out ident>         (.  trm.setValue(trm.getValue() + ident); .)
+            '='                             (.  ((StringTerm) trm).setValue(trm.toString() + t.val); .)
+            (   identity<out ident>         (.  ((StringTerm) trm).setValue(trm.toString() + ident); .)
                 |
-                integer                     (.  trm.setValue(trm.getValue() + t.val); .)
+                integer                     (.  ((StringTerm) trm).setValue(trm.toString() + t.val); .)
             )
         }
         [
             '(' expr<out exp>               (.  Function func = new Function();
-                                                func.setName(trm.getValue());
+                                                func.setName(trm.toString());
                                                 func.setExpression(exp);
-                                                trm.setValue(null);
-                                                trm.setFunction(func);
-                                                trm.setType(TermType.Function);
+                                                trm = new FunctionTerm(func);
                                             .)
             ')'
             |
             ('<'                            (.  ClassReference cls = new ClassReference();
                                                 Declaration dec;
-                                                cls.setName(trm.getValue());
-                                                trm.setValue(null);
-                                                trm.setClassReference(cls);
-                                                trm.setType(TermType.ClassReference);
+                                                cls.setName(trm.toString());
+                                                trm = new ClassReferenceTerm(cls);
                                             .)
                 [ declaration<out dec>      (.  cls.addArgument(dec); .)
                   { ';'
@@ -604,12 +593,13 @@ term<out Term trm> =                        (.  trm = new Term();
             '>')
         ]
         |
-        [   '-'                             (.  trm.setSign('-'); .)
+        [   '-'                             (.  trm = new NumberTerm(0); ((NumberTerm) trm).setSign('-'); .)
             |
-            '+'                             (.  trm.setSign('+'); .)
+            '+'                             (.  trm = new NumberTerm(0); ((NumberTerm) trm).setSign('+'); .)
         ]
-        ( integer | decimal )               (.  val = t.val; .)
+        ( integer | decimal )               (.  if (trm == null) trm = new NumberTerm(Double.parseDouble(t.val)); val = t.val; .)
         (
+            // TODO: This gets lost because val isn't used to construct the NumberTerm
             IF(la.val.toLowerCase().equals("n"))
             (
             /* func(4n+1) */
@@ -621,19 +611,20 @@ term<out Term trm> =                        (.  trm = new Term();
                     integer                 (.  val += t.val; .)
                 ]
             )
-            |
-            "%"                             (.  trm.setUnit(Unit.Percent); .)
+            |                               // TODO: What if trm isn't a NumberTerm?
+            "%"                             (.  ((NumberTerm) trm).setUnit(Unit.Percent); .)
             |
             [
                 IF(IsUnit())
                     identity<out ident>     (.  try {
-                                                    trm.setUnit(Unit.parse(ident));
+                                                    // TODO: What if trm isn't a NumberTerm?
+                                                    ((NumberTerm) trm).setUnit(Unit.parse(ident));
                                                 } catch (Exception ex) {
                                                     errors.SemErr(t.line, t.col, "Unrecognized unit '" + ident + "'");
                                                 }
                                             .)
             ]
-        )                                   (.  trm.setValue(val); trm.setType(TermType.Number); .)
+        )                                   (.  if (trm == null) { trm = new NumberTerm(0); } ((NumberTerm) trm).setValue(Double.parseDouble(val)); .)
     )
 .
 

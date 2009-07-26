@@ -1,5 +1,6 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.term.Term;
 import java.util.ArrayList;
 import java.util.List;
 

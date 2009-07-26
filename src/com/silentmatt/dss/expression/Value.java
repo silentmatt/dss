@@ -1,8 +1,8 @@
 package com.silentmatt.dss.expression;
 
-import com.silentmatt.dss.Term;
-import com.silentmatt.dss.TermType;
+import com.silentmatt.dss.term.Term;
 import com.silentmatt.dss.Unit;
+import com.silentmatt.dss.term.NumberTerm;
 
 /**
  * Represents a dimensioned value.
@@ -25,22 +25,18 @@ public class Value {
     }
 
     /**
-     * Constructs a Value from a CSS {@link Term}.
-     * The Term's {@link TermType} must be {@link TermType#Number}.
+     * Constructs a Value from a CSS {@link NumberTerm}.
      *
      * @param term The CSS Term to convert.
      * @throws IllegalArgumentException <code>term</term> is not a number.
      */
-    public Value(Term term) {
-        if (term.getType() != TermType.Number) {
-            throw new IllegalArgumentException("term");
-        }
+    public Value(NumberTerm term) {
         this.unit = CalculationUnit.fromCssUnit(term.getUnit());
         if (this.unit == null) {
             throw new IllegalArgumentException("term");
         }
         char sign = term.getSign() == null ? '+' : term.getSign().charValue();
-        this.scalar = Double.parseDouble(sign + term.getValue()) * this.unit.getScale();
+        this.scalar = Double.parseDouble(sign + String.valueOf(term.getDoubleValue())) * this.unit.getScale();
         this.unit = CalculationUnit.getCanonicalUnit(this.unit);
     }
 
@@ -136,9 +132,7 @@ public class Value {
      * @throws CalculationException <code>this</code> cannot be represented by a valid CSS unit.
      */
     public Term toTerm() throws CalculationException {
-        Term t = new Term();
-        t.setType(TermType.Number);
-        t.setValue(String.valueOf(scalar));
+        NumberTerm t = new NumberTerm(scalar);
         com.silentmatt.dss.Unit cssUnit = CalculationUnit.toCssUnit(unit);
         if (cssUnit == null) {
             throw new CalculationException("not a valid CSS unit: " + toString());
