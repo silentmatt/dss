@@ -25,8 +25,8 @@ public class Attribute {
      *
      * @param Operand The attribute name to be compared.
      */
-    public void setOperand(String Operand) {
-        this.operand = Operand;
+    public void setOperand(String operand) {
+        this.operand = operand;
     }
 
     /**
@@ -82,6 +82,7 @@ public class Attribute {
             case BeginsWith: txt.append("^="); break;
             case EndsWith: txt.append("$="); break;
             case Contains: txt.append("*="); break;
+            default: break;
             }
             txt.append(value);
         }

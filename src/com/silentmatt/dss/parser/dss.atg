@@ -512,9 +512,8 @@ term<out Term trm> =                        (.  String val = "";
                                             .)
             ')'
             |
-            ('<'                            (.  ClassReference cls = new ClassReference();
+            ('<'                            (.  ClassReference cls = new ClassReference(trm.toString());
                                                 Declaration dec;
-                                                cls.setName(trm.toString());
                                                 trm = new ClassReferenceTerm(cls);
                                             .)
                 [ declaration<out dec>      (.  cls.addArgument(dec); .)

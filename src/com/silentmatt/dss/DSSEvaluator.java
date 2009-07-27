@@ -1,12 +1,8 @@
 package com.silentmatt.dss;
 
 import com.silentmatt.dss.directive.PageDirective;
-import com.silentmatt.dss.directive.NamespaceDirective;
 import com.silentmatt.dss.directive.MediaDirective;
 import com.silentmatt.dss.directive.IncludeDirective;
-import com.silentmatt.dss.directive.ImportDirective;
-import com.silentmatt.dss.directive.GenericDirective;
-import com.silentmatt.dss.directive.CharsetDirective;
 import com.silentmatt.dss.directive.ClassDirective;
 import com.silentmatt.dss.directive.FontFaceDirective;
 import com.silentmatt.dss.directive.DefineDirective;
@@ -100,6 +96,8 @@ public class DSSEvaluator {
             case RuleSet:
                 evaluateRuleSet((RuleSet) rule);
                 break;
+            default:
+                throw new IllegalStateException("Unknown rule type:" + rule.getRuleType());
             }
         }
     }
@@ -117,8 +115,11 @@ public class DSSEvaluator {
     private void evaluateDirective(Directive directive, List<Rule> container) throws MalformedURLException, IOException {
         switch (directive.getType()) {
             case Charset:
-                evaluateCharsetDirective((CharsetDirective) directive);
+            case Namespace:
+            case Import:
+            case Other:
                 break;
+
             case Class:
                 evaluateClass((ClassDirective) directive);
                 break;
@@ -131,46 +132,22 @@ public class DSSEvaluator {
             case FontFace:
                 evaluateFontFaceDirective((FontFaceDirective) directive);
                 break;
-            case Import:
-                evaluateImportDirective((ImportDirective) directive);
-                break;
             case Include:
                 evaluateInclude((IncludeDirective) directive, container);
                 break;
             case Media:
                 evaluateMediaDirective((MediaDirective) directive);
                 break;
-            case Namespace:
-                evaluateNamespaceDirective((NamespaceDirective) directive);
-                break;
             case Page:
                 evaluatePageDirective((PageDirective) directive);
                 break;
-            case Other:
-                evaluateGenericDirective((GenericDirective) directive);
-                break;
+            default:
+                throw new IllegalStateException("Unknown Directive type:" + directive.getType());
         }
-    }
-
-    private void evaluateCharsetDirective(CharsetDirective rule) {
-        // Do nothing
-        // XXX: should we support variables in @charset rules?
     }
 
     private void evaluateFontFaceDirective(FontFaceDirective rule) {
         evaluateStyle(rule.getDeclarations(), true);
-    }
-
-    private void evaluateGenericDirective(GenericDirective rule) {
-        // Do Nothing
-    }
-
-    private void evaluateNamespaceDirective(NamespaceDirective rule) {
-        // Do Nothing
-    }
-
-    private void evaluateImportDirective(ImportDirective rule) {
-        // Do Nothing
     }
 
     private void evaluateMediaDirective(MediaDirective rule) throws MalformedURLException, IOException {
@@ -289,7 +266,7 @@ public class DSSEvaluator {
             }
 
             for (Declaration dec : properties) {
-                substituteValue(dec, true);
+                substituteValue(dec, true, true);
             }
         }
         finally {

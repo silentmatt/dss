@@ -690,9 +690,8 @@ public class Parser {
 					Expect(53);
 				} else {
 					Get();
-					ClassReference cls = new ClassReference();
+					ClassReference cls = new ClassReference(trm.toString());
 					Declaration dec;
-					cls.setName(trm.toString());
 					trm = new ClassReferenceTerm(cls);
 					
 					if (StartOf(4)) {

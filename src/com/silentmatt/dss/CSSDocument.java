@@ -16,7 +16,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class CSSDocument {
-    private List<RuleSet> ruleSet = new ArrayList<RuleSet>();
+    private List<RuleSet> ruleSets = new ArrayList<RuleSet>();
     private String charset;
     private List<Directive> directives = new ArrayList<Directive>();
     private List<Rule> allRules = new ArrayList<Rule>();
@@ -35,28 +35,28 @@ public class CSSDocument {
     }
 
     public static CSSDocument parse(Scanner scanner, ErrorReporter errors) {
-        Parser p = new Parser(scanner);
-        p.errors = errors;
-        p.Parse();
-        if (p.errors.getErrorCount() > 0) {
+        Parser parser = new Parser(scanner);
+        parser.errors = errors;
+        parser.Parse();
+        if (parser.errors.getErrorCount() > 0) {
             return null;
         }
         else {
-            return p.CSSDoc;
+            return parser.CSSDoc;
         }
     }
 
     public List<RuleSet> getRuleSets() {
-        return Collections.unmodifiableList(ruleSet);
+        return Collections.unmodifiableList(ruleSets);
     }
 
-    public void setRuleSets(List<RuleSet> ruleSet) {
-        this.ruleSet = ruleSet;
+    public void setRuleSets(List<RuleSet> ruleSets) {
+        this.ruleSets = ruleSets;
     }
 
     public void addRuleSet(RuleSet set) {
         allRules.add(set);
-        ruleSet.add(set);
+        ruleSets.add(set);
     }
 
     public String getCharset() {

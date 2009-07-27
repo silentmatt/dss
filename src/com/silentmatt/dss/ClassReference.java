@@ -22,12 +22,6 @@ public class ClassReference {
     private List<Declaration> arguments = new ArrayList<Declaration>();
 
     /**
-     * Constructor.
-     */
-    public ClassReference() {
-    }
-
-    /**
      * Constructs a ClassReference from a class name.
      *
      * @param name The name of the class to reference.
