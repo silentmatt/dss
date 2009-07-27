@@ -1,16 +1,16 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.*;
-import com.silentmatt.dss.directive.ExpressionDirective;
-import com.silentmatt.dss.directive.DirectiveType;
+import com.silentmatt.dss.term.Term;
 
 /**
  *
  * @author Matthew Crumley
  */
 public class CharsetDirective extends ExpressionDirective {
-    public CharsetDirective(Expression charset) {
-        super(charset);
+    public CharsetDirective(Term charset) {
+        super(new Expression());
+        getExpression().getTerms().add(charset);
     }
 
     public String getName() {

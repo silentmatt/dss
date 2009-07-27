@@ -14,6 +14,11 @@ import java.net.URL;
 public class IncludeDirective extends ExpressionDirective {
     private CSSDocument included;
 
+    public IncludeDirective(UrlTerm url) {
+        super(new Expression());
+        getExpression().getTerms().add(url);
+    }
+
     public IncludeDirective(Expression url) {
         super(url);
     }

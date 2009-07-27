@@ -3,13 +3,20 @@ package com.silentmatt.dss.directive;
 import com.silentmatt.dss.*;
 import com.silentmatt.dss.directive.ExpressionDirective;
 import com.silentmatt.dss.directive.DirectiveType;
+import com.silentmatt.dss.term.UrlTerm;
 
 /**
- *
+ * @todo Why does this extend ExpressionDirective?
  * @author Matthew Crumley
  */
 public class NamespaceDirective extends ExpressionDirective {
     private String prefix;
+
+    public NamespaceDirective(String prefix, UrlTerm namespace) {
+        super(new Expression());
+        getExpression().getTerms().add(namespace);
+        setPrefix(prefix);
+    }
 
     public NamespaceDirective(String prefix, Expression namespace) {
         super(namespace);

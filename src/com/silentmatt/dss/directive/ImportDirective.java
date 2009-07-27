@@ -3,6 +3,7 @@ package com.silentmatt.dss.directive;
 import com.silentmatt.dss.*;
 import com.silentmatt.dss.directive.ExpressionDirective;
 import com.silentmatt.dss.directive.DirectiveType;
+import com.silentmatt.dss.term.UrlTerm;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -12,6 +13,12 @@ import java.net.URL;
  */
 public class ImportDirective extends ExpressionDirective {
     private Medium medium;
+
+    public ImportDirective(UrlTerm url, Medium medium) {
+        super(new Expression());
+        getExpression().getTerms().add(url);
+        setMedium(medium);
+    }
 
     public ImportDirective(Expression url, Medium medium) {
         super(url);

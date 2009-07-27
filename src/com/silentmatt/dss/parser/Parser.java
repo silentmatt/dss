@@ -149,9 +149,9 @@ public class Parser {
 	RuleSet  ruleset() {
 		RuleSet  rset;
 		rset = new RuleSet();
-		Selector sel = null;
-		Declaration dec = null;
-		DirectiveBuilder dir;
+		Selector sel;
+		Declaration dec;
+		Directive dir;
 		
 		sel = selector();
 		rset.getSelectors().add(sel); 
@@ -168,10 +168,10 @@ public class Parser {
 				rset.addDeclaration(dec); 
 			} else if (la.kind == 25) {
 				dir = classDirective();
-				rset.addDirective(dir.build()); 
+				rset.addDirective(dir); 
 			} else {
 				dir = defineDirective();
-				rset.addDirective(dir.build()); 
+				rset.addDirective(dir); 
 			}
 		}
 		Expect(23);
@@ -180,92 +180,50 @@ public class Parser {
 
 	Directive  directive() {
 		Directive  dir;
-		dir = null; //new GenericDirective();
-		Declaration dec = null;
-		RuleSet rset = null;
-		Expression exp = null;
-		Directive dr = null;
-		String ident = null;
-		Medium m;
-		DirectiveBuilder dirb = new DirectiveBuilder();
-		
+		dir = null; 
 		switch (la.kind) {
 		case 21: {
-			dirb = mediaDirective();
+			dir = mediaDirective();
 			break;
 		}
 		case 25: {
-			dirb = classDirective();
+			dir = classDirective();
 			break;
 		}
 		case 29: {
-			dirb = defineDirective();
+			dir = defineDirective();
 			break;
 		}
 		case 31: {
-			dirb = fontFaceDirective();
+			dir = fontFaceDirective();
 			break;
 		}
 		case 33: {
-			dirb = importDirective();
+			dir = importDirective();
 			break;
 		}
 		case 34: {
-			dirb = includeDirective();
+			dir = includeDirective();
 			break;
 		}
 		case 35: {
-			dirb = charsetDirective();
+			dir = charsetDirective();
 			break;
 		}
 		case 32: {
-			dirb = pageDirective();
+			dir = pageDirective();
 			break;
 		}
 		case 36: {
-			dirb = namespaceDirective();
+			dir = namespaceDirective();
 			break;
 		}
 		case 37: {
-			Get();
-			ident = identity();
-			dirb.setName("@" + ident);
-			String lcName = ident.toLowerCase();
-			dirb.setType(DirectiveType.Other);
-			
-			if (StartOf(5)) {
-				if (StartOf(5)) {
-					exp = expr();
-					dirb.setExpression(exp); 
-				} else {
-					m = medium();
-					dirb.getMediums().add(m); 
-				}
-			}
-			if (la.kind == 22) {
-				Get();
-				while (StartOf(1)) {
-					if (StartOf(4)) {
-						dec = declaration();
-						Expect(27);
-						dirb.addDeclaration(dec); 
-					} else if (StartOf(2)) {
-						rset = ruleset();
-						dirb.addRuleSet(rset); 
-					} else {
-						dr = directive();
-						dirb.addDirective(dr); 
-					}
-				}
-				Expect(23);
-			} else if (la.kind == 27) {
-				Get();
-			} else SynErr(61);
+			dir = genericDirective();
 			break;
 		}
-		default: SynErr(62); break;
+		default: SynErr(61); break;
 		}
-		dir = dirb.build(); 
 		return dir;
 	}
 
@@ -337,7 +295,7 @@ public class Parser {
 			m = Medium.tv; 
 			break;
 		}
-		default: SynErr(63); break;
+		default: SynErr(62); break;
 		}
 		return m;
 	}
@@ -398,116 +356,102 @@ public class Parser {
 			Get();
 			break;
 		}
-		default: SynErr(64); break;
+		default: SynErr(63); break;
 		}
 		ident = t.val; 
 		return ident;
 	}
 
-	DirectiveBuilder  mediaDirective() {
-		DirectiveBuilder  dirb;
-		dirb = new DirectiveBuilder();
-		Medium m;
-		RuleSet rset = new RuleSet();
-		dirb.setName("@media");
-		dirb.setType(DirectiveType.Media);
+	MediaDirective  mediaDirective() {
+		MediaDirective  mdir;
+		List<Medium> media = new ArrayList<Medium>();
+		List<Rule> rules = new ArrayList<Rule>();
 		
 		Expect(21);
-		m = medium();
-		dirb.getMediums().add(m); 
+		Medium m = medium();
+		media.add(m); 
 		Expect(22);
-		while (StartOf(6)) {
+		while (StartOf(5)) {
 			if (StartOf(2)) {
-				rset = ruleset();
-				dirb.addRuleSet(rset); 
+				RuleSet rset = ruleset();
+				rules.add(rset); 
 			} else if (la.kind == 25) {
-				DirectiveBuilder dir = classDirective();
-				dirb.addDirective(dir.build()); 
+				ClassDirective cdir = classDirective();
+				rules.add(cdir); 
 			} else if (la.kind == 29) {
-				DirectiveBuilder dir = defineDirective();
-				dirb.addDirective(dir.build()); 
+				DefineDirective ddir = defineDirective();
+				rules.add(ddir); 
 			} else {
-				DirectiveBuilder dir = includeDirective();
-				dirb.addDirective(dir.build()); 
+				IncludeDirective idir = includeDirective();
+				rules.add(idir); 
 			}
 		}
 		Expect(23);
-		return dirb;
+		mdir = new MediaDirective(media, rules); 
+		return mdir;
 	}
 
-	DirectiveBuilder  classDirective() {
-		DirectiveBuilder  dirb;
-		dirb = new DirectiveBuilder();
-		Declaration dec = null;
+	ClassDirective  classDirective() {
+		ClassDirective  dir;
 		String ident;
+		List<Declaration> parameters = new ArrayList<Declaration>();
+		List<Declaration> declarations = new ArrayList<Declaration>();
 		Declaration param;
-		RuleSet rset = new RuleSet();
-		dirb.setType(DirectiveType.Class);
 		
 		Expect(25);
 		ident = identity();
-		dirb.setID(ident); 
 		if (la.kind == 26) {
 			Get();
 			if (StartOf(4)) {
 				param = parameter();
-				dirb.addParameter(param); 
+				parameters.add(param); 
 				while (la.kind == 27) {
 					Get();
 					param = parameter();
-					dirb.addParameter(param); 
+					parameters.add(param); 
 				}
 			}
 			Expect(28);
 		}
 		Expect(22);
 		while (StartOf(4)) {
-			dec = declaration();
+			Declaration dec = declaration();
 			Expect(27);
-			dirb.addDeclaration(dec); 
+			declarations.add(dec); 
 		}
 		Expect(23);
-		return dirb;
+		dir = new ClassDirective(ident, parameters, declarations); 
+		return dir;
 	}
 
-	DirectiveBuilder  defineDirective() {
-		DirectiveBuilder  dirb;
-		dirb = new DirectiveBuilder();
-		Declaration dec = null;
-		RuleSet rset = new RuleSet();
-		dirb.setType(DirectiveType.Define);
+	DefineDirective  defineDirective() {
+		DefineDirective  dir;
+		List<Declaration> declarations = new ArrayList<Declaration>();
+		boolean global = false;
 		
 		Expect(29);
 		if (la.kind == 30) {
 			Get();
-			dirb.setID("global"); 
+			global = true; 
 		}
 		Expect(22);
 		while (StartOf(4)) {
-			dec = declaration();
+			Declaration dec = declaration();
 			Expect(27);
-			dirb.addDeclaration(dec); 
+			declarations.add(dec); 
 		}
 		Expect(23);
-		return dirb;
+		dir = new DefineDirective(declarations, global); 
+		return dir;
 	}
 
-	DirectiveBuilder  includeDirective() {
-		DirectiveBuilder  dirb;
-		dirb = new DirectiveBuilder();
-		Declaration dec = null;
-		RuleSet rset = new RuleSet();
-		Expression expr = new Expression();
-		dirb.setType(DirectiveType.Include);
-		String url;
-		
+	IncludeDirective  includeDirective() {
+		IncludeDirective  dir;
 		Expect(34);
-		url = URI();
-		UrlTerm trm = new UrlTerm(url);
-		expr.getTerms().add(trm);
-		dirb.setExpression(expr); 
+		String url = URI();
+		dir = new IncludeDirective(new UrlTerm(url)); 
 		Expect(27);
-		return dirb;
+		return dir;
 	}
 
 	Declaration  parameter() {
@@ -534,7 +478,7 @@ public class Parser {
 		
 		trm = term();
 		exp.getTerms().add(trm); 
-		while (StartOf(7)) {
+		while (StartOf(6)) {
 			if (la.kind == 38 || la.kind == 55) {
 				if (la.kind == 55) {
 					Get();
@@ -571,48 +515,42 @@ public class Parser {
 		return dec;
 	}
 
-	DirectiveBuilder  fontFaceDirective() {
-		DirectiveBuilder  dirb;
-		dirb = new DirectiveBuilder();
-		Declaration dec = null;
-		RuleSet rset = new RuleSet();
-		dirb.setType(DirectiveType.FontFace);
-		
+	FontFaceDirective  fontFaceDirective() {
+		FontFaceDirective  dir;
+		List<Declaration> declarations = new ArrayList<Declaration>(); 
 		Expect(31);
 		Expect(22);
 		while (StartOf(4)) {
-			dec = declaration();
+			Declaration dec = declaration();
 			Expect(27);
-			dirb.addDeclaration(dec); 
+			declarations.add(dec); 
 		}
 		Expect(23);
-		return dirb;
+		dir = new FontFaceDirective(declarations); 
+		return dir;
 	}
 
-	DirectiveBuilder  pageDirective() {
-		DirectiveBuilder  dirb;
-		dirb = new DirectiveBuilder();
-		Declaration dec = null;
-		SimpleSelector ss;
-		String psd;
-		dirb.setType(DirectiveType.Page);
+	PageDirective  pageDirective() {
+		PageDirective  dir;
+		List<Declaration> declarations = new ArrayList<Declaration>();
+		SimpleSelector ss = null;
 		
 		Expect(32);
 		if (la.kind == 24) {
-			psd = pseudo();
+			String psd = pseudo();
 			ss = new SimpleSelector();
 			ss.setPseudo(psd);
-			dirb.setSimpleSelector(ss);
 			
 		}
 		Expect(22);
 		while (StartOf(4)) {
-			dec = declaration();
+			Declaration dec = declaration();
 			Expect(27);
-			dirb.addDeclaration(dec); 
+			declarations.add(dec); 
 		}
 		Expect(23);
-		return dirb;
+		dir = new PageDirective(ss, declarations); 
+		return dir;
 	}
 
 	String  pseudo() {
@@ -638,44 +576,29 @@ public class Parser {
 		return pseudo;
 	}
 
-	DirectiveBuilder  importDirective() {
-		DirectiveBuilder  dirb;
-		dirb = new DirectiveBuilder();
-		Declaration dec = null;
-		RuleSet rset = new RuleSet();
-		Expression expr = new Expression();
-		dirb.setType(DirectiveType.Import);
-		Medium m;
-		String url;
+	ImportDirective  importDirective() {
+		ImportDirective  dir;
+		Medium m = Medium.all;
+		UrlTerm trm;
 		
 		Expect(33);
-		url = URI();
-		UrlTerm trm = new UrlTerm(url);
-		expr.getTerms().add(trm);
-		dirb.setExpression(expr); 
-		if (StartOf(8)) {
+		String url = URI();
+		trm = new UrlTerm(url); 
+		if (StartOf(7)) {
 			m = medium();
-			dirb.getMediums().add(m); 
 		}
 		Expect(27);
-		return dirb;
+		dir = new ImportDirective(trm, m); 
+		return dir;
 	}
 
-	DirectiveBuilder  charsetDirective() {
-		DirectiveBuilder  dirb;
-		dirb = new DirectiveBuilder();
-		Declaration dec = null;
-		RuleSet rset = new RuleSet();
-		Term trm;
-		Expression expr = new Expression();
-		dirb.setType(DirectiveType.Charset);
-		
+	CharsetDirective  charsetDirective() {
+		CharsetDirective  dir;
 		Expect(35);
-		trm = term();
-		expr.getTerms().add(trm);
-		dirb.setExpression(expr); 
+		Term trm = term();
+		dir = new CharsetDirective(trm); 
 		Expect(27);
-		return dirb;
+		return dir;
 	}
 
 	Term  term() {
@@ -740,7 +663,7 @@ public class Parser {
 					} else if (la.kind == 2) {
 						Get();
 						((StringTerm) trm).setValue(trm.toString() + t.val); 
-					} else SynErr(65);
+					} else SynErr(64);
 				}
 			}
 			if (la.kind == 26 || la.kind == 52) {
@@ -788,7 +711,7 @@ public class Parser {
 				Get();
 			} else if (la.kind == 3) {
 				Get();
-			} else SynErr(66);
+			} else SynErr(65);
 			if (trm == null) trm = new NumberTerm(Double.parseDouble(t.val)); val = t.val; 
 			if (la.val.toLowerCase().equals("n")) {
 				Expect(19);
@@ -808,7 +731,7 @@ public class Parser {
 			} else if (la.kind == 59) {
 				Get();
 				((NumberTerm) trm).setUnit(Unit.Percent); 
-			} else if (StartOf(9)) {
+			} else if (StartOf(8)) {
 				if (IsUnit()) {
 					ident = identity();
 					try {
@@ -819,7 +742,7 @@ public class Parser {
 					}
 					
 				}
-			} else SynErr(67);
+			} else SynErr(66);
 			if (trm == null) {
 			   trm = new NumberTerm(0);
 			}
@@ -833,41 +756,67 @@ public class Parser {
 			
 			break;
 		}
-		default: SynErr(68); break;
+		default: SynErr(67); break;
 		}
 		return trm;
 	}
 
-	DirectiveBuilder  namespaceDirective() {
-		DirectiveBuilder  dirb;
-		dirb = new DirectiveBuilder();
-		Declaration dec = null;
-		RuleSet rset = new RuleSet();
-		Expression expr = new Expression();
-		dirb.setType(DirectiveType.Namespace);
-		String ident;
-		String url;
+	NamespaceDirective  namespaceDirective() {
+		NamespaceDirective  dir;
+		String ident = null;
+		String url = null;
 		
 		Expect(36);
 		if (StartOf(4)) {
 			ident = identity();
-			dirb.setID(ident); 
 		}
 		if (la.kind == 6) {
 			url = URI();
-			UrlTerm trm = new UrlTerm(url);
-			expr.getTerms().add(trm);
-			dirb.setExpression(expr);
-			
 		} else if (la.kind == 5) {
 			url = QuotedString();
-			UrlTerm trm = new UrlTerm(url);
-			expr.getTerms().add(trm);
-			dirb.setExpression(expr);
-			
-		} else SynErr(69);
+		} else SynErr(68);
 		Expect(27);
-		return dirb;
+		dir = new NamespaceDirective(ident, new UrlTerm(url)); 
+		return dir;
+	}
+
+	GenericDirective  genericDirective() {
+		GenericDirective  dir;
+		Expect(37);
+		String ident = identity();
+		dir = new GenericDirective();
+		dir.setName("@" + ident);
+		dir.setType(DirectiveType.Other);
+		
+		if (StartOf(9)) {
+			if (StartOf(9)) {
+				Expression exp = expr();
+				dir.setExpression(exp); 
+			} else {
+				Medium m = medium();
+				dir.getMediums().add(m); 
+			}
+		}
+		if (la.kind == 22) {
+			Get();
+			while (StartOf(1)) {
+				if (StartOf(4)) {
+					Declaration dec = declaration();
+					Expect(27);
+					dir.getDeclarations().add(dec); 
+				} else if (StartOf(2)) {
+					RuleSet rset = ruleset();
+					dir.addRuleSet(rset); 
+				} else {
+					Directive dr = directive();
+					dir.addDirective(dr); 
+				}
+			}
+			Expect(23);
+		} else if (la.kind == 27) {
+			Get();
+		} else SynErr(69);
+		return dir;
 	}
 
 	Selector  selector() {
@@ -1075,7 +1024,7 @@ public class Parser {
 			exp = lengthExpression();
 			Expect(53);
 			expr = exp; 
-		} else if (StartOf(5)) {
+		} else if (StartOf(9)) {
 			trm = term();
 			expr = new TermExpression(trm); 
 		} else SynErr(74);
@@ -1129,11 +1078,11 @@ public class Parser {
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,T,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,T,T, x,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,T,x,x, x,T,x,x, x,x,T,x, x,x,x,x, x,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,T,T, x,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,x, x,x},
 		{x,x,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,T,T, x,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,x,T,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,T,T, x,T,T,x, x,x,x,x, x,x,x,x, x,T,T,T, T,T,T,x, x,x},
+		{x,T,T,T, x,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,x,x,x, T,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x}
@@ -1205,14 +1154,14 @@ public class Parser {
 			case 59: s = "\"%\" expected"; break;
 			case 60: s = "??? expected"; break;
 			case 61: s = "invalid directive"; break;
-			case 62: s = "invalid directive"; break;
-			case 63: s = "invalid medium"; break;
-			case 64: s = "invalid identity"; break;
+			case 62: s = "invalid medium"; break;
+			case 63: s = "invalid identity"; break;
+			case 64: s = "invalid term"; break;
 			case 65: s = "invalid term"; break;
 			case 66: s = "invalid term"; break;
 			case 67: s = "invalid term"; break;
-			case 68: s = "invalid term"; break;
-			case 69: s = "invalid namespaceDirective"; break;
+			case 68: s = "invalid namespaceDirective"; break;
+			case 69: s = "invalid genericDirective"; break;
 			case 70: s = "invalid simpleselector"; break;
 			case 71: s = "invalid attrib"; break;
 			case 72: s = "invalid addop"; break;

@@ -10,7 +10,7 @@ import java.util.List;
 public class DefineDirective extends DeclarationDirective {
     private boolean global;
 
-    DefineDirective(List<Declaration> declarations, boolean global) {
+    public DefineDirective(List<Declaration> declarations, boolean global) {
         super(declarations);
         this.global = global;
     }
