@@ -804,6 +804,7 @@ public class Parser {
 					Expect(2);
 					val += t.val; 
 				}
+				trm = new StringTerm(val); val = ""; 
 			} else if (la.kind == 59) {
 				Get();
 				((NumberTerm) trm).setUnit(Unit.Percent); 
@@ -819,7 +820,17 @@ public class Parser {
 					
 				}
 			} else SynErr(67);
-			if (trm == null) { trm = new NumberTerm(0); } ((NumberTerm) trm).setValue(Double.parseDouble(val)); 
+			if (trm == null) {
+			   trm = new NumberTerm(0);
+			}
+			if (trm instanceof NumberTerm) {
+			    ((NumberTerm) trm).setValue(Double.parseDouble(val));
+			}
+			else if (trm instanceof StringTerm) {
+			    StringTerm strTrm = (StringTerm) trm;
+			    strTrm.setValue(strTrm.getValue() + val);
+			}
+			
 			break;
 		}
 		default: SynErr(68); break;

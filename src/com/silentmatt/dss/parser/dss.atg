@@ -611,7 +611,7 @@ term<out Term trm> =                        (.  String val = "";
                   )
                     integer                 (.  val += t.val; .)
                 ]
-            )
+            )                               (. trm = new StringTerm(val); val = ""; .)
             |                               // TODO: What if trm isn't a NumberTerm?
             "%"                             (.  ((NumberTerm) trm).setUnit(Unit.Percent); .)
             |
@@ -625,7 +625,17 @@ term<out Term trm> =                        (.  String val = "";
                                                 }
                                             .)
             ]
-        )                                   (.  if (trm == null) { trm = new NumberTerm(0); } ((NumberTerm) trm).setValue(Double.parseDouble(val)); .)
+        )                                   (.  if (trm == null) {
+                                                    trm = new NumberTerm(0);
+                                                }
+                                                if (trm instanceof NumberTerm) {
+                                                    ((NumberTerm) trm).setValue(Double.parseDouble(val));
+                                                }
+                                                else if (trm instanceof StringTerm) {
+                                                    StringTerm strTrm = (StringTerm) trm;
+                                                    strTrm.setValue(strTrm.getValue() + val);
+                                                }
+                                            .)
     )
 .
 
