@@ -116,7 +116,6 @@ PRODUCTIONS
  *------------------------------------------------------------------------*/
 
 CSS3 =                          (.  CSSDoc = new CSSDocument();
-                                    String cset = null;
                                     RuleSet rset = null;
                                     Directive dir = null;
                                 .)

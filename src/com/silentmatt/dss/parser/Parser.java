@@ -58,13 +58,17 @@ public class Parser {
 		errors = new ListErrorReporter();
 	}
 
-	void SynErr (int n) {
-		if (errDist >= minErrDist) errors.SynErr(la.line, la.col, n);
+	void SynErr(int n) {
+		if (errDist >= minErrDist) {
+            errors.SynErr(la.line, la.col, n);
+        }
 		errDist = 0;
 	}
 
-	public void SemErr (String msg) {
-		if (errDist >= minErrDist) errors.SemErr(t.line, t.col, msg);
+	public void SemErr(String msg) {
+		if (errDist >= minErrDist) {
+            errors.SemErr(t.line, t.col, msg);
+        }
 		errDist = 0;
 	}
 	
@@ -82,7 +86,12 @@ public class Parser {
 	}
 	
 	void Expect (int n) {
-		if (la.kind==n) Get(); else { SynErr(n); }
+		if (la.kind==n) {
+            Get();
+        }
+        else {
+            SynErr(n);
+        }
 	}
 	
 	boolean StartOf (int s) {
@@ -90,17 +99,21 @@ public class Parser {
 	}
 	
 	void ExpectWeak (int n, int follow) {
-		if (la.kind == n) Get();
+		if (la.kind == n) {
+            Get();
+        }
 		else {
 			SynErr(n);
-			while (!StartOf(follow)) Get();
+			while (!StartOf(follow)) {
+                Get();
+            }
 		}
 	}
 	
 	boolean WeakSeparator (int n, int syFol, int repFol) {
 		int kind = la.kind;
 		if (kind == n) { Get(); return true; }
-		else if (StartOf(repFol)) return false;
+		else if (StartOf(repFol)) { return false; }
 		else {
 			SynErr(n);
 			while (!(set[syFol][kind] || set[repFol][kind] || set[0][kind])) {
@@ -113,7 +126,6 @@ public class Parser {
 	
 	void CSS3() {
 		CSSDoc = new CSSDocument();
-		String cset = null;
 		RuleSet rset = null;
 		Directive dir = null;
 		
