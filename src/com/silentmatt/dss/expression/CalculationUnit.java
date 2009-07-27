@@ -8,86 +8,86 @@ import java.util.Map;
  * Represents a CSS unit that can be used in calculations.
  * @author Matthew Crumley
  */
-public class CalculationUnit implements Comparable<CalculationUnit> {
+public final class CalculationUnit implements Comparable<CalculationUnit> {
     /**
      * a scalar (dimensionless) unit
      */
-    public static CalculationUnit None = new CalculationUnit(1, 0,0,0,0,0,0, Unit.None);
+    public static final CalculationUnit None = new CalculationUnit(1, 0,0,0,0,0,0, Unit.None);
 
     /**
      * pixels
      */
-    public static CalculationUnit PX = new CalculationUnit( 1, 1,0,0,0,0,0, Unit.PX);
+    public static final CalculationUnit PX = new CalculationUnit( 1, 1,0,0,0,0,0, Unit.PX);
 
     /**
      * percentage
      */
-    public static CalculationUnit Percent = new CalculationUnit( 1, 0,1,0,0,0,0, Unit.Percent);
+    public static final CalculationUnit Percent = new CalculationUnit( 1, 0,1,0,0,0,0, Unit.Percent);
 
     /**
      * inches
      */
-    public static CalculationUnit IN = new CalculationUnit(            72, 0,0,1,0,0,0, Unit.IN);
+    public static final CalculationUnit IN = new CalculationUnit(            72, 0,0,1,0,0,0, Unit.IN);
     /**
      * millimeters
      */
-    public static CalculationUnit MM = new CalculationUnit(.0393700787*72, 0,0,1,0,0,0, Unit.MM);
+    public static final CalculationUnit MM = new CalculationUnit(.0393700787*72, 0,0,1,0,0,0, Unit.MM);
     /**
      * centimeters
      */
-    public static CalculationUnit CM = new CalculationUnit(0.393700787*72, 0,0,1,0,0,0, Unit.CM);
+    public static final CalculationUnit CM = new CalculationUnit(0.393700787*72, 0,0,1,0,0,0, Unit.CM);
     /**
      * points (1/72 of an inch)
      */
-    public static CalculationUnit PT = new CalculationUnit(             1, 0,0,1,0,0,0, Unit.PT);
+    public static final CalculationUnit PT = new CalculationUnit(             1, 0,0,1,0,0,0, Unit.PT);
     /**
      * picas
      */
-    public static CalculationUnit PC = new CalculationUnit(            12, 0,0,1,0,0,0, Unit.PC);
+    public static final CalculationUnit PC = new CalculationUnit(            12, 0,0,1,0,0,0, Unit.PC);
 
     /**
      * degrees
      */
-    public static CalculationUnit DEG  = new CalculationUnit(          1, 0,0,0,1,0,0, Unit.DEG);
+    public static final CalculationUnit DEG  = new CalculationUnit(          1, 0,0,0,1,0,0, Unit.DEG);
     /**
      * grads/grades/gradians
      */
-    public static CalculationUnit GRAD = new CalculationUnit(       9/10, 0,0,0,1,0,0, Unit.GRAD);
+    public static final CalculationUnit GRAD = new CalculationUnit(       9/10, 0,0,0,1,0,0, Unit.GRAD);
     /**
      * radians
      */
-    public static CalculationUnit RAD  = new CalculationUnit(180/Math.PI, 0,0,0,1,0,0, Unit.RAD);
+    public static final CalculationUnit RAD  = new CalculationUnit(180/Math.PI, 0,0,0,1,0,0, Unit.RAD);
     /**
      * turns/revolutions
      */
-    public static CalculationUnit TURN = new CalculationUnit(        360, 0,0,0,1,0,0, Unit.TURN);
+    public static final CalculationUnit TURN = new CalculationUnit(        360, 0,0,0,1,0,0, Unit.TURN);
 
     /**
      * milliseconds
      */
-    public static CalculationUnit MS = new CalculationUnit(   1, 0,0,0,0,1,0, Unit.MS);
+    public static final CalculationUnit MS = new CalculationUnit(   1, 0,0,0,0,1,0, Unit.MS);
     /**
      * seconds
      */
-    public static CalculationUnit S  = new CalculationUnit(1000, 0,0,0,0,1,0, Unit.S);
+    public static final CalculationUnit S  = new CalculationUnit(1000, 0,0,0,0,1,0, Unit.S);
 
     /**
      * Hertz (1/s)
      */
-    public static CalculationUnit Hz  = new CalculationUnit(   1, 0,0,0,0,-1,0, Unit.Hz);
+    public static final CalculationUnit Hz  = new CalculationUnit(   1, 0,0,0,0,-1,0, Unit.Hz);
     /**
      * kilohertz
      */
-    public static CalculationUnit kHz = new CalculationUnit(1000, 0,0,0,0,-1,0, Unit.kHz);
+    public static final CalculationUnit kHz = new CalculationUnit(1000, 0,0,0,0,-1,0, Unit.kHz);
 
     /**
      * em
      */
-    public static CalculationUnit EM = new CalculationUnit(  1, 0,0,0,0,0,1, Unit.EM);
+    public static final CalculationUnit EM = new CalculationUnit(  1, 0,0,0,0,0,1, Unit.EM);
     /**
      * ex (1/2 em)
      */
-    public static CalculationUnit EX = new CalculationUnit(0.5, 0,0,0,0,0,1, Unit.EX);
+    public static final CalculationUnit EX = new CalculationUnit(0.5, 0,0,0,0,0,1, Unit.EX);
 
     /**
      * Mapping from a CSS {@link Unit} to the corresponding CalculationUnit.
@@ -108,7 +108,7 @@ public class CalculationUnit implements Comparable<CalculationUnit> {
      */
     private static Map<CalculationUnit, CalculationUnit> canonicalUnit;
 
-    {
+    static {
         cssToUnitMap = new HashMap<Unit, CalculationUnit>();
         unitToCssMap = new HashMap<CalculationUnit, Unit>();
         canonicalUnit = new HashMap<CalculationUnit, CalculationUnit>();

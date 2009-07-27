@@ -10,6 +10,7 @@ public class FunctionTerm extends Term {
     private Function function;
 
     public FunctionTerm(Function function) {
+        super();
         this.function = function;
     }
 

@@ -29,7 +29,7 @@ public class Parser {
 
 	public CSSDocument CSSDoc;
 
-        boolean PartOfHex(String value) {
+        boolean partOfHex(String value) {
             if (value.length() == 7) { return false; }
             if (value.length() + la.val.length() > 7) { return false; }
             List<String> hexes = Arrays.asList(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "a", "b", "c", "d", "e", "f" });
@@ -41,7 +41,7 @@ public class Parser {
             }
             return true;
         }
-        boolean IsUnit() {
+        boolean isUnit() {
             if (la.kind != 1) { return false; }
             List<String> units = Arrays.asList(new String[] { "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz" });
             return units.contains(la.val);
@@ -125,10 +125,7 @@ public class Parser {
 	}
 	
 	void CSS3() {
-		CSSDoc = new CSSDocument();
-		RuleSet rset = null;
-		Directive dir = null;
-		
+		CSSDoc = new CSSDocument(); 
 		while (la.kind == 4 || la.kind == 7 || la.kind == 8) {
 			if (la.kind == 7) {
 				Get();
@@ -140,10 +137,10 @@ public class Parser {
 		}
 		while (StartOf(1)) {
 			if (StartOf(2)) {
-				rset = ruleset();
+				RuleSet rset = ruleset();
 				CSSDoc.addRuleSet(rset); 
 			} else {
-				dir = directive();
+				Directive dir = directive();
 				CSSDoc.addDirective(dir); 
 			}
 			while (la.kind == 4 || la.kind == 7 || la.kind == 8) {
@@ -314,7 +311,6 @@ public class Parser {
 
 	String  identity() {
 		String  ident;
-		ident = null; 
 		switch (la.kind) {
 		case 1: {
 			Get();
@@ -468,15 +464,12 @@ public class Parser {
 
 	Declaration  parameter() {
 		Declaration  dec;
-		dec = new Declaration();
-		Expression exp = null;
-		String ident = null;
-		
-		ident = identity();
+		dec = new Declaration(); 
+		String ident = identity();
 		dec.setName(ident); 
 		if (la.kind == 24) {
 			Get();
-			exp = expr();
+			Expression exp = expr();
 			dec.setExpression(exp); 
 		}
 		return dec;
@@ -486,7 +479,7 @@ public class Parser {
 		Expression  exp;
 		exp = new Expression();
 		Character sep = null;
-		Term trm = null;
+		Term trm;
 		
 		trm = term();
 		exp.getTerms().add(trm); 
@@ -511,14 +504,11 @@ public class Parser {
 
 	Declaration  declaration() {
 		Declaration  dec;
-		dec = new Declaration();
-		Expression exp = null;
-		String ident = null;
-		
-		ident = identity();
+		dec = new Declaration(); 
+		String ident = identity();
 		dec.setName(ident); 
 		Expect(24);
-		exp = expr();
+		Expression exp = expr();
 		dec.setExpression(exp); 
 		if (la.kind == 54) {
 			Get();
@@ -567,23 +557,17 @@ public class Parser {
 
 	String  pseudo() {
 		String  pseudo;
-		pseudo = "";
-		Expression exp = null;
-		String ident = null;
-		
 		Expect(24);
 		if (la.kind == 24) {
 			Get();
 		}
-		ident = identity();
+		String ident = identity();
 		pseudo = ident; 
 		if (la.kind == 52) {
 			Get();
-			pseudo += t.val; 
-			exp = expr();
-			pseudo += exp.toString(); 
+			Expression exp = expr();
+			pseudo += "(" + exp.toString() + ")"; 
 			Expect(53);
-			pseudo += t.val; 
 		}
 		return pseudo;
 	}
@@ -616,9 +600,9 @@ public class Parser {
 	Term  term() {
 		Term  trm;
 		String val = "";
-		Expression exp = null;
-		String ident = null;
-		CalcExpression expression = null;
+		Expression exp;
+		String ident;
+		CalcExpression expression;
 		trm = null;
 		
 		switch (la.kind) {
@@ -730,10 +714,10 @@ public class Parser {
 				if (la.kind == 39 || la.kind == 56) {
 					if (la.kind == 39) {
 						Get();
-						val += t.val; 
+						val += '+'; 
 					} else {
 						Get();
-						val += t.val; 
+						val += '-'; 
 					}
 					Expect(2);
 					val += t.val; 
@@ -743,7 +727,7 @@ public class Parser {
 				Get();
 				((NumberTerm) trm).setUnit(Unit.Percent); 
 			} else if (StartOf(8)) {
-				if (IsUnit()) {
+				if (isUnit()) {
 					ident = identity();
 					try {
 					   // TODO: What if trm isn't a NumberTerm?
@@ -754,11 +738,8 @@ public class Parser {
 					
 				}
 			} else SynErr(66);
-			if (trm == null) {
-			   trm = new NumberTerm(0);
-			}
 			if (trm instanceof NumberTerm) {
-			    ((NumberTerm) trm).setValue(Double.parseDouble(val));
+			   ((NumberTerm) trm).setValue(Double.parseDouble(val));
 			}
 			else if (trm instanceof StringTerm) {
 			    StringTerm strTrm = (StringTerm) trm;
@@ -833,7 +814,7 @@ public class Parser {
 	Selector  selector() {
 		Selector  sel;
 		sel = new Selector();
-		SimpleSelector ss = null;
+		SimpleSelector ss;
 		Combinator cb = null;
 		
 		ss = simpleselector();
@@ -863,10 +844,8 @@ public class Parser {
 	SimpleSelector  simpleselector() {
 		SimpleSelector  ss;
 		ss = new SimpleSelector();
-		String psd = null;
-		Attribute atb = null;
 		SimpleSelector parent = ss;
-		String ident = null;
+		String ident;
 		
 		if (StartOf(4)) {
 			ident = identity();
@@ -884,10 +863,10 @@ public class Parser {
 				ident = identity();
 				ss.setClassName(ident); 
 			} else if (la.kind == 44) {
-				atb = attrib();
+				Attribute atb = attrib();
 				ss.setAttribute(atb); 
 			} else {
-				psd = pseudo();
+				String psd = pseudo();
 				ss.setPseudo(psd); 
 			}
 		} else SynErr(70);
@@ -902,10 +881,10 @@ public class Parser {
 				ident = identity();
 				child.setClassName(ident); 
 			} else if (la.kind == 44) {
-				atb = attrib();
+				Attribute atb = attrib();
 				child.setAttribute(atb); 
 			} else {
-				psd = pseudo();
+				String psd = pseudo();
 				child.setPseudo(psd); 
 			}
 			parent.setChild(child);
@@ -918,8 +897,8 @@ public class Parser {
 	Attribute  attrib() {
 		Attribute  atb;
 		atb = new Attribute();
-		String quote = null;
-		String ident = null;
+		String quote;
+		String ident;
 		
 		Expect(44);
 		ident = identity();
@@ -1065,7 +1044,7 @@ public class Parser {
 			Get();
 			val += t.val; found = true; 
 		} else SynErr(75);
-		if (!found && PartOfHex(val)) {
+		if (!found && partOfHex(val)) {
 			Expect(1);
 			val += t.val; 
 		}
@@ -1101,7 +1080,7 @@ public class Parser {
 	};
 
 	public static final String getErrorMessage(int n) {
-		String s = null;
+		String s;
 		switch (n) {
 			case 0: s = "EOF expected"; break;
 			case 1: s = "ident expected"; break;

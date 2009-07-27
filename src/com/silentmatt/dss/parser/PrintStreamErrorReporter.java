@@ -15,6 +15,7 @@ public class PrintStreamErrorReporter extends AbstractErrorReporter {
     }
 
     public PrintStreamErrorReporter(PrintStream out) {
+        super();
         errorStream = out;
     }
 

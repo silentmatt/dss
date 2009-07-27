@@ -8,7 +8,7 @@ COMPILER CSS3
 
     public CSSDocument CSSDoc;
 
-        boolean PartOfHex(String value) {
+        boolean partOfHex(String value) {
             if (value.length() == 7) { return false; }
             if (value.length() + la.val.length() > 7) { return false; }
             List<String> hexes = Arrays.asList(new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "a", "b", "c", "d", "e", "f" });
@@ -20,7 +20,7 @@ COMPILER CSS3
             }
             return true;
         }
-        boolean IsUnit() {
+        boolean isUnit() {
             if (la.kind != 1) { return false; }
             List<String> units = Arrays.asList(new String[] { "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz" });
             return units.contains(la.val);
@@ -115,15 +115,12 @@ PRODUCTIONS
  *--------------------------- Declarations -------------------------------*
  *------------------------------------------------------------------------*/
 
-CSS3 =                          (.  CSSDoc = new CSSDocument();
-                                    RuleSet rset = null;
-                                    Directive dir = null;
-                                .)
+CSS3 =                                  (. CSSDoc = new CSSDocument(); .)
     {"<!--" | "-->" | s}
     {
-        ( ruleset<out rset>     (.  CSSDoc.addRuleSet(rset); .)
+        ( ruleset<out RuleSet rset>     (. CSSDoc.addRuleSet(rset); .)
           |
-          directive<out dir>    (.  CSSDoc.addDirective(dir); .)
+          directive<out Directive dir>  (. CSSDoc.addDirective(dir); .)
         )
         {"<!--" | "-->" | s}
     }
@@ -148,7 +145,7 @@ medium<out Medium m> =  (. m = Medium.all; .)
     )
 .
 
-identity<out String ident> =    (. ident = null; .)
+identity<out String ident> =
     (
         ident
         | "n"
@@ -163,7 +160,7 @@ identity<out String ident> =    (. ident = null; .)
         | "screen"
         | "tty"
         | "tv"
-    )                           (. ident = t.val; .)
+    )   (. ident = t.val; .)
 .
 
 mediaDirective<out MediaDirective mdir> =               (.
@@ -185,14 +182,10 @@ mediaDirective<out MediaDirective mdir> =               (.
     '}'                                                 (.  mdir = new MediaDirective(media, rules); .)
 .
 
-parameter<out Declaration dec> =
-                            (.  dec = new Declaration();
-                                Expression exp = null;
-                                String ident = null;
-                            .)
-    identity<out ident>     (.  dec.setName(ident); .)
+parameter<out Declaration dec> =        (. dec = new Declaration(); .)
+    identity<out String ident>          (. dec.setName(ident); .)
     [
-        ':' expr<out exp>   (.  dec.setExpression(exp); .)
+        ':' expr<out Expression exp>    (. dec.setExpression(exp); .)
     ]
 .
 
@@ -347,7 +340,7 @@ ruleset<out RuleSet rset> =             (.  rset = new RuleSet();
 .
 
 selector<out Selector sel> =    (. sel = new Selector();
-                                    SimpleSelector ss = null;
+                                    SimpleSelector ss;
                                     Combinator cb = null;
                                 .)
     simpleselector<out ss>      (. sel.getSimpleSelectors().add(ss); .)
@@ -362,32 +355,31 @@ selector<out Selector sel> =    (. sel = new Selector();
     }
 .
 simpleselector<out SimpleSelector ss> = (. ss = new SimpleSelector();
-                                            String psd = null;
-                                            Attribute atb = null;
                                             SimpleSelector parent = ss;
-                                            String ident = null;
+                                            String ident;
                                         .)
     (identity<out ident>                (.  ss.setElementName(ident); .)
     | '*'                               (.  ss.setElementName("*"); .)
     | ('#' identity<out ident>          (.  ss.setID(ident); .)
         | '.' identity<out ident>       (.  ss.setClassName(ident); .)
-        | attrib<out atb>               (.  ss.setAttribute(atb); .)
-        | pseudo<out psd>               (.  ss.setPseudo(psd); .)
+        | attrib<out Attribute atb>     (.  ss.setAttribute(atb); .)
+        | pseudo<out String psd>        (.  ss.setPseudo(psd); .)
         )
     )
     {                                   (.  SimpleSelector child = new SimpleSelector(); .)
         ('#' identity<out ident>        (.  child.setID(ident); .)
         | '.' identity<out ident>       (.  child.setClassName(ident); .)
-        | attrib<out atb>               (.  child.setAttribute(atb); .)
-        | pseudo<out psd>               (.  child.setPseudo(psd); .)
+        | attrib<out Attribute atb>     (.  child.setAttribute(atb); .)
+        | pseudo<out String psd>        (.  child.setPseudo(psd); .)
         )                               (.  parent.setChild(child);
                                             parent = child;
                                         .)
     }
 .
+
 attrib<out Attribute atb> =         (.  atb = new Attribute();
-                                        String quote = null;
-                                        String ident = null;
+                                        String quote;
+                                        String ident;
                                     .)
     '[' identity<out ident>         (.  atb.setOperand(ident); .)
     [
@@ -403,31 +395,23 @@ attrib<out Attribute atb> =         (.  atb = new Attribute();
         )
     ] ']'
 .
-pseudo<out String pseudo> = (. pseudo = "";
-                                Expression exp = null;
-                                String ident = null;
-                            .)
+
+pseudo<out String pseudo> =
     ':' [ ':' ]
-    identity<out ident>     (. pseudo = ident; .)
-    [ '('                   (. pseudo += t.val; .)
-    expr<out exp>           (. pseudo += exp.toString(); .)
-    ')'                     (. pseudo += t.val; .)
+    identity<out String ident>      (. pseudo = ident; .)
+    [ '('
+        expr<out Expression exp>    (. pseudo += "(" + exp.toString() + ")"; .)
+    ')'
     ]
 .
-declaration<out Declaration dec> =
-                        (.  dec = new Declaration();
-                            Expression exp = null;
-                            String ident = null;
-                        .)
-    identity<out ident> (. dec.setName(ident); .)
-    ':' expr<out exp>   (. dec.setExpression(exp); .)
-    [
-        "!important"    (. dec.setImportant(true); .)
-    ]
+declaration<out Declaration dec> =  (. dec = new Declaration(); .)
+    identity<out String ident>      (. dec.setName(ident); .)
+    ':' expr<out Expression exp>    (. dec.setExpression(exp); .)
+    [ "!important"                  (. dec.setImportant(true); .) ]
 .
 expr<out Expression exp> =  (.  exp = new Expression();
                                 Character sep = null;
-                                Term trm = null;
+                                Term trm;
                             .)
     term<out trm>           (.  exp.getTerms().add(trm); .)
     { [ ('/'                (.  sep = '/'; .)
@@ -473,9 +457,9 @@ calculation<out CalcExpression expr> =
 .
 
 term<out Term trm> =                        (.  String val = "";
-                                                Expression exp = null;
-                                                String ident = null;
-                                                CalcExpression expression = null;
+                                                Expression exp;
+                                                String ident;
+                                                CalcExpression expression;
                                                 trm = null;
                                             .)
     (
@@ -534,9 +518,9 @@ term<out Term trm> =                        (.  String val = "";
             (
             /* func(4n+1) */
                 "n"                         (.  val += t.val; .)
-                [ ( "+"                     (.  val += t.val; .)
+                [ ( "+"                     (.  val += '+'; .)
                     |
-                    "-"                     (.  val += t.val; .)
+                    "-"                     (.  val += '-'; .)
                   )
                     integer                 (.  val += t.val; .)
                 ]
@@ -545,7 +529,7 @@ term<out Term trm> =                        (.  String val = "";
             "%"                             (.  ((NumberTerm) trm).setUnit(Unit.Percent); .)
             |
             [
-                IF(IsUnit())
+                IF(isUnit())
                     identity<out ident>     (.  try {
                                                     // TODO: What if trm isn't a NumberTerm?
                                                     ((NumberTerm) trm).setUnit(Unit.parse(ident));
@@ -554,10 +538,7 @@ term<out Term trm> =                        (.  String val = "";
                                                 }
                                             .)
             ]
-        )                                   (.  if (trm == null) {
-                                                    trm = new NumberTerm(0);
-                                                }
-                                                if (trm instanceof NumberTerm) {
+        )                                   (.  if (trm instanceof NumberTerm) {
                                                     ((NumberTerm) trm).setValue(Double.parseDouble(val));
                                                 }
                                                 else if (trm instanceof StringTerm) {
@@ -577,7 +558,7 @@ HexValue<out String val> =  (.  val = "";
         |
         ident               (.  val += t.val; found = true; .)
     )
-    [   IF(!found && PartOfHex(val))
+    [   IF(!found && partOfHex(val))
             ident           (.  val += t.val; .)
     ]
 .

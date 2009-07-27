@@ -1,7 +1,6 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.*;
-import com.silentmatt.dss.directive.Directive;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +8,11 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
-public abstract class DeclarationDirective implements Directive {
+public abstract class DeclarationDirective extends Directive {
     private List<Declaration> declarations = new ArrayList<Declaration>();
 
     public DeclarationDirective(List<Declaration> declarations) {
+        super();
         this.declarations = declarations;
     }
 
@@ -50,10 +50,7 @@ public abstract class DeclarationDirective implements Directive {
     }
 
     public String getDeclarationsString(int nesting) {
-        String start = "";
-        for (int i = 0; i < nesting; i++) {
-            start += "\t";
-        }
+        String start = Rule.getIndent(nesting);
 
         StringBuilder txt = new StringBuilder("{");
 

@@ -17,12 +17,7 @@ public class ImportDirective extends ExpressionDirective {
     public ImportDirective(UrlTerm url, Medium medium) {
         super(new Expression());
         getExpression().getTerms().add(url);
-        setMedium(medium);
-    }
-
-    public ImportDirective(Expression url, Medium medium) {
-        super(url);
-        setMedium(medium);
+        this.medium = medium;
     }
 
     public String getName() {

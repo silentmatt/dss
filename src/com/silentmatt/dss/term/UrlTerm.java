@@ -8,6 +8,7 @@ public class UrlTerm extends Term {
     private String value;
 
     public UrlTerm(String url) {
+        super();
         value = url;
     }
 

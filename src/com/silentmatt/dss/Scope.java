@@ -18,7 +18,7 @@ import java.util.Set;
  * @author Matthew Crumley
  * @param <T> The type of objects being stored.
  */
-public class Scope<T> implements Map<String, T> {
+public final class Scope<T> implements Map<String, T> {
     /**
      * Constructs a Scope with a given parent.
      *
@@ -26,7 +26,7 @@ public class Scope<T> implements Map<String, T> {
      * a top-level scope.
      */
     public Scope(Scope<T> parent) {
-        this.parent = parent;
+        this.parentScope = parent;
         this.table = new HashMap<String, T>();
     }
 
@@ -62,7 +62,7 @@ public class Scope<T> implements Map<String, T> {
      * @return The parent Scope, or <code>null</code> if this is a top-level Scope.
      */
     public Scope<T> parent() {
-        return parent;
+        return parentScope;
     }
 
     /**
@@ -76,7 +76,7 @@ public class Scope<T> implements Map<String, T> {
         return new Scope<T>(this);
     }
 
-    private Scope<T> parent;
+    private Scope<T> parentScope;
     private Map<String, T> table;
 
     /**
@@ -91,7 +91,7 @@ public class Scope<T> implements Map<String, T> {
     }
 
     public boolean isEmpty() {
-        return table.isEmpty() && (parent == null || parent.isEmpty());
+        return table.isEmpty() && (parentScope == null || parentScope.isEmpty());
     }
 
     /**
@@ -108,7 +108,7 @@ public class Scope<T> implements Map<String, T> {
      * @see #declaresKey(java.lang.String)
      */
     public boolean containsKey(Object key) {
-        return table.containsKey(key) || (parent != null && parent.containsKey(key));
+        return table.containsKey(key) || (parentScope != null && parentScope.containsKey(key));
     }
 
     /**
@@ -128,13 +128,14 @@ public class Scope<T> implements Map<String, T> {
         if (table.containsValue(value)) {
             return true;
         }
-        if (parent != null) {
-            for (String key : parent.keySet()) {
-                if (!table.containsKey(key)) {
-                    T val = parent.get(key);
-                    if (val == value || (val != null && val.equals(value))) {
-                        return true;
-                    }
+        if (parentScope == null) {
+            return false;
+        }
+        for (String key : parentScope.keySet()) {
+            if (!table.containsKey(key)) {
+                T val = parentScope.get(key);
+                if (val == value || (val != null && val.equals(value))) {
+                    return true;
                 }
             }
         }
@@ -147,8 +148,8 @@ public class Scope<T> implements Map<String, T> {
             return o;
         }
         else {
-            if (!table.containsKey(key) && parent != null) {
-                return parent.get(key);
+            if (!table.containsKey(key) && parentScope != null) {
+                return parentScope.get(key);
             }
         }
         return null;
@@ -190,8 +191,8 @@ public class Scope<T> implements Map<String, T> {
         if (table.containsKey(key)) {
             return table.put(key, value);
         }
-        else if (parent != null && parent.containsKey(key)) {
-            return parent.put(key, value);
+        else if (parentScope != null && parentScope.containsKey(key)) {
+            return parentScope.put(key, value);
         }
 
         throw new UnsupportedOperationException("undefined variable");
@@ -224,17 +225,17 @@ public class Scope<T> implements Map<String, T> {
 
     public Set<String> keySet() {
         Set<String> keys = table.keySet();
-        if (parent != null) {
+        if (parentScope != null) {
             keys = new HashSet<String>(keys);
-            keys.addAll(parent.keySet());
+            keys.addAll(parentScope.keySet());
         }
         return keys;
     }
 
     public Collection<T> values() {
         LinkedList<T> result = new LinkedList<T>();
-        for (String name : keySet()) {
-            result.add(get(name));
+        for (Entry<String, T> entry : entrySet()) {
+            result.add(entry.getValue());
         }
         return result;
     }
@@ -242,9 +243,9 @@ public class Scope<T> implements Map<String, T> {
     public Set<Entry<String, T>> entrySet() {
         Set<Entry<String, T>> entries = table.entrySet();
 
-        if (parent != null) {
+        if (parentScope != null) {
             entries = new java.util.HashSet<Entry<String, T>>(entries);
-            for (Entry<String, T> entry : parent.entrySet()) {
+            for (Entry<String, T> entry : parentScope.entrySet()) {
                 if (!table.containsKey(entry.getKey())) {
                     entries.add(entry);
                 }

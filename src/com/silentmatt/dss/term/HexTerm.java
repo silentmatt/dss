@@ -8,6 +8,7 @@ public class HexTerm extends Term {
     private String value;
 
     public HexTerm(String value) {
+        super();
         this.value = value;
     }
 

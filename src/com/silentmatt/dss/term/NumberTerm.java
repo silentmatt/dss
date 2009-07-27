@@ -12,6 +12,7 @@ public class NumberTerm extends Term {
     private Unit unit;
 
     public NumberTerm(double value) {
+        super();
         this.value = value;
     }
 

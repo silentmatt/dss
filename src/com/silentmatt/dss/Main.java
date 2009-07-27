@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.*;
 
-public class Main {
+public final class Main {
+    private Main() {
+    }
 
     private static void printUsage(JSAP jsap) {
         System.err.println("usage: java -jar dss.jar");
@@ -78,7 +80,7 @@ public class Main {
                     opts.setErrors(errors);
                     DSSEvaluator eval = new DSSEvaluator(opts);
                     eval.evaluate(css);
-                    String cssString = null;
+                    String cssString;
 
                     if (config.getBoolean("debug")) {
                         cssString = css.toString();

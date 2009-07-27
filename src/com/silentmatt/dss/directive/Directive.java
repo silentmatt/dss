@@ -11,7 +11,7 @@ import com.silentmatt.dss.*;
  *
  * @author Matthew Crumley
  */
-public interface Directive extends Rule {
-    String getName();
-    DirectiveType getType();
+public abstract class Directive extends Rule {
+    public abstract String getName();
+    public abstract DirectiveType getType();
 }

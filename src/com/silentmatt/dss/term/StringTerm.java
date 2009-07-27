@@ -13,6 +13,7 @@ public class StringTerm extends Term {
     private String value;
 
     public StringTerm(String s) {
+        super();
         value = s;
     }
 

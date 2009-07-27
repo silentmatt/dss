@@ -15,12 +15,7 @@ public class NamespaceDirective extends ExpressionDirective {
     public NamespaceDirective(String prefix, UrlTerm namespace) {
         super(new Expression());
         getExpression().getTerms().add(namespace);
-        setPrefix(prefix);
-    }
-
-    public NamespaceDirective(String prefix, Expression namespace) {
-        super(namespace);
-        setPrefix(prefix);
+        this.prefix = prefix;
     }
 
     public String getName() {

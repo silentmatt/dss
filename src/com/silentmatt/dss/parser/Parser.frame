@@ -128,7 +128,7 @@ public class Parser {
 	};
 
 	public static final String getErrorMessage(int n) {
-		String s = null;
+		String s;
 		switch (n) {-->errors
 			default: s = "error " + n; break;
 		}

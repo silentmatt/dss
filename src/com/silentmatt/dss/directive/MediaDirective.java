@@ -1,8 +1,6 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.*;
-import com.silentmatt.dss.directive.DirectiveType;
-import com.silentmatt.dss.directive.Directive;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,13 +9,14 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
-public class MediaDirective implements Directive {
+public class MediaDirective extends Directive {
     private List<Medium> mediums;
     private List<Rule> allRules;
     private List<RuleSet> ruleSets;
     private List<Directive> directives;
 
     public MediaDirective(List<Medium> mediums, List<Rule> rules) {
+        super();
         this.mediums = mediums;
         this.allRules = rules;
         this.ruleSets = new ArrayList<RuleSet>();

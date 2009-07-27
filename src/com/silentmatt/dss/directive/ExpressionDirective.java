@@ -1,13 +1,12 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.*;
-import com.silentmatt.dss.directive.Directive;
 
 /**
  *
  * @author Matthew Crumley
  */
-public abstract class ExpressionDirective implements Directive {
+public abstract class ExpressionDirective extends Directive {
     private Expression expression;
 
     public RuleType getRuleType() {
@@ -15,7 +14,8 @@ public abstract class ExpressionDirective implements Directive {
     }
 
     public ExpressionDirective(Expression expression) {
-        setExpression(expression);
+        super();
+        this.expression = expression;
     }
 
     public Expression getExpression() {
@@ -32,11 +32,7 @@ public abstract class ExpressionDirective implements Directive {
     }
 
     public String toString(int nesting) {
-        String start = "";
-        for (int i = 0; i < nesting; i++) {
-            start += "\t";
-        }
-        return start + (toString());
+        return Rule.getIndent(nesting) + toString();
     }
 
     public String toCssString(int nesting) {

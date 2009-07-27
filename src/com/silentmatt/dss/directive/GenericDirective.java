@@ -1,8 +1,6 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.*;
-import com.silentmatt.dss.directive.DirectiveType;
-import com.silentmatt.dss.directive.Directive;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +9,7 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
-public class GenericDirective implements Directive {
+public class GenericDirective extends Directive {
     private List<Declaration> declarations = new ArrayList<Declaration>();
     private List<Rule> allRules = new ArrayList<Rule>();
     private List<RuleSet> ruleSet = new ArrayList<RuleSet>();
@@ -89,10 +87,7 @@ public class GenericDirective implements Directive {
     }
 
     public String toString(int nesting) {
-        String start = "";
-        for (int i = 0; i < nesting; i++) {
-            start += "\t";
-        }
+        String start = Rule.getIndent(nesting);
 
         StringBuilder txt = new StringBuilder();
 

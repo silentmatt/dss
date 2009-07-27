@@ -55,17 +55,15 @@ public class TermExpression implements CalcExpression {
     public void substituteValues(Scope<Expression> variables, Scope<Expression> parameters) throws CalculationException {
         if (value instanceof FunctionTerm) {
             Function fn = ((FunctionTerm) value).getFunction();
-            Expression variable = null;
+            Expression variable;
             if (fn.getName().equals("const")) {
                 variable = variables.get(fn.getExpression().toString());
             }
             else if (fn.getName().equals("param")) {
-                if (parameters != null) {
-                    variable = parameters.get(fn.getExpression().toString());
-                }
-                else {
+                if (parameters == null) {
                     return;
                 }
+                variable = parameters.get(fn.getExpression().toString());
             }
             else {
                 throw new CalculationException("unrecognized function");

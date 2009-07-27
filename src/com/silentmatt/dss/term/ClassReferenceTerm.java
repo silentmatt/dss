@@ -10,6 +10,7 @@ public class ClassReferenceTerm extends Term {
     private ClassReference classReference;
 
     public ClassReferenceTerm(ClassReference cls) {
+        super();
         this.classReference = cls;
     }
 

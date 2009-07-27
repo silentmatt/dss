@@ -8,6 +8,7 @@ public class UnicodeTerm extends Term {
     private String value;
 
     public UnicodeTerm(String value) {
+        super();
         this.value = value;
     }
 

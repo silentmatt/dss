@@ -190,7 +190,7 @@ public class DSSEvaluator {
     }
 
     private void evaluateClass(ClassDirective cssClass) {
-        String className = cssClass.getID();
+        String className = cssClass.getClassName();
         evaluateStyle(cssClass.getDeclarations(), false);
         classes.declare(className, cssClass);
     }

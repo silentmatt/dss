@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
-public class RuleSet implements Rule {
+public class RuleSet extends Rule {
     private List<Directive> directives = new ArrayList<Directive>();
     private List<Declaration> declarations = new ArrayList<Declaration>();
     private List<Selector> selectors = new ArrayList<Selector>();
@@ -72,10 +72,7 @@ public class RuleSet implements Rule {
     }
 
     public String toString(int nesting) {
-        String start = "";
-        for (int i = 0; i < nesting; i++) {
-            start += "\t";
-        }
+        String start = Rule.getIndent(nesting);
 
         StringBuilder txt = new StringBuilder();
         boolean first = true;
@@ -107,10 +104,7 @@ public class RuleSet implements Rule {
     }
 
     public String toCssString(int nesting) {
-        String start = "";
-        for (int i = 0; i < nesting; i++) {
-            start += "\t";
-        }
+        String start = Rule.getIndent(nesting);
 
         StringBuilder txt = new StringBuilder();
         boolean first = true;

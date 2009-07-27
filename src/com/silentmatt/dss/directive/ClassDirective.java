@@ -1,8 +1,6 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.*;
-import com.silentmatt.dss.directive.DeclarationDirective;
-import com.silentmatt.dss.directive.DirectiveType;
 import java.util.List;
 
 /**
@@ -10,13 +8,13 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class ClassDirective extends DeclarationDirective {
-    private String id;
+    private String className;
     private List<Declaration> parameters;
 
-    public ClassDirective(String id, List<Declaration> parameters, List<Declaration> declarations) {
+    public ClassDirective(String className, List<Declaration> parameters, List<Declaration> declarations) {
         super(declarations);
-        setID(id);
-        setParameters(parameters);
+        this.className = className;
+        this.parameters = parameters;
     }
 
     public String getName() {
@@ -27,12 +25,12 @@ public class ClassDirective extends DeclarationDirective {
         return DirectiveType.Class;
     }
 
-    public String getID() {
-        return id;
+    public String getClassName() {
+        return className;
     }
 
-    public void setID(String id) {
-        this.id = id;
+    public void setClassName(String id) {
+        this.className = id;
     }
 
     public List<Declaration> getParameters() {
@@ -49,14 +47,11 @@ public class ClassDirective extends DeclarationDirective {
 
     @Override
     public String toString(int nesting) {
-        String start = "";
-        for (int i = 0; i < nesting; i++) {
-            start += "\t";
-        }
+        String start = Rule.getIndent(nesting);
 
         StringBuilder txt = new StringBuilder(start);
         txt.append("@class ");
-        txt.append(getID());
+        txt.append(getClassName());
         if (parameters.size() > 0) {
             txt.append("<");
             boolean first = true;

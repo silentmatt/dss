@@ -14,7 +14,7 @@ public class PageDirective extends DeclarationDirective {
 
     public PageDirective(SimpleSelector pseudo, List<Declaration> declarations) {
         super(declarations);
-        setSelector(pseudo);
+        this.ss = pseudo;
     }
 
     public String getName() {

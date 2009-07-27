@@ -10,6 +10,7 @@ public class CalculationTerm extends Term {
     private CalcExpression calculation;
 
     public CalculationTerm(CalcExpression calculation) {
+        super();
         this.calculation = calculation;
     }
 
