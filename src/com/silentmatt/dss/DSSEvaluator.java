@@ -15,7 +15,8 @@ import com.silentmatt.dss.parser.ErrorReporter;
 import com.silentmatt.dss.parser.PrintStreamErrorReporter;
 import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.ClassReferenceTerm;
-import com.silentmatt.dss.term.FunctionTerm;
+import com.silentmatt.dss.term.ConstTerm;
+import com.silentmatt.dss.term.ParamTerm;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -327,31 +328,31 @@ public class DSSEvaluator {
         substituteValue(property, false, doCalculations);
     }
 
-    private static boolean isReference(FunctionTerm function, boolean withParams) {
-        String name = function.getName();
-        return name.equals("const") || (withParams && name.equals("param"));
-    }
-
     private void substituteValue(Declaration property, boolean withParams, boolean doCalculations) {
         Expression value = property.getExpression();
         Expression newValue = new Expression();
 
         for (Term primitiveValue : value.getTerms()) {
-            if (primitiveValue instanceof FunctionTerm) {
-                FunctionTerm function = (FunctionTerm) primitiveValue;
-                if (isReference(function, withParams)) {
-                    String name = function.getExpression().toString();
-                    Expression sub = function.getName().equals("const") ? getConstantValue(name) : getParameterValue(name);
-                    if (sub != null) {
-                        for (Term t : sub.getTerms()) {
-                            newValue.getTerms().add(t);
-                        }
+            // TODO: Remove duplicated code
+            if (primitiveValue instanceof ConstTerm) {
+                ConstTerm function = (ConstTerm) primitiveValue;
+                Expression sub = getConstantValue(function.getExpression());
+                if (sub != null) {
+                    for (Term t : sub.getTerms()) {
+                        newValue.getTerms().add(t);
                     }
-                    continue;
                 }
             }
-
-            if (primitiveValue instanceof CalculationTerm) {
+            else if (withParams && primitiveValue instanceof ParamTerm) {
+                ParamTerm function = (ParamTerm) primitiveValue;
+                Expression sub = getParameterValue(function.getExpression());
+                if (sub != null) {
+                    for (Term t : sub.getTerms()) {
+                        newValue.getTerms().add(t);
+                    }
+                }
+            }
+            else if (primitiveValue instanceof CalculationTerm) {
                 CalcExpression expression = ((CalculationTerm) primitiveValue).getCalculation();
                 try {
                     expression.substituteValues(variables, withParams ? parameters : null);
@@ -365,10 +366,10 @@ public class DSSEvaluator {
                 } catch (CalculationException ex) {
                     options.errors.SemErr(ex.getMessage());
                 }
-                continue;
             }
-
-            newValue.getTerms().add(primitiveValue);
+            else {
+                newValue.getTerms().add(primitiveValue);
+            }
         }
 
         property.setExpression(newValue);

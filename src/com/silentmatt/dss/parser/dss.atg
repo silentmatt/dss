@@ -467,6 +467,10 @@ term<out Term trm> =                        (.  String val = "";
         |
         URI<out val>                        (.  trm = new UrlTerm(val); .)
         |
+        "const" '(' identity<out ident> ')' (.  trm = new ConstTerm(ident); .)
+        |
+        "param" '(' identity<out ident> ')' (.  trm = new ParamTerm(ident); .)
+        |
         "U\\" identity<out ident>           (.  trm = new UnicodeTerm("U\\" + ident); .)
         |
         HexValue<out val>                   (.  trm = new HexTerm(val); .)

@@ -5,8 +5,7 @@ import com.silentmatt.dss.Expression;
 /**
  * A function "call" term.
  *
- * "Functions" include rgb(...), const(name), param(name), etc. but <strong>not</strong> url(...) or calc(...).
- * @todo const and param should probably be separated from functions like calc and url are.
+ * "Functions" include rgb(...), but <strong>not</strong> url(...), const(...), param(...), or calc(...).
  *
  * @author Matthew Crumley
  */

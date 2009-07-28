@@ -3,8 +3,9 @@ package com.silentmatt.dss.expression;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Scope;
 import com.silentmatt.dss.term.CalculationTerm;
-import com.silentmatt.dss.term.FunctionTerm;
+import com.silentmatt.dss.term.ConstTerm;
 import com.silentmatt.dss.term.NumberTerm;
+import com.silentmatt.dss.term.ParamTerm;
 import com.silentmatt.dss.term.Term;
 
 /**
@@ -52,21 +53,26 @@ public class TermExpression implements CalcExpression {
     }
 
     public void substituteValues(Scope<Expression> variables, Scope<Expression> parameters) throws CalculationException {
-        if (value instanceof FunctionTerm) {
-            FunctionTerm function = (FunctionTerm) value;
+        // TODO: remove duplicated code
+        if (value instanceof ConstTerm) {
+            ConstTerm function = (ConstTerm) value;
+            Expression variable = variables.get(function.getExpression());
+            if (variable == null) {
+                throw new CalculationException("missing value: " + function.toString());
+            }
+            if (variable.getTerms().size() > 1) {
+                throw new CalculationException("not a single value: " + function.toString());
+            }
+
+            value = variable.getTerms().get(0);
+        }
+        else if (value instanceof ParamTerm) {
+            ParamTerm function = (ParamTerm) value;
             Expression variable;
-            if (function.getName().equals("const")) {
-                variable = variables.get(function.getExpression().toString());
+            if (parameters == null) {
+                return;
             }
-            else if (function.getName().equals("param")) {
-                if (parameters == null) {
-                    return;
-                }
-                variable = parameters.get(function.getExpression().toString());
-            }
-            else {
-                throw new CalculationException("unrecognized function");
-            }
+            variable = parameters.get(function.getExpression());
 
             if (variable == null) {
                 throw new CalculationException("missing value: " + function.toString());

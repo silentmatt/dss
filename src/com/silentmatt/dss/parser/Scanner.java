@@ -248,8 +248,8 @@ class StartStates {
 public class Scanner {
 	static final char EOL = '\n';
 	static final int  eofSym = 0;
-	static final int maxT = 60;
-	static final int noSym = 60;
+	static final int maxT = 62;
+	static final int noSym = 62;
 
 
 	public Buffer buffer; // scanner buffer
@@ -329,6 +329,8 @@ public class Scanner {
 		literals.put("url", new Integer(20));
 		literals.put("global", new Integer(30));
 		literals.put("calc", new Integer(57));
+		literals.put("const", new Integer(58));
+		literals.put("param", new Integer(59));
 
 	}
 	
@@ -1098,7 +1100,7 @@ public class Scanner {
 				case 175:
 					{t.kind = 55; break loop;}
 				case 176:
-					{t.kind = 59; break loop;}
+					{t.kind = 61; break loop;}
 				case 177:
 					if (ch >= 'A' && ch <= 'Z' || ch == '_' || ch >= 'a' && ch <= 'z' || ch >= 128 && ch <= 55295 || ch >= 57344 && ch <= 65533) {AddCh(); state = 1; break;}
 					else if (ch == 92) {AddCh(); state = 38; break;}
@@ -1137,7 +1139,7 @@ public class Scanner {
 				case 185:
 					if (ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'F' || ch >= 'a' && ch <= 'f') {AddCh(); state = 55; break;}
 					else if (ch >= ' ' && ch <= '/' || ch >= ':' && ch <= '@' || ch >= 'G' && ch <= '`' || ch >= 'g' && ch <= '~' || ch >= 128 && ch <= 55295 || ch >= 57344 && ch <= 65533) {AddCh(); state = 1; break;}
-					else {t.kind = 58; break loop;}
+					else {t.kind = 60; break loop;}
 
 			}
 		}
