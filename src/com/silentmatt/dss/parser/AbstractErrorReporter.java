@@ -8,9 +8,6 @@ public abstract class AbstractErrorReporter implements ErrorReporter {
     private String errMsgFormat = "-- {type}: line {line} col {column}: {message}";
     private String errSimpleMsgFormat = "{type}: {message}";
 
-    public AbstractErrorReporter() {
-    }
-
     public void setMessageFormat(String fmt) {
         errMsgFormat = fmt;
     }

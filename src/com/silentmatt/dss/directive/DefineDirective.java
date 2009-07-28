@@ -8,7 +8,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class DefineDirective extends DeclarationDirective {
-    private boolean global;
+    private final boolean global;
 
     public DefineDirective(List<Declaration> declarations, boolean global) {
         super(declarations);

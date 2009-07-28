@@ -34,8 +34,8 @@ public class SimpleSelector {
         return id;
     }
 
-    public void setID(String ID) {
-        this.id = ID;
+    public void setID(String id) {
+        this.id = id;
     }
 
     public String getClassName() {
@@ -86,6 +86,8 @@ public class SimpleSelector {
             case PrecededImmediatelyBy: txt.append("+ "); break;
             case ChildOf: txt.append("> "); break;
             case PrecededBy: txt.append("~ "); break;
+            default:
+                throw new IllegalStateException("Unknown combinator: " + combinator);
             }
         }
         if (elementName != null) { txt.append(elementName); }

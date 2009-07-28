@@ -557,18 +557,20 @@ public class Parser {
 
 	String  pseudo() {
 		String  pseudo;
+		StringBuilder sb = new StringBuilder(); 
 		Expect(24);
 		if (la.kind == 24) {
 			Get();
 		}
 		String ident = identity();
-		pseudo = ident; 
+		sb.append(ident); 
 		if (la.kind == 52) {
 			Get();
 			Expression exp = expr();
-			pseudo += "(" + exp.toString() + ")"; 
+			sb.append("(").append(exp).append(")"); 
 			Expect(53);
 		}
+		pseudo = sb.toString(); 
 		return pseudo;
 	}
 
@@ -708,7 +710,7 @@ public class Parser {
 				Get();
 			} else SynErr(65);
 			if (trm == null) trm = new NumberTerm(Double.parseDouble(t.val)); val = t.val; 
-			if (la.val.toLowerCase().equals("n")) {
+			if (la.val.equalsIgnoreCase("n")) {
 				Expect(19);
 				val += t.val; 
 				if (la.kind == 39 || la.kind == 56) {
@@ -835,8 +837,8 @@ public class Parser {
 			ss = simpleselector();
 			if (cb != null) { ss.setCombinator(cb); }
 			sel.getSimpleSelectors().add(ss);
+			cb = null;
 			
-			cb = null; 
 		}
 		return sel;
 	}
@@ -995,7 +997,7 @@ public class Parser {
 
 	CalcExpression  multiplicativeExpression() {
 		CalcExpression  expr;
-		CalcExpression left, right; Term trm; Operation op; 
+		CalcExpression left, right; Operation op; 
 		left = termExpression();
 		expr = left; 
 		while (la.kind == 41 || la.kind == 55) {
@@ -1032,22 +1034,23 @@ public class Parser {
 
 	String  HexValue() {
 		String  val;
-		val = "";
+		StringBuilder sb = new StringBuilder();
 		boolean found = false;
 		
 		Expect(42);
-		val += t.val; 
+		sb.append(t.val); 
 		if (la.kind == 2) {
 			Get();
-			val += t.val; 
+			sb.append(t.val); 
 		} else if (la.kind == 1) {
 			Get();
-			val += t.val; found = true; 
+			sb.append(t.val); found = true; 
 		} else SynErr(75);
-		if (!found && partOfHex(val)) {
+		if (!found && partOfHex(sb.toString())) {
 			Expect(1);
-			val += t.val; 
+			sb.append(t.val); 
 		}
+		val = sb.toString(); 
 		return val;
 	}
 

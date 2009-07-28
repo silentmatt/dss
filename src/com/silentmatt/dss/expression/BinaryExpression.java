@@ -9,41 +9,41 @@ import com.silentmatt.dss.Scope;
  * @author Matthew Crumley
  */
 public class BinaryExpression implements CalcExpression {
-    private Operation op;
-    private CalcExpression left;
-    private CalcExpression right;
+    private final Operation operation;
+    private final CalcExpression left;
+    private final CalcExpression right;
 
     /**
      * Constructs a BinaryExpression with an operator and the two operands.
      *
-     * @param op The oparation to perform.
+     * @param operation The oparation to perform.
      * @param left The left operand.
      * @param right The right operand.
      */
-    public BinaryExpression(Operation op, CalcExpression left, CalcExpression right) {
-        this.op = op;
+    public BinaryExpression(Operation operation, CalcExpression left, CalcExpression right) {
+        this.operation = operation;
         this.left = left;
         this.right = right;
     }
 
     public Value calculateValue(Scope<Expression> variables, Scope<Expression> parameters) throws CalculationException {
         try {
-            Value l = left.calculateValue(variables, parameters);
-            Value r = right.calculateValue(variables, parameters);
-            switch (op) {
+            Value leftValue = left.calculateValue(variables, parameters);
+            Value rightValue = right.calculateValue(variables, parameters);
+            switch (operation) {
             case Add:
-                return l.add(r);
+                return leftValue.add(rightValue);
             case Subtract:
-                return l.subtract(r);
+                return leftValue.subtract(rightValue);
             case Multiply:
-                return l.multiply(r);
+                return leftValue.multiply(rightValue);
             case Divide:
-                return l.divide(r);
+                return leftValue.divide(rightValue);
             default:
                 throw new CalculationException("Unrecognized operation");
             }
         } catch (IllegalArgumentException ex) {
-            throw new CalculationException("incompatible units");
+            throw new CalculationException("incompatible units", ex);
         }
     }
 
@@ -62,14 +62,14 @@ public class BinaryExpression implements CalcExpression {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        boolean lp = left.getPrecidence() < getPrecidence();
-        boolean rp = right.getPrecidence() <= getPrecidence();
+        boolean leftPrecidence = left.getPrecidence() < getPrecidence();
+        boolean rightPrecidence = right.getPrecidence() <= getPrecidence();
 
-        if (lp) { sb.append('('); }
+        if (leftPrecidence) { sb.append('('); }
         sb.append(left);
-        if (lp) { sb.append(')'); }
+        if (leftPrecidence) { sb.append(')'); }
 
-        switch (op) {
+        switch (operation) {
             case Add:
                 sb.append(" + ");
                 break;
@@ -82,17 +82,19 @@ public class BinaryExpression implements CalcExpression {
             case Divide:
                 sb.append(" / ");
                 break;
+            default:
+                throw new IllegalStateException("Unknown operator: " + operation);
         }
 
-        if (rp) { sb.append('('); }
+        if (rightPrecidence) { sb.append('('); }
         sb.append(right);
-        if (rp) { sb.append(')'); }
+        if (rightPrecidence) { sb.append(')'); }
 
         return sb.toString();
     }
 
     public int getPrecidence() {
-    switch (op) {
+    switch (operation) {
         case Add:
         case Subtract:
             return 1;

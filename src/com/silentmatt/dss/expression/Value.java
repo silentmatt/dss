@@ -10,7 +10,7 @@ import com.silentmatt.dss.term.NumberTerm;
  * @author Matthew Crumley
  */
 public class Value {
-    private double scalar;
+    private final double scalar;
     private CalculationUnit unit;
 
     /**
@@ -132,13 +132,13 @@ public class Value {
      * @throws CalculationException <code>this</code> cannot be represented by a valid CSS unit.
      */
     public Term toTerm() throws CalculationException {
-        NumberTerm t = new NumberTerm(scalar);
+        NumberTerm term = new NumberTerm(scalar);
         com.silentmatt.dss.Unit cssUnit = CalculationUnit.toCssUnit(unit);
         if (cssUnit == null) {
             throw new CalculationException("not a valid CSS unit: " + toString());
         }
-        t.setUnit(cssUnit);
-        return t;
+        term.setUnit(cssUnit);
+        return term;
     }
 
     /**

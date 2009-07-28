@@ -141,18 +141,18 @@ public enum Unit {
      * represented by "%", <code>None</code> is represented by the empty string,
      * and case is ignored.
      *
-     * @param s The String to parse.
+     * @param unitString The String to parse.
      *
      * @return The Unit represented by <code>s</code>.
      *
      * @throws IllegalArgumentException The String cannot be parsed into a valid Unit.
      */
-    public static Unit parse(String s) {
+    public static Unit parse(String unitString) {
         for (Unit m : Unit.values()) {
-            if (s.equalsIgnoreCase(m.toString())) {
+            if (unitString.equalsIgnoreCase(m.toString())) {
                 return m;
             }
         }
-        throw new IllegalArgumentException(s);
+        throw new IllegalArgumentException(unitString);
     }
 }

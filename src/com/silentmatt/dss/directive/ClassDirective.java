@@ -29,8 +29,8 @@ public class ClassDirective extends DeclarationDirective {
         return className;
     }
 
-    public void setClassName(String id) {
-        this.className = id;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     public List<Declaration> getParameters() {
@@ -52,7 +52,7 @@ public class ClassDirective extends DeclarationDirective {
         StringBuilder txt = new StringBuilder(start);
         txt.append("@class ");
         txt.append(getClassName());
-        if (parameters.size() > 0) {
+        if (!parameters.isEmpty()) {
             txt.append("<");
             boolean first = true;
             for (Declaration param : parameters) {

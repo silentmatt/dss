@@ -160,14 +160,14 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
         unitToCssMap.put(EM, Unit.EM);
     }
 
-    private double scale;
-    private int percent;
-    private int pxLength;
-    private int fontLength;
-    private int length;
-    private int angle;
-    private int time;
-    private Unit cssUnit;
+    private final double scale;
+    private final int percent;
+    private final int pxLength;
+    private final int fontLength;
+    private final int length;
+    private final int angle;
+    private final int time;
+    private final Unit cssUnit;
 
     /**
      * Gets the CalculationUnit that corresponds to a given {@link Unit}.
@@ -343,32 +343,16 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final CalculationUnit other = (CalculationUnit) obj;
-        if (this.pxLength != other.pxLength) {
-            return false;
-        }
-        if (this.percent != other.percent) {
-            return false;
-        }
-        if (this.length != other.length) {
-            return false;
-        }
-        if (this.angle != other.angle) {
-            return false;
-        }
-        if (this.time != other.time) {
-            return false;
-        }
-        if (this.fontLength != other.fontLength) {
-            return false;
-        }
-        return true;
+        CalculationUnit other = (CalculationUnit) obj;
+        return this.pxLength == other.pxLength &&
+               this.percent == other.percent &&
+               this.length == other.length &&
+               this.angle == other.angle &&
+               this.time == other.time &&
+               this.fontLength == other.fontLength;
     }
 
     /**
@@ -384,8 +368,8 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
      */
     @Override
     public String toString() {
-        CalculationUnit cu = getCanonicalUnit(this);
-        if (cu.cssUnit != null) { return cu.cssUnit.toString(); }
+        CalculationUnit canonicalUnit = getCanonicalUnit(this);
+        if (canonicalUnit.cssUnit != null) { return canonicalUnit.cssUnit.toString(); }
 
         StringBuilder sb = new StringBuilder();
         if (pxLength > 1) {
@@ -476,7 +460,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
 
         String res = sb.toString().trim();
         if (res.endsWith("/")) {
-            return res.substring(0, res.length() - 1);
+            res = res.substring(0, res.length() - 1);
         }
         return res;
     }
@@ -488,7 +472,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
      *
      * @return The <code>CalculationUnit</code>'s scale.
      */
-    double getScale() {
+    public double getScale() {
         return this.scale;
     }
 }

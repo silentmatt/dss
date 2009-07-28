@@ -19,7 +19,7 @@ public class CSSDocument {
     private List<RuleSet> ruleSets = new ArrayList<RuleSet>();
     private String charset;
     private List<Directive> directives = new ArrayList<Directive>();
-    private List<Rule> allRules = new ArrayList<Rule>();
+    private final List<Rule> allRules = new ArrayList<Rule>();
 
     public static CSSDocument parse(String url, ErrorReporter errors) throws IOException {
         return parse(new URL(url), errors);

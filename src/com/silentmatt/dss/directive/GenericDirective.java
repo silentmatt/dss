@@ -11,25 +11,25 @@ import java.util.List;
  */
 public class GenericDirective extends Directive {
     private List<Declaration> declarations = new ArrayList<Declaration>();
-    private List<Rule> allRules = new ArrayList<Rule>();
-    private List<RuleSet> ruleSet = new ArrayList<RuleSet>();
-    private List<Directive> directives = new ArrayList<Directive>();
+    private final List<Rule> allRules = new ArrayList<Rule>();
+    private final List<RuleSet> ruleSets = new ArrayList<RuleSet>();
+    private final List<Directive> directives = new ArrayList<Directive>();
     private DirectiveType type;
     private String name;
     private List<Medium> mediums = new ArrayList<Medium>();
     private Expression expression;
 
     public List<RuleSet> getRuleSets() {
-        return Collections.unmodifiableList(ruleSet);
+        return Collections.unmodifiableList(ruleSets);
     }
 
     public List<Directive> getDirectives() {
         return Collections.unmodifiableList(directives);
     }
 
-    public void addRuleSet(RuleSet rs) {
-        allRules.add(rs);
-        ruleSet.add(rs);
+    public void addRuleSet(RuleSet ruleSet) {
+        allRules.add(ruleSet);
+        ruleSets.add(ruleSet);
     }
 
     public void addDirective(Directive dir) {
@@ -110,7 +110,7 @@ public class GenericDirective extends Directive {
             txt.append(m.toString());
         }
 
-        boolean hasBlock = (this.declarations.size() > 0 || this.directives.size() > 0 || this.ruleSet.size() > 0);
+        boolean hasBlock = (this.declarations.size() > 0 || this.directives.size() > 0 || this.ruleSets.size() > 0);
 
         if (!hasBlock) {
             txt.append(";");

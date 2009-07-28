@@ -68,7 +68,7 @@ public class DSSEvaluator {
         }
     }
 
-    private Options options;
+    private final Options options;
     private Scope<ClassDirective> classes;
     private Scope<Expression> variables;
     private Scope<Expression> parameters;

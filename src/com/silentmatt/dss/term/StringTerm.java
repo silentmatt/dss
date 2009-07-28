@@ -12,9 +12,9 @@ package com.silentmatt.dss.term;
 public class StringTerm extends Term {
     private String value;
 
-    public StringTerm(String s) {
+    public StringTerm(String value) {
         super();
-        value = s;
+        this.value = value;
     }
 
     public String getValue() {

@@ -54,26 +54,26 @@ public class TermExpression implements CalcExpression {
 
     public void substituteValues(Scope<Expression> variables, Scope<Expression> parameters) throws CalculationException {
         if (value instanceof FunctionTerm) {
-            Function fn = ((FunctionTerm) value).getFunction();
+            Function function = ((FunctionTerm) value).getFunction();
             Expression variable;
-            if (fn.getName().equals("const")) {
-                variable = variables.get(fn.getExpression().toString());
+            if (function.getName().equals("const")) {
+                variable = variables.get(function.getExpression().toString());
             }
-            else if (fn.getName().equals("param")) {
+            else if (function.getName().equals("param")) {
                 if (parameters == null) {
                     return;
                 }
-                variable = parameters.get(fn.getExpression().toString());
+                variable = parameters.get(function.getExpression().toString());
             }
             else {
                 throw new CalculationException("unrecognized function");
             }
 
             if (variable == null) {
-                throw new CalculationException("missing value: " + fn.toString());
+                throw new CalculationException("missing value: " + function.toString());
             }
             if (variable.getTerms().size() > 1) {
-                throw new CalculationException("not a single value: " + fn.toString());
+                throw new CalculationException("not a single value: " + function.toString());
             }
 
             value = variable.getTerms().get(0);

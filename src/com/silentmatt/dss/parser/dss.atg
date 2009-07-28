@@ -350,8 +350,8 @@ selector<out Selector sel> =    (. sel = new Selector();
         ) ]
         simpleselector<out ss>  (. if (cb != null) { ss.setCombinator(cb); }
                                     sel.getSimpleSelectors().add(ss);
+                                    cb = null;
                                 .)
-                                (. cb = null; .)
     }
 .
 simpleselector<out SimpleSelector ss> = (. ss = new SimpleSelector();
@@ -396,13 +396,13 @@ attrib<out Attribute atb> =         (.  atb = new Attribute();
     ] ']'
 .
 
-pseudo<out String pseudo> =
+pseudo<out String pseudo> =         (.  StringBuilder sb = new StringBuilder(); .)
     ':' [ ':' ]
-    identity<out String ident>      (. pseudo = ident; .)
+    identity<out String ident>      (.  sb.append(ident); .)
     [ '('
-        expr<out Expression exp>    (. pseudo += "(" + exp.toString() + ")"; .)
+        expr<out Expression exp>    (.  sb.append("(").append(exp).append(")"); .)
     ')'
-    ]
+    ]                               (.  pseudo = sb.toString(); .)
 .
 declaration<out Declaration dec> =  (. dec = new Declaration(); .)
     identity<out String ident>      (. dec.setName(ident); .)
@@ -439,7 +439,7 @@ additiveExpression<out CalcExpression expr> = (. CalcExpression left, right; Ope
     }
 .
 
-multiplicativeExpression<out CalcExpression expr> = (. CalcExpression left, right; Term trm; Operation op; .)
+multiplicativeExpression<out CalcExpression expr> = (. CalcExpression left, right; Operation op; .)
     termExpression<out left> (. expr = left; .)
     {
         mulop<out op> termExpression<out right> (. expr = new BinaryExpression(op, expr, right); .)
@@ -514,7 +514,7 @@ term<out Term trm> =                        (.  String val = "";
         ( integer | decimal )               (.  if (trm == null) trm = new NumberTerm(Double.parseDouble(t.val)); val = t.val; .)
         (
             // TODO: This gets lost because val isn't used to construct the NumberTerm
-            IF(la.val.toLowerCase().equals("n"))
+            IF(la.val.equalsIgnoreCase("n"))
             (
             /* func(4n+1) */
                 "n"                         (.  val += t.val; .)
@@ -549,18 +549,18 @@ term<out Term trm> =                        (.  String val = "";
     )
 .
 
-HexValue<out String val> =  (.  val = "";
+HexValue<out String val> =  (.  StringBuilder sb = new StringBuilder();
                                 boolean found = false;
                             .)
-    '#'                     (.  val += t.val; .)
+    '#'                     (.  sb.append(t.val); .)
     (
-        integer             (.  val += t.val; .)
+        integer             (.  sb.append(t.val); .)
         |
-        ident               (.  val += t.val; found = true; .)
+        ident               (.  sb.append(t.val); found = true; .)
     )
-    [   IF(!found && partOfHex(val))
-            ident           (.  val += t.val; .)
-    ]
+    [   IF(!found && partOfHex(sb.toString()))
+            ident           (.  sb.append(t.val); .)
+    ]                       (.  val = sb.toString(); .)
 .
 
 END CSS3.

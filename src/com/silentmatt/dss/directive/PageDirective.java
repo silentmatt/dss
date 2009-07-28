@@ -1,8 +1,6 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.*;
-import com.silentmatt.dss.directive.DeclarationDirective;
-import com.silentmatt.dss.directive.DirectiveType;
 import java.util.List;
 
 /**
@@ -10,11 +8,11 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class PageDirective extends DeclarationDirective {
-    private SimpleSelector ss;
+    private SimpleSelector selector;
 
     public PageDirective(SimpleSelector pseudo, List<Declaration> declarations) {
         super(declarations);
-        this.ss = pseudo;
+        this.selector = pseudo;
     }
 
     public String getName() {
@@ -26,19 +24,19 @@ public class PageDirective extends DeclarationDirective {
     }
 
     public SimpleSelector getSelector() {
-        return ss;
+        return selector;
     }
 
-    public void setSelector(SimpleSelector ss) {
-        this.ss = ss;
+    public void setSelector(SimpleSelector selector) {
+        this.selector = selector;
     }
 
     @Override
     public String toString(int nesting) {
         StringBuilder txt = new StringBuilder("@page");
-        if (ss != null) {
+        if (selector != null) {
             txt.append(" ");
-            txt.append(ss.toString());
+            txt.append(selector.toString());
         }
         txt.append(" ");
 

@@ -11,9 +11,9 @@ import java.util.List;
  */
 public class MediaDirective extends Directive {
     private List<Medium> mediums;
-    private List<Rule> allRules;
-    private List<RuleSet> ruleSets;
-    private List<Directive> directives;
+    private final List<Rule> allRules;
+    private final List<RuleSet> ruleSets;
+    private final List<Directive> directives;
 
     public MediaDirective(List<Medium> mediums, List<Rule> rules) {
         super();
@@ -21,14 +21,16 @@ public class MediaDirective extends Directive {
         this.allRules = rules;
         this.ruleSets = new ArrayList<RuleSet>();
         this.directives = new ArrayList<Directive>();
-        for (Rule r : rules) {
-            switch (r.getRuleType()) {
+        for (Rule rule : rules) {
+            switch (rule.getRuleType()) {
             case Directive:
-                directives.add((Directive) r);
+                directives.add((Directive) rule);
                 break;
             case RuleSet:
-                ruleSets.add((RuleSet) r);
+                ruleSets.add((RuleSet) rule);
                 break;
+            default:
+                throw new IllegalStateException("Unknown directive type: " + rule.getRuleType());
             }
         }
     }

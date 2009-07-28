@@ -33,11 +33,8 @@ public abstract class DeclarationDirective extends Directive {
     }
 
     public Expression getValue(String name) {
-        Declaration d = getDeclaration(name);
-        if (d != null) {
-            return d.getExpression();
-        }
-        return null;
+        Declaration declaration = getDeclaration(name);
+        return (declaration != null) ? declaration.getExpression() : null;
     }
 
     public Declaration getDeclaration(String name) {

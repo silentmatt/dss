@@ -9,6 +9,16 @@ public class CalculationException extends Exception {
     private static final long serialVersionUID = 198304051234L;
 
     /**
+     * Constructor with an original cause.
+     *
+     * @param string A description of the error.
+     * @cause The Exception that caused this Exception.
+     */
+    public CalculationException(String string, Throwable cause) {
+        super(string, cause);
+    }
+
+    /**
      * Constructor.
      *
      * @param string A description of the error.

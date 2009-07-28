@@ -143,9 +143,9 @@ public final class Scope<T> implements Map<String, T> {
     }
 
     public T get(Object key) {
-        T o = table.get(key);
-        if (o != null) {
-            return o;
+        T value = table.get(key);
+        if (value != null) {
+            return value;
         }
         else {
             if (!table.containsKey(key) && parentScope != null) {
@@ -209,8 +209,8 @@ public final class Scope<T> implements Map<String, T> {
         throw new UnsupportedOperationException("cannot remove a variable");
     }
 
-    public void putAll(Map<? extends String, ? extends T> m) {
-        for (Entry<? extends String, ? extends T> pair : m.entrySet()) {
+    public void putAll(Map<? extends String, ? extends T> map) {
+        for (Entry<? extends String, ? extends T> pair : map.entrySet()) {
             put(pair.getKey(), pair.getValue());
         }
     }
