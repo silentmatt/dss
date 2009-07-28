@@ -1,6 +1,6 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.*;
+import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.term.UrlTerm;
 
 /**

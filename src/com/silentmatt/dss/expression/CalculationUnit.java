@@ -52,7 +52,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
     /**
      * grads/grades/gradians
      */
-    public static final CalculationUnit GRAD = new CalculationUnit(       9/10, 0,0,0,1,0,0, Unit.GRAD);
+    public static final CalculationUnit GRAD = new CalculationUnit(   9.0/10.0, 0,0,0,1,0,0, Unit.GRAD);
     /**
      * radians
      */

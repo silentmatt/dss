@@ -1,6 +1,11 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.*;
+import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Medium;
+import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.RuleSet;
+import com.silentmatt.dss.RuleType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,10 +48,6 @@ public class GenericDirective extends Directive {
 
     public void setType(DirectiveType type) {
         this.type = type;
-    }
-
-    public RuleType getRuleType() {
-        return RuleType.Directive;
     }
 
     public String getName() {

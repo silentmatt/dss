@@ -12,7 +12,7 @@ public abstract class Rule {
     public abstract String toCssString(int nesting);
 
     protected static String getIndent(int nesting) {
-        char chars[] = new char[nesting];
+        char[] chars = new char[nesting];
         Arrays.fill(chars, '\t');
         return new String(chars);
     }

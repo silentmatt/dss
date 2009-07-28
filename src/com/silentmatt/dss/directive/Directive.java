@@ -1,11 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.*;
+import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.RuleType;
 
 /**
  *
@@ -14,4 +10,8 @@ import com.silentmatt.dss.*;
 public abstract class Directive extends Rule {
     public abstract String getName();
     public abstract DirectiveType getType();
+
+    public RuleType getRuleType() {
+        return RuleType.Directive;
+    }
 }

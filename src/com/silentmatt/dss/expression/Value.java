@@ -15,7 +15,7 @@ public class Value {
 
     /**
      * Constructs a Value from a number and a unit.
-     * 
+     *
      * @param scalar The scalar (numeric) part of the value.
      * @param unit The associated {@link CalculationUnit}.
      */

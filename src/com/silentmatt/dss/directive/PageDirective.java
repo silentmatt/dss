@@ -1,6 +1,7 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.*;
+import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.SimpleSelector;
 import java.util.List;
 
 /**

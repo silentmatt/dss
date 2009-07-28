@@ -1,6 +1,8 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.*;
+import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.RuleType;
 
 /**
  *
@@ -8,10 +10,6 @@ import com.silentmatt.dss.*;
  */
 public abstract class ExpressionDirective extends Directive {
     private Expression expression;
-
-    public RuleType getRuleType() {
-        return RuleType.Directive;
-    }
 
     public ExpressionDirective(Expression expression) {
         super();

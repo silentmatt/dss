@@ -1,6 +1,8 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.*;
+import com.silentmatt.dss.Medium;
+import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.RuleSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,10 +63,6 @@ public class MediaDirective extends Directive {
 
     public DirectiveType getType() {
         return DirectiveType.Media;
-    }
-
-    public RuleType getRuleType() {
-        return RuleType.Directive;
     }
 
     @Override
