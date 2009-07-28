@@ -1,7 +1,6 @@
 package com.silentmatt.dss.expression;
 
 import com.silentmatt.dss.Expression;
-import com.silentmatt.dss.Function;
 import com.silentmatt.dss.Scope;
 import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.FunctionTerm;
@@ -54,7 +53,7 @@ public class TermExpression implements CalcExpression {
 
     public void substituteValues(Scope<Expression> variables, Scope<Expression> parameters) throws CalculationException {
         if (value instanceof FunctionTerm) {
-            Function function = ((FunctionTerm) value).getFunction();
+            FunctionTerm function = (FunctionTerm) value;
             Expression variable;
             if (function.getName().equals("const")) {
                 variable = variables.get(function.getExpression().toString());

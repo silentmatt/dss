@@ -327,7 +327,7 @@ public class DSSEvaluator {
         substituteValue(property, false, doCalculations);
     }
 
-    private static boolean isReference(Function function, boolean withParams) {
+    private static boolean isReference(FunctionTerm function, boolean withParams) {
         String name = function.getName();
         return name.equals("const") || (withParams && name.equals("param"));
     }
@@ -338,7 +338,7 @@ public class DSSEvaluator {
 
         for (Term primitiveValue : value.getTerms()) {
             if (primitiveValue instanceof FunctionTerm) {
-                Function function = ((FunctionTerm) primitiveValue).getFunction();
+                FunctionTerm function = (FunctionTerm) primitiveValue;
                 if (isReference(function, withParams)) {
                     String name = function.getExpression().toString();
                     Expression sub = function.getName().equals("const") ? getConstantValue(name) : getParameterValue(name);

@@ -489,10 +489,10 @@ term<out Term trm> =                        (.  String val = "";
             )
         }
         [
-            '(' expr<out exp>               (.  Function func = new Function();
+            '(' expr<out exp>               (.  FunctionTerm func = new FunctionTerm();
                                                 func.setName(trm.toString());
                                                 func.setExpression(exp);
-                                                trm = new FunctionTerm(func);
+                                                trm = func;
                                             .)
             ')'
             |

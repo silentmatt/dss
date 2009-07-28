@@ -668,10 +668,10 @@ public class Parser {
 				if (la.kind == 52) {
 					Get();
 					exp = expr();
-					Function func = new Function();
+					FunctionTerm func = new FunctionTerm();
 					func.setName(trm.toString());
 					func.setExpression(exp);
-					trm = new FunctionTerm(func);
+					trm = func;
 					
 					Expect(53);
 				} else {

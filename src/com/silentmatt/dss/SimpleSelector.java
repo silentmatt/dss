@@ -1,5 +1,7 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.term.FunctionTerm;
+
 /**
  *
  * @author Matthew Crumley
@@ -11,7 +13,7 @@ public class SimpleSelector {
     private String className;
     private String pseudo;
     private Attribute attribute;
-    private Function function;
+    private FunctionTerm function;
     private SimpleSelector child;
 
     public Combinator getCombinator() {
@@ -62,11 +64,11 @@ public class SimpleSelector {
         this.attribute = Attribute;
     }
 
-    public Function getFunction() {
+    public FunctionTerm getFunction() {
         return function;
     }
 
-    public void setFunction(Function Function) {
+    public void setFunction(FunctionTerm Function) {
         this.function = Function;
     }
 
