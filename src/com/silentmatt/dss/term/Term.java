@@ -1,7 +1,6 @@
 package com.silentmatt.dss.term;
 
 /**
- * @todo Separate different {@link TermType}s into subclasses of Term.
  *
  * @author Matthew Crumley
  */

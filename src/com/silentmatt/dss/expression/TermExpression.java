@@ -4,9 +4,7 @@ import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Scope;
 import com.silentmatt.dss.parser.ErrorReporter;
 import com.silentmatt.dss.term.CalculationTerm;
-import com.silentmatt.dss.term.ConstTerm;
 import com.silentmatt.dss.term.NumberTerm;
-import com.silentmatt.dss.term.ParamTerm;
 import com.silentmatt.dss.term.ReferenceTerm;
 import com.silentmatt.dss.term.Term;
 
