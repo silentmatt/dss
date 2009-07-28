@@ -233,7 +233,7 @@ public class DSSEvaluator {
         return false;
     }
 
-    private void addInheritedProperties(List<Declaration> style, ClassReference classReference) {
+    private void addInheritedProperties(List<Declaration> style, ClassReferenceTerm classReference) {
         String className = classReference.getName();
         ClassDirective clazz = classes.get(className);
         if (clazz == null) {
@@ -277,7 +277,7 @@ public class DSSEvaluator {
     }
 
     private void addInheritedProperties(List<Declaration> style, String className) {
-        addInheritedProperties(style, new ClassReference(className));
+        addInheritedProperties(style, new ClassReferenceTerm(className));
     }
 
     private void inheritProperties(List<Declaration> style, List<Declaration> properties) {
@@ -294,7 +294,7 @@ public class DSSEvaluator {
     private void addInheritedProperties(List<Declaration> style, Expression inherits) {
         for (Term inherit : inherits.getTerms()) {
             if (inherit instanceof ClassReferenceTerm) {
-                addInheritedProperties(style, ((ClassReferenceTerm) inherit).getClassReference());
+                addInheritedProperties(style, (ClassReferenceTerm) inherit);
             }
             else {
                 addInheritedProperties(style, inherit.toString());

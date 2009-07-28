@@ -496,9 +496,9 @@ term<out Term trm> =                        (.  String val = "";
                                             .)
             ')'
             |
-            ('<'                            (.  ClassReference cls = new ClassReference(trm.toString());
+            ('<'                            (.  ClassReferenceTerm cls = new ClassReferenceTerm(trm.toString());
                                                 Declaration dec;
-                                                trm = new ClassReferenceTerm(cls);
+                                                trm = cls;
                                             .)
                 [ declaration<out dec>      (.  cls.addArgument(dec); .)
                   { ';'
