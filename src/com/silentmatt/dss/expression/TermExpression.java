@@ -2,10 +2,12 @@ package com.silentmatt.dss.expression;
 
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Scope;
+import com.silentmatt.dss.parser.ErrorReporter;
 import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.ConstTerm;
 import com.silentmatt.dss.term.NumberTerm;
 import com.silentmatt.dss.term.ParamTerm;
+import com.silentmatt.dss.term.ReferenceTerm;
 import com.silentmatt.dss.term.Term;
 
 /**
@@ -25,17 +27,17 @@ public class TermExpression implements CalcExpression {
         this.value = value;
     }
 
-    public Value calculateValue(Scope<Expression> variables, Scope<Expression> parameters) throws CalculationException {
-        substituteValues(variables, parameters);
+    public Value calculateValue(Scope<Expression> variables, Scope<Expression> parameters, ErrorReporter errors) {
+        substituteValues(variables, parameters, errors);
         if (value instanceof NumberTerm) {
             return new Value((NumberTerm) value);
         }
         else if (value instanceof CalculationTerm) {
-            return ((CalculationTerm) value).getCalculation().calculateValue(variables, parameters);
+            return ((CalculationTerm) value).getCalculation().calculateValue(variables, parameters, errors);
         }
-        else {
-            throw new CalculationException("Invalid term in calculation: '" + value + "'");
-        }
+
+        errors.SemErr("Invalid term in calculation: '" + value + "'");
+        return null;
     }
 
     public int getPrecidence() {
@@ -52,33 +54,17 @@ public class TermExpression implements CalcExpression {
         return this.value.toString();
     }
 
-    public void substituteValues(Scope<Expression> variables, Scope<Expression> parameters) throws CalculationException {
-        // TODO: remove duplicated code
-        if (value instanceof ConstTerm) {
-            ConstTerm function = (ConstTerm) value;
-            Expression variable = variables.get(function.getExpression());
+    public void substituteValues(Scope<Expression> variables, Scope<Expression> parameters, ErrorReporter errors) {
+        if (value instanceof ReferenceTerm) {
+            ReferenceTerm function = (ReferenceTerm) value;
+            Expression variable = function.evaluate(variables, parameters, errors);
             if (variable == null) {
-                throw new CalculationException("missing value: " + function.toString());
-            }
-            if (variable.getTerms().size() > 1) {
-                throw new CalculationException("not a single value: " + function.toString());
-            }
-
-            value = variable.getTerms().get(0);
-        }
-        else if (value instanceof ParamTerm) {
-            ParamTerm function = (ParamTerm) value;
-            Expression variable;
-            if (parameters == null) {
+                errors.SemErr("missing value: " + function.toString());
                 return;
             }
-            variable = parameters.get(function.getExpression());
-
-            if (variable == null) {
-                throw new CalculationException("missing value: " + function.toString());
-            }
             if (variable.getTerms().size() > 1) {
-                throw new CalculationException("not a single value: " + function.toString());
+                errors.SemErr("not a single value: " + function.toString());
+                return;
             }
 
             value = variable.getTerms().get(0);

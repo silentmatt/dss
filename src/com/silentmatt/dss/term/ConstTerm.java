@@ -1,37 +1,17 @@
 package com.silentmatt.dss.term;
 
+import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Scope;
+import com.silentmatt.dss.parser.ErrorReporter;
+
 /**
  * A constant reference.
  *
  * @author Matthew Crumley
  */
-public class ConstTerm extends Term {
-    /**
-     * The const name.
-     */
-    private String name;
-
+public class ConstTerm extends ReferenceTerm {
     public ConstTerm(String name) {
-        super();
-        this.name = name;
-    }
-
-    /**
-     * Gets the name of the constant to reference.
-     *
-     * @return The constant name.
-     */
-    public String getExpression() {
-        return name;
-    }
-
-    /**
-     * Sets the name of the constant to reference.
-     *
-     * @param name The constant name.
-     */
-    public void setExpression(String name) {
-        this.name = name;
+        super(name);
     }
 
     /**
@@ -41,6 +21,15 @@ public class ConstTerm extends Term {
      */
     @Override
     public String toString() {
-        return "const(" + name + ")";
+        return "const(" + getName() + ")";
+    }
+
+    @Override
+    public Expression evaluate(Scope<Expression> constants, Scope<Expression> parameters, ErrorReporter errors) {
+        if (constants == null) {
+            errors.SemErr("Invalid scope");
+            return null;
+        }
+        return constants.get(getName());
     }
 }

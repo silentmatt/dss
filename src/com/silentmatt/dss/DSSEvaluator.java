@@ -17,12 +17,15 @@ import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.ClassReferenceTerm;
 import com.silentmatt.dss.term.ConstTerm;
 import com.silentmatt.dss.term.ParamTerm;
+import com.silentmatt.dss.term.ReferenceTerm;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DSSEvaluator {
 
@@ -333,19 +336,9 @@ public class DSSEvaluator {
         Expression newValue = new Expression();
 
         for (Term primitiveValue : value.getTerms()) {
-            // TODO: Remove duplicated code
-            if (primitiveValue instanceof ConstTerm) {
-                ConstTerm function = (ConstTerm) primitiveValue;
-                Expression sub = getConstantValue(function.getExpression());
-                if (sub != null) {
-                    for (Term t : sub.getTerms()) {
-                        newValue.getTerms().add(t);
-                    }
-                }
-            }
-            else if (withParams && primitiveValue instanceof ParamTerm) {
-                ParamTerm function = (ParamTerm) primitiveValue;
-                Expression sub = getParameterValue(function.getExpression());
+            if (primitiveValue instanceof ConstTerm || (withParams && primitiveValue instanceof ParamTerm)) {
+                ReferenceTerm function = (ReferenceTerm) primitiveValue;
+                Expression sub = function.evaluate(variables, parameters, options.errors);
                 if (sub != null) {
                     for (Term t : sub.getTerms()) {
                         newValue.getTerms().add(t);
@@ -354,17 +347,19 @@ public class DSSEvaluator {
             }
             else if (primitiveValue instanceof CalculationTerm) {
                 CalcExpression expression = ((CalculationTerm) primitiveValue).getCalculation();
-                try {
-                    expression.substituteValues(variables, withParams ? parameters : null);
-                    if (doCalculations) {
-                        Value calc = expression.calculateValue(variables, parameters);
-                        newValue.getTerms().add(calc.toTerm());
+                expression.substituteValues(variables, withParams ? parameters : null, options.errors);
+                if (doCalculations) {
+                    Value calc = expression.calculateValue(variables, parameters, options.errors);
+                    if (calc != null) {
+                        try {
+                            newValue.getTerms().add(calc.toTerm());
+                        } catch (CalculationException ex) {
+                            options.errors.SemErr(ex.getMessage());
+                        }
                     }
-                    else {
-                        newValue.getTerms().add(primitiveValue);
-                    }
-                } catch (CalculationException ex) {
-                    options.errors.SemErr(ex.getMessage());
+                }
+                else {
+                    newValue.getTerms().add(primitiveValue);
                 }
             }
             else {

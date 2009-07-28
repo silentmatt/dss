@@ -1,37 +1,17 @@
 package com.silentmatt.dss.term;
 
+import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Scope;
+import com.silentmatt.dss.parser.ErrorReporter;
+
 /**
  * A parameter reference.
  *
  * @author Matthew Crumley
  */
-public class ParamTerm extends Term {
-    /**
-     * The parameter name.
-     */
-    private String name;
-
+public class ParamTerm extends ReferenceTerm {
     public ParamTerm(String name) {
-        super();
-        this.name = name;
-    }
-
-    /**
-     * Gets the name of the parameter to reference.
-     *
-     * @return The parameter name.
-     */
-    public String getExpression() {
-        return name;
-    }
-
-    /**
-     * Sets the name of the parameter to reference.
-     *
-     * @param name The parameter name.
-     */
-    public void setExpression(String name) {
-        this.name = name;
+        super(name);
     }
 
     /**
@@ -41,6 +21,24 @@ public class ParamTerm extends Term {
      */
     @Override
     public String toString() {
-        return "param(" + name + ")";
+        return "param(" + getName() + ")";
+    }
+
+    @Override
+    public Expression evaluate(Scope<Expression> constants, Scope<Expression> parameters, ErrorReporter errors) {
+        if (parameters == null) {
+            errors.SemErr("param is only valid inside a class");
+            return null;
+        }
+        Expression value = parameters.get(getName());
+        if (value == null) {
+            if (parameters.containsKey(getName())) {
+                errors.SemErr("Missing required class parameter: " + getName());
+            }
+            else {
+                errors.SemErr("Invalid class parameter: " + getName());
+            }
+        }
+        return value;
     }
 }

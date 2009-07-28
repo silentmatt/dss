@@ -2,6 +2,7 @@ package com.silentmatt.dss.expression;
 
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Scope;
+import com.silentmatt.dss.parser.ErrorReporter;
 
 /**
  * An expression from a calc(...) Term.
@@ -21,7 +22,7 @@ public interface CalcExpression {
      * @throws CalculationException The expression attempts invalid unit operations,
      * has invalid Terms, or a const/param lookup fails.
      */
-    Value calculateValue(Scope<Expression> variables, Scope<Expression> parameters) throws CalculationException;
+    Value calculateValue(Scope<Expression> variables, Scope<Expression> parameters, ErrorReporter errors);
 
     /**
      * Gets the relative precidence of the expression.
@@ -39,5 +40,5 @@ public interface CalcExpression {
      * @param parameters Scope for param lookups.
      * @throws CalculationException The expression has invalid Terms.
      */
-    void substituteValues(Scope<Expression> variables, Scope<Expression> parameters) throws CalculationException;
+    void substituteValues(Scope<Expression> variables, Scope<Expression> parameters, ErrorReporter errors);
 }
