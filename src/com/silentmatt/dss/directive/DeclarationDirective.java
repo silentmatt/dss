@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
-public abstract class DeclarationDirective extends Directive {
+public abstract class DeclarationDirective extends Rule {
     private List<Declaration> declarations = new ArrayList<Declaration>();
 
     public DeclarationDirective(List<Declaration> declarations) {

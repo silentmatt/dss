@@ -138,10 +138,10 @@ public class Parser {
 		while (StartOf(1)) {
 			if (StartOf(2)) {
 				RuleSet rset = ruleset();
-				CSSDoc.addRuleSet(rset); 
+				CSSDoc.addRule(rset); 
 			} else {
-				Directive dir = directive();
-				CSSDoc.addDirective(dir); 
+				Rule dir = directive();
+				CSSDoc.addRule(dir); 
 			}
 			while (la.kind == 4 || la.kind == 7 || la.kind == 8) {
 				if (la.kind == 7) {
@@ -160,7 +160,7 @@ public class Parser {
 		rset = new RuleSet();
 		Selector sel;
 		Declaration dec;
-		Directive dir;
+		Rule dir;
 		
 		sel = selector();
 		rset.getSelectors().add(sel); 
@@ -177,18 +177,18 @@ public class Parser {
 				rset.addDeclaration(dec); 
 			} else if (la.kind == 25) {
 				dir = classDirective();
-				rset.addDirective(dir); 
+				rset.addRule(dir); 
 			} else {
 				dir = defineDirective();
-				rset.addDirective(dir); 
+				rset.addRule(dir); 
 			}
 		}
 		Expect(23);
 		return rset;
 	}
 
-	Directive  directive() {
-		Directive  dir;
+	Rule  directive() {
+		Rule  dir;
 		dir = null; 
 		switch (la.kind) {
 		case 21: {
@@ -815,10 +815,10 @@ public class Parser {
 					dir.getDeclarations().add(dec); 
 				} else if (StartOf(2)) {
 					RuleSet rset = ruleset();
-					dir.addRuleSet(rset); 
+					dir.addRule(rset); 
 				} else {
-					Directive dr = directive();
-					dir.addDirective(dr); 
+					Rule dr = directive();
+					dir.addRule(dr); 
 				}
 			}
 			Expect(23);

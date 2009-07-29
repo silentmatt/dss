@@ -3,40 +3,22 @@ package com.silentmatt.dss.directive;
 import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Medium;
 import com.silentmatt.dss.Rule;
-import com.silentmatt.dss.RuleSet;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  *
  * @author Matthew Crumley
  */
-public class MediaDirective extends Directive {
+public class MediaDirective extends Rule {
     private List<Medium> mediums;
-    private final List<Rule> allRules;
-    private final List<RuleSet> ruleSets;
-    private final List<Directive> directives;
+    private final List<Rule> rules;
 
     public MediaDirective(List<Medium> mediums, List<Rule> rules) {
         super();
         this.mediums = mediums;
-        this.allRules = rules;
-        this.ruleSets = new ArrayList<RuleSet>();
-        this.directives = new ArrayList<Directive>();
-        for (Rule rule : rules) {
-            if (rule instanceof Directive) {
-                directives.add((Directive) rule);
-            }
-            else if (rule instanceof RuleSet) {
-                ruleSets.add((RuleSet) rule);
-            }
-            else {
-                throw new IllegalStateException("Unknown rule type");
-            }
-        }
+        this.rules = rules;
     }
 
     public List<Medium> getMediums() {
@@ -47,16 +29,8 @@ public class MediaDirective extends Directive {
         this.mediums = mediums;
     }
 
-    public List<RuleSet> getRuleSets() {
-        return Collections.unmodifiableList(ruleSets);
-    }
-
-    public List<Directive> getDirectives() {
-        return Collections.unmodifiableList(directives);
-    }
-
     public List<Rule> getRules() {
-        return allRules;
+        return rules;
     }
 
     @Override
@@ -64,14 +38,8 @@ public class MediaDirective extends Directive {
         return toString(0);
     }
 
-    public void addDirective(Directive directive) {
-        allRules.add(directive);
-        directives.add(directive);
-    }
-
-    public void addRuleSet(RuleSet ruleSet) {
-        allRules.add(ruleSet);
-        ruleSets.add(ruleSet);
+    public void addRule(Rule rule) {
+        this.rules.add(rule);
     }
 
     public String toString(int nesting) {
@@ -89,7 +57,7 @@ public class MediaDirective extends Directive {
         }
         txt.append(" {\n");
 
-        for (Rule rule : allRules) {
+        for (Rule rule : rules) {
             txt.append(rule.toString(nesting + 1));
             txt.append("\n");
         }
@@ -113,7 +81,7 @@ public class MediaDirective extends Directive {
         }
         txt.append(" {\n");
 
-        for (Rule rule : allRules) {
+        for (Rule rule : rules) {
             String ruleString = rule.toCssString(nesting + 1);
             if (ruleString.length() > 0) {
                 txt.append(ruleString);

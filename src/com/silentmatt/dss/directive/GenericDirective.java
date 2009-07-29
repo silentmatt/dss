@@ -5,40 +5,22 @@ import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Medium;
 import com.silentmatt.dss.Rule;
-import com.silentmatt.dss.RuleSet;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  *
  * @author Matthew Crumley
  */
-public class GenericDirective extends Directive {
+public class GenericDirective extends Rule {
     private List<Declaration> declarations = new ArrayList<Declaration>();
-    private final List<Rule> allRules = new ArrayList<Rule>();
-    private final List<RuleSet> ruleSets = new ArrayList<RuleSet>();
-    private final List<Directive> directives = new ArrayList<Directive>();
+    private final List<Rule> rules = new ArrayList<Rule>();
     private String name;
     private List<Medium> mediums = new ArrayList<Medium>();
     private Expression expression;
 
-    public List<RuleSet> getRuleSets() {
-        return Collections.unmodifiableList(ruleSets);
-    }
-
-    public List<Directive> getDirectives() {
-        return Collections.unmodifiableList(directives);
-    }
-
-    public void addRuleSet(RuleSet ruleSet) {
-        allRules.add(ruleSet);
-        ruleSets.add(ruleSet);
-    }
-
-    public void addDirective(Directive dir) {
-        allRules.add(dir);
-        directives.add(dir);
+    public void addRule(Rule rule) {
+        this.rules.add(rule);
     }
 
     public String getName() {
@@ -102,7 +84,7 @@ public class GenericDirective extends Directive {
             txt.append(m.toString());
         }
 
-        boolean hasBlock = (this.declarations.size() > 0 || this.directives.size() > 0 || this.ruleSets.size() > 0);
+        boolean hasBlock = (this.declarations.size() > 0 || this.rules.size() > 0);
 
         if (!hasBlock) {
             txt.append(";");
@@ -111,13 +93,8 @@ public class GenericDirective extends Directive {
 
         txt.append(" {" + start);
 
-        for (Directive dir : directives) {
-            txt.append(dir.toString());
-            txt.append("\n");
-        }
-
-        for (RuleSet rules : getRuleSets()) {
-            txt.append(rules.toString(nesting + 1));
+        for (Rule dir : rules) {
+            txt.append(dir.toString(nesting + 1));
             txt.append("\n");
         }
 

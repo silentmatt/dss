@@ -1,7 +1,6 @@
 package com.silentmatt.dss;
 
 import com.silentmatt.dss.DSSEvaluator.EvaluationState;
-import com.silentmatt.dss.directive.Directive;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class RuleSet extends Rule {
-    private List<Directive> directives = new ArrayList<Directive>();
+    private List<Rule> rules = new ArrayList<Rule>();
     private List<Declaration> declarations = new ArrayList<Declaration>();
     private List<Selector> selectors = new ArrayList<Selector>();
 
@@ -36,16 +35,12 @@ public class RuleSet extends Rule {
         this.selectors = selectors;
     }
 
-    public List<Directive> getDirectives() {
-        return directives;
+    public List<Rule> getRules() {
+        return rules;
     }
 
-    public void setDirectives(List<Directive> directives) {
-        this.directives = directives;
-    }
-
-    public void addDirective(Directive directive) {
-        directives.add(directive);
+    public void addRule(Rule directive) {
+        rules.add(directive);
     }
 
     public Declaration getDeclaration(String name) {
@@ -84,7 +79,7 @@ public class RuleSet extends Rule {
         }
         txt.append(" {");
 
-        for (Directive dir : directives) {
+        for (Rule dir : rules) {
             txt.append("\n\t" + start);
             txt.append(dir.toString(nesting + 1));
         }
@@ -116,7 +111,7 @@ public class RuleSet extends Rule {
         }
         txt.append(" {");
 
-        for (Directive dir : directives) {
+        for (Rule dir : rules) {
             String dirString = dir.toCssString(nesting + 1);
             if (dirString.length() > 0) {
                 txt.append("\n\t" + start);
@@ -138,7 +133,7 @@ public class RuleSet extends Rule {
     public void evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
         state.pushScope();
         try {
-            for (Directive dir : this.getDirectives()) {
+            for (Rule dir : this.getRules()) {
                 dir.evaluate(state, null);
             }
             DSSEvaluator.evaluateStyle(state, this.getDeclarations(), true);

@@ -1,6 +1,5 @@
 package com.silentmatt.dss;
 
-import com.silentmatt.dss.directive.Directive;
 import com.silentmatt.dss.parser.ErrorReporter;
 import com.silentmatt.dss.parser.Parser;
 import com.silentmatt.dss.parser.Scanner;
@@ -8,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,10 +14,8 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class CSSDocument {
-    private List<RuleSet> ruleSets = new ArrayList<RuleSet>();
     private String charset;
-    private List<Directive> directives = new ArrayList<Directive>();
-    private final List<Rule> allRules = new ArrayList<Rule>();
+    private final List<Rule> rules = new ArrayList<Rule>();
 
     public static CSSDocument parse(String url, ErrorReporter errors) throws IOException {
         return parse(new URL(url), errors);
@@ -46,17 +42,8 @@ public class CSSDocument {
         }
     }
 
-    public List<RuleSet> getRuleSets() {
-        return Collections.unmodifiableList(ruleSets);
-    }
-
-    public void setRuleSets(List<RuleSet> ruleSets) {
-        this.ruleSets = ruleSets;
-    }
-
-    public void addRuleSet(RuleSet set) {
-        allRules.add(set);
-        ruleSets.add(set);
+    public void addRule(Rule rule) {
+        this.rules.add(rule);
     }
 
     public String getCharset() {
@@ -67,27 +54,14 @@ public class CSSDocument {
         this.charset = charset;
     }
 
-    public List<Directive> getDirectives() {
-        return Collections.unmodifiableList(directives);
-    }
-
-    public void addDirective(Directive directive) {
-        allRules.add(directive);
-        directives.add(directive);
-    }
-
     public List<Rule> getRules() {
-        return allRules;
-    }
-
-    public void setDirectives(List<Directive> directives) {
-        this.directives = directives;
+        return rules;
     }
 
     @Override
     public String toString() {
         StringBuilder txt = new StringBuilder();
-        for (Rule r : allRules) {
+        for (Rule r : rules) {
             txt.append(r).append("\n");
         }
         return txt.toString();
@@ -95,7 +69,7 @@ public class CSSDocument {
 
     public String toCssString() {
         StringBuilder txt = new StringBuilder();
-        for (Rule r : allRules) {
+        for (Rule r : rules) {
             String ruleString = r.toCssString(0);
             if (ruleString.length() > 0) {
                 txt.append(ruleString).append("\n");

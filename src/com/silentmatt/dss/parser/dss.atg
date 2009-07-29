@@ -118,9 +118,9 @@ PRODUCTIONS
 CSS3 =                                  (. CSSDoc = new CSSDocument(); .)
     {"<!--" | "-->" | s}
     {
-        ( ruleset<out RuleSet rset>     (. CSSDoc.addRuleSet(rset); .)
+        ( ruleset<out RuleSet rset>     (. CSSDoc.addRule(rset); .)
           |
-          directive<out Directive dir>  (. CSSDoc.addDirective(dir); .)
+          directive<out Rule dir>  (. CSSDoc.addRule(dir); .)
         )
         {"<!--" | "-->" | s}
     }
@@ -283,9 +283,9 @@ genericDirective<out GenericDirective dir> =
                 // XXX: Order between Declarations and Rules is not preserved.
                 declaration<out Declaration dec> ';'    (.  dir.getDeclarations().add(dec); .)
                 |
-                ruleset<out RuleSet rset>               (.  dir.addRuleSet(rset); .)
+                ruleset<out RuleSet rset>               (.  dir.addRule(rset); .)
                 |
-                directive<out Directive dr>             (.  dir.addDirective(dr); .)
+                directive<out Rule dr>             (.  dir.addRule(dr); .)
             }
         '}'
         |
@@ -293,7 +293,7 @@ genericDirective<out GenericDirective dir> =
     )
 .
 
-directive<out Directive dir> (.  dir = null; .) =
+directive<out Rule dir> (.  dir = null; .) =
     mediaDirective<out dir>
     |
     classDirective<out dir>
@@ -321,7 +321,7 @@ directive<out Directive dir> (.  dir = null; .) =
 ruleset<out RuleSet rset> =             (.  rset = new RuleSet();
                                             Selector sel;
                                             Declaration dec;
-                                            Directive dir;
+                                            Rule dir;
                                         .)
 
     selector<out sel>                   (.  rset.getSelectors().add(sel); .)
@@ -331,9 +331,9 @@ ruleset<out RuleSet rset> =             (.  rset = new RuleSet();
         {
             declaration<out dec> ';'    (.  rset.addDeclaration(dec); .)
             |
-            classDirective<out dir>     (.  rset.addDirective(dir); .)
+            classDirective<out dir>     (.  rset.addRule(dir); .)
             |
-            defineDirective<out dir>    (.  rset.addDirective(dir); .)
+            defineDirective<out dir>    (.  rset.addRule(dir); .)
         }
     '}'
 .
