@@ -275,7 +275,7 @@ genericDirective<out GenericDirective dir> =
     [
         expr<out Expression exp>                        (.  dir.setExpression(exp); .)
         |
-        medium<out Medium m>                            (.  dir.getMediums().add(m); .)
+        medium<out Medium m>                            (.  dir.addMedium(m); .)
     ]
     (
         '{'

@@ -19,10 +19,6 @@ public abstract class ExpressionDirective extends Rule {
         return expression;
     }
 
-    public void setExpression(Expression expression) {
-        this.expression = expression;
-    }
-
     public String toString(int nesting) {
         return Rule.getIndent(nesting) + toString();
     }

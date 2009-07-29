@@ -22,10 +22,6 @@ public abstract class DeclarationDirective extends Rule {
         return declarations;
     }
 
-    public void setDeclarations(List<Declaration> declarations) {
-        this.declarations = declarations;
-    }
-
     public void addDeclaration(Declaration declaration) {
         declarations.add(declaration);
     }

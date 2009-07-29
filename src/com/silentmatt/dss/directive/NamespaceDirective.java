@@ -23,10 +23,6 @@ public class NamespaceDirective extends ExpressionDirective {
         return prefix;
     }
 
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
     @Override
     public String toString() {
         return "@namespace " + (prefix != null ? (prefix + " ") : "") + getExpression().toString() + ";";

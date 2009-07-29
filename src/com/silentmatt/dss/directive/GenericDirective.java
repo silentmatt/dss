@@ -13,10 +13,10 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class GenericDirective extends Rule {
-    private List<Declaration> declarations = new ArrayList<Declaration>();
+    private final List<Declaration> declarations = new ArrayList<Declaration>();
     private final List<Rule> rules = new ArrayList<Rule>();
+    private final List<Medium> mediums = new ArrayList<Medium>();
     private String name;
-    private List<Medium> mediums = new ArrayList<Medium>();
     private Expression expression;
 
     public void addRule(Rule rule) {
@@ -35,8 +35,8 @@ public class GenericDirective extends Rule {
         return mediums;
     }
 
-    public void setMediums(List<Medium> mediums) {
-        this.mediums = mediums;
+    public void addMedium(Medium medium) {
+        this.mediums.add(medium);
     }
 
     public Expression getExpression() {
@@ -51,8 +51,8 @@ public class GenericDirective extends Rule {
         return declarations;
     }
 
-    public void setDeclarations(List<Declaration> declarations) {
-        this.declarations = declarations;
+    public void addDeclaration(Declaration declaration) {
+        this.declarations.add(declaration);
     }
 
     @Override

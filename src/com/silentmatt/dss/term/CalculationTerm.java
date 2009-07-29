@@ -18,10 +18,6 @@ public class CalculationTerm extends Term {
         return calculation;
     }
 
-    public void setCalculation(CalcExpression calculation) {
-        this.calculation = calculation;
-    }
-
     @Override
     public String toString() {
         return "calc(" + calculation.toString() + ")";

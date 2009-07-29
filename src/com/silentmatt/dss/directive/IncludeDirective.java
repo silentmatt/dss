@@ -39,10 +39,6 @@ public class IncludeDirective extends ExpressionDirective {
         return included;
     }
 
-    public void setIncludedDocument(CSSDocument doc) {
-        included = doc;
-    }
-
     @Override
     public String toString() {
         return "@include " + getExpression() + ";";
@@ -59,7 +55,7 @@ public class IncludeDirective extends ExpressionDirective {
                 if (includedDocument.getRules().size() > 0) {
                     Rule.evaluateRules(state, includedDocument.getRules().subList(0, 1));
                 }
-                this.setIncludedDocument(includedDocument);
+                this.included = includedDocument;
             }
             finally {
                 state.popBaseURL();

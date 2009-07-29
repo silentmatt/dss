@@ -36,10 +36,6 @@ public class NumberTerm extends Term {
         this.value = value;
     }
 
-    public void setValue(String value) {
-        this.value = Double.parseDouble(value);
-    }
-
     public Unit getUnit() {
         return unit;
     }

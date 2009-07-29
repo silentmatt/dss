@@ -14,7 +14,6 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class CSSDocument {
-    private String charset;
     private final List<Rule> rules = new ArrayList<Rule>();
 
     public static CSSDocument parse(String url, ErrorReporter errors) throws IOException {
@@ -44,14 +43,6 @@ public class CSSDocument {
 
     public void addRule(Rule rule) {
         this.rules.add(rule);
-    }
-
-    public String getCharset() {
-        return charset;
-    }
-
-    public void setCharset(String charset) {
-        this.charset = charset;
     }
 
     public List<Rule> getRules() {

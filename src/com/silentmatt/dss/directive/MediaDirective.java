@@ -25,10 +25,6 @@ public class MediaDirective extends Rule {
         return mediums;
     }
 
-    public void setMediums(List<Medium> mediums) {
-        this.mediums = mediums;
-    }
-
     public List<Rule> getRules() {
         return rules;
     }

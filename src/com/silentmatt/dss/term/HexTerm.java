@@ -16,10 +16,6 @@ public class HexTerm extends Term {
         return value;
     }
 
-    public void setValue(String Value) {
-        this.value = Value;
-    }
-
     @Override
     public String toString() {
         return value.toUpperCase();

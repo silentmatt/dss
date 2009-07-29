@@ -44,15 +44,6 @@ public class ClassReferenceTerm extends Term {
     }
 
     /**
-     * Sets the name of the class being referenced.
-     *
-     * @param Name The class name.
-     */
-    public void setName(String Name) {
-        this.name = Name;
-    }
-
-    /**
      * Gets the arguments to be passed to the class.
      * The List is shared, so changes to the returned List will affect the ClassReference.
      *
@@ -60,17 +51,6 @@ public class ClassReferenceTerm extends Term {
      */
     public List<Declaration> getArguments() {
         return arguments;
-    }
-
-    /**
-     * Sets the arguments to be passed to the class.
-     * The List is shared, not copied, so any future changes to the List will
-     * affect the ClassReference.
-     *
-     * @param arguments The CSS declarations that will be passed to the class.
-     */
-    public void setArguments(List<Declaration> arguments) {
-        this.arguments = arguments;
     }
 
     /**

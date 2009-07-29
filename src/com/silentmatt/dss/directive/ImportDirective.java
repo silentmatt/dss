@@ -26,10 +26,6 @@ public class ImportDirective extends ExpressionDirective {
         return medium;
     }
 
-    public void setMedium(Medium medium) {
-        this.medium = medium;
-    }
-
     @Override
     public String toString() {
         return "@import " + getExpression() + " " + medium + ";";

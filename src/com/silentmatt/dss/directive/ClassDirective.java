@@ -27,16 +27,8 @@ public class ClassDirective extends DeclarationDirective {
         return className;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
     public List<Declaration> getParameters() {
         return parameters;
-    }
-
-    public void setParameters(List<Declaration> parameters) {
-        this.parameters = parameters;
     }
 
     public void addParameter(Declaration param) {

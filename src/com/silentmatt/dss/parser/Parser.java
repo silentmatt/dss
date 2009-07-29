@@ -803,7 +803,7 @@ public class Parser {
 				dir.setExpression(exp); 
 			} else {
 				Medium m = medium();
-				dir.getMediums().add(m); 
+				dir.addMedium(m); 
 			}
 		}
 		if (la.kind == 22) {

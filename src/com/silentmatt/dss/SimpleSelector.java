@@ -1,19 +1,17 @@
 package com.silentmatt.dss;
 
-import com.silentmatt.dss.term.FunctionTerm;
-
 /**
  *
  * @author Matthew Crumley
  */
 public class SimpleSelector {
+    // XXX: There was FunctionTerm function after attributes, but it was never used.
     private Combinator combinator;
     private String elementName;
     private String id;
     private String className;
     private String pseudo;
     private Attribute attribute;
-    private FunctionTerm function;
     private SimpleSelector child;
 
     public Combinator getCombinator() {
@@ -64,14 +62,6 @@ public class SimpleSelector {
         this.attribute = Attribute;
     }
 
-    public FunctionTerm getFunction() {
-        return function;
-    }
-
-    public void setFunction(FunctionTerm Function) {
-        this.function = Function;
-    }
-
     public SimpleSelector getChild() {
         return child;
     }
@@ -91,7 +81,6 @@ public class SimpleSelector {
         if (className != null) { txt.append(".").append(className); }
         if (pseudo != null) { txt.append(":").append(pseudo); }
         if (attribute != null) { txt.append(attribute); }
-        if (function != null) { txt.append(function); }
         if (child != null) {
             if (child.elementName != null) { txt.append(" "); }
             txt.append(child);

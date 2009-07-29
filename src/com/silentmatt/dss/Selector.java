@@ -14,10 +14,6 @@ public class Selector {
         return simpleSelectors;
     }
 
-    public void setSimpleSelectors(List<SimpleSelector> SimpleSelectors) {
-        this.simpleSelectors = SimpleSelectors;
-    }
-
     @Override
     public String toString() {
         StringBuilder txt = new StringBuilder();

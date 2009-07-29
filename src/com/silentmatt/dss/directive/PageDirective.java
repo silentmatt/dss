@@ -26,10 +26,6 @@ public class PageDirective extends DeclarationDirective {
         return selector;
     }
 
-    public void setSelector(SimpleSelector selector) {
-        this.selector = selector;
-    }
-
     @Override
     public String toString(int nesting) {
         StringBuilder txt = new StringBuilder("@page");

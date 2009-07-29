@@ -19,20 +19,12 @@ public class RuleSet extends Rule {
         return declarations;
     }
 
-    public void setDeclarations(List<Declaration> declarations) {
-        this.declarations = declarations;
-    }
-
     public void addDeclaration(Declaration declaration) {
         declarations.add(declaration);
     }
 
     public List<Selector> getSelectors() {
         return selectors;
-    }
-
-    public void setSelectors(List<Selector> selectors) {
-        this.selectors = selectors;
     }
 
     public List<Rule> getRules() {

@@ -24,15 +24,6 @@ public class Expression {
     }
 
     /**
-     * Sets the list of Terms in the expression.
-     *
-     * @param Terms The List of Terms.
-     */
-    public void setTerms(List<Term> Terms) {
-        this.terms = Terms;
-    }
-
-    /**
      * Gets the expression as a String.
      *
      * @return A string of the form "term [&lt;separator&gt; term]*".
