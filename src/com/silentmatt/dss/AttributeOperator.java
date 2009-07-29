@@ -9,30 +9,40 @@ public enum AttributeOperator {
     /**
      * Equality comparison: [attr=value]
      */
-    Equals,
+    Equals("="),
 
     /**
      * In space-separated list: [attr~=item]
      */
-    InList,
+    InList("~="),
 
     /**
      * In hyphen-separated list: [attr|=item]
      */
-    Hyphenated,
+    Hyphenated("|="),
 
     /**
      * Ends with: [attr$=ending]
      */
-    EndsWith,
+    EndsWith("$="),
 
     /**
      * Starts with: [attr^=start]
      */
-    BeginsWith,
+    BeginsWith("^="),
 
     /**
      * Contains: [attr*=middle]
      */
-    Contains
+    Contains("*=");
+
+    private AttributeOperator(String cssText) {
+        this.cssText = cssText;
+    }
+    private String cssText;
+
+    @Override
+    public String toString() {
+        return cssText;
+    }
 }

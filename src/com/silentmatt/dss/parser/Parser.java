@@ -750,7 +750,7 @@ public class Parser {
 					try {
 					   // TODO: What if trm isn't a NumberTerm?
 					   ((NumberTerm) trm).setUnit(Unit.parse(ident));
-					} catch (Exception ex) {
+					} catch (IllegalArgumentException ex) {
 					    errors.SemErr(t.line, t.col, "Unrecognized unit '" + ident + "'");
 					}
 					

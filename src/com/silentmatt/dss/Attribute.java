@@ -72,19 +72,10 @@ public class Attribute {
      */
     @Override
     public String toString() {
-        StringBuilder txt = new StringBuilder();
-        txt.append("[").append(operand);
+        StringBuilder txt = new StringBuilder("[");
+        txt.append(operand);
         if (operator != null) {
-            switch (operator) {
-            case Equals: txt.append("="); break;
-            case InList: txt.append("~="); break;
-            case Hyphenated: txt.append("|="); break;
-            case BeginsWith: txt.append("^="); break;
-            case EndsWith: txt.append("$="); break;
-            case Contains: txt.append("*="); break;
-            default: break;
-            }
-            txt.append(value);
+            txt.append(operator).append(value);
         }
         txt.append("]");
         return txt.toString();
