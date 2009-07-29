@@ -22,7 +22,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class DSSEvaluator {
@@ -70,22 +72,84 @@ public class DSSEvaluator {
         }
     }
 
-    private final Options options;
-    private Scope<ClassDirective> classes;
-    private Scope<Expression> variables;
-    private Scope<Expression> parameters;
+    public class EvaluationState {
+        private Deque<URL> baseURL;
+        private ErrorReporter errors = new PrintStreamErrorReporter();
+        private Scope<ClassDirective> classes = new Scope<ClassDirective>(null);
+        private Scope<Expression> variables = new Scope<Expression>(null);
+        private Scope<Expression> parameters;
+
+        public EvaluationState(Options opts) {
+            this.baseURL = new LinkedList<URL>();
+            baseURL.push(opts.getBaseURL());
+            this.errors = opts.getErrors();
+            this.classes = new Scope<ClassDirective>(opts.getClasses());
+            this.variables = new Scope<Expression>(opts.getVariables());
+        }
+
+        public URL getBaseURL() {
+            return baseURL.getFirst();
+        }
+
+        public ErrorReporter getErrors() {
+            return errors;
+        }
+
+        public Scope<ClassDirective> getClasses() {
+            return classes;
+        }
+
+        public Scope<Expression> getVariables() {
+            return variables;
+        }
+
+        public Scope<Expression> getParameters() {
+            return parameters;
+        }
+
+        public void pushBaseURL(URL newBase) {
+            baseURL.push(newBase);
+            pushScope();
+        }
+
+        public void popBaseURL() {
+            popScope();
+            baseURL.pop();
+        }
+
+        public void pushScope() {
+            classes = new Scope<ClassDirective>(classes);
+            variables = new Scope<Expression>(variables);
+        }
+
+        public void popScope() {
+            classes = classes.parent();
+            variables = variables.parent();
+        }
+
+        public void pushParameters() {
+            parameters = new Scope<Expression>(parameters);
+        }
+
+        public void popParameters() {
+            parameters = parameters.parent();
+        }
+    }
+
+    private final EvaluationState state;
 
     public DSSEvaluator(Options opts) {
-        this.options = opts;
-        this.classes = new Scope<ClassDirective>(opts.getClasses());
-        this.variables = new Scope<Expression>(opts.getVariables());
+        this.state = new EvaluationState(opts);
     }
 
     public void evaluate(CSSDocument css) throws MalformedURLException, IOException {
-        classes = classes.inherit();
-        variables = variables.inherit();
-
-        evaluateRules(css.getRules());
+        state.pushScope();
+        try {
+            evaluateRules(css.getRules());
+        }
+        finally {
+            state.popScope();
+        }
     }
 
     private void evaluateRules(List<Rule> rules) throws MalformedURLException, IOException {
@@ -102,16 +166,6 @@ public class DSSEvaluator {
                 throw new IllegalStateException("Unknown rule type:" + rule.getRuleType());
             }
         }
-    }
-
-    private void pushScope() {
-        classes = new Scope<ClassDirective>(classes);
-        variables = new Scope<Expression>(variables);
-    }
-
-    private void popScope() {
-        classes = classes.parent();
-        variables = variables.parent();
     }
 
     private void evaluateDirective(Directive directive, List<Rule> container) throws MalformedURLException, IOException {
@@ -153,12 +207,12 @@ public class DSSEvaluator {
     }
 
     private void evaluateMediaDirective(MediaDirective rule) throws MalformedURLException, IOException {
-        pushScope();
+        state.pushScope();
         try {
             evaluateRules(rule.getRules());
         }
         finally {
-            popScope();
+            state.popScope();
         }
     }
 
@@ -167,19 +221,23 @@ public class DSSEvaluator {
     }
 
     private void evaluateRuleSet(RuleSet rule) throws MalformedURLException, IOException {
-        pushScope();
-        for (Directive dir : rule.getDirectives()) {
-            evaluateDirective(dir, null);
+        state.pushScope();
+        try {
+            for (Directive dir : rule.getDirectives()) {
+                evaluateDirective(dir, null);
+            }
+            evaluateStyle(rule.getDeclarations(), true);
         }
-        evaluateStyle(rule.getDeclarations(), true);
-        popScope();
+        finally {
+            state.popScope();
+        }
     }
 
     private void evaluateDefine(DefineDirective define, boolean global) {
         List<Declaration> properties = define.getDeclarations();
         evaluateStyle(properties, true);
 
-        Scope<Expression> scope = variables;
+        Scope<Expression> scope = state.getVariables();
         if (global) {
             while (scope.parent() != null) {
                 scope = scope.parent();
@@ -194,15 +252,14 @@ public class DSSEvaluator {
     private void evaluateClass(ClassDirective cssClass) {
         String className = cssClass.getClassName();
         evaluateStyle(cssClass.getDeclarations(), false);
-        classes.declare(className, cssClass);
+        state.getClasses().declare(className, cssClass);
     }
 
     private void evaluateInclude(IncludeDirective rule, List<Rule> container) throws MalformedURLException, IOException {
-        URL url = new URL(options.getBaseURL(), rule.getURLString());
-        CSSDocument included = CSSDocument.parse(url.toString(), options.getErrors());
+        URL url = new URL(state.getBaseURL(), rule.getURLString());
+        CSSDocument included = CSSDocument.parse(url.toString(), state.getErrors());
         if (included != null) {
-            pushScope();
-            URL baseURL = options.getBaseURL();
+            state.pushBaseURL(url);
             try {
                 // Evaluate the first rule, since it's in the same index as the include
                 if (included.getRules().size() > 0) {
@@ -211,8 +268,7 @@ public class DSSEvaluator {
                 rule.setIncludedDocument(included);
             }
             finally {
-                options.setBaseURL(baseURL);
-                popScope();
+                state.popBaseURL();
             }
 
             int index = container.indexOf(rule);
@@ -237,9 +293,9 @@ public class DSSEvaluator {
 
     private void addInheritedProperties(List<Declaration> style, ClassReferenceTerm classReference) {
         String className = classReference.getName();
-        ClassDirective clazz = classes.get(className);
+        ClassDirective clazz = state.getClasses().get(className);
         if (clazz == null) {
-            options.errors.SemErr("no such class: " + className);
+            state.getErrors().SemErr("no such class: " + className);
             return;
         }
 
@@ -254,16 +310,16 @@ public class DSSEvaluator {
         }
 
         // Fill in the parameter values
-        parameters = new Scope<Expression>(parameters);
+        state.pushParameters();
         try {
             // Defaults
             for (Declaration param : clazz.getParameters()) {
-                parameters.declare(param.getName(), param.getExpression());
+                state.getParameters().declare(param.getName(), param.getExpression());
             }
             // Arguments
             for (Declaration arg : classReference.getArguments()) {
-                if (parameters.declaresKey(arg.getName())) {
-                    parameters.put(arg.getName(), arg.getExpression());
+                if (state.getParameters().declaresKey(arg.getName())) {
+                    state.getParameters().put(arg.getName(), arg.getExpression());
                 }
             }
 
@@ -272,7 +328,7 @@ public class DSSEvaluator {
             }
         }
         finally {
-            parameters = parameters.parent();
+            state.popParameters();
         }
 
         inheritProperties(style, properties);
@@ -304,27 +360,6 @@ public class DSSEvaluator {
         }
     }
 
-    private Expression getConstantValue(String name) {
-        return variables.get(name.trim());
-    }
-
-    private Expression getParameterValue(String name) {
-        if (parameters == null) {
-            options.errors.SemErr("param is only valid inside a class");
-            return null;
-        }
-        Expression value = parameters.get(name);
-        if (value == null) {
-            if (parameters.containsKey(name)) {
-                options.errors.SemErr("Missing required class parameter: " + name);
-            }
-            else {
-                options.errors.SemErr("Invalid class parameter: " + name);
-            }
-        }
-        return value;
-    }
-
     private void substituteValue(Declaration property, boolean doCalculations) {
         substituteValue(property, false, doCalculations);
     }
@@ -336,7 +371,7 @@ public class DSSEvaluator {
         for (Term primitiveValue : value.getTerms()) {
             if (primitiveValue instanceof ConstTerm || (withParams && primitiveValue instanceof ParamTerm)) {
                 ReferenceTerm function = (ReferenceTerm) primitiveValue;
-                Expression sub = function.evaluate(variables, parameters, options.errors);
+                Expression sub = function.evaluate(state);
                 if (sub != null) {
                     for (Term t : sub.getTerms()) {
                         newValue.getTerms().add(t);
@@ -345,14 +380,15 @@ public class DSSEvaluator {
             }
             else if (primitiveValue instanceof CalculationTerm) {
                 CalcExpression expression = ((CalculationTerm) primitiveValue).getCalculation();
-                expression.substituteValues(variables, withParams ? parameters : null, options.errors);
+                // XXX: had "withParams ? state.getParameters() : null". Do we need a withParams flag?
+                expression.substituteValues(state);
                 if (doCalculations) {
-                    Value calc = expression.calculateValue(variables, parameters, options.errors);
+                    Value calc = expression.calculateValue(state);
                     if (calc != null) {
                         try {
                             newValue.getTerms().add(calc.toTerm());
                         } catch (CalculationException ex) {
-                            options.errors.SemErr(ex.getMessage());
+                            state.getErrors().SemErr(ex.getMessage());
                         }
                     }
                 }
@@ -379,7 +415,7 @@ public class DSSEvaluator {
     }
 
     private void evaluateStyle(List<Declaration> style, boolean doCalculations) {
-        pushScope();
+        state.pushScope();
         try {
             for (int i = 0; i < style.size(); i++) {
                 Declaration property = style.get(i);
@@ -395,7 +431,7 @@ public class DSSEvaluator {
             removeProperty(style, "extend");
         }
         finally {
-            popScope();
+            state.popScope();
         }
     }
 

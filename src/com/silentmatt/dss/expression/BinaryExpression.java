@@ -1,8 +1,6 @@
 package com.silentmatt.dss.expression;
 
-import com.silentmatt.dss.Expression;
-import com.silentmatt.dss.Scope;
-import com.silentmatt.dss.parser.ErrorReporter;
+import com.silentmatt.dss.DSSEvaluator;
 
 /**
  * A CalcExpression that represents a binary operation.
@@ -27,10 +25,10 @@ public class BinaryExpression implements CalcExpression {
         this.right = right;
     }
 
-    public Value calculateValue(Scope<Expression> variables, Scope<Expression> parameters, ErrorReporter errors) {
+    public Value calculateValue(DSSEvaluator.EvaluationState state) {
         try {
-            Value leftValue = left.calculateValue(variables, parameters, errors);
-            Value rightValue = right.calculateValue(variables, parameters, errors);
+            Value leftValue = left.calculateValue(state);
+            Value rightValue = right.calculateValue(state);
             switch (operation) {
             case Add:
                 return leftValue.add(rightValue);
@@ -41,18 +39,18 @@ public class BinaryExpression implements CalcExpression {
             case Divide:
                 return leftValue.divide(rightValue);
             default:
-                errors.SemErr("Unrecognized operation");
+                state.getErrors().SemErr("Unrecognized operation");
                 break;
             }
         } catch (IllegalArgumentException ex) {
-            errors.SemErr("incompatible units");
+            state.getErrors().SemErr("incompatible units");
         }
         return null;
     }
 
-    public void substituteValues(Scope<Expression> variables, Scope<Expression> parameters, ErrorReporter errors) {
-        left.substituteValues(variables, parameters, errors);
-        right.substituteValues(variables, parameters, errors);
+    public void substituteValues(DSSEvaluator.EvaluationState state) {
+        left.substituteValues(state);
+        right.substituteValues(state);
     }
 
     /**

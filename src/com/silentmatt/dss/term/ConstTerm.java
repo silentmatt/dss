@@ -1,8 +1,7 @@
 package com.silentmatt.dss.term;
 
+import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Expression;
-import com.silentmatt.dss.Scope;
-import com.silentmatt.dss.parser.ErrorReporter;
 
 /**
  * A constant reference.
@@ -25,11 +24,11 @@ public class ConstTerm extends ReferenceTerm {
     }
 
     @Override
-    public Expression evaluate(Scope<Expression> constants, Scope<Expression> parameters, ErrorReporter errors) {
-        if (constants == null) {
-            errors.SemErr("Invalid scope");
+    public Expression evaluate(DSSEvaluator.EvaluationState state) {
+        if (state.getVariables() == null) {
+            state.getErrors().SemErr("Invalid scope");
             return null;
         }
-        return constants.get(getName());
+        return state.getVariables().get(getName());
     }
 }

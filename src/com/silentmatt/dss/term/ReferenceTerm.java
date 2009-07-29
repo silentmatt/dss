@@ -1,8 +1,7 @@
 package com.silentmatt.dss.term;
 
+import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Expression;
-import com.silentmatt.dss.Scope;
-import com.silentmatt.dss.parser.ErrorReporter;
 
 /**
  * A constant or parameter reference.
@@ -37,5 +36,5 @@ public abstract class ReferenceTerm extends Term {
     @Override
     public abstract String toString();
 
-    public abstract Expression evaluate(Scope<Expression> constants, Scope<Expression> parameters, ErrorReporter errors);
+    public abstract Expression evaluate(DSSEvaluator.EvaluationState state);
 }

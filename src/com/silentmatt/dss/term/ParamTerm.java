@@ -1,8 +1,7 @@
 package com.silentmatt.dss.term;
 
+import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Expression;
-import com.silentmatt.dss.Scope;
-import com.silentmatt.dss.parser.ErrorReporter;
 
 /**
  * A parameter reference.
@@ -25,18 +24,18 @@ public class ParamTerm extends ReferenceTerm {
     }
 
     @Override
-    public Expression evaluate(Scope<Expression> constants, Scope<Expression> parameters, ErrorReporter errors) {
-        if (parameters == null) {
-            errors.SemErr("param is only valid inside a class");
+    public Expression evaluate(DSSEvaluator.EvaluationState state) {
+        if (state.getParameters() == null) {
+            state.getErrors().SemErr("param is only valid inside a class");
             return null;
         }
-        Expression value = parameters.get(getName());
+        Expression value = state.getParameters().get(getName());
         if (value == null) {
-            if (parameters.containsKey(getName())) {
-                errors.SemErr("Missing required class parameter: " + getName());
+            if (state.getParameters().containsKey(getName())) {
+                state.getErrors().SemErr("Missing required class parameter: " + getName());
             }
             else {
-                errors.SemErr("Invalid class parameter: " + getName());
+                state.getErrors().SemErr("Invalid class parameter: " + getName());
             }
         }
         return value;

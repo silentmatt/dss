@@ -10,15 +10,26 @@ public enum Combinator {
     /**
      * Child selector (immediate descendent): parent > child
      */
-    ChildOf,
+    ChildOf(">"),
 
     /**
      * Immediate sibling: element + next
      */
-    PrecededImmediatelyBy,
+    PrecededImmediatelyBy("+"),
 
     /**
      * Sibling: element ~ later
      */
-    PrecededBy
+    PrecededBy("~");
+
+    private String cssText;
+
+    private Combinator(String cssText) {
+        this.cssText = cssText;
+    }
+
+    @Override
+    public String toString() {
+        return this.cssText;
+    }
 }

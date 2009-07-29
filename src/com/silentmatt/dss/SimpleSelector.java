@@ -84,13 +84,7 @@ public class SimpleSelector {
     public String toString() {
         StringBuilder txt = new StringBuilder();
         if (combinator != null) {
-            switch (combinator) {
-            case PrecededImmediatelyBy: txt.append("+ "); break;
-            case ChildOf: txt.append("> "); break;
-            case PrecededBy: txt.append("~ "); break;
-            default:
-                throw new IllegalStateException("Unknown combinator: " + combinator);
-            }
+            txt.append(combinator).append(' ');
         }
         if (elementName != null) { txt.append(elementName); }
         if (id != null) { txt.append("#").append(id); }

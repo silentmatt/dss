@@ -1,8 +1,7 @@
 package com.silentmatt.dss.expression;
 
+import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Expression;
-import com.silentmatt.dss.Scope;
-import com.silentmatt.dss.parser.ErrorReporter;
 import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.NumberTerm;
 import com.silentmatt.dss.term.ReferenceTerm;
@@ -25,16 +24,16 @@ public class TermExpression implements CalcExpression {
         this.value = value;
     }
 
-    public Value calculateValue(Scope<Expression> variables, Scope<Expression> parameters, ErrorReporter errors) {
-        substituteValues(variables, parameters, errors);
+    public Value calculateValue(DSSEvaluator.EvaluationState state) {
+        substituteValues(state);
         if (value instanceof NumberTerm) {
             return new Value((NumberTerm) value);
         }
         else if (value instanceof CalculationTerm) {
-            return ((CalculationTerm) value).getCalculation().calculateValue(variables, parameters, errors);
+            return ((CalculationTerm) value).getCalculation().calculateValue(state);
         }
 
-        errors.SemErr("Invalid term in calculation: '" + value + "'");
+        state.getErrors().SemErr("Invalid term in calculation: '" + value + "'");
         return null;
     }
 
@@ -52,16 +51,16 @@ public class TermExpression implements CalcExpression {
         return this.value.toString();
     }
 
-    public void substituteValues(Scope<Expression> variables, Scope<Expression> parameters, ErrorReporter errors) {
+    public void substituteValues(DSSEvaluator.EvaluationState state) {
         if (value instanceof ReferenceTerm) {
             ReferenceTerm function = (ReferenceTerm) value;
-            Expression variable = function.evaluate(variables, parameters, errors);
+            Expression variable = function.evaluate(state);
             if (variable == null) {
-                errors.SemErr("missing value: " + function.toString());
+                state.getErrors().SemErr("missing value: " + function.toString());
                 return;
             }
             if (variable.getTerms().size() > 1) {
-                errors.SemErr("not a single value: " + function.toString());
+                state.getErrors().SemErr("not a single value: " + function.toString());
                 return;
             }
 
