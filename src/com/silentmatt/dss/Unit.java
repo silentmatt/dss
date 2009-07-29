@@ -1,6 +1,7 @@
 package com.silentmatt.dss;
 
 import com.silentmatt.dss.expression.CalculationUnit;
+import java.util.Locale;
 
 /**
  * A CSS unit.
@@ -131,7 +132,7 @@ public enum Unit {
         } else if (this == Unit.None) {
             return "";
         }
-        return super.toString().toLowerCase();
+        return super.toString().toLowerCase(Locale.ENGLISH);
     }
 
     /**
@@ -143,7 +144,7 @@ public enum Unit {
      *
      * @param unitString The String to parse.
      *
-     * @return The Unit represented by <code>s</code>.
+     * @return The Unit represented by <code>unitString</code>.
      *
      * @throws IllegalArgumentException The String cannot be parsed into a valid Unit.
      */

@@ -1,5 +1,8 @@
 package com.silentmatt.dss.term;
 
+import com.silentmatt.dss.Color;
+import java.util.Locale;
+
 /**
  *
  * @author matt
@@ -18,6 +21,56 @@ public class HexTerm extends Term {
 
     @Override
     public String toString() {
-        return value.toUpperCase();
+        return value.toUpperCase(Locale.ENGLISH);
+    }
+
+    @Override
+    public boolean isColor() {
+        if ((value.length() == 6 || value.length() == 3 || ((value.length() == 7 || value.length() == 4)
+            && value.startsWith("#")))) {
+            for (int i = 0; i < value.length(); i++) {
+                char c = value.charAt(i);
+                if (!Character.isDigit(c) && c != '#'
+                    && c != 'a' && c != 'A'
+                    && c != 'b' && c != 'B'
+                    && c != 'c' && c != 'C'
+                    && c != 'd' && c != 'D'
+                    && c != 'e' && c != 'E'
+                    && c != 'f' && c != 'F'
+                ) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Color toColor() {
+        String hex = "000000";
+        if ((value.length() == 7 || value.length() == 4) && value.startsWith("#")) {
+            hex = value.substring(1);
+        } else if (value.length() == 6 || value.length() == 3) {
+            hex = value;
+        }
+
+        if (hex.length() == 3) {
+            char red = hex.charAt(0);
+            char green = hex.charAt(1);
+            char blue = hex.charAt(2);
+
+            hex = new String(new char[] { red, red, green, green, blue, blue});
+        }
+
+        try {
+            int r = Integer.parseInt(hex.substring(0, 2), 16);
+            int g = Integer.parseInt(hex.substring(2, 4), 16);
+            int b = Integer.parseInt(hex.substring(4), 16);
+            return new Color(r, g, b, 255);
+        }
+        catch (NumberFormatException ex) {
+            return null;
+        }
     }
 }

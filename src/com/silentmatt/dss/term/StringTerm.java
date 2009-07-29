@@ -1,5 +1,7 @@
 package com.silentmatt.dss.term;
 
+import com.silentmatt.dss.Color;
+
 /**
  *
  * @author matt
@@ -23,5 +25,19 @@ public class StringTerm extends Term {
     @Override
     public String toString() {
         return value;
+    }
+
+    @Override
+    public boolean isColor() {
+        return toColor() != null;
+    }
+
+    @Override
+    public Color toColor() {
+        try {
+            return Color.parse(value);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 }

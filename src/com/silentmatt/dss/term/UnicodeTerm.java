@@ -1,5 +1,7 @@
 package com.silentmatt.dss.term;
 
+import java.util.Locale;
+
 /**
  *
  * @author matt
@@ -18,6 +20,6 @@ public class UnicodeTerm extends Term {
 
     @Override
     public String toString() {
-        return "U\\" + value.toUpperCase();
+        return "U\\" + value.toUpperCase(Locale.ENGLISH);
     }
 }

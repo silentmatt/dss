@@ -71,7 +71,7 @@ public class DSSEvaluator {
         private ErrorReporter errors = new PrintStreamErrorReporter();
         private Scope<ClassDirective> classes = new Scope<ClassDirective>(null);
         private Scope<Expression> variables = new Scope<Expression>(null);
-        private Scope<Expression> parameters;
+        private Scope<Expression> parameters = null;
 
         public EvaluationState(Options opts) {
             this.baseURL = new LinkedList<URL>();

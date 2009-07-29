@@ -56,5 +56,4 @@ public class NumberTerm extends Term {
 
         return txt.toString();
     }
-
 }
