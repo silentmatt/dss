@@ -1,10 +1,13 @@
 package com.silentmatt.dss.directive;
 
+import com.silentmatt.dss.DSSEvaluator.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Medium;
+import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.term.UrlTerm;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 /**
  *
@@ -19,10 +22,6 @@ public class ImportDirective extends ExpressionDirective {
         this.medium = medium;
     }
 
-    public String getName() {
-        return "@import";
-    }
-
     public Medium getMedium() {
         return medium;
     }
@@ -31,13 +30,9 @@ public class ImportDirective extends ExpressionDirective {
         this.medium = medium;
     }
 
-    public DirectiveType getType() {
-        return DirectiveType.Import;
-    }
-
     @Override
     public String toString() {
-        return getName() + " " + getExpression() + " " + medium + ";";
+        return "@import " + getExpression() + " " + medium + ";";
     }
 
     public String getURLString() {
@@ -46,6 +41,11 @@ public class ImportDirective extends ExpressionDirective {
 
     public URL getURL() throws MalformedURLException {
         return new URL(getURLString());
+    }
+
+    @Override
+    public void evaluate(EvaluationState state, List<Rule> container) {
+        // Do nothing
     }
 
 }

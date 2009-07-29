@@ -1,8 +1,11 @@
 package com.silentmatt.dss.directive;
 
+import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Medium;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.RuleSet;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,15 +27,14 @@ public class MediaDirective extends Directive {
         this.ruleSets = new ArrayList<RuleSet>();
         this.directives = new ArrayList<Directive>();
         for (Rule rule : rules) {
-            switch (rule.getRuleType()) {
-            case Directive:
+            if (rule instanceof Directive) {
                 directives.add((Directive) rule);
-                break;
-            case RuleSet:
+            }
+            else if (rule instanceof RuleSet) {
                 ruleSets.add((RuleSet) rule);
-                break;
-            default:
-                throw new IllegalStateException("Unknown directive type: " + rule.getRuleType());
+            }
+            else {
+                throw new IllegalStateException("Unknown rule type");
             }
         }
     }
@@ -55,14 +57,6 @@ public class MediaDirective extends Directive {
 
     public List<Rule> getRules() {
         return allRules;
-    }
-
-    public String getName() {
-        return "@media";
-    }
-
-    public DirectiveType getType() {
-        return DirectiveType.Media;
     }
 
     @Override
@@ -129,5 +123,16 @@ public class MediaDirective extends Directive {
 
         txt.append("}");
         return txt.toString();
+    }
+
+    @Override
+    public void evaluate(DSSEvaluator.EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
+        state.pushScope();
+        try {
+            Rule.evaluateRules(state, getRules());
+        }
+        finally {
+            state.popScope();
+        }
     }
 }

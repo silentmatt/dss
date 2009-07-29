@@ -271,7 +271,6 @@ namespaceDirective<out NamespaceDirective dir> =            (.  String ident = n
 genericDirective<out GenericDirective dir> =
     '@' identity<out String ident>                      (.  dir = new GenericDirective();
                                                             dir.setName("@" + ident);
-                                                            dir.setType(DirectiveType.Other);
                                                         .)
     [
         expr<out Expression exp>                        (.  dir.setExpression(exp); .)

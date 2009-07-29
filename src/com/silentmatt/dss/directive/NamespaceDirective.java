@@ -1,7 +1,10 @@
 package com.silentmatt.dss.directive;
 
+import com.silentmatt.dss.DSSEvaluator.EvaluationState;
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.term.UrlTerm;
+import java.util.List;
 
 /**
  * @todo Why does this extend ExpressionDirective?
@@ -16,14 +19,6 @@ public class NamespaceDirective extends ExpressionDirective {
         this.prefix = prefix;
     }
 
-    public String getName() {
-        return "@namespace";
-    }
-
-    public DirectiveType getType() {
-        return DirectiveType.Namespace;
-    }
-
     public String getPrefix() {
         return prefix;
     }
@@ -34,6 +29,11 @@ public class NamespaceDirective extends ExpressionDirective {
 
     @Override
     public String toString() {
-        return getName() + " " + (prefix != null ? (prefix + " ") : "") + getExpression().toString() + ";";
+        return "@namespace " + (prefix != null ? (prefix + " ") : "") + getExpression().toString() + ";";
+    }
+
+    @Override
+    public void evaluate(EvaluationState state, List<Rule> container) {
+        // Do nothing
     }
 }

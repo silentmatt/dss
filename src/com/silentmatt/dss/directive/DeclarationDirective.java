@@ -3,7 +3,6 @@ package com.silentmatt.dss.directive;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
-import com.silentmatt.dss.RuleType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +59,8 @@ public abstract class DeclarationDirective extends Directive {
 
         return txt.toString();
     }
+
+    public abstract String getName();
 
     @Override
     public String toString() {

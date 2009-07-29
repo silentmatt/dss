@@ -2,7 +2,6 @@ package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
-import com.silentmatt.dss.RuleType;
 
 /**
  *
@@ -22,11 +21,6 @@ public abstract class ExpressionDirective extends Directive {
 
     public void setExpression(Expression expression) {
         this.expression = expression;
-    }
-
-    @Override
-    public String toString() {
-        return getName() + " " + getExpression() + ";";
     }
 
     public String toString(int nesting) {

@@ -1,12 +1,6 @@
 package com.silentmatt.dss;
 
-import com.silentmatt.dss.directive.PageDirective;
-import com.silentmatt.dss.directive.MediaDirective;
-import com.silentmatt.dss.directive.IncludeDirective;
 import com.silentmatt.dss.directive.ClassDirective;
-import com.silentmatt.dss.directive.FontFaceDirective;
-import com.silentmatt.dss.directive.DefineDirective;
-import com.silentmatt.dss.directive.Directive;
 import com.silentmatt.dss.term.Term;
 import com.silentmatt.dss.expression.CalcExpression;
 import com.silentmatt.dss.expression.CalculationException;
@@ -72,7 +66,7 @@ public class DSSEvaluator {
         }
     }
 
-    public class EvaluationState {
+    public static class EvaluationState {
         private Deque<URL> baseURL;
         private ErrorReporter errors = new PrintStreamErrorReporter();
         private Scope<ClassDirective> classes = new Scope<ClassDirective>(null);
@@ -145,140 +139,10 @@ public class DSSEvaluator {
     public void evaluate(CSSDocument css) throws MalformedURLException, IOException {
         state.pushScope();
         try {
-            evaluateRules(css.getRules());
+            Rule.evaluateRules(state, css.getRules());
         }
         finally {
             state.popScope();
-        }
-    }
-
-    private void evaluateRules(List<Rule> rules) throws MalformedURLException, IOException {
-        for (int i = 0; i < rules.size(); i++) {
-            Rule rule = rules.get(i);
-            switch (rule.getRuleType()) {
-            case Directive:
-                evaluateDirective((Directive) rule, rules);
-                break;
-            case RuleSet:
-                evaluateRuleSet((RuleSet) rule);
-                break;
-            default:
-                throw new IllegalStateException("Unknown rule type:" + rule.getRuleType());
-            }
-        }
-    }
-
-    private void evaluateDirective(Directive directive, List<Rule> container) throws MalformedURLException, IOException {
-        switch (directive.getType()) {
-            case Charset:
-            case Namespace:
-            case Import:
-            case Other:
-                break;
-
-            case Class:
-                evaluateClass((ClassDirective) directive);
-                break;
-            case Define:
-                {
-                    DefineDirective define = (DefineDirective) directive;
-                    evaluateDefine(define, define.isGlobal());
-                }
-                break;
-            case FontFace:
-                evaluateFontFaceDirective((FontFaceDirective) directive);
-                break;
-            case Include:
-                evaluateInclude((IncludeDirective) directive, container);
-                break;
-            case Media:
-                evaluateMediaDirective((MediaDirective) directive);
-                break;
-            case Page:
-                evaluatePageDirective((PageDirective) directive);
-                break;
-            default:
-                throw new IllegalStateException("Unknown Directive type:" + directive.getType());
-        }
-    }
-
-    private void evaluateFontFaceDirective(FontFaceDirective rule) {
-        evaluateStyle(rule.getDeclarations(), true);
-    }
-
-    private void evaluateMediaDirective(MediaDirective rule) throws MalformedURLException, IOException {
-        state.pushScope();
-        try {
-            evaluateRules(rule.getRules());
-        }
-        finally {
-            state.popScope();
-        }
-    }
-
-    private void evaluatePageDirective(PageDirective rule) {
-        evaluateStyle(rule.getDeclarations(), true);
-    }
-
-    private void evaluateRuleSet(RuleSet rule) throws MalformedURLException, IOException {
-        state.pushScope();
-        try {
-            for (Directive dir : rule.getDirectives()) {
-                evaluateDirective(dir, null);
-            }
-            evaluateStyle(rule.getDeclarations(), true);
-        }
-        finally {
-            state.popScope();
-        }
-    }
-
-    private void evaluateDefine(DefineDirective define, boolean global) {
-        List<Declaration> properties = define.getDeclarations();
-        evaluateStyle(properties, true);
-
-        Scope<Expression> scope = state.getVariables();
-        if (global) {
-            while (scope.parent() != null) {
-                scope = scope.parent();
-            }
-        }
-        for (int i = 0; i < properties.size(); i++) {
-            Declaration property = properties.get(i);
-            scope.declare(property.getName(), property.getExpression());
-        }
-    }
-
-    private void evaluateClass(ClassDirective cssClass) {
-        String className = cssClass.getClassName();
-        evaluateStyle(cssClass.getDeclarations(), false);
-        state.getClasses().declare(className, cssClass);
-    }
-
-    private void evaluateInclude(IncludeDirective rule, List<Rule> container) throws MalformedURLException, IOException {
-        URL url = new URL(state.getBaseURL(), rule.getURLString());
-        CSSDocument included = CSSDocument.parse(url.toString(), state.getErrors());
-        if (included != null) {
-            state.pushBaseURL(url);
-            try {
-                // Evaluate the first rule, since it's in the same index as the include
-                if (included.getRules().size() > 0) {
-                    evaluateRules(included.getRules().subList(0, 1));
-                }
-                rule.setIncludedDocument(included);
-            }
-            finally {
-                state.popBaseURL();
-            }
-
-            int index = container.indexOf(rule);
-            if (index != -1) {
-                container.remove(index);
-                for (Rule r : included.getRules()) {
-                    container.add(index, r);
-                    index++;
-                }
-            }
         }
     }
 
@@ -291,7 +155,7 @@ public class DSSEvaluator {
         return false;
     }
 
-    private void addInheritedProperties(List<Declaration> style, ClassReferenceTerm classReference) {
+    private static void addInheritedProperties(DSSEvaluator.EvaluationState state, List<Declaration> style, ClassReferenceTerm classReference) {
         String className = classReference.getName();
         ClassDirective clazz = state.getClasses().get(className);
         if (clazz == null) {
@@ -324,7 +188,7 @@ public class DSSEvaluator {
             }
 
             for (Declaration dec : properties) {
-                substituteValue(dec, true, true);
+                DSSEvaluator.substituteValue(state, dec, true, true);
             }
         }
         finally {
@@ -334,11 +198,11 @@ public class DSSEvaluator {
         inheritProperties(style, properties);
     }
 
-    private void addInheritedProperties(List<Declaration> style, String className) {
-        addInheritedProperties(style, new ClassReferenceTerm(className));
+    private static void addInheritedProperties(DSSEvaluator.EvaluationState state, List<Declaration> style, String className) {
+        addInheritedProperties(state, style, new ClassReferenceTerm(className));
     }
 
-    private void inheritProperties(List<Declaration> style, List<Declaration> properties) {
+    private static void inheritProperties(List<Declaration> style, List<Declaration> properties) {
         for (int i = properties.size() - 1; i >= 0; i--) {
             Declaration declaration = properties.get(i);
             String property = declaration.getName();
@@ -349,22 +213,22 @@ public class DSSEvaluator {
         }
     }
 
-    private void addInheritedProperties(List<Declaration> style, Expression inherits) {
+    private static void addInheritedProperties(DSSEvaluator.EvaluationState state, List<Declaration> style, Expression inherits) {
         for (Term inherit : inherits.getTerms()) {
             if (inherit instanceof ClassReferenceTerm) {
-                addInheritedProperties(style, (ClassReferenceTerm) inherit);
+                DSSEvaluator.addInheritedProperties(state, style, (ClassReferenceTerm) inherit);
             }
             else {
-                addInheritedProperties(style, inherit.toString());
+                DSSEvaluator.addInheritedProperties(state, style, inherit.toString());
             }
         }
     }
 
-    private void substituteValue(Declaration property, boolean doCalculations) {
-        substituteValue(property, false, doCalculations);
+    private static void substituteValue(DSSEvaluator.EvaluationState state, Declaration property, boolean doCalculations) {
+        substituteValue(state, property, false, doCalculations);
     }
 
-    private void substituteValue(Declaration property, boolean withParams, boolean doCalculations) {
+    private static void substituteValue(DSSEvaluator.EvaluationState state, Declaration property, boolean withParams, boolean doCalculations) {
         Expression value = property.getExpression();
         Expression newValue = new Expression();
 
@@ -414,7 +278,7 @@ public class DSSEvaluator {
         }
     }
 
-    private void evaluateStyle(List<Declaration> style, boolean doCalculations) {
+    public static void evaluateStyle(DSSEvaluator.EvaluationState state, List<Declaration> style, boolean doCalculations) {
         state.pushScope();
         try {
             for (int i = 0; i < style.size(); i++) {
@@ -422,10 +286,10 @@ public class DSSEvaluator {
                 if (property.getName().equals("extend")) {
                     // Add to inherits list
                     Expression inherit = property.getExpression();
-                    addInheritedProperties(style, inherit);
+                    DSSEvaluator.addInheritedProperties(state, style, inherit);
                 }
                 else {
-                    substituteValue(property, doCalculations);
+                    DSSEvaluator.substituteValue(state, property, doCalculations);
                 }
             }
             removeProperty(style, "extend");

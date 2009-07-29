@@ -1,7 +1,10 @@
 package com.silentmatt.dss.directive;
 
+import com.silentmatt.dss.DSSEvaluator.EvaluationState;
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.term.Term;
+import java.util.List;
 
 /**
  *
@@ -13,11 +16,13 @@ public class CharsetDirective extends ExpressionDirective {
         getExpression().getTerms().add(charset);
     }
 
-    public String getName() {
-        return "@charset";
+    @Override
+    public String toString() {
+        return "@charset " + getExpression() + ";";
     }
 
-    public DirectiveType getType() {
-        return DirectiveType.Charset;
+    @Override
+    public void evaluate(EvaluationState state, List<Rule> container) {
+        // Do nothing
     }
 }

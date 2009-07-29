@@ -1,11 +1,11 @@
 package com.silentmatt.dss.directive;
 
+import com.silentmatt.dss.DSSEvaluator.EvaluationState;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Medium;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.RuleSet;
-import com.silentmatt.dss.RuleType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +19,6 @@ public class GenericDirective extends Directive {
     private final List<Rule> allRules = new ArrayList<Rule>();
     private final List<RuleSet> ruleSets = new ArrayList<RuleSet>();
     private final List<Directive> directives = new ArrayList<Directive>();
-    private DirectiveType type;
     private String name;
     private List<Medium> mediums = new ArrayList<Medium>();
     private Expression expression;
@@ -40,14 +39,6 @@ public class GenericDirective extends Directive {
     public void addDirective(Directive dir) {
         allRules.add(dir);
         directives.add(dir);
-    }
-
-    public DirectiveType getType() {
-        return type;
-    }
-
-    public void setType(DirectiveType type) {
-        this.type = type;
     }
 
     public String getName() {
@@ -144,6 +135,11 @@ public class GenericDirective extends Directive {
 
     public String toCssString(int nesting) {
         return toString(nesting);
+    }
+
+    @Override
+    public void evaluate(EvaluationState state, List<Rule> container) {
+        // Do nothing
     }
 
 }

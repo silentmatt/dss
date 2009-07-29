@@ -1,6 +1,9 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.DSSEvaluator.EvaluationState;
 import com.silentmatt.dss.directive.Directive;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,10 +15,6 @@ public class RuleSet extends Rule {
     private List<Directive> directives = new ArrayList<Directive>();
     private List<Declaration> declarations = new ArrayList<Declaration>();
     private List<Selector> selectors = new ArrayList<Selector>();
-
-    public RuleType getRuleType() {
-        return RuleType.RuleSet;
-    }
 
     public List<Declaration> getDeclarations() {
         return declarations;
@@ -133,5 +132,19 @@ public class RuleSet extends Rule {
         txt.append("\n" + start + "}");
 
         return txt.toString();
+    }
+
+    @Override
+    public void evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
+        state.pushScope();
+        try {
+            for (Directive dir : this.getDirectives()) {
+                dir.evaluate(state, null);
+            }
+            DSSEvaluator.evaluateStyle(state, this.getDeclarations(), true);
+        }
+        finally {
+            state.popScope();
+        }
     }
 }

@@ -1,6 +1,8 @@
 package com.silentmatt.dss.directive;
 
+import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.Rule;
 import java.util.List;
 
 /**
@@ -12,12 +14,12 @@ public class FontFaceDirective extends DeclarationDirective {
         super(declarations);
     }
 
-    @Override
-    public DirectiveType getType() {
-        return DirectiveType.FontFace;
-    }
-
     public String getName() {
         return "@font-face";
+    }
+
+    @Override
+    public void evaluate(DSSEvaluator.EvaluationState state, List<Rule> container) {
+        DSSEvaluator.evaluateStyle(state, getDeclarations(), true);
     }
 }

@@ -1,6 +1,10 @@
 package com.silentmatt.dss.directive;
 
+import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.Scope;
 import java.util.List;
 
 /**
@@ -15,11 +19,6 @@ public class DefineDirective extends DeclarationDirective {
         this.global = global;
     }
 
-    @Override
-    public DirectiveType getType() {
-        return DirectiveType.Define;
-    }
-
     public String getName() {
         return "@define" + (global ? " global" : "");
     }
@@ -31,5 +30,22 @@ public class DefineDirective extends DeclarationDirective {
     @Override
     public String toCssString(int nesting) {
         return "";
+    }
+
+    @Override
+    public void evaluate(DSSEvaluator.EvaluationState state, List<Rule> container) {
+        List<Declaration> properties = getDeclarations();
+        DSSEvaluator.evaluateStyle(state, properties, true);
+
+        Scope<Expression> scope = state.getVariables();
+        if (isGlobal()) {
+            while (scope.parent() != null) {
+                scope = scope.parent();
+            }
+        }
+        for (int i = 0; i < properties.size(); i++) {
+            Declaration property = properties.get(i);
+            scope.declare(property.getName(), property.getExpression());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.silentmatt.dss.directive;
 
+import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.Rule;
 import java.util.List;
@@ -20,10 +21,6 @@ public class ClassDirective extends DeclarationDirective {
 
     public String getName() {
         return "@class";
-    }
-
-    public DirectiveType getType() {
-        return DirectiveType.Class;
     }
 
     public String getClassName() {
@@ -77,5 +74,11 @@ public class ClassDirective extends DeclarationDirective {
     @Override
     public String toCssString(int nesting) {
         return "";
+    }
+
+    @Override
+    public void evaluate(DSSEvaluator.EvaluationState state, List<Rule> container) {
+        DSSEvaluator.evaluateStyle(state, getDeclarations(), false);
+        state.getClasses().declare(className, this);
     }
 }

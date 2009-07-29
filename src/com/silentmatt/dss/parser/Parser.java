@@ -796,7 +796,6 @@ public class Parser {
 		String ident = identity();
 		dir = new GenericDirective();
 		dir.setName("@" + ident);
-		dir.setType(DirectiveType.Other);
 		
 		if (StartOf(9)) {
 			if (StartOf(9)) {

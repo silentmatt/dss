@@ -1,6 +1,8 @@
 package com.silentmatt.dss.directive;
 
+import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.SimpleSelector;
 import java.util.List;
 
@@ -18,10 +20,6 @@ public class PageDirective extends DeclarationDirective {
 
     public String getName() {
         return "@page";
-    }
-
-    public DirectiveType getType() {
-        return DirectiveType.Page;
     }
 
     public SimpleSelector getSelector() {
@@ -43,5 +41,10 @@ public class PageDirective extends DeclarationDirective {
 
         txt.append(getDeclarationsString(nesting));
         return txt.toString();
+    }
+
+    @Override
+    public void evaluate(DSSEvaluator.EvaluationState state, List<Rule> container) {
+        DSSEvaluator.evaluateStyle(state, getDeclarations(), true);
     }
 }
