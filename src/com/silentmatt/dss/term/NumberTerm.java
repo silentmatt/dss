@@ -49,7 +49,11 @@ public class NumberTerm extends Term {
         StringBuilder txt = new StringBuilder();
 
         if (sign != null) { txt.append(sign); }
-        txt.append(value);
+        String valueString = Double.toString(value);
+        if (valueString.endsWith(".0")) {
+            valueString = valueString.substring(0, valueString.length() - 2);
+        }
+        txt.append(valueString);
         if (unit != null) {
             txt.append(unit.toString());
         }

@@ -21,29 +21,15 @@ public class HexTerm extends Term {
 
     @Override
     public String toString() {
+        if (isColor()) {
+            return toColor().toString();
+        }
         return value.toUpperCase(Locale.ENGLISH);
     }
 
     @Override
     public boolean isColor() {
-        if ((value.length() == 6 || value.length() == 3 || ((value.length() == 7 || value.length() == 4)
-            && value.startsWith("#")))) {
-            for (int i = 0; i < value.length(); i++) {
-                char c = value.charAt(i);
-                if (!Character.isDigit(c) && c != '#'
-                    && c != 'a' && c != 'A'
-                    && c != 'b' && c != 'B'
-                    && c != 'c' && c != 'C'
-                    && c != 'd' && c != 'D'
-                    && c != 'e' && c != 'E'
-                    && c != 'f' && c != 'F'
-                ) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
+        return toColor() != null;
     }
 
     @Override

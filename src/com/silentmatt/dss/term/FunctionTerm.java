@@ -3,7 +3,6 @@ package com.silentmatt.dss.term;
 import com.silentmatt.dss.Color;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Unit;
-import java.util.Locale;
 
 /**
  * A function "call" term.
@@ -70,6 +69,9 @@ public class FunctionTerm extends Term {
      */
     @Override
     public String toString() {
+        if (isColor()) {
+            return toColor().toString();
+        }
         StringBuilder txt = new StringBuilder();
         txt.append(name).append("(");
         if (expression != null) {
@@ -81,40 +83,26 @@ public class FunctionTerm extends Term {
 
     @Override
     public boolean isColor() {
-        if ((name.equalsIgnoreCase("rgb") && expression.getTerms().size() == 3)
-            || (name.equalsIgnoreCase("rgba") && expression.getTerms().size() == 4)
-            ) {
-            for (int i = 0; i < expression.getTerms().size(); i++) {
-                if (! (expression.getTerms().get(i) instanceof NumberTerm)) { return false; }
-            }
-            return true;
-        } else if ((name.equalsIgnoreCase("hsl") && expression.getTerms().size() == 3)
-            || (name.equalsIgnoreCase("hsla") && expression.getTerms().size() == 4)
-            ) {
-            for (int i = 0; i < expression.getTerms().size(); i++) {
-                if (! (expression.getTerms().get(i) instanceof NumberTerm)) { return false; }
-            }
-            return true;
-        }
-        return false;
+        return toColor() != null;
     }
 
     @Override
     public Color toColor() {
-        String hex = "000000";
         if ((name.equalsIgnoreCase("rgb") && expression.getTerms().size() == 3)
             || (name.equalsIgnoreCase("rgba") && expression.getTerms().size() == 4)
             ) {
             int fr = 0, fg = 0, fb = 0, fa = 255;
             for (int i = 0; i < expression.getTerms().size(); i++) {
-                if (!(expression.getTerms().get(i) instanceof NumberTerm)) {
+                Term term = expression.getTerms().get(i);
+                if (!(term instanceof NumberTerm) ||
+                        (i > 0 && (term.getSeperator() == null || !term.getSeperator().equals(','))) ) {
                     return null;
                 }
                 switch (i) {
-                    case 0: fr = getRGBValue((NumberTerm) expression.getTerms().get(i)); break;
-                    case 1: fg = getRGBValue((NumberTerm) expression.getTerms().get(i)); break;
-                    case 2: fb = getRGBValue((NumberTerm) expression.getTerms().get(i)); break;
-                    case 3: fa = getRGBValue((NumberTerm) expression.getTerms().get(i)); break;
+                    case 0: fr = getRGBValue((NumberTerm) term); break;
+                    case 1: fg = getRGBValue((NumberTerm) term); break;
+                    case 2: fb = getRGBValue((NumberTerm) term); break;
+                    case 3: fa = getRGBValue((NumberTerm) term); break;
                 }
             }
             return new Color(fr, fg, fb, fa);
@@ -123,14 +111,15 @@ public class FunctionTerm extends Term {
             ) {
             int h = 0, s = 0, v = 0, a = 255;
             for (int i = 0; i < expression.getTerms().size(); i++) {
-                if (!(expression.getTerms().get(i) instanceof NumberTerm)) {
+                Term term = expression.getTerms().get(i);
+                if (!(term instanceof NumberTerm) || term.getSeperator() == null || !term.getSeperator().equals(',') ) {
                     return null;
                 }
                 switch (i) {
-                    case 0: h = getHueValue((NumberTerm) expression.getTerms().get(i)); break;
-                    case 1: s = getRGBValue((NumberTerm) expression.getTerms().get(i)); break;
-                    case 2: v = getRGBValue((NumberTerm) expression.getTerms().get(i)); break;
-                    case 3: a = getRGBValue((NumberTerm) expression.getTerms().get(i)); break;
+                    case 0: h = getHueValue((NumberTerm) term); break;
+                    case 1: s = getRGBValue((NumberTerm) term); break;
+                    case 2: v = getRGBValue((NumberTerm) term); break;
+                    case 3: a = getRGBValue((NumberTerm) term); break;
                 }
             }
             java.awt.Color jColor = java.awt.Color.getHSBColor(h, s, v);

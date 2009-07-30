@@ -4,8 +4,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -173,6 +171,24 @@ public class Color {
         this.green = g;
         this.blue = b;
         this.alpha = a;
+    }
+
+    public String toHexString() {
+        if ((red & 0x0F) == ((red >> 4) & 0x0F) &&
+            (green & 0x0F) == ((green >> 4) & 0x0F) &&
+            (blue & 0x0F) == ((blue >> 4) & 0x0F)) {
+            return String.format("#%X%X%X", red & 0x0F, green & 0x0F, blue & 0x0F);
+        }
+        return String.format("#%02X%02X%02X", red, green, blue);
+    }
+
+    public String toRGBAString() {
+        return "rgba(" + red + "," + green + "," + blue + "," + alpha  + ")";
+    }
+
+    @Override
+    public String toString() {
+        return alpha == 255 ? toHexString() : toRGBAString();
     }
 
     /**

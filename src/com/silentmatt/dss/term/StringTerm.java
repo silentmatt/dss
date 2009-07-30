@@ -24,6 +24,9 @@ public class StringTerm extends Term {
 
     @Override
     public String toString() {
+        if (isColor()) {
+            return toColor().toString();
+        }
         return value;
     }
 
