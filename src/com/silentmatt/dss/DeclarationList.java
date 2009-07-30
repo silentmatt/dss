@@ -15,7 +15,6 @@ import java.util.Set;
  *
  * @author Matthew Crumley
  */
-// FIXME: Map methods return the last declaration, ignoring the "!important" flag.
 public class DeclarationList implements List<Declaration> {
     private final List<Declaration> list = new LinkedList<Declaration>();
     private final Map<String, Expression> mapView = new DeclarationListMapView();
@@ -122,7 +121,7 @@ public class DeclarationList implements List<Declaration> {
     // Map methods
     public boolean containsKey(String key) {
         for (Declaration declaration : list) {
-            if (declaration.getName().equalsIgnoreCase(key)) {
+            if (matches(declaration, key)) {
                 return true;
             }
         }
@@ -138,15 +137,28 @@ public class DeclarationList implements List<Declaration> {
         return false;
     }
 
+    private static boolean matches(Declaration declaration, String name) {
+        return declaration.getName().equalsIgnoreCase(name);
+    }
+
     public Declaration getDeclaration(String name) {
+        Declaration found = null;
+
         ListIterator<Declaration> it = list.listIterator(list.size());
         while (it.hasPrevious()) {
             Declaration declaration = it.previous();
-            if (declaration.getName().equalsIgnoreCase(name)) {
-                return declaration;
+            if (matches(declaration, name)) {
+                if (declaration.isImportant()) {
+                    found = declaration;
+                    break;
+                }
+                else if (found == null) {
+                    found = declaration;
+                }
             }
         }
-        return null;
+
+        return found;
     }
 
     public Expression get(String name) {
@@ -166,7 +178,7 @@ public class DeclarationList implements List<Declaration> {
         ListIterator<Declaration> it = list.listIterator();
         while (it.hasNext()) {
             Declaration current = it.next();
-            if (current.getName().equalsIgnoreCase(key)) {
+            if (matches(current, key)) {
                 result = current.getExpression();
                 it.remove();
             }
