@@ -12,10 +12,10 @@ import java.util.List;
  */
 public class RuleSet extends Rule {
     private List<Rule> rules = new ArrayList<Rule>();
-    private List<Declaration> declarations = new ArrayList<Declaration>();
+    private DeclarationList declarations = new DeclarationList();
     private List<Selector> selectors = new ArrayList<Selector>();
 
-    public List<Declaration> getDeclarations() {
+    public DeclarationList getDeclarations() {
         return declarations;
     }
 
@@ -45,8 +45,7 @@ public class RuleSet extends Rule {
     }
 
     public Expression getValue(String name) {
-        Declaration declaration = getDeclaration(name);
-        return declaration != null ? declaration.getExpression() : null;
+        return declarations.get(name);
     }
 
     @Override
@@ -112,7 +111,7 @@ public class RuleSet extends Rule {
         }
         for (Declaration dec : declarations) {
             txt.append("\n\t" + start);
-            txt.append(dec.toString());
+            txt.append(dec);
             txt.append(";");
         }
 

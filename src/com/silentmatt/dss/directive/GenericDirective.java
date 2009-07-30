@@ -2,6 +2,7 @@ package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.DSSEvaluator.EvaluationState;
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Medium;
 import com.silentmatt.dss.Rule;
@@ -13,7 +14,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class GenericDirective extends Rule {
-    private final List<Declaration> declarations = new ArrayList<Declaration>();
+    private final DeclarationList declarations = new DeclarationList();
     private final List<Rule> rules = new ArrayList<Rule>();
     private final List<Medium> mediums = new ArrayList<Medium>();
     private String name;
@@ -47,7 +48,7 @@ public class GenericDirective extends Rule {
         this.expression = expression;
     }
 
-    public List<Declaration> getDeclarations() {
+    public DeclarationList getDeclarations() {
         return declarations;
     }
 

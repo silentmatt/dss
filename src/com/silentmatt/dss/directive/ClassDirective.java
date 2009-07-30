@@ -2,6 +2,7 @@ package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.Rule;
 import java.util.List;
 
@@ -11,12 +12,12 @@ import java.util.List;
  */
 public class ClassDirective extends DeclarationDirective {
     private String className;
-    private List<Declaration> parameters;
+    private DeclarationList parameters;
 
     public ClassDirective(String className, List<Declaration> parameters, List<Declaration> declarations) {
         super(declarations);
         this.className = className;
-        this.parameters = parameters;
+        this.parameters = new DeclarationList(parameters);
     }
 
     public String getName() {
@@ -27,7 +28,7 @@ public class ClassDirective extends DeclarationDirective {
         return className;
     }
 
-    public List<Declaration> getParameters() {
+    public DeclarationList getParameters() {
         return parameters;
     }
 

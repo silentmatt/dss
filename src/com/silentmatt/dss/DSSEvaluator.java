@@ -15,11 +15,9 @@ import com.silentmatt.dss.term.ReferenceTerm;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 public class DSSEvaluator {
 
@@ -146,16 +144,11 @@ public class DSSEvaluator {
         }
     }
 
-    private static boolean hasProperty(List<Declaration> style, String property) {
-        for (Declaration dec : style) {
-            if (dec.getName().equals(property)) {
-                return true;
-            }
-        }
-        return false;
+    private static boolean hasProperty(DeclarationList style, String property) {
+        return style.containsKey(property);
     }
 
-    private static void addInheritedProperties(DSSEvaluator.EvaluationState state, List<Declaration> style, ClassReferenceTerm classReference) {
+    private static void addInheritedProperties(DSSEvaluator.EvaluationState state, DeclarationList style, ClassReferenceTerm classReference) {
         String className = classReference.getName();
         ClassDirective clazz = state.getClasses().get(className);
         if (clazz == null) {
@@ -164,7 +157,7 @@ public class DSSEvaluator {
         }
 
         // Make a copy of the properties, to substitute parameters into
-        List<Declaration> properties = new ArrayList<Declaration>(clazz.getDeclarations().size());
+        DeclarationList properties = new DeclarationList();
         for (Declaration prop : clazz.getDeclarations()) {
             Declaration copy = new Declaration();
             copy.setName(prop.getName());
@@ -198,11 +191,11 @@ public class DSSEvaluator {
         inheritProperties(style, properties);
     }
 
-    private static void addInheritedProperties(DSSEvaluator.EvaluationState state, List<Declaration> style, String className) {
+    private static void addInheritedProperties(DSSEvaluator.EvaluationState state, DeclarationList style, String className) {
         addInheritedProperties(state, style, new ClassReferenceTerm(className));
     }
 
-    private static void inheritProperties(List<Declaration> style, List<Declaration> properties) {
+    private static void inheritProperties(DeclarationList style, DeclarationList properties) {
         for (int i = properties.size() - 1; i >= 0; i--) {
             Declaration declaration = properties.get(i);
             String property = declaration.getName();
@@ -213,7 +206,7 @@ public class DSSEvaluator {
         }
     }
 
-    private static void addInheritedProperties(DSSEvaluator.EvaluationState state, List<Declaration> style, Expression inherits) {
+    private static void addInheritedProperties(DSSEvaluator.EvaluationState state, DeclarationList style, Expression inherits) {
         for (Term inherit : inherits.getTerms()) {
             if (inherit instanceof ClassReferenceTerm) {
                 DSSEvaluator.addInheritedProperties(state, style, (ClassReferenceTerm) inherit);
@@ -268,31 +261,22 @@ public class DSSEvaluator {
         property.setExpression(newValue);
     }
 
-    private static void removeProperty(List<Declaration> style, String property) {
-        Iterator<Declaration> it = style.iterator();
-        while (it.hasNext()) {
-            Declaration dec = it.next();
-            if (dec.getName().equals(property)) {
-                it.remove();
-            }
-        }
+    private static void removeProperty(DeclarationList style, String property) {
+        style.remove(property);
     }
 
-    public static void evaluateStyle(DSSEvaluator.EvaluationState state, List<Declaration> style, boolean doCalculations) {
+    public static void evaluateStyle(DSSEvaluator.EvaluationState state, DeclarationList style, boolean doCalculations) {
         state.pushScope();
         try {
+            Expression inherit;
+            while ((inherit = style.get("extend")) != null) {
+                DSSEvaluator.addInheritedProperties(state, style, inherit);
+                style.asMap().values().remove(inherit);
+            }
             for (int i = 0; i < style.size(); i++) {
                 Declaration property = style.get(i);
-                if (property.getName().equals("extend")) {
-                    // Add to inherits list
-                    Expression inherit = property.getExpression();
-                    DSSEvaluator.addInheritedProperties(state, style, inherit);
-                }
-                else {
-                    DSSEvaluator.substituteValue(state, property, doCalculations);
-                }
+                DSSEvaluator.substituteValue(state, property, doCalculations);
             }
-            removeProperty(style, "extend");
         }
         finally {
             state.popScope();

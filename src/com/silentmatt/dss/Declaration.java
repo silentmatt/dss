@@ -1,5 +1,7 @@
 package com.silentmatt.dss;
 
+import java.util.Map;
+
 /**
  * Represents a DSS declaration (name-value pair).
  * Declarations are in this form: "name : term [,] term ... [!important]".
@@ -9,7 +11,30 @@ package com.silentmatt.dss;
  *
  * @author Matthew Crumley
  */
-public class Declaration {
+public class Declaration implements Map.Entry<String, Expression> {
+    /**
+     * Default constructor.
+     */
+    public Declaration() {
+    }
+
+    /**
+     * Constructs a Declaration with a specified name and expression.
+     */
+    public Declaration(String name, Expression expression) {
+        this.name = name;
+        this.expression = expression;
+    }
+
+    /**
+     * Constructs a Declaration with a specified name, expression and important flag.
+     */
+    public Declaration(String name, Expression expression, boolean important) {
+        this.name = name;
+        this.expression = expression;
+        this.important = important;
+    }
+
     /**
      * The property name to the left of the ':'.
      */
@@ -89,5 +114,19 @@ public class Declaration {
         StringBuilder txt = new StringBuilder();
         txt.append(name).append(": ").append(expression).append(important ? " !important" : "");
         return txt.toString();
+    }
+
+    public String getKey() {
+        return getName();
+    }
+
+    public Expression getValue() {
+        return getExpression();
+    }
+
+    public Expression setValue(Expression arg0) {
+        Expression old = getExpression();
+        setExpression(arg0);
+        return old;
     }
 }

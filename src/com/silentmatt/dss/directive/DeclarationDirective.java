@@ -1,6 +1,7 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
 import java.util.ArrayList;
@@ -11,14 +12,14 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public abstract class DeclarationDirective extends Rule {
-    private List<Declaration> declarations = new ArrayList<Declaration>();
+    private DeclarationList declarations = new DeclarationList();
 
     public DeclarationDirective(List<Declaration> declarations) {
         super();
-        this.declarations = declarations;
+        this.declarations = new DeclarationList(declarations);
     }
 
-    public List<Declaration> getDeclarations() {
+    public DeclarationList getDeclarations() {
         return declarations;
     }
 

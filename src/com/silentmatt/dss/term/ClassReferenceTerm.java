@@ -1,6 +1,7 @@
 package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.DeclarationList;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class ClassReferenceTerm extends Term {
     /**
      * The arguments to be passed to the class.
      */
-    private List<Declaration> arguments = new ArrayList<Declaration>();
+    private DeclarationList arguments = new DeclarationList();
 
     /**
      * Constructs a ClassReference from a class name.
@@ -49,7 +50,7 @@ public class ClassReferenceTerm extends Term {
      *
      * @return The CSS declarations that will be passed to the class.
      */
-    public List<Declaration> getArguments() {
+    public DeclarationList getArguments() {
         return arguments;
     }
 
