@@ -26,6 +26,12 @@ public class FunctionTerm extends Term {
         super();
     }
 
+    public FunctionTerm(String name, Expression expression) {
+        super();
+        this.name = name;
+        this.expression = expression;
+    }
+
     /**
      * Gets the name of the function.
      *

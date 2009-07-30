@@ -5,6 +5,9 @@ import com.martiansoftware.jsap.stringparsers.FileStringParser;
 import com.martiansoftware.jsap.stringparsers.URLStringParser;
 import com.silentmatt.dss.parser.ErrorReporter;
 import com.silentmatt.dss.parser.PrintStreamErrorReporter;
+import com.silentmatt.dss.term.FunctionTerm;
+import com.silentmatt.dss.term.NumberTerm;
+import com.silentmatt.dss.term.StringTerm;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -78,10 +81,34 @@ public final class Main {
                 if (css != null) {
                     DSSEvaluator.Options opts = new DSSEvaluator.Options(url);
                     opts.setErrors(errors);
-                    DSSEvaluator eval = new DSSEvaluator(opts);
-                    eval.evaluate(css);
-                    String cssString;
+                    opts.getFunctions().put("string", new Function() {
+                        public Expression call(FunctionTerm function) {
+                            return new StringTerm("\"" + function.getExpression() + "\"").toExpression();
+                        }
+                    });
+                    Function mathFunction = new Function() {
+                        public Expression call(FunctionTerm function) {
+                            String name = function.getName();
+                            NumberTerm value = (NumberTerm) function.getExpression().getTerms().get(0);
+                            if (name.equals("sin")) {
+                                return new NumberTerm(Math.sin(value.getDoubleValue())).toExpression();
+                            }
+                            else if (name.equals("cos")) {
+                                return new NumberTerm(Math.cos(value.getDoubleValue())).toExpression();
+                            }
+                            else if (name.equals("tan")) {
+                                return new NumberTerm(Math.tan(value.getDoubleValue())).toExpression();
+                            }
+                            return function.toExpression();
+                        }
+                    };
+                    opts.getFunctions().put("sin", mathFunction);
+                    opts.getFunctions().put("cos", mathFunction);
+                    opts.getFunctions().put("tan", mathFunction);
 
+                    new DSSEvaluator(opts).evaluate(css);
+
+                    String cssString;
                     if (config.getBoolean("debug")) {
                         cssString = css.toString();
                     }

@@ -10,14 +10,16 @@ import com.silentmatt.dss.parser.PrintStreamErrorReporter;
 import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.ClassReferenceTerm;
 import com.silentmatt.dss.term.ConstTerm;
+import com.silentmatt.dss.term.FunctionTerm;
 import com.silentmatt.dss.term.ParamTerm;
 import com.silentmatt.dss.term.ReferenceTerm;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Deque;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 public class DSSEvaluator {
 
@@ -26,6 +28,7 @@ public class DSSEvaluator {
         private ErrorReporter errors = new PrintStreamErrorReporter();
         private Scope<ClassDirective> classes = new Scope<ClassDirective>(null);
         private Scope<Expression> variables = new Scope<Expression>(null);
+        private Map<String, Function> functions = new HashMap<String, Function>();
 
         public Options(URL url) {
             baseURL = url;
@@ -62,6 +65,14 @@ public class DSSEvaluator {
         public void setVariables(Scope<Expression> variables) {
             this.variables = variables;
         }
+
+        public Map<String, Function> getFunctions() {
+            return functions;
+        }
+
+        public void setFunctions(Map<String, Function> functions) {
+            this.functions = functions;
+        }
     }
 
     public static class EvaluationState {
@@ -70,6 +81,7 @@ public class DSSEvaluator {
         private Scope<ClassDirective> classes = new Scope<ClassDirective>(null);
         private Scope<Expression> variables = new Scope<Expression>(null);
         private Scope<Expression> parameters = null;
+        private Map<String, Function> functions = new HashMap<String, Function>();
 
         public EvaluationState(Options opts) {
             this.baseURL = new LinkedList<URL>();
@@ -77,6 +89,7 @@ public class DSSEvaluator {
             this.errors = opts.getErrors();
             this.classes = new Scope<ClassDirective>(opts.getClasses());
             this.variables = new Scope<Expression>(opts.getVariables());
+            this.functions.putAll(opts.functions);
         }
 
         public URL getBaseURL() {
@@ -97,6 +110,10 @@ public class DSSEvaluator {
 
         public Scope<Expression> getParameters() {
             return parameters;
+        }
+
+        public Map<String, Function> getFunctions() {
+            return functions;
         }
 
         public void pushBaseURL(URL newBase) {
@@ -221,8 +238,7 @@ public class DSSEvaluator {
         substituteValue(state, property, false, doCalculations);
     }
 
-    private static void substituteValue(DSSEvaluator.EvaluationState state, Declaration property, boolean withParams, boolean doCalculations) {
-        Expression value = property.getExpression();
+    private static Expression substituteValues(DSSEvaluator.EvaluationState state, Expression value, boolean withParams, boolean doCalculations) {
         Expression newValue = new Expression();
 
         for (Term primitiveValue : value.getTerms()) {
@@ -253,16 +269,42 @@ public class DSSEvaluator {
                     newValue.getTerms().add(primitiveValue);
                 }
             }
+            else if (primitiveValue instanceof FunctionTerm) {
+                FunctionTerm function = (FunctionTerm) primitiveValue;
+                Expression argument = substituteValues(state, function.getExpression(), withParams, doCalculations);
+                Expression result = DSSEvaluator.applyFunction(state, new FunctionTerm(function.getName(), argument));
+                if (result != null) {
+                    newValue.getTerms().addAll(result.getTerms());
+                }
+                else {
+                    newValue.getTerms().add(function);
+                }
+            }
             else {
                 newValue.getTerms().add(primitiveValue);
             }
         }
 
+        return newValue;
+    }
+
+    private static void substituteValue(DSSEvaluator.EvaluationState state, Declaration property, boolean withParams, boolean doCalculations) {
+        Expression value = property.getExpression();
+        Expression newValue = DSSEvaluator.substituteValues(state, value, withParams, doCalculations);
         property.setExpression(newValue);
     }
 
-    private static void removeProperty(DeclarationList style, String property) {
-        style.remove(property);
+    public static Expression applyFunction(EvaluationState state, FunctionTerm functionTerm) {
+        Function function = state.getFunctions().get(functionTerm.getName());
+        if (function != null) {
+            try {
+                return function.call(functionTerm);
+            }
+            catch (Throwable ex) {
+                state.getErrors().Warning(ex.getMessage());
+            }
+        }
+        return null;
     }
 
     public static void evaluateStyle(DSSEvaluator.EvaluationState state, DeclarationList style, boolean doCalculations) {

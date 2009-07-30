@@ -3,6 +3,7 @@ package com.silentmatt.dss.expression;
 import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.term.CalculationTerm;
+import com.silentmatt.dss.term.FunctionTerm;
 import com.silentmatt.dss.term.NumberTerm;
 import com.silentmatt.dss.term.ReferenceTerm;
 import com.silentmatt.dss.term.Term;
@@ -31,6 +32,14 @@ public class TermExpression implements CalcExpression {
         }
         else if (value instanceof CalculationTerm) {
             return ((CalculationTerm) value).getCalculation().calculateValue(state);
+        }
+        else if (value instanceof FunctionTerm) {
+            Expression result = DSSEvaluator.applyFunction(state, (FunctionTerm) value);
+            if (result != null &&
+                    result.getTerms().size() == 1 &&
+                    result.getTerms().get(0) instanceof NumberTerm) {
+                return new Value((NumberTerm) result.getTerms().get(0));
+            }
         }
 
         state.getErrors().SemErr("Invalid term in calculation: '" + value + "'");

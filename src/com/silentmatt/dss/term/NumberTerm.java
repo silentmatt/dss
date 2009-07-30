@@ -13,6 +13,10 @@ public class NumberTerm extends Term {
 
     public NumberTerm(double value) {
         super();
+        if (value < 0) {
+            this.sign = '-';
+            value = -value;
+        }
         this.value = value;
         this.unit = Unit.None;
     }

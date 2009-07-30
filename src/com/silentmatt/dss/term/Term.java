@@ -1,6 +1,7 @@
 package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.Color;
+import com.silentmatt.dss.Expression;
 
 /**
  *
@@ -17,11 +18,16 @@ public abstract class Term {
         this.seperator = Seperator;
     }
 
-    public boolean isColor() {
-        return false;
+    public Expression toExpression() {
+        Expression result = new Expression();
+        result.getTerms().add(this);
+        return result;
     }
 
-    // TODO: Test this
+    public boolean isColor() {
+        return toColor() != null;
+    }
+
     public Color toColor() {
         return null;
     }
