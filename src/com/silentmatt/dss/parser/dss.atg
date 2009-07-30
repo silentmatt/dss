@@ -281,7 +281,7 @@ genericDirective<out GenericDirective dir> =
         '{'
             {
                 // XXX: Order between Declarations and Rules is not preserved.
-                declaration<out Declaration dec> ';'    (.  dir.getDeclarations().add(dec); .)
+                declaration<out Declaration dec> ';'    (.  dir.addDeclaration(dec); .)
                 |
                 ruleset<out RuleSet rset>               (.  dir.addRule(rset); .)
                 |

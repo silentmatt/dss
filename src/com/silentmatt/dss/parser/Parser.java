@@ -812,7 +812,7 @@ public class Parser {
 				if (StartOf(4)) {
 					Declaration dec = declaration();
 					Expect(27);
-					dir.getDeclarations().add(dec); 
+					dir.addDeclaration(dec); 
 				} else if (StartOf(2)) {
 					RuleSet rset = ruleset();
 					dir.addRule(rset); 
