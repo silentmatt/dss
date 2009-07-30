@@ -28,7 +28,13 @@ public class BinaryExpression implements CalcExpression {
     public Value calculateValue(DSSEvaluator.EvaluationState state) {
         try {
             Value leftValue = left.calculateValue(state);
+            if (leftValue == null) {
+                return null;
+            }
             Value rightValue = right.calculateValue(state);
+            if (rightValue == null) {
+                return null;
+            }
             switch (operation) {
             case Add:
                 return leftValue.add(rightValue);

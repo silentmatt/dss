@@ -14,6 +14,7 @@ public class NumberTerm extends Term {
     public NumberTerm(double value) {
         super();
         this.value = value;
+        this.unit = Unit.None;
     }
 
     public Character getSign() {
