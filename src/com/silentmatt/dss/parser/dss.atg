@@ -406,7 +406,7 @@ pseudo<out String pseudo> =         (.  StringBuilder sb = new StringBuilder(); 
 declaration<out Declaration dec> =  (. dec = new Declaration(); .)
     identity<out String ident>      (. dec.setName(ident); .)
     ':' expr<out Expression exp>    (. dec.setExpression(exp); .)
-    [ "!important"                  (. dec.setImportant(true); .) ]
+    [ '!' "important"               (. dec.setImportant(true); .) ]
 .
 expr<out Expression exp> =  (.  exp = new Expression();
                                 Character sep = null;
