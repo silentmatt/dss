@@ -1,11 +1,10 @@
 package com.silentmatt.dss;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -16,9 +15,10 @@ import java.util.Set;
  *
  * @author Matthew Crumley
  */
+// FIXME: Map methods return the last declaration, ignoring the "!important" flag.
 public class DeclarationList implements List<Declaration> {
-    private List<Declaration> list = new ArrayList<Declaration>();
-    private Map<String, Expression> mapView = new DeclarationListMapView();
+    private final List<Declaration> list = new LinkedList<Declaration>();
+    private final Map<String, Expression> mapView = new DeclarationListMapView();
 
     public DeclarationList() {
     }
@@ -111,21 +111,16 @@ public class DeclarationList implements List<Declaration> {
         return list.listIterator();
     }
 
-    public ListIterator<Declaration> listIterator(int arg0) {
-        return list.listIterator(arg0);
+    public ListIterator<Declaration> listIterator(int start) {
+        return list.listIterator(start);
     }
 
-    public List<Declaration> subList(int arg0, int arg1) {
-        return list.subList(arg0, arg1);
+    public List<Declaration> subList(int start, int end) {
+        return list.subList(start, end);
     }
 
     // Map methods
-    public boolean containsKey(Object arg0) {
-        if (!(arg0 instanceof String)) {
-            return false;
-        }
-
-        String key = (String) arg0;
+    public boolean containsKey(String key) {
         for (Declaration declaration : list) {
             if (declaration.getName().equalsIgnoreCase(key)) {
                 return true;
@@ -134,38 +129,34 @@ public class DeclarationList implements List<Declaration> {
         return false;
     }
 
-    public boolean containsValue(Object arg0) {
+    public boolean containsValue(Expression value) {
         for (Declaration declaration : list) {
-            if (declaration.getExpression().equals(arg0)) {
+            if (declaration.getExpression().equals(value)) {
                 return true;
             }
         }
         return false;
     }
 
-    public Declaration getDeclaration(String key) {
+    public Declaration getDeclaration(String name) {
         ListIterator<Declaration> it = list.listIterator(list.size());
         while (it.hasPrevious()) {
             Declaration declaration = it.previous();
-            if (declaration.getName().equalsIgnoreCase(key)) {
+            if (declaration.getName().equalsIgnoreCase(name)) {
                 return declaration;
             }
         }
         return null;
     }
 
-    public Expression get(Object arg0) {
-        if (!(arg0 instanceof String)) {
-            return null;
-        }
-        String key = (String) arg0;
-        Declaration declaration = getDeclaration(key);
+    public Expression get(String name) {
+        Declaration declaration = getDeclaration(name);
         return declaration != null ? declaration.getExpression() : null;
     }
 
-    public Expression put(String arg0, Expression arg1) {
-        Expression result = get(arg0);
-        list.add(new Declaration(arg0, arg1));
+    public Expression put(String name, Expression expression) {
+        Expression result = get(name);
+        list.add(new Declaration(name, expression));
         return result;
     }
 
@@ -184,8 +175,8 @@ public class DeclarationList implements List<Declaration> {
         return result;
     }
 
-    public void putAll(Map<? extends String, ? extends Expression> arg0) {
-        for (Entry<? extends String, ? extends Expression> entry : arg0.entrySet()) {
+    public void putAll(Map<? extends String, ? extends Expression> map) {
+        for (Entry<? extends String, ? extends Expression> entry : map.entrySet()) {
             this.put(entry.getKey(), entry.getValue());
         }
     }
@@ -204,15 +195,15 @@ public class DeclarationList implements List<Declaration> {
         }
 
         public boolean containsKey(Object arg0) {
-            return DeclarationList.this.containsKey(arg0);
+            return arg0 instanceof String && DeclarationList.this.containsKey((String) arg0);
         }
 
         public boolean containsValue(Object arg0) {
-            return DeclarationList.this.containsValue(arg0);
+            return arg0 instanceof Expression && DeclarationList.this.containsValue((Expression) arg0);
         }
 
         public Expression get(Object arg0) {
-            return DeclarationList.this.get(arg0);
+            return arg0 instanceof String ? DeclarationList.this.get((String) arg0) : null;
         }
 
         public Expression put(String arg0, Expression arg1) {
@@ -333,7 +324,7 @@ public class DeclarationList implements List<Declaration> {
                 }
 
                 public boolean contains(Object arg0) {
-                    return DeclarationList.this.containsValue(arg0);
+                    return arg0 instanceof Expression && DeclarationList.this.containsValue((Expression) arg0);
                 }
 
                 public Iterator<Expression> iterator() {
