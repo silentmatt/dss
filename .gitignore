@@ -1,3 +1,7 @@
 build/
 dist/
 *.java.old
+nbproject/private/
+nbproject/findbugs.settings
+nbproject/pmd.settings
+nbproject/sqe.properties
