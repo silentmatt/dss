@@ -14,6 +14,13 @@ import java.util.List;
 public class Expression {
     private List<Term> terms = new ArrayList<Term>();
 
+    public Expression() {
+    }
+
+    public Expression(Term term) {
+        terms.add(term);
+    }
+
     /**
      * Gets the child terms of the expression.
      *

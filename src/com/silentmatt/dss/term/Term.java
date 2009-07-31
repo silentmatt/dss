@@ -19,9 +19,7 @@ public abstract class Term {
     }
 
     public Expression toExpression() {
-        Expression result = new Expression();
-        result.getTerms().add(this);
-        return result;
+        return new Expression(this);
     }
 
     public boolean isColor() {

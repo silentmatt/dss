@@ -238,12 +238,14 @@ public class DeclarationList implements List<Declaration> {
         }
 
         public Set<String> keySet() {
-            final Set<String> keys = new LinkedHashSet<String>();
-            for (Declaration declaration : DeclarationList.this.list) {
-                keys.add(declaration.getName());
-            }
-
             return new Set<String>() {
+                final Set<String> keys = new LinkedHashSet<String>();
+                {
+                    for (Declaration declaration : DeclarationList.this.list) {
+                        keys.add(declaration.getName());
+                    }
+                }
+
                 public int size() {
                     return keys.size();
                 }
@@ -257,8 +259,8 @@ public class DeclarationList implements List<Declaration> {
                 }
 
                 public Iterator<String> iterator() {
-                    final Iterator<String> it = keys.iterator();
                     return new Iterator<String>() {
+                        final Iterator<String> it = keys.iterator();
                         private String current = null;
 
                         public boolean hasNext() {
@@ -451,9 +453,8 @@ public class DeclarationList implements List<Declaration> {
                 }
 
                 public Iterator<Entry<String, Expression>> iterator() {
-                    final Iterator<Declaration> it = DeclarationList.this.iterator();
-
                     return new Iterator<Entry<String, Expression>>() {
+                        final Iterator<Declaration> it = DeclarationList.this.iterator();
                         public boolean hasNext() {
                             return it.hasNext();
                         }

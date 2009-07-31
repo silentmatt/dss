@@ -95,7 +95,7 @@ public class FunctionTerm extends Term {
             try {
                 return function.call(this, state);
             }
-            catch (Throwable ex) {
+            catch (Exception ex) {
                 state.getErrors().Warning(ex.getMessage());
             }
         }
