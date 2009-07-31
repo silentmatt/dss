@@ -4,7 +4,6 @@ import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

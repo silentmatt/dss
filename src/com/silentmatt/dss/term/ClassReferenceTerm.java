@@ -2,8 +2,6 @@ package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationList;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A term that references a class with parameters.

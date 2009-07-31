@@ -1,6 +1,5 @@
 package com.silentmatt.dss.term;
 
-import com.silentmatt.dss.Color;
 import com.silentmatt.dss.expression.CalcExpression;
 
 /**
