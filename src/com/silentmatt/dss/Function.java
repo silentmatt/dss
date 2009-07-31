@@ -7,5 +7,5 @@ import com.silentmatt.dss.term.FunctionTerm;
  * @author Matthew Crumley
  */
 public interface Function {
-    Expression call(FunctionTerm function);
+    Expression call(FunctionTerm function, EvaluationState state);
 }

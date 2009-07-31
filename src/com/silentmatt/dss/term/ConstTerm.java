@@ -1,6 +1,6 @@
 package com.silentmatt.dss.term;
 
-import com.silentmatt.dss.DSSEvaluator;
+import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 
 /**
@@ -24,7 +24,7 @@ public class ConstTerm extends ReferenceTerm {
     }
 
     @Override
-    public Expression evaluate(DSSEvaluator.EvaluationState state) {
+    public Expression evaluate(EvaluationState state) {
         if (state.getVariables() == null) {
             state.getErrors().SemErr("Invalid scope");
             return null;

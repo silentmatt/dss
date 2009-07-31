@@ -131,7 +131,7 @@ public class Value {
      * @return A CSS Term that represents this Value.
      * @throws CalculationException <code>this</code> cannot be represented by a valid CSS unit.
      */
-    public Term toTerm() throws CalculationException {
+    public NumberTerm toTerm() throws CalculationException {
         NumberTerm term = new NumberTerm(scalar);
         com.silentmatt.dss.Unit cssUnit = CalculationUnit.toCssUnit(unit);
         if (cssUnit == null) {

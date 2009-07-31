@@ -1,7 +1,7 @@
 package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.Color;
-import com.silentmatt.dss.DSSEvaluator.EvaluationState;
+import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Function;
 import com.silentmatt.dss.Unit;
@@ -93,7 +93,7 @@ public class FunctionTerm extends Term {
         Function function = state.getFunctions().get(getName());
         if (function != null) {
             try {
-                return function.call(this);
+                return function.call(this, state);
             }
             catch (Throwable ex) {
                 state.getErrors().Warning(ex.getMessage());

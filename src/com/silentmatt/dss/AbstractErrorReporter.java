@@ -1,4 +1,6 @@
-package com.silentmatt.dss.parser;
+package com.silentmatt.dss;
+
+import com.silentmatt.dss.parser.*;
 
 /**
  *

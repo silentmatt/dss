@@ -2,6 +2,7 @@ package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Rule;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class FontFaceDirective extends DeclarationDirective {
     }
 
     @Override
-    public void evaluate(DSSEvaluator.EvaluationState state, List<Rule> container) {
+    public void evaluate(EvaluationState state, List<Rule> container) {
         DSSEvaluator.evaluateStyle(state, getDeclarations(), true);
     }
 }

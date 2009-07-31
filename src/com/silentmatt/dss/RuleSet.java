@@ -1,6 +1,5 @@
 package com.silentmatt.dss;
 
-import com.silentmatt.dss.DSSEvaluator.EvaluationState;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;

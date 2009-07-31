@@ -1,6 +1,5 @@
 package com.silentmatt.dss;
 
-import com.silentmatt.dss.parser.ErrorReporter;
 import com.silentmatt.dss.parser.Parser;
 import com.silentmatt.dss.parser.Scanner;
 import java.io.IOException;

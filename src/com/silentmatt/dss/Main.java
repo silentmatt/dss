@@ -3,9 +3,8 @@ package com.silentmatt.dss;
 import com.martiansoftware.jsap.*;
 import com.martiansoftware.jsap.stringparsers.FileStringParser;
 import com.martiansoftware.jsap.stringparsers.URLStringParser;
-import com.silentmatt.dss.expression.CalculationUnit;
-import com.silentmatt.dss.parser.ErrorReporter;
-import com.silentmatt.dss.parser.PrintStreamErrorReporter;
+import com.silentmatt.dss.expression.CalculationException;
+import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.FunctionTerm;
 import com.silentmatt.dss.term.NumberTerm;
 import com.silentmatt.dss.term.StringTerm;
@@ -84,14 +83,28 @@ public final class Main {
                     DSSEvaluator.Options opts = new DSSEvaluator.Options(url);
                     opts.setErrors(errors);
                     opts.getFunctions().put("string", new Function() {
-                        public Expression call(FunctionTerm function) {
+                        public Expression call(FunctionTerm function, EvaluationState state) {
                             return new StringTerm("\"" + function.getExpression() + "\"").toExpression();
                         }
                     });
                     Function mathFunction = new Function() {
-                        public Expression call(FunctionTerm function) {
+                        public Expression call(FunctionTerm function, EvaluationState state) {
                             String name = function.getName();
-                            NumberTerm value = (NumberTerm) function.getExpression().getTerms().get(0);
+                            Term term = function.getExpression().getTerms().get(0);
+                            NumberTerm value;
+                            if (term instanceof NumberTerm) {
+                                value = (NumberTerm) term;
+                            }
+                            else if (term instanceof CalculationTerm) {
+                                try {
+                                    value = ((CalculationTerm) term).getCalculation().calculateValue(state).toTerm();
+                                } catch (CalculationException ex) {
+                                    return null;
+                                }
+                            }
+                            else {
+                                return null;
+                            }
                             double x = value.getDoubleValue();
                             switch (value.getUnit()) {
                             case None:

@@ -5,8 +5,6 @@ import com.silentmatt.dss.term.Term;
 import com.silentmatt.dss.expression.CalcExpression;
 import com.silentmatt.dss.expression.CalculationException;
 import com.silentmatt.dss.expression.Value;
-import com.silentmatt.dss.parser.ErrorReporter;
-import com.silentmatt.dss.parser.PrintStreamErrorReporter;
 import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.ClassReferenceTerm;
 import com.silentmatt.dss.term.ConstTerm;
@@ -16,9 +14,7 @@ import com.silentmatt.dss.term.ReferenceTerm;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 public class DSSEvaluator {
@@ -75,76 +71,6 @@ public class DSSEvaluator {
         }
     }
 
-    public static class EvaluationState {
-        private Deque<URL> baseURL;
-        private ErrorReporter errors = new PrintStreamErrorReporter();
-        private Scope<ClassDirective> classes = new Scope<ClassDirective>(null);
-        private Scope<Expression> variables = new Scope<Expression>(null);
-        private Scope<Expression> parameters = null;
-        private Map<String, Function> functions = new HashMap<String, Function>();
-
-        public EvaluationState(Options opts) {
-            this.baseURL = new LinkedList<URL>();
-            baseURL.push(opts.getBaseURL());
-            this.errors = opts.getErrors();
-            this.classes = new Scope<ClassDirective>(opts.getClasses());
-            this.variables = new Scope<Expression>(opts.getVariables());
-            this.functions.putAll(opts.functions);
-        }
-
-        public URL getBaseURL() {
-            return baseURL.getFirst();
-        }
-
-        public ErrorReporter getErrors() {
-            return errors;
-        }
-
-        public Scope<ClassDirective> getClasses() {
-            return classes;
-        }
-
-        public Scope<Expression> getVariables() {
-            return variables;
-        }
-
-        public Scope<Expression> getParameters() {
-            return parameters;
-        }
-
-        public Map<String, Function> getFunctions() {
-            return functions;
-        }
-
-        public void pushBaseURL(URL newBase) {
-            baseURL.push(newBase);
-            pushScope();
-        }
-
-        public void popBaseURL() {
-            popScope();
-            baseURL.pop();
-        }
-
-        public void pushScope() {
-            classes = new Scope<ClassDirective>(classes);
-            variables = new Scope<Expression>(variables);
-        }
-
-        public void popScope() {
-            classes = classes.parent();
-            variables = variables.parent();
-        }
-
-        public void pushParameters() {
-            parameters = new Scope<Expression>(parameters);
-        }
-
-        public void popParameters() {
-            parameters = parameters.parent();
-        }
-    }
-
     private final EvaluationState state;
 
     public DSSEvaluator(Options opts) {
@@ -165,7 +91,7 @@ public class DSSEvaluator {
         return style.containsKey(property);
     }
 
-    private static void addInheritedProperties(DSSEvaluator.EvaluationState state, DeclarationList style, ClassReferenceTerm classReference) {
+    private static void addInheritedProperties(EvaluationState state, DeclarationList style, ClassReferenceTerm classReference) {
         String className = classReference.getName();
         ClassDirective clazz = state.getClasses().get(className);
         if (clazz == null) {
@@ -208,7 +134,7 @@ public class DSSEvaluator {
         inheritProperties(style, properties);
     }
 
-    private static void addInheritedProperties(DSSEvaluator.EvaluationState state, DeclarationList style, String className) {
+    private static void addInheritedProperties(EvaluationState state, DeclarationList style, String className) {
         addInheritedProperties(state, style, new ClassReferenceTerm(className));
     }
 
@@ -223,7 +149,7 @@ public class DSSEvaluator {
         }
     }
 
-    private static void addInheritedProperties(DSSEvaluator.EvaluationState state, DeclarationList style, Expression inherits) {
+    private static void addInheritedProperties(EvaluationState state, DeclarationList style, Expression inherits) {
         for (Term inherit : inherits.getTerms()) {
             if (inherit instanceof ClassReferenceTerm) {
                 DSSEvaluator.addInheritedProperties(state, style, (ClassReferenceTerm) inherit);
@@ -234,11 +160,11 @@ public class DSSEvaluator {
         }
     }
 
-    private static void substituteValue(DSSEvaluator.EvaluationState state, Declaration property, boolean doCalculations) {
+    private static void substituteValue(EvaluationState state, Declaration property, boolean doCalculations) {
         substituteValue(state, property, false, doCalculations);
     }
 
-    private static Expression substituteValues(DSSEvaluator.EvaluationState state, Expression value, boolean withParams, boolean doCalculations) {
+    private static Expression substituteValues(EvaluationState state, Expression value, boolean withParams, boolean doCalculations) {
         Expression newValue = new Expression();
 
         for (Term primitiveValue : value.getTerms()) {
@@ -288,13 +214,13 @@ public class DSSEvaluator {
         return newValue;
     }
 
-    private static void substituteValue(DSSEvaluator.EvaluationState state, Declaration property, boolean withParams, boolean doCalculations) {
+    private static void substituteValue(EvaluationState state, Declaration property, boolean withParams, boolean doCalculations) {
         Expression value = property.getExpression();
         Expression newValue = DSSEvaluator.substituteValues(state, value, withParams, doCalculations);
         property.setExpression(newValue);
     }
 
-    public static void evaluateStyle(DSSEvaluator.EvaluationState state, DeclarationList style, boolean doCalculations) {
+    public static void evaluateStyle(EvaluationState state, DeclarationList style, boolean doCalculations) {
         state.pushScope();
         try {
             Expression inherit;

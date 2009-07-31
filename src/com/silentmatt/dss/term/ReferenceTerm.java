@@ -1,6 +1,6 @@
 package com.silentmatt.dss.term;
 
-import com.silentmatt.dss.DSSEvaluator;
+import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 
 /**
@@ -36,5 +36,5 @@ public abstract class ReferenceTerm extends Term {
     @Override
     public abstract String toString();
 
-    public abstract Expression evaluate(DSSEvaluator.EvaluationState state);
+    public abstract Expression evaluate(EvaluationState state);
 }

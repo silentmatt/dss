@@ -1,6 +1,6 @@
 package com.silentmatt.dss.term;
 
-import com.silentmatt.dss.DSSEvaluator;
+import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 
 /**
@@ -24,7 +24,7 @@ public class ParamTerm extends ReferenceTerm {
     }
 
     @Override
-    public Expression evaluate(DSSEvaluator.EvaluationState state) {
+    public Expression evaluate(EvaluationState state) {
         if (state.getParameters() == null) {
             state.getErrors().SemErr("param is only valid inside a class");
             return null;

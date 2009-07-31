@@ -1,6 +1,6 @@
 package com.silentmatt.dss.expression;
 
-import com.silentmatt.dss.DSSEvaluator;
+import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.FunctionTerm;
@@ -25,7 +25,7 @@ public class TermExpression implements CalcExpression {
         this.value = value;
     }
 
-    public Value calculateValue(DSSEvaluator.EvaluationState state) {
+    public Value calculateValue(EvaluationState state) {
         substituteValues(state);
         if (value instanceof NumberTerm) {
             return new Value((NumberTerm) value);
@@ -60,7 +60,7 @@ public class TermExpression implements CalcExpression {
         return this.value.toString();
     }
 
-    public void substituteValues(DSSEvaluator.EvaluationState state) {
+    public void substituteValues(EvaluationState state) {
         if (value instanceof ReferenceTerm) {
             ReferenceTerm function = (ReferenceTerm) value;
             Expression variable = function.evaluate(state);

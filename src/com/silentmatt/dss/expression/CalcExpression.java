@@ -1,6 +1,6 @@
 package com.silentmatt.dss.expression;
 
-import com.silentmatt.dss.DSSEvaluator;
+import com.silentmatt.dss.EvaluationState;
 
 /**
  * An expression from a calc(...) Term.
@@ -20,7 +20,7 @@ public interface CalcExpression {
      * @throws CalculationException The expression attempts invalid unit operations,
      * has invalid Terms, or a const/param lookup fails.
      */
-    Value calculateValue(DSSEvaluator.EvaluationState state);
+    Value calculateValue(EvaluationState state);
 
     /**
      * Gets the relative precidence of the expression.
@@ -38,5 +38,5 @@ public interface CalcExpression {
      * @param parameters Scope for param lookups.
      * @throws CalculationException The expression has invalid Terms.
      */
-    void substituteValues(DSSEvaluator.EvaluationState state);
+    void substituteValues(EvaluationState state);
 }

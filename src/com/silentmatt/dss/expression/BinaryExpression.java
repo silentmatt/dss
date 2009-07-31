@@ -1,6 +1,6 @@
 package com.silentmatt.dss.expression;
 
-import com.silentmatt.dss.DSSEvaluator;
+import com.silentmatt.dss.EvaluationState;
 
 /**
  * A CalcExpression that represents a binary operation.
@@ -25,7 +25,7 @@ public class BinaryExpression implements CalcExpression {
         this.right = right;
     }
 
-    public Value calculateValue(DSSEvaluator.EvaluationState state) {
+    public Value calculateValue(EvaluationState state) {
         try {
             Value leftValue = left.calculateValue(state);
             if (leftValue == null) {
@@ -54,7 +54,7 @@ public class BinaryExpression implements CalcExpression {
         return null;
     }
 
-    public void substituteValues(DSSEvaluator.EvaluationState state) {
+    public void substituteValues(EvaluationState state) {
         left.substituteValues(state);
         right.substituteValues(state);
     }

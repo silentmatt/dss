@@ -1,6 +1,6 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.DSSEvaluator;
+import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Medium;
 import com.silentmatt.dss.Rule;
 import java.io.IOException;
@@ -90,7 +90,7 @@ public class MediaDirective extends Rule {
     }
 
     @Override
-    public void evaluate(DSSEvaluator.EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
+    public void evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
         state.pushScope();
         try {
             Rule.evaluateRules(state, getRules());

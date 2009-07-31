@@ -368,8 +368,8 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
      */
     @Override
     public String toString() {
-        CalculationUnit canonicalUnit = getCanonicalUnit(this);
-        if (canonicalUnit.cssUnit != null) { return canonicalUnit.cssUnit.toString(); }
+        CalculationUnit canonical = getCanonicalUnit(this);
+        if (canonical.cssUnit != null) { return canonical.cssUnit.toString(); }
 
         StringBuilder sb = new StringBuilder();
         if (pxLength > 1) {

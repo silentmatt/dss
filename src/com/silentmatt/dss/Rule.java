@@ -21,9 +21,9 @@ public abstract class Rule {
         return new String(chars);
     }
 
-    public abstract void evaluate(DSSEvaluator.EvaluationState state, List<Rule> container) throws MalformedURLException, IOException;
+    public abstract void evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException;
 
-    public static void evaluateRules(DSSEvaluator.EvaluationState state, List<Rule> rules) throws MalformedURLException, IOException {
+    public static void evaluateRules(EvaluationState state, List<Rule> rules) throws MalformedURLException, IOException {
         for (int i = 0; i < rules.size(); i++) {
             Rule rule = rules.get(i);
             rule.evaluate(state, rules);
