@@ -3,11 +3,13 @@ package com.silentmatt.dss;
 import com.martiansoftware.jsap.*;
 import com.martiansoftware.jsap.stringparsers.FileStringParser;
 import com.martiansoftware.jsap.stringparsers.URLStringParser;
+import com.silentmatt.dss.expression.CalculationUnit;
 import com.silentmatt.dss.parser.ErrorReporter;
 import com.silentmatt.dss.parser.PrintStreamErrorReporter;
 import com.silentmatt.dss.term.FunctionTerm;
 import com.silentmatt.dss.term.NumberTerm;
 import com.silentmatt.dss.term.StringTerm;
+import com.silentmatt.dss.term.Term;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -90,16 +92,28 @@ public final class Main {
                         public Expression call(FunctionTerm function) {
                             String name = function.getName();
                             NumberTerm value = (NumberTerm) function.getExpression().getTerms().get(0);
-                            if (name.equals("sin")) {
-                                return new NumberTerm(Math.sin(value.getDoubleValue())).toExpression();
+                            double x = value.getDoubleValue();
+                            switch (value.getUnit()) {
+                            case None:
+                            case DEG:
+                                x = Math.toRadians(x);
+                                break;
+                            case GRAD:
+                                x = Math.toRadians(0.9 * x);
+                                break;
+                            case RAD:
+                                break;
+                            default:
+                                return null;
                             }
-                            else if (name.equals("cos")) {
-                                return new NumberTerm(Math.cos(value.getDoubleValue())).toExpression();
-                            }
-                            else if (name.equals("tan")) {
-                                return new NumberTerm(Math.tan(value.getDoubleValue())).toExpression();
-                            }
-                            return function.toExpression();
+
+                            double res;
+                            if      (name.equals("sin")) { res = Math.sin(x); }
+                            else if (name.equals("cos")) { res = Math.cos(x); }
+                            else if (name.equals("tan")) { res = Math.tan(x); }
+                            else                         { return function.toExpression(); }
+
+                            return new NumberTerm(res).toExpression();
                         }
                     };
                     opts.getFunctions().put("sin", mathFunction);

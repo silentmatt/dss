@@ -272,7 +272,7 @@ public class DSSEvaluator {
             else if (primitiveValue instanceof FunctionTerm) {
                 FunctionTerm function = (FunctionTerm) primitiveValue;
                 Expression argument = substituteValues(state, function.getExpression(), withParams, doCalculations);
-                Expression result = DSSEvaluator.applyFunction(state, new FunctionTerm(function.getName(), argument));
+                Expression result = new FunctionTerm(function.getName(), argument).applyFunction(state);
                 if (result != null) {
                     newValue.getTerms().addAll(result.getTerms());
                 }
@@ -292,19 +292,6 @@ public class DSSEvaluator {
         Expression value = property.getExpression();
         Expression newValue = DSSEvaluator.substituteValues(state, value, withParams, doCalculations);
         property.setExpression(newValue);
-    }
-
-    public static Expression applyFunction(EvaluationState state, FunctionTerm functionTerm) {
-        Function function = state.getFunctions().get(functionTerm.getName());
-        if (function != null) {
-            try {
-                return function.call(functionTerm);
-            }
-            catch (Throwable ex) {
-                state.getErrors().Warning(ex.getMessage());
-            }
-        }
-        return null;
     }
 
     public static void evaluateStyle(DSSEvaluator.EvaluationState state, DeclarationList style, boolean doCalculations) {

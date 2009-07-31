@@ -34,7 +34,7 @@ public class TermExpression implements CalcExpression {
             return ((CalculationTerm) value).getCalculation().calculateValue(state);
         }
         else if (value instanceof FunctionTerm) {
-            Expression result = DSSEvaluator.applyFunction(state, (FunctionTerm) value);
+            Expression result = ((FunctionTerm) value).applyFunction(state);
             if (result != null &&
                     result.getTerms().size() == 1 &&
                     result.getTerms().get(0) instanceof NumberTerm) {
