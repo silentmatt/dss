@@ -11,7 +11,7 @@ import java.util.Map;
  *
  * @author Matthew Crumley
  */
-public class EvaluationState {
+public final class EvaluationState {
     private Deque<URL> baseURL;
     private ErrorReporter errors = new PrintStreamErrorReporter();
     private Scope<ClassDirective> classes = new Scope<ClassDirective>(null);

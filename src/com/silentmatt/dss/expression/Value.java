@@ -35,8 +35,12 @@ public class Value {
         if (this.unit == null) {
             throw new IllegalArgumentException("term");
         }
-        char sign = term.getSign() == null ? '+' : term.getSign().charValue();
-        this.scalar = Double.parseDouble(sign + String.valueOf(term.getDoubleValue())) * this.unit.getScale();
+        double val = term.getDoubleValue();
+        Character sign = term.getSign();
+        if (sign != null && sign.charValue() == '-') {
+            val = -val;
+        }
+        this.scalar = val * this.unit.getScale();
         this.unit = CalculationUnit.getCanonicalUnit(this.unit);
     }
 

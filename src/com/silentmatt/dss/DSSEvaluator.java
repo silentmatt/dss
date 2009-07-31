@@ -160,10 +160,6 @@ public class DSSEvaluator {
         }
     }
 
-    private static void substituteValue(EvaluationState state, Declaration property, boolean doCalculations) {
-        substituteValue(state, property, false, doCalculations);
-    }
-
     private static Expression substituteValues(EvaluationState state, Expression value, boolean withParams, boolean doCalculations) {
         Expression newValue = new Expression();
 
@@ -230,7 +226,7 @@ public class DSSEvaluator {
             }
             for (int i = 0; i < style.size(); i++) {
                 Declaration property = style.get(i);
-                DSSEvaluator.substituteValue(state, property, doCalculations);
+                DSSEvaluator.substituteValue(state, property, false, doCalculations);
             }
         }
         finally {

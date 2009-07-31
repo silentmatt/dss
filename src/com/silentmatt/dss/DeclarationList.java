@@ -1,10 +1,10 @@
 package com.silentmatt.dss;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -16,7 +16,7 @@ import java.util.Set;
  * @author Matthew Crumley
  */
 public class DeclarationList implements List<Declaration> {
-    private final List<Declaration> list = new LinkedList<Declaration>();
+    private final List<Declaration> list = new ArrayList<Declaration>();
     private final Map<String, Expression> mapView = new DeclarationListMapView();
 
     public DeclarationList() {
