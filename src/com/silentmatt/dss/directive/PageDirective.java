@@ -1,6 +1,5 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Rule;
@@ -42,6 +41,6 @@ public class PageDirective extends DeclarationDirective {
 
     @Override
     public void evaluate(EvaluationState state, List<Rule> container) {
-        DSSEvaluator.evaluateStyle(state, getDeclarations(), true);
+        getDeclarations().evaluateStyle(state, true);
     }
 }

@@ -1,5 +1,8 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.directive.ClassDirective;
+import com.silentmatt.dss.term.ClassReferenceTerm;
+import com.silentmatt.dss.term.Term;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +19,7 @@ import java.util.Set;
  * @author Matthew Crumley
  */
 public class DeclarationList implements List<Declaration> {
-    private final List<Declaration> list = new ArrayList<Declaration>();
+    private List<Declaration> list = new ArrayList<Declaration>();
     private final Map<String, Expression> mapView = new DeclarationListMapView();
 
     public DeclarationList() {
@@ -118,6 +121,90 @@ public class DeclarationList implements List<Declaration> {
         return list.subList(start, end);
     }
 
+    public void inheritProperties(DeclarationList properties) {
+        for (int i = 0; i < properties.size(); i++) {
+            Declaration declaration = properties.get(i);
+            add(declaration);
+        }
+    }
+
+    public void addInheritedProperties(EvaluationState state, ClassReferenceTerm classReference) {
+        String className = classReference.getName();
+        ClassDirective clazz = state.getClasses().get(className);
+        if (clazz == null) {
+            state.getErrors().SemErr("no such class: " + className);
+            return;
+        }
+
+        // Make a copy of the properties, to substitute parameters into
+        DeclarationList properties = new DeclarationList();
+        for (Declaration prop : clazz.getDeclarations()) {
+            Declaration copy = new Declaration();
+            copy.setName(prop.getName());
+            copy.setExpression(prop.getExpression());
+            copy.setImportant(prop.isImportant());
+            properties.add(copy);
+        }
+
+        // Fill in the parameter values
+        state.pushParameters();
+        try {
+            // Defaults
+            for (Declaration param : clazz.getParameters()) {
+                state.getParameters().declare(param.getName(), param.getExpression());
+            }
+            // Arguments
+            for (Declaration arg : classReference.getArguments()) {
+                if (state.getParameters().declaresKey(arg.getName())) {
+                    state.getParameters().put(arg.getName(), arg.getExpression());
+                }
+            }
+
+            for (Declaration dec : properties) {
+                dec.substituteValue(state, true, true);
+            }
+        }
+        finally {
+            state.popParameters();
+        }
+
+        inheritProperties(properties);
+    }
+
+    public void addInheritedProperties(EvaluationState state, Expression inherits) {
+        for (Term inherit : inherits.getTerms()) {
+            if (inherit instanceof ClassReferenceTerm) {
+                addInheritedProperties(state, (ClassReferenceTerm) inherit);
+            }
+            else {
+                addInheritedProperties(state, new ClassReferenceTerm(inherit.toString()));
+            }
+        }
+    }
+
+    public void evaluateStyle(EvaluationState state, boolean doCalculations) {
+        state.pushScope();
+        try {
+            DeclarationList newList = new DeclarationList();
+            for (Declaration declaration : list) {
+                if (matches(declaration, "extend")) {
+                    newList.addInheritedProperties(state, declaration.getExpression());
+                }
+                else {
+                    newList.add(declaration);
+                }
+            }
+
+            this.list = newList.list;
+            for (int i = 0; i < list.size(); i++) {
+                list.get(i).substituteValue(state, false, doCalculations);
+            }
+        }
+        finally {
+            state.popScope();
+        }
+    }
+
     // Map methods
     public boolean containsKey(String key) {
         for (Declaration declaration : list) {
@@ -139,6 +226,18 @@ public class DeclarationList implements List<Declaration> {
 
     private static boolean matches(Declaration declaration, String name) {
         return declaration.getName().equalsIgnoreCase(name);
+    }
+
+    public List<Declaration> getAllDeclarations(String name) {
+        ArrayList<Declaration> all = new ArrayList<Declaration>();
+
+        for (Declaration declaration : list) {
+            if (matches(declaration, name)) {
+                all.add(declaration);
+            }
+        }
+
+        return all;
     }
 
     public Declaration getDeclaration(String name) {

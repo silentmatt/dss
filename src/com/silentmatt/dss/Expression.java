@@ -57,4 +57,22 @@ public class Expression {
         }
         return txt.toString();
     }
+
+    public Expression substituteValues(EvaluationState state, boolean withParams, boolean doCalculations) {
+        Expression newValue = new Expression();
+
+        for (Term primitiveValue : getTerms()) {
+            Expression sub = primitiveValue.substituteValues(state, withParams, doCalculations);
+            if (sub != null) {
+                for (Term t : sub.getTerms()) {
+                    newValue.getTerms().add(t);
+                }
+            }
+            else {
+                System.err.println(primitiveValue);
+            }
+        }
+
+        return newValue;
+    }
 }

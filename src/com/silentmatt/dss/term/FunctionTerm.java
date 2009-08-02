@@ -161,4 +161,16 @@ public class FunctionTerm extends Term {
     private static int getHueValue(NumberTerm t) {
         return (int)(t.getDoubleValue() * 255.0 / 360.0);
     }
+
+    @Override
+    public Expression substituteValues(EvaluationState state, boolean withParams, boolean doCalculations) {
+        Expression argument = getExpression().substituteValues(state, withParams, doCalculations);
+        Expression result = new FunctionTerm(getName(), argument).applyFunction(state);
+        if (result != null) {
+            return result;
+        }
+        else {
+            return toExpression();
+        }
+    }
 }

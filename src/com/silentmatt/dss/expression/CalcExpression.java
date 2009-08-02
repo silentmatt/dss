@@ -34,6 +34,8 @@ public interface CalcExpression {
      * Replaces any const/param values available.
      * Any missing constants/parameters will not be replaced, but will not cause an exception.
      *
+     * @todo make this return a new calculation, instead of modifying this one
+     *
      * @param variables Scope for const lookups.
      * @param parameters Scope for param lookups.
      * @throws CalculationException The expression has invalid Terms.

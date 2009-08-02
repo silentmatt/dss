@@ -1,7 +1,6 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.Expression;
-import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
@@ -37,7 +36,7 @@ public class DefineDirective extends DeclarationDirective {
     @Override
     public void evaluate(EvaluationState state, List<Rule> container) {
         DeclarationList properties = getDeclarations();
-        DSSEvaluator.evaluateStyle(state, properties, true);
+        properties.evaluateStyle(state, true);
 
         Scope<Expression> scope = state.getVariables();
         if (isGlobal()) {

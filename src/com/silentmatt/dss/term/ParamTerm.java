@@ -40,4 +40,9 @@ public class ParamTerm extends ReferenceTerm {
         }
         return value;
     }
+
+    @Override
+    public Expression substituteValues(EvaluationState state, boolean withParams, boolean doCalculations) {
+        return withParams ? evaluate(state) : toExpression();
+    }
 }

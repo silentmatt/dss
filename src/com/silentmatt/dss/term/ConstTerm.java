@@ -31,4 +31,9 @@ public class ConstTerm extends ReferenceTerm {
         }
         return state.getVariables().get(getName());
     }
+
+    @Override
+    public Expression substituteValues(EvaluationState state, boolean withParams, boolean doCalculations) {
+        return evaluate(state);
+    }
 }

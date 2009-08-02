@@ -1,6 +1,5 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
@@ -72,7 +71,7 @@ public class ClassDirective extends DeclarationDirective {
 
     @Override
     public void evaluate(EvaluationState state, List<Rule> container) {
-        DSSEvaluator.evaluateStyle(state, getDeclarations(), false);
+        getDeclarations().evaluateStyle(state, false);
         state.getClasses().declare(className, this);
     }
 }

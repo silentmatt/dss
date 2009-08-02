@@ -126,7 +126,7 @@ public class RuleSet extends Rule {
             for (Rule dir : this.getRules()) {
                 dir.evaluate(state, null);
             }
-            DSSEvaluator.evaluateStyle(state, this.getDeclarations(), true);
+            this.getDeclarations().evaluateStyle(state, true);
         }
         finally {
             state.popScope();
