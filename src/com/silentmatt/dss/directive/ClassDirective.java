@@ -11,8 +11,8 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class ClassDirective extends DeclarationDirective {
-    private String className;
-    private DeclarationList parameters;
+    private final String className;
+    private final DeclarationList parameters;
 
     public ClassDirective(String className, List<Declaration> parameters, List<Declaration> declarations) {
         super(declarations);

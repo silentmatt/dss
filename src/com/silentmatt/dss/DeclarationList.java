@@ -139,11 +139,7 @@ public class DeclarationList implements List<Declaration> {
         // Make a copy of the properties, to substitute parameters into
         DeclarationList properties = new DeclarationList();
         for (Declaration prop : clazz.getDeclarations()) {
-            Declaration copy = new Declaration();
-            copy.setName(prop.getName());
-            copy.setExpression(prop.getExpression());
-            copy.setImportant(prop.isImportant());
-            properties.add(copy);
+            properties.add(new Declaration(prop.getName(), prop.getExpression(), prop.isImportant()));
         }
 
         // Fill in the parameter values
@@ -177,6 +173,8 @@ public class DeclarationList implements List<Declaration> {
                 addInheritedProperties(state, (ClassReferenceTerm) inherit);
             }
             else {
+                // XXX: May want to split ClassReferenceTerm into SimpleCRT and ParameterizedCRT
+                // so this doesn't need to create a new arguments list every time (SCRT would share one)
                 addInheritedProperties(state, new ClassReferenceTerm(inherit.toString()));
             }
         }
@@ -337,274 +335,280 @@ public class DeclarationList implements List<Declaration> {
         }
 
         public Set<String> keySet() {
-            return new Set<String>() {
-                final Set<String> keys = new LinkedHashSet<String>();
-                {
-                    for (Declaration declaration : DeclarationList.this.list) {
-                        keys.add(declaration.getName());
-                    }
-                }
-
-                public int size() {
-                    return keys.size();
-                }
-
-                public boolean isEmpty() {
-                    return keys.isEmpty();
-                }
-
-                public boolean contains(Object arg0) {
-                    return keys.contains(arg0);
-                }
-
-                public Iterator<String> iterator() {
-                    return new Iterator<String>() {
-                        final Iterator<String> it = keys.iterator();
-                        private String current = null;
-
-                        public boolean hasNext() {
-                            return it.hasNext();
-                        }
-
-                        public String next() {
-                            return current = it.next();
-                        }
-
-                        public void remove() {
-                            keys.remove(current);
-                            DeclarationList.this.remove(current);
-                        }
-                    };
-                }
-
-                public Object[] toArray() {
-                    return keys.toArray();
-                }
-
-                public <T> T[] toArray(T[] arg0) {
-                    return keys.toArray(arg0);
-                }
-
-                public boolean add(String arg0) {
-                    throw new UnsupportedOperationException("Cannot call add to a key set.");
-                }
-
-                public boolean remove(Object arg0) {
-                    if (!(arg0 instanceof String)) {
-                        return false;
-                    }
-                    String key = (String) arg0;
-                    DeclarationList.this.remove(key);
-                    return keys.remove(key);
-                }
-
-                public boolean containsAll(Collection<?> arg0) {
-                    return keys.containsAll(arg0);
-                }
-
-                public boolean addAll(Collection<? extends String> arg0) {
-                    throw new UnsupportedOperationException("Cannot call addAll on a key set.");
-                }
-
-                public boolean retainAll(Collection<?> arg0) {
-                    keys.retainAll(arg0);
-                        throw new UnsupportedOperationException("Not supported yet.");
-                }
-
-                public boolean removeAll(Collection<?> arg0) {
-                    boolean result = false;
-                    for (Object o : arg0) {
-                        result |= remove(o);
-                    }
-                    return result;
-                }
-
-                public void clear() {
-                    keys.clear();
-                    DeclarationList.this.clear();
-                }
-            };
+            return new DeclarationListKeySet();
         }
 
         public Collection<Expression> values() {
-            return new Collection<Expression>() {
-                public int size() {
-                    return DeclarationList.this.size();
-                }
-
-                public boolean isEmpty() {
-                    return DeclarationList.this.isEmpty();
-                }
-
-                public boolean contains(Object arg0) {
-                    return arg0 instanceof Expression && DeclarationList.this.containsValue((Expression) arg0);
-                }
-
-                public Iterator<Expression> iterator() {
-                    return new Iterator<Expression>() {
-                        Iterator<Declaration> it = DeclarationList.this.iterator();
-                        public boolean hasNext() {
-                            return it.hasNext();
-                        }
-
-                        public Expression next() {
-                            return it.next().getExpression();
-                        }
-
-                        public void remove() {
-                            it.remove();
-                        }
-                    };
-                }
-
-                public Object[] toArray() {
-                    return toArray(new Object[size()]);
-                }
-
-                @SuppressWarnings("unchecked")
-                public <T> T[] toArray(T[] arg0) {
-                    if (arg0.length >= size()) {
-                        int i = 0;
-                        for (Declaration declaration : DeclarationList.this) {
-                           arg0[i++] = (T) declaration;
-                        }
-                        if (i < size()) {
-                            arg0[i] = null;
-                        }
-                        return arg0;
-                    }
-
-                    T[] array = (T[]) Array.newInstance(arg0.getClass().getComponentType(), size());
-                    int i = 0;
-                    for (Object declaration : DeclarationList.this) {
-                        try {
-                            array[i++] = (T) declaration;
-                        }
-                        catch (ClassCastException ex) {
-                            throw new ArrayStoreException();
-                        }
-                    }
-                    return array;
-                }
-
-                public boolean add(Expression arg0) {
-                    throw new UnsupportedOperationException("Cannot call add on a value set.");
-                }
-
-                public boolean remove(Object arg0) {
-                    boolean result = false;
-
-                    Iterator<Declaration> it = DeclarationList.this.iterator();
-                    while (it.hasNext()) {
-                        Declaration declaration = it.next();
-                        if (declaration.getExpression().equals(arg0)) {
-                            result = true;
-                            it.remove();
-                        }
-                    }
-
-                    return result;
-                }
-
-                public boolean containsAll(Collection<?> arg0) {
-                    for (Object o : arg0) {
-                        if (!contains(o)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-
-                public boolean addAll(Collection<? extends Expression> arg0) {
-                    throw new UnsupportedOperationException("Cannot call addAll on a value set.");
-                }
-
-                public boolean removeAll(Collection<?> arg0) {
-                    boolean result = false;
-                    for (Object o : arg0) {
-                        result |= remove(o);
-                    }
-                    return result;
-                }
-
-                public boolean retainAll(Collection<?> arg0) {
-                    throw new UnsupportedOperationException("Not supported yet.");
-                }
-
-                public void clear() {
-                    DeclarationList.this.clear();
-                }
-            };
+            return new DeclarationListValues();
         }
 
         public Set<Entry<String, Expression>> entrySet() {
-            return new Set<Entry<String, Expression>>() {
-                public int size() {
-                    return DeclarationList.this.size();
-                }
-
-                public boolean isEmpty() {
-                    return DeclarationList.this.isEmpty();
-                }
-
-                public boolean contains(Object arg0) {
-                    return DeclarationList.this.contains(arg0);
-                }
-
-                public Iterator<Entry<String, Expression>> iterator() {
-                    return new Iterator<Entry<String, Expression>>() {
-                        final Iterator<Declaration> it = DeclarationList.this.iterator();
-                        public boolean hasNext() {
-                            return it.hasNext();
-                        }
-
-                        public Entry<String, Expression> next() {
-                            return it.next();
-                        }
-
-                        public void remove() {
-                            it.remove();
-                        }
-                    };
-                }
-
-                public Object[] toArray() {
-                    return DeclarationList.this.toArray();
-                }
-
-                public <T> T[] toArray(T[] arg0) {
-                    return DeclarationList.this.toArray(arg0);
-                }
-
-                public boolean add(Entry<String, Expression> arg0) {
-                    throw new UnsupportedOperationException("Cannot call add on an entry set.");
-                }
-
-                public boolean remove(Object arg0) {
-                    return DeclarationList.this.remove(arg0);
-                }
-
-                public boolean containsAll(Collection<?> arg0) {
-                    return DeclarationList.this.containsAll(arg0);
-                }
-
-                public boolean addAll(Collection<? extends Entry<String, Expression>> arg0) {
-                    throw new UnsupportedOperationException("Cannot call addAll on an entry set.");
-                }
-
-                public boolean retainAll(Collection<?> arg0) {
-                    return DeclarationList.this.retainAll(arg0);
-                }
-
-                public boolean removeAll(Collection<?> arg0) {
-                    return DeclarationList.this.removeAll(arg0);
-                }
-
-                public void clear() {
-                    DeclarationList.this.clear();
-                }
-            };
+            return new DeclarationListEntrySet();
         }
 
+        private class DeclarationListKeySet implements Set<String> {
+            final Set<String> keys = new LinkedHashSet<String>();
+
+            public DeclarationListKeySet() {
+                for (Declaration declaration : DeclarationList.this.list) {
+                    keys.add(declaration.getName());
+                }
+            }
+
+            public int size() {
+                return keys.size();
+            }
+
+            public boolean isEmpty() {
+                return keys.isEmpty();
+            }
+
+            public boolean contains(Object arg0) {
+                return keys.contains(arg0);
+            }
+
+            public Iterator<String> iterator() {
+                return new Iterator<String>() {
+                    final Iterator<String> it = keys.iterator();
+                    private String current = null;
+
+                    public boolean hasNext() {
+                        return it.hasNext();
+                    }
+
+                    public String next() {
+                        return current = it.next();
+                    }
+
+                    public void remove() {
+                        keys.remove(current);
+                        DeclarationList.this.remove(current);
+                    }
+                };
+            }
+
+            public Object[] toArray() {
+                return keys.toArray();
+            }
+
+            public <T> T[] toArray(T[] arg0) {
+                return keys.toArray(arg0);
+            }
+
+            public boolean add(String arg0) {
+                throw new UnsupportedOperationException("Cannot call add to a key set.");
+            }
+
+            public boolean remove(Object arg0) {
+                if (!(arg0 instanceof String)) {
+                    return false;
+                }
+                String key = (String) arg0;
+                DeclarationList.this.remove(key);
+                return keys.remove(key);
+            }
+
+            public boolean containsAll(Collection<?> arg0) {
+                return keys.containsAll(arg0);
+            }
+
+            public boolean addAll(Collection<? extends String> arg0) {
+                throw new UnsupportedOperationException("Cannot call addAll on a key set.");
+            }
+
+            public boolean retainAll(Collection<?> arg0) {
+                keys.retainAll(arg0);
+                    throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public boolean removeAll(Collection<?> arg0) {
+                boolean result = false;
+                for (Object o : arg0) {
+                    result |= remove(o);
+                }
+                return result;
+            }
+
+            public void clear() {
+                keys.clear();
+                DeclarationList.this.clear();
+            }
+        }
+
+        private class DeclarationListEntrySet implements Set<Entry<String, Expression>> {
+            public int size() {
+                return DeclarationList.this.size();
+            }
+
+            public boolean isEmpty() {
+                return DeclarationList.this.isEmpty();
+            }
+
+            public boolean contains(Object arg0) {
+                return DeclarationList.this.contains(arg0);
+            }
+
+            public Iterator<Entry<String, Expression>> iterator() {
+                return new Iterator<Entry<String, Expression>>() {
+                    final Iterator<Declaration> it = DeclarationList.this.iterator();
+                    public boolean hasNext() {
+                        return it.hasNext();
+                    }
+
+                    public Entry<String, Expression> next() {
+                        return it.next();
+                    }
+
+                    public void remove() {
+                        it.remove();
+                    }
+                };
+            }
+
+            public Object[] toArray() {
+                return DeclarationList.this.toArray();
+            }
+
+            public <T> T[] toArray(T[] arg0) {
+                return DeclarationList.this.toArray(arg0);
+            }
+
+            public boolean add(Entry<String, Expression> arg0) {
+                throw new UnsupportedOperationException("Cannot call add on an entry set.");
+            }
+
+            public boolean remove(Object arg0) {
+                return DeclarationList.this.remove(arg0);
+            }
+
+            public boolean containsAll(Collection<?> arg0) {
+                return DeclarationList.this.containsAll(arg0);
+            }
+
+            public boolean addAll(Collection<? extends Entry<String, Expression>> arg0) {
+                throw new UnsupportedOperationException("Cannot call addAll on an entry set.");
+            }
+
+            public boolean retainAll(Collection<?> arg0) {
+                return DeclarationList.this.retainAll(arg0);
+            }
+
+            public boolean removeAll(Collection<?> arg0) {
+                return DeclarationList.this.removeAll(arg0);
+            }
+
+            public void clear() {
+                DeclarationList.this.clear();
+            }
+        }
+
+        private class DeclarationListValues implements Collection<Expression> {
+            public int size() {
+                return DeclarationList.this.size();
+            }
+
+            public boolean isEmpty() {
+                return DeclarationList.this.isEmpty();
+            }
+
+            public boolean contains(Object arg0) {
+                return arg0 instanceof Expression && DeclarationList.this.containsValue((Expression) arg0);
+            }
+
+            public Iterator<Expression> iterator() {
+                return new Iterator<Expression>() {
+                    Iterator<Declaration> it = DeclarationList.this.iterator();
+                    public boolean hasNext() {
+                        return it.hasNext();
+                    }
+
+                    public Expression next() {
+                        return it.next().getExpression();
+                    }
+
+                    public void remove() {
+                        it.remove();
+                    }
+                };
+            }
+
+            public Object[] toArray() {
+                return toArray(new Object[size()]);
+            }
+
+            @SuppressWarnings("unchecked")
+            public <T> T[] toArray(T[] arg0) {
+                if (arg0.length >= size()) {
+                    int i = 0;
+                    for (Declaration declaration : DeclarationList.this) {
+                       arg0[i++] = (T) declaration;
+                    }
+                    if (i < size()) {
+                        arg0[i] = null;
+                    }
+                    return arg0;
+                }
+
+                T[] array = (T[]) Array.newInstance(arg0.getClass().getComponentType(), size());
+                int i = 0;
+                for (Object declaration : DeclarationList.this) {
+                    try {
+                        array[i++] = (T) declaration;
+                    }
+                    catch (ClassCastException ex) {
+                        throw new ArrayStoreException();
+                    }
+                }
+                return array;
+            }
+
+            public boolean add(Expression arg0) {
+                throw new UnsupportedOperationException("Cannot call add on a value set.");
+            }
+
+            public boolean remove(Object arg0) {
+                boolean result = false;
+
+                Iterator<Declaration> it = DeclarationList.this.iterator();
+                while (it.hasNext()) {
+                    Declaration declaration = it.next();
+                    if (declaration.getExpression().equals(arg0)) {
+                        result = true;
+                        it.remove();
+                    }
+                }
+
+                return result;
+            }
+
+            public boolean containsAll(Collection<?> arg0) {
+                for (Object o : arg0) {
+                    if (!contains(o)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            public boolean addAll(Collection<? extends Expression> arg0) {
+                throw new UnsupportedOperationException("Cannot call addAll on a value set.");
+            }
+
+            public boolean removeAll(Collection<?> arg0) {
+                boolean result = false;
+                for (Object o : arg0) {
+                    result |= remove(o);
+                }
+                return result;
+            }
+
+            public boolean retainAll(Collection<?> arg0) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public void clear() {
+                DeclarationList.this.clear();
+            }
+        }
     }
 }

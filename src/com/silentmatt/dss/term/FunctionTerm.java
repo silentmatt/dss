@@ -120,10 +120,11 @@ public class FunctionTerm extends Term {
                     return null;
                 }
                 switch (i) {
-                    case 0: fr = getRGBValue((NumberTerm) term); break;
-                    case 1: fg = getRGBValue((NumberTerm) term); break;
-                    case 2: fb = getRGBValue((NumberTerm) term); break;
-                    case 3: fa = getRGBValue((NumberTerm) term); break;
+                case 0: fr = getRGBValue((NumberTerm) term); break;
+                case 1: fg = getRGBValue((NumberTerm) term); break;
+                case 2: fb = getRGBValue((NumberTerm) term); break;
+                case 3: fa = getRGBValue((NumberTerm) term); break;
+                default: break;
                 }
             }
             return new Color(fr, fg, fb, fa);
@@ -137,10 +138,11 @@ public class FunctionTerm extends Term {
                     return null;
                 }
                 switch (i) {
-                    case 0: h = getHueValue((NumberTerm) term); break;
-                    case 1: s = getRGBValue((NumberTerm) term); break;
-                    case 2: v = getRGBValue((NumberTerm) term); break;
-                    case 3: a = getRGBValue((NumberTerm) term); break;
+                case 0: h = getHueValue((NumberTerm) term); break;
+                case 1: s = getRGBValue((NumberTerm) term); break;
+                case 2: v = getRGBValue((NumberTerm) term); break;
+                case 3: a = getRGBValue((NumberTerm) term); break;
+                default: break;
                 }
             }
             java.awt.Color jColor = java.awt.Color.getHSBColor(h, s, v);
@@ -166,11 +168,6 @@ public class FunctionTerm extends Term {
     public Expression substituteValues(EvaluationState state, boolean withParams, boolean doCalculations) {
         Expression argument = getExpression().substituteValues(state, withParams, doCalculations);
         Expression result = new FunctionTerm(getName(), argument).applyFunction(state);
-        if (result != null) {
-            return result;
-        }
-        else {
-            return toExpression();
-        }
+        return result != null ? result : toExpression();
     }
 }

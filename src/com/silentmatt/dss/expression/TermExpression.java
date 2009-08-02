@@ -7,6 +7,7 @@ import com.silentmatt.dss.term.FunctionTerm;
 import com.silentmatt.dss.term.NumberTerm;
 import com.silentmatt.dss.term.ReferenceTerm;
 import com.silentmatt.dss.term.Term;
+import java.util.List;
 
 /**
  * A CalcExpression that evaluates to a simple CSS {@link Term}.
@@ -35,10 +36,11 @@ public class TermExpression implements CalcExpression {
         }
         else if (value instanceof FunctionTerm) {
             Expression result = ((FunctionTerm) value).applyFunction(state);
-            if (result != null &&
-                    result.getTerms().size() == 1 &&
-                    result.getTerms().get(0) instanceof NumberTerm) {
-                return new Value((NumberTerm) result.getTerms().get(0));
+            if (result != null) {
+                List<Term> resultTerms = result.getTerms();
+                if (resultTerms.size() == 1 && resultTerms.get(0) instanceof NumberTerm) {
+                    return new Value((NumberTerm) resultTerms.get(0));
+                }
             }
         }
 

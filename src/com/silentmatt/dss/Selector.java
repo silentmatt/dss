@@ -8,7 +8,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class Selector {
-    private List<SimpleSelector> simpleSelectors = new ArrayList<SimpleSelector>();
+    private final List<SimpleSelector> simpleSelectors = new ArrayList<SimpleSelector>();
 
     public List<SimpleSelector> getSimpleSelectors() {
         return simpleSelectors;

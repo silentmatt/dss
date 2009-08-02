@@ -8,7 +8,7 @@ import java.util.Locale;
  * @author matt
  */
 public class HexTerm extends Term {
-    private String value;
+    private final String value;
 
     public HexTerm(String value) {
         super();
@@ -35,7 +35,7 @@ public class HexTerm extends Term {
     @Override
     public Color toColor() {
         String hex = "000000";
-        if ((value.length() == 7 || value.length() == 4) && value.startsWith("#")) {
+        if ((value.length() == 7 || value.length() == 4) && value.charAt(0) == '#') {
             hex = value.substring(1);
         } else if (value.length() == 6 || value.length() == 3) {
             hex = value;

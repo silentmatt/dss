@@ -12,12 +12,12 @@ import java.util.Map;
  * @author Matthew Crumley
  */
 public final class EvaluationState {
-    private Deque<URL> baseURL;
-    private ErrorReporter errors = new PrintStreamErrorReporter();
-    private Scope<ClassDirective> classes = new Scope<ClassDirective>(null);
-    private Scope<Expression> variables = new Scope<Expression>(null);
+    private final Deque<URL> baseURL;
+    private final ErrorReporter errors;
+    private Scope<ClassDirective> classes;
+    private Scope<Expression> variables;
     private Scope<Expression> parameters = null;
-    private Map<String, Function> functions = new HashMap<String, Function>();
+    private final Map<String, Function> functions = new HashMap<String, Function>();
 
     public EvaluationState(DSSEvaluator.Options opts) {
         this.baseURL = new LinkedList<URL>();

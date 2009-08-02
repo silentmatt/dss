@@ -11,7 +11,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public abstract class DeclarationDirective extends Rule {
-    private DeclarationList declarations = new DeclarationList();
+    private final DeclarationList declarations;
 
     public DeclarationDirective(List<Declaration> declarations) {
         super();

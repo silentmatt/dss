@@ -14,7 +14,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class ImportDirective extends ExpressionDirective {
-    private Medium medium;
+    private final Medium medium;
 
     public ImportDirective(UrlTerm url, Medium medium) {
         super(new Expression());

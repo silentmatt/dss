@@ -134,7 +134,7 @@ public final class Scope<T> implements Map<String, T> {
         for (String key : parentScope.keySet()) {
             if (!table.containsKey(key)) {
                 T val = parentScope.get(key);
-                if (val == value || (val != null && val.equals(value))) {
+                if (val != null && val.equals(value)) {
                     return true;
                 }
             }

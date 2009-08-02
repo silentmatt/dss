@@ -11,7 +11,7 @@ import com.silentmatt.dss.term.NumberTerm;
  */
 public class Value {
     private final double scalar;
-    private CalculationUnit unit;
+    private final CalculationUnit unit;
 
     /**
      * Constructs a Value from a number and a unit.
@@ -31,17 +31,12 @@ public class Value {
      * @throws IllegalArgumentException <code>term</term> is not a number.
      */
     public Value(NumberTerm term) {
-        this.unit = CalculationUnit.fromCssUnit(term.getUnit());
-        if (this.unit == null) {
+        CalculationUnit thisUnit = CalculationUnit.fromCssUnit(term.getUnit());
+        if (thisUnit == null) {
             throw new IllegalArgumentException("term");
         }
-        double val = term.getDoubleValue();
-        Character sign = term.getSign();
-        if (sign != null && sign.charValue() == '-') {
-            val = -val;
-        }
-        this.scalar = val * this.unit.getScale();
-        this.unit = CalculationUnit.getCanonicalUnit(this.unit);
+        this.scalar = term.getDoubleValue() * thisUnit.getScale();
+        this.unit = CalculationUnit.getCanonicalUnit(thisUnit);
     }
 
     /**
@@ -51,9 +46,9 @@ public class Value {
      * @param unit The associated CSS Unit.
      */
     public Value(double scalar, Unit unit) {
-        this.unit = CalculationUnit.fromCssUnit(unit);
-        this.scalar = scalar * this.unit.getScale();
-        this.unit = CalculationUnit.getCanonicalUnit(this.unit);
+        CalculationUnit thisUnit = CalculationUnit.fromCssUnit(unit);
+        this.scalar = scalar * thisUnit.getScale();
+        this.unit = CalculationUnit.getCanonicalUnit(thisUnit);
     }
 
     /**

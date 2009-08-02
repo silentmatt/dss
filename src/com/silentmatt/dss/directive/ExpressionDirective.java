@@ -8,7 +8,7 @@ import com.silentmatt.dss.Rule;
  * @author Matthew Crumley
  */
 public abstract class ExpressionDirective extends Rule {
-    private Expression expression;
+    private final Expression expression;
 
     public ExpressionDirective(Expression expression) {
         super();

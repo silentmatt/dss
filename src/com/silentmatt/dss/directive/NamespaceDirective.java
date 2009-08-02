@@ -11,7 +11,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class NamespaceDirective extends ExpressionDirective {
-    private String prefix;
+    private final String prefix;
 
     public NamespaceDirective(String prefix, UrlTerm namespace) {
         super(new Expression());

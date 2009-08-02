@@ -715,10 +715,10 @@ public class Parser {
 			if (la.kind == 39 || la.kind == 57) {
 				if (la.kind == 57) {
 					Get();
-					trm = new NumberTerm(0); ((NumberTerm) trm).setSign('-'); 
+					val = "-"; 
 				} else {
 					Get();
-					trm = new NumberTerm(0); ((NumberTerm) trm).setSign('+'); 
+					val = "+"; 
 				}
 			}
 			if (la.kind == 2) {
@@ -726,7 +726,7 @@ public class Parser {
 			} else if (la.kind == 3) {
 				Get();
 			} else SynErr(68);
-			if (trm == null) trm = new NumberTerm(Double.parseDouble(t.val)); val = t.val; 
+			val += t.val; trm = new NumberTerm(Double.parseDouble(val)); 
 			if (la.val.equalsIgnoreCase("n")) {
 				Expect(19);
 				val += t.val; 

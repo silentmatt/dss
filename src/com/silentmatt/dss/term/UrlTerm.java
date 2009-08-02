@@ -5,7 +5,7 @@ package com.silentmatt.dss.term;
  * @author matt
  */
 public class UrlTerm extends Term {
-    private String value;
+    private final String value;
 
     public UrlTerm(String url) {
         super();

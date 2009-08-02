@@ -11,7 +11,7 @@ import com.silentmatt.dss.expression.Value;
  * @author matt
  */
 public class CalculationTerm extends Term {
-    private CalcExpression calculation;
+    private final CalcExpression calculation;
 
     public CalculationTerm(CalcExpression calculation) {
         super();

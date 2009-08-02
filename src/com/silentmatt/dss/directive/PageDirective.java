@@ -11,7 +11,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class PageDirective extends DeclarationDirective {
-    private SimpleSelector selector;
+    private final SimpleSelector selector;
 
     public PageDirective(SimpleSelector pseudo, List<Declaration> declarations) {
         super(declarations);

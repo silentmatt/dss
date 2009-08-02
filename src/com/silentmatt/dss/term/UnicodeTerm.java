@@ -7,7 +7,7 @@ import java.util.Locale;
  * @author matt
  */
 public class UnicodeTerm extends Term {
-    private String value;
+    private final String value;
 
     public UnicodeTerm(String value) {
         super();

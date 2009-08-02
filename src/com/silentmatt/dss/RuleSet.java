@@ -10,9 +10,9 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class RuleSet extends Rule {
-    private List<Rule> rules = new ArrayList<Rule>();
-    private DeclarationList declarations = new DeclarationList();
-    private List<Selector> selectors = new ArrayList<Selector>();
+    private final List<Rule> rules = new ArrayList<Rule>();
+    private final DeclarationList declarations = new DeclarationList();
+    private final List<Selector> selectors = new ArrayList<Selector>();
 
     public DeclarationList getDeclarations() {
         return declarations;

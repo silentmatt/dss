@@ -1,11 +1,14 @@
 package com.silentmatt.dss;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  *
  * @author Matthew Crumley
  */
 public class ListErrorReporter extends AbstractErrorReporter {
-    private java.util.List<String> errors = new java.util.LinkedList<String>();
+    private final List<String> errors = new LinkedList<String>();
 
     protected void addError(String msg) {
         errors.add(msg);

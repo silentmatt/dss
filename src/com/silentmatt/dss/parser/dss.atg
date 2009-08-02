@@ -510,11 +510,11 @@ term<out Term trm> =                        (.  String val = "";
             '>')
         ]
         |
-        [   '-'                             (.  trm = new NumberTerm(0); ((NumberTerm) trm).setSign('-'); .)
+        [   '-'                             (.  val = "-"; .)
             |
-            '+'                             (.  trm = new NumberTerm(0); ((NumberTerm) trm).setSign('+'); .)
+            '+'                             (.  val = "+"; .)
         ]
-        ( integer | decimal )               (.  if (trm == null) trm = new NumberTerm(Double.parseDouble(t.val)); val = t.val; .)
+        ( integer | decimal )               (.  val += t.val; trm = new NumberTerm(Double.parseDouble(val)); .)
         (
             // TODO: This gets lost because val isn't used to construct the NumberTerm
             IF(la.val.equalsIgnoreCase("n"))
@@ -528,7 +528,7 @@ term<out Term trm> =                        (.  String val = "";
                     integer                 (.  val += t.val; .)
                 ]
             )                               (. trm = new StringTerm(val); val = ""; .)
-            |                               // TODO: What if trm isn't a NumberTerm?
+            |                               // TODO: Do we knoe trm is a NumberTerm?
             "%"                             (.  ((NumberTerm) trm).setUnit(Unit.Percent); .)
             |
             [

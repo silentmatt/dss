@@ -12,7 +12,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class Expression {
-    private List<Term> terms = new ArrayList<Term>();
+    private final List<Term> terms = new ArrayList<Term>();
 
     public Expression() {
     }
@@ -67,9 +67,6 @@ public class Expression {
                 for (Term t : sub.getTerms()) {
                     newValue.getTerms().add(t);
                 }
-            }
-            else {
-                System.err.println(primitiveValue);
             }
         }
 

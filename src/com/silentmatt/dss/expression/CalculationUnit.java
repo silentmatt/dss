@@ -203,7 +203,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
      * @param unit The CalculationUnit to convert.
      * @return The Canonical CalculationUnit.
      */
-    static CalculationUnit getCanonicalUnit(CalculationUnit unit) {
+    public static CalculationUnit getCanonicalUnit(CalculationUnit unit) {
         CalculationUnit res = canonicalUnit.get(unit);
         return res == null ? unit : res;
     }

@@ -12,7 +12,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class MediaDirective extends Rule {
-    private List<Medium> mediums;
+    private final List<Medium> mediums;
     private final List<Rule> rules;
 
     public MediaDirective(List<Medium> mediums, List<Rule> rules) {

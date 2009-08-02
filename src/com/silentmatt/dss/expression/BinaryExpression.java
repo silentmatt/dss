@@ -101,15 +101,14 @@ public class BinaryExpression implements CalcExpression {
     }
 
     public int getPrecidence() {
-    switch (operation) {
-        case Add:
-        case Subtract:
-            return 1;
-        case Multiply:
-        case Divide:
-            return 2;
-        default:
-            return -1;
+        int precidence;
+        switch (operation) {
+        case Multiply: precidence =  2; break;
+        case Divide:   precidence =  2; break;
+        case Add:      precidence =  1; break;
+        case Subtract: precidence =  1; break;
+        default:       precidence = -1; break;
         }
+        return precidence;
     }
 }

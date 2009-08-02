@@ -14,12 +14,12 @@ public class ClassReferenceTerm extends Term {
     /**
      * The class name being referenced.
      */
-    private String name;
+    private final String name;
 
     /**
      * The arguments to be passed to the class.
      */
-    private DeclarationList arguments = new DeclarationList();
+    private final DeclarationList arguments = new DeclarationList();
 
     /**
      * Constructs a ClassReference from a class name.
