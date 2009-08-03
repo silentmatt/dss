@@ -2,6 +2,7 @@ import java.util.*;
 import com.silentmatt.dss.*;
 import com.silentmatt.dss.directive.*;
 import com.silentmatt.dss.term.*;
+import com.silentmatt.dss.bool.*;
 import com.silentmatt.dss.calc.*;
 
 COMPILER CSS3
@@ -182,6 +183,29 @@ mediaDirective<out MediaDirective mdir> =               (.
     '}'                                                 (.  mdir = new MediaDirective(media, rules); .)
 .
 
+ifDirective<out IfDirective idir> =     (.
+                                            BooleanExpression expr;
+                                            List<Rule> ifrules = new ArrayList<Rule>();
+                                            List<Rule> elserules = null;
+                                        .)
+    "@if"
+    booleanExpression<out expr>
+    '{' {
+        ruleset<out RuleSet rset>       (.  ifrules.add(rset); .)
+        |
+        directive<out Rule dir>         (.  ifrules.add(dir); .)
+    } '}'
+    [
+        "@else"                         (.  elserules = new ArrayList<Rule>(); .)
+        '{' {
+            ruleset<out RuleSet rset>   (.  elserules.add(rset); .)
+            |
+            directive<out Rule dir>     (.  elserules.add(dir); .)
+        } '}'
+    ]
+    (.  idir = new IfDirective(expr, ifrules, elserules); .)
+.
+
 parameter<out Declaration dec> =        (. dec = new Declaration(); .)
     identity<out String ident>          (. dec.setName(ident); .)
     [
@@ -294,6 +318,8 @@ genericDirective<out GenericDirective dir> =
 .
 
 directive<out Rule dir> (.  dir = null; .) =
+    ifDirective<out dir>
+    |
     mediaDirective<out dir>
     |
     classDirective<out dir>
@@ -422,6 +448,38 @@ expr<out Expression exp> =  (.  exp = new Expression();
                                 sep = null;
                             .)
     }
+.
+
+booleanExpression<out BooleanExpression expr> =
+    orExpression<out expr>
+.
+
+orop<out BooleanOperation op> (. op = null; .) = "||" (. op = BooleanOperation.OR; .) | '^' (. op = BooleanOperation.XOR; .).
+
+orExpression<out BooleanExpression expr> = (. BooleanExpression left, right; BooleanOperation op; .)
+    andExpression<out left> (. expr = left; .)
+    {
+        orop<out op> andExpression<out right> (. expr = new BinaryBooleanExpression(op, expr, right); .)
+    }
+.
+
+andExpression<out BooleanExpression expr> = (. BooleanExpression left, right; BooleanOperation op; .)
+    notExpression<out left> (. expr = left; .)
+    {
+        "&&" notExpression<out right> (. expr = new BinaryBooleanExpression(BooleanOperation.AND, expr, right); .)
+    }
+.
+
+notExpression<out BooleanExpression expr> (. BooleanExpression exp; expr = null; .) =
+    primaryBooleanExpression<out exp> (. expr = exp; .)
+    |
+    '!' notExpression<out exp> (. expr = new NotExpression(exp); .)
+.
+
+primaryBooleanExpression<out BooleanExpression expr> (. expr = null; Term trm; BooleanExpression exp; .) =
+    '(' booleanExpression<out exp> ')' (. expr = exp; .)
+    |
+    term<out trm> (. expr = new TermBooleanExpression(trm); .)
 .
 
 lengthExpression<out CalcExpression expr> =

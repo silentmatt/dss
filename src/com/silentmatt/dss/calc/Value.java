@@ -52,6 +52,15 @@ public class Value {
     }
 
     /**
+     * Gets the scalar part of the value.
+     *
+     * @return The scalar (numeric) part of the value.
+     */
+    public double getScalarValue() {
+        return this.scalar;
+    }
+
+    /**
      * Adds two Values.
      * The Values must have compatible units.
      *
