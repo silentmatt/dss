@@ -1,6 +1,5 @@
 package com.silentmatt.dss.parser;
 
-import com.silentmatt.dss.bool.NotExpression;
 import java.util.*;
 import com.silentmatt.dss.*;
 import com.silentmatt.dss.directive.*;

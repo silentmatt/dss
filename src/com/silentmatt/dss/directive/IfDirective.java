@@ -88,13 +88,7 @@ public class IfDirective extends Rule {
         rules = result ? ifRules : elseRules;
 
         if (rules != null) {
-            state.pushScope();
-            try {
-                Rule.evaluateRules(state, rules);
-            }
-            finally {
-                state.popScope();
-            }
+            Rule.evaluateRules(state, rules);
         }
     }
 }
