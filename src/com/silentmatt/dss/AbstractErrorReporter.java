@@ -35,7 +35,7 @@ public abstract class AbstractErrorReporter implements ErrorReporter {
     }
 
     public void SynErr(int line, int col, int n) {
-        String s = Parser.getErrorMessage(n);
+        String s = DSSParser.getErrorMessage(n);
         formatError("Syntax Error", line, col, s);
     }
 

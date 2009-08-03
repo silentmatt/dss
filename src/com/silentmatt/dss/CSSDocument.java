@@ -1,6 +1,6 @@
 package com.silentmatt.dss;
 
-import com.silentmatt.dss.parser.Parser;
+import com.silentmatt.dss.parser.DSSParser;
 import com.silentmatt.dss.parser.Scanner;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,14 +29,14 @@ public class CSSDocument {
     }
 
     public static CSSDocument parse(Scanner scanner, ErrorReporter errors) {
-        Parser parser = new Parser(scanner);
-        parser.errors = errors;
-        parser.Parse();
-        if (parser.errors.getErrorCount() > 0) {
+        DSSParser parser = new DSSParser(scanner);
+        parser.setErrors(errors);
+        parser.parse();
+        if (parser.getErrors().getErrorCount() > 0) {
             return null;
         }
         else {
-            return parser.CSSDoc;
+            return parser.getDocument();
         }
     }
 

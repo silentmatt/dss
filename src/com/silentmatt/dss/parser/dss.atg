@@ -116,15 +116,18 @@ PRODUCTIONS
  *--------------------------- Declarations -------------------------------*
  *------------------------------------------------------------------------*/
 
-CSS3 =                                  (. CSSDoc = new CSSDocument(); .)
+CSS3 =                      (. CSSDoc = new CSSDocument(); .)
     {"<!--" | "-->" | s}
     {
-        ( ruleset<out RuleSet rset>     (. CSSDoc.addRule(rset); .)
-          |
-          directive<out Rule dir>  (. CSSDoc.addRule(dir); .)
-        )
+        rule<out Rule rule> (. CSSDoc.addRule(rule); .)
         {"<!--" | "-->" | s}
     }
+.
+
+rule<out Rule rule> (. rule = null; .) =
+    ruleset<out rule>
+    |
+    directive<out rule>
 .
 
 QuotedString<out String qs> = stringLit (. qs = t.val; .) .
@@ -183,24 +186,20 @@ mediaDirective<out MediaDirective mdir> =               (.
     '}'                                                 (.  mdir = new MediaDirective(media, rules); .)
 .
 
-ifDirective<out IfDirective idir> =     (.
-                                            BooleanExpression expr;
-                                            List<Rule> ifrules = new ArrayList<Rule>();
-                                            List<Rule> elserules = null;
-                                        .)
+ifDirective<out IfDirective idir> = (.
+                                        BooleanExpression expr;
+                                        List<Rule> ifrules = new ArrayList<Rule>();
+                                        List<Rule> elserules = null;
+                                    .)
     "@if"
     booleanExpression<out expr>
     '{' {
-        ruleset<out RuleSet rset>       (.  ifrules.add(rset); .)
-        |
-        directive<out Rule dir>         (.  ifrules.add(dir); .)
+        rule<out Rule rule>         (.  ifrules.add(rule); .)
     } '}'
     [
-        "@else"                         (.  elserules = new ArrayList<Rule>(); .)
+        "@else"                     (.  elserules = new ArrayList<Rule>(); .)
         '{' {
-            ruleset<out RuleSet rset>   (.  elserules.add(rset); .)
-            |
-            directive<out Rule dir>     (.  elserules.add(dir); .)
+            rule<out Rule rule>     (.  elserules.add(rule); .)
         } '}'
     ]
     (.  idir = new IfDirective(expr, ifrules, elserules); .)
