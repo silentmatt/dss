@@ -1,6 +1,6 @@
 package com.silentmatt.dss;
 
-import com.silentmatt.dss.expression.CalculationUnit;
+import com.silentmatt.dss.calc.CalculationUnit;
 import java.util.Locale;
 
 /**

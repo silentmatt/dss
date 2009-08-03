@@ -1,4 +1,4 @@
-package com.silentmatt.dss.expression;
+package com.silentmatt.dss.calc;
 
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;

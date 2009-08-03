@@ -4,7 +4,7 @@ import java.util.*;
 import com.silentmatt.dss.*;
 import com.silentmatt.dss.directive.*;
 import com.silentmatt.dss.term.*;
-import com.silentmatt.dss.expression.*;
+import com.silentmatt.dss.calc.*;
 
 public class Parser {
 	public static final int _EOF = 0;

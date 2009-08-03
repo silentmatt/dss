@@ -1,4 +1,4 @@
-package com.silentmatt.dss.expression;
+package com.silentmatt.dss.calc;
 
 /**
  * Thrown by a {@link CalcExpression} if there are errors in the expression.

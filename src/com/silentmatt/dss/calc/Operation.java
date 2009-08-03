@@ -1,4 +1,4 @@
-package com.silentmatt.dss.expression;
+package com.silentmatt.dss.calc;
 
 /**
  * Specifies the operation for a {@link BinaryExpression}.

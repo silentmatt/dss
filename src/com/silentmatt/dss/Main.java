@@ -3,7 +3,7 @@ package com.silentmatt.dss;
 import com.martiansoftware.jsap.*;
 import com.martiansoftware.jsap.stringparsers.FileStringParser;
 import com.martiansoftware.jsap.stringparsers.URLStringParser;
-import com.silentmatt.dss.expression.CalculationException;
+import com.silentmatt.dss.calc.CalculationException;
 import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.FunctionTerm;
 import com.silentmatt.dss.term.NumberTerm;

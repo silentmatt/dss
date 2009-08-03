@@ -2,9 +2,9 @@ package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
-import com.silentmatt.dss.expression.CalcExpression;
-import com.silentmatt.dss.expression.CalculationException;
-import com.silentmatt.dss.expression.Value;
+import com.silentmatt.dss.calc.CalcExpression;
+import com.silentmatt.dss.calc.CalculationException;
+import com.silentmatt.dss.calc.Value;
 
 /**
  *
