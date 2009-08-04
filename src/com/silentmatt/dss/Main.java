@@ -2,6 +2,7 @@ package com.silentmatt.dss;
 
 import com.martiansoftware.jsap.*;
 import com.martiansoftware.jsap.stringparsers.FileStringParser;
+import com.silentmatt.dss.parser.DSSParser;
 import com.silentmatt.dss.term.UrlTerm;
 import java.io.File;
 import java.io.IOException;
@@ -51,16 +52,24 @@ public final class Main {
     }
 
     private static void setupArguments(JSAP jsap) {
-        Switch debugFlag = new Switch("debug")
-                .setLongFlag("debug");
-        debugFlag.setHelp("Don't remove DSS directives from output");
-
         FlaggedOption outOpt = new FlaggedOption("out")
-                .setStringParser(FileStringParser.getParser().setMustBeFile(true))
+                .setStringParser(FileStringParser.getParser().setMustBeFile(true).setMustExist(false))
                 .setRequired(false)
                 .setAllowMultipleDeclarations(false)
                 .setShortFlag('o');
         outOpt.setHelp("File to save outout to");
+
+        Switch debugFlag = new Switch("debug")
+                .setLongFlag("debug");
+        debugFlag.setHelp("Don't remove DSS directives from output");
+
+        FlaggedOption defineOpt = new FlaggedOption("define")
+                .setAllowMultipleDeclarations(true)
+                .setRequired(false)
+                .setShortFlag('d')
+                .setLongFlag("define")
+                .setStringParser(JSAP.STRING_PARSER);
+        defineOpt.setHelp("Pre-define a constant in the global namespace");
 
         UnflaggedOption urlOpt = new UnflaggedOption("url")
                 .setStringParser(FileOrURLStringParser.getParser())
@@ -70,6 +79,7 @@ public final class Main {
         try {
             jsap.registerParameter(outOpt);
             jsap.registerParameter(debugFlag);
+            jsap.registerParameter(defineOpt);
 
             jsap.registerParameter(urlOpt);
         } catch (JSAPException j) {
@@ -103,14 +113,20 @@ public final class Main {
             }
         }
 
+        DSSEvaluator.Options opts = new DSSEvaluator.Options(url);
         ErrorReporter errors = new PrintStreamErrorReporter();
+        opts.setErrors(errors);
+
+        String[] defines = config.getStringArray("define");
+        for (String define : defines) {
+            Declaration declaration = DSSParser.parseDeclaration(define, errors);
+            opts.getVariables().declare(declaration.getName(), declaration.getExpression());
+        }
 
         if (url != null) {
             try {
                 CSSDocument css = CSSDocument.parse(url, errors);
                 if (css != null) {
-                    DSSEvaluator.Options opts = new DSSEvaluator.Options(url);
-                    opts.setErrors(errors);
 
                     new DSSEvaluator(opts).evaluate(css);
 
