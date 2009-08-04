@@ -63,7 +63,6 @@ TOKENS
     ident = ['-'] (letter | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars))) { letter | digit | '-' | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars)) }.
     integer = digit {digit}.
     decimal = digit {digit} '.' {digit}.
-    s = wc { wc }.
     stringLit =
       ("\"" { dqStringChar
            | "\\" ( "b" | "t" | "n" | "f" | "r" | "\"" | "\'" | "\\" | "\n"
@@ -117,10 +116,10 @@ PRODUCTIONS
  *------------------------------------------------------------------------*/
 
 CSS3 =                      (. CSSDoc = new CSSDocument(); .)
-    {"<!--" | "-->" | s}
+    {"<!--" | "-->"}
     {
         rule<out Rule rule> (. CSSDoc.addRule(rule); .)
-        {"<!--" | "-->" | s}
+        {"<!--" | "-->"}
     }
 .
 
