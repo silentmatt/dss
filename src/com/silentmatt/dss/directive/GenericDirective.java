@@ -92,7 +92,7 @@ public class GenericDirective extends Rule {
             return txt.toString();
         }
 
-        txt.append(" {" + start);
+        txt.append(" {\n").append(start);
 
         for (Rule dir : rules) {
             txt.append(dir.toString(nesting + 1));
@@ -106,7 +106,7 @@ public class GenericDirective extends Rule {
             txt.append(dec.toString());
         }
 
-        txt.append("\n" + start + "}");
+        txt.append("\n").append(start).append("}");
 
         return txt.toString();
     }

@@ -64,7 +64,9 @@ public abstract class DeclarationDirective extends Rule {
     }
 
     public String toString(int nesting) {
-        StringBuilder txt = new StringBuilder(getName());
+        String start = Rule.getIndent(nesting);
+        StringBuilder txt = new StringBuilder(start);
+        txt.append(getName());
         txt.append(" ");
         txt.append(getDeclarationsString(nesting));
         return txt.toString();

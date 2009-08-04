@@ -38,9 +38,9 @@ public class MediaDirective extends Rule {
         this.rules.add(rule);
     }
 
-    // FIXME: not nested properly
     public String toString(int nesting) {
-        StringBuilder txt = new StringBuilder();
+        String start = Rule.getIndent(nesting);
+        StringBuilder txt = new StringBuilder(start);
         txt.append("@media ");
 
         boolean first = true;
@@ -59,13 +59,13 @@ public class MediaDirective extends Rule {
             txt.append("\n");
         }
 
-        txt.append("}");
+        txt.append(start).append("}");
         return txt.toString();
     }
 
-    // FIXME: not nested properly
     public String toCssString(int nesting) {
-        StringBuilder txt = new StringBuilder();
+        String start = Rule.getIndent(nesting);
+        StringBuilder txt = new StringBuilder(start);
         txt.append("@media ");
 
         boolean first = true;
@@ -87,7 +87,7 @@ public class MediaDirective extends Rule {
             }
         }
 
-        txt.append("}");
+        txt.append(start).append("}");
         return txt.toString();
     }
 

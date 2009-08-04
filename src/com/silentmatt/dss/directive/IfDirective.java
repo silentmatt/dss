@@ -41,9 +41,10 @@ public class IfDirective extends Rule {
         return toString(0);
     }
 
-    // FIXME: not nested properly
     public String toString(int nesting) {
-        StringBuilder txt = new StringBuilder();
+        String start = Rule.getIndent(nesting);
+
+        StringBuilder txt = new StringBuilder(start);
         txt.append("@if ").append(condition).append(" {\n");
 
         for (Rule rule : ifRules) {
@@ -51,17 +52,17 @@ public class IfDirective extends Rule {
             txt.append("\n");
         }
 
-        txt.append("}");
+        txt.append(start).append("}");
 
         if (elseRules != null) {
-            txt.append("\n@else {\n");
+            txt.append("\n").append(start).append("@else {\n");
 
             for (Rule rule : elseRules) {
                 txt.append(rule.toString(nesting + 1));
                 txt.append("\n");
             }
 
-            txt.append("}");
+            txt.append(start).append("}");
         }
         return txt.toString();
     }
