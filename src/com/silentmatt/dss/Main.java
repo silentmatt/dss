@@ -2,17 +2,13 @@ package com.silentmatt.dss;
 
 import com.martiansoftware.jsap.*;
 import com.martiansoftware.jsap.stringparsers.FileStringParser;
-import com.martiansoftware.jsap.stringparsers.URLStringParser;
-import com.silentmatt.dss.calc.CalculationException;
-import com.silentmatt.dss.term.CalculationTerm;
-import com.silentmatt.dss.term.FunctionTerm;
-import com.silentmatt.dss.term.NumberTerm;
-import com.silentmatt.dss.term.StringTerm;
-import com.silentmatt.dss.term.Term;
+import com.silentmatt.dss.term.UrlTerm;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class Main {
     private Main() {
@@ -25,38 +21,71 @@ public final class Main {
         System.err.println(jsap.getHelp());
     }
 
-    public static void main(String[] args) {
-        JSAP jsap = new JSAP();
+    @SuppressWarnings("deprecation")
+    private static class FileOrURLStringParser extends com.martiansoftware.jsap.stringparsers.URLStringParser {
+        private static FileStringParser fileParser = FileStringParser.getParser();
 
+        private FileOrURLStringParser() {
+            fileParser.setMustBeFile(true).setMustExist(true);
+        }
+
+        public static FileOrURLStringParser getParser() {
+            return new FileOrURLStringParser();
+        }
+
+        @Override
+        public Object parse(String arg) throws ParseException {
+            try {
+                return super.parse(arg);
+            } catch (ParseException ex) {
+                fileParser.setUp();
+                File file = (File) fileParser.parse(arg);
+                fileParser.tearDown();
+                try {
+                    return file.toURI().toURL();
+                } catch (MalformedURLException ex1) {
+                    throw new ParseException(ex1);
+                }
+            }
+        }
+    }
+
+    private static void setupArguments(JSAP jsap) {
         Switch debugFlag = new Switch("debug")
                 .setLongFlag("debug");
         debugFlag.setHelp("Don't remove DSS directives from output");
 
         FlaggedOption outOpt = new FlaggedOption("out")
-                .setStringParser(FileStringParser.getParser())
+                .setStringParser(FileStringParser.getParser().setMustBeFile(true))
                 .setRequired(false)
                 .setAllowMultipleDeclarations(false)
                 .setShortFlag('o');
         outOpt.setHelp("File to save outout to");
 
         UnflaggedOption urlOpt = new UnflaggedOption("url")
-                .setStringParser(URLStringParser.getParser())
-                .setDefault("")
+                .setStringParser(FileOrURLStringParser.getParser())
                 .setRequired(true);
-        urlOpt.setHelp("Valid URL containing CSS2-stylesheet.");
+        urlOpt.setHelp("The filename or URL of the DSS file.");
 
         try {
-            jsap.registerParameter(urlOpt);
             jsap.registerParameter(outOpt);
             jsap.registerParameter(debugFlag);
+
+            jsap.registerParameter(urlOpt);
         } catch (JSAPException j) {
             System.err.println("Unexpected Error: Illegal JSAP parameter.");
             System.exit(2);
         }
+    }
+
+    public static void main(String[] args) {
+        JSAP jsap = new JSAP();
+        setupArguments(jsap);
 
         JSAPResult config = jsap.parse(args);
         if (!config.success()) {
             printUsage(jsap);
+            System.exit(1);
         }
 
         URL url = config.getURL("url");
@@ -82,56 +111,6 @@ public final class Main {
                 if (css != null) {
                     DSSEvaluator.Options opts = new DSSEvaluator.Options(url);
                     opts.setErrors(errors);
-                    opts.getFunctions().put("string", new Function() {
-                        public Expression call(FunctionTerm function, EvaluationState state) {
-                            return new StringTerm("\"" + function.getExpression() + "\"").toExpression();
-                        }
-                    });
-                    Function mathFunction = new Function() {
-                        public Expression call(FunctionTerm function, EvaluationState state) {
-                            String name = function.getName();
-                            Term term = function.getExpression().getTerms().get(0);
-                            NumberTerm value;
-                            if (term instanceof NumberTerm) {
-                                value = (NumberTerm) term;
-                            }
-                            else if (term instanceof CalculationTerm) {
-                                try {
-                                    value = ((CalculationTerm) term).getCalculation().calculateValue(state).toTerm();
-                                } catch (CalculationException ex) {
-                                    return null;
-                                }
-                            }
-                            else {
-                                return null;
-                            }
-                            double x = value.getDoubleValue();
-                            switch (value.getUnit()) {
-                            case None:
-                            case DEG:
-                                x = Math.toRadians(x);
-                                break;
-                            case GRAD:
-                                x = Math.toRadians(0.9 * x);
-                                break;
-                            case RAD:
-                                break;
-                            default:
-                                return null;
-                            }
-
-                            double res;
-                            if      (name.equals("sin")) { res = Math.sin(x); }
-                            else if (name.equals("cos")) { res = Math.cos(x); }
-                            else if (name.equals("tan")) { res = Math.tan(x); }
-                            else                         { return function.toExpression(); }
-
-                            return new NumberTerm(res).toExpression();
-                        }
-                    };
-                    opts.getFunctions().put("sin", mathFunction);
-                    opts.getFunctions().put("cos", mathFunction);
-                    opts.getFunctions().put("tan", mathFunction);
 
                     new DSSEvaluator(opts).evaluate(css);
 
@@ -161,6 +140,7 @@ public final class Main {
         else {
             System.err.println("Missing url parameter.");
             printUsage(jsap);
+            System.exit(1);
         }
 
         if (errors.getErrorCount() > 0) {
