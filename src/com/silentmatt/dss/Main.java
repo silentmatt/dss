@@ -3,13 +3,10 @@ package com.silentmatt.dss;
 import com.martiansoftware.jsap.*;
 import com.martiansoftware.jsap.stringparsers.FileStringParser;
 import com.silentmatt.dss.parser.DSSParser;
-import com.silentmatt.dss.term.UrlTerm;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class Main {
     private Main() {
@@ -20,6 +17,10 @@ public final class Main {
         System.err.println("       " + jsap.getUsage());
         System.err.println();
         System.err.println(jsap.getHelp());
+    }
+
+    private static void printVersion() {
+        System.out.println("DSS 0.1b");
     }
 
     @SuppressWarnings("deprecation")
@@ -63,11 +64,17 @@ public final class Main {
                 .setLongFlag("debug");
         debugFlag.setHelp("Don't remove DSS directives from output");
 
+        Switch versionFlag = new Switch("version")
+                .setShortFlag('v')
+                .setLongFlag("version");
+        versionFlag.setHelp("Show version information and exit");
+
         FlaggedOption defineOpt = new FlaggedOption("define")
                 .setAllowMultipleDeclarations(true)
                 .setRequired(false)
                 .setShortFlag('d')
                 .setLongFlag("define")
+                .setUsageName("name:value")
                 .setStringParser(JSAP.STRING_PARSER);
         defineOpt.setHelp("Pre-define a constant in the global namespace");
 
@@ -77,9 +84,10 @@ public final class Main {
         urlOpt.setHelp("The filename or URL of the DSS file.");
 
         try {
-            jsap.registerParameter(outOpt);
+            jsap.registerParameter(versionFlag);
             jsap.registerParameter(debugFlag);
             jsap.registerParameter(defineOpt);
+            jsap.registerParameter(outOpt);
 
             jsap.registerParameter(urlOpt);
         } catch (JSAPException j) {
@@ -93,6 +101,11 @@ public final class Main {
         setupArguments(jsap);
 
         JSAPResult config = jsap.parse(args);
+        if (config.getBoolean("version")) {
+            printVersion();
+            System.exit(0);
+        }
+
         if (!config.success()) {
             printUsage(jsap);
             System.exit(1);
