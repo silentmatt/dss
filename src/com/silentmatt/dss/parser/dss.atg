@@ -363,16 +363,16 @@ ruleset<out RuleSet rset> =             (.  rset = new RuleSet();
     '}'
 .
 
-selector<out Selector sel> =    (. sel = new Selector();
+selector<out Selector sel> =    (.  sel = new Selector();
                                     SimpleSelector ss;
                                     Combinator cb = null;
                                 .)
-    simpleselector<out ss>      (. sel.getSimpleSelectors().add(ss); .)
-    { [ ('+'                    (. cb = Combinator.PrecededImmediatelyBy; .)
-        | '>'                   (. cb = Combinator.ChildOf; .)
-        | '~'                   (. cb = Combinator.PrecededBy; .)
+    simpleselector<out ss>      (.  sel.getSimpleSelectors().add(ss); .)
+    { [ ('+'                    (.  cb = Combinator.PrecededImmediatelyBy; .)
+        | '>'                   (.  cb = Combinator.ChildOf; .)
+        | '~'                   (.  cb = Combinator.PrecededBy; .)
         ) ]
-        simpleselector<out ss>  (. if (cb != null) { ss.setCombinator(cb); }
+        simpleselector<out ss>  (.  if (cb != null) { ss.setCombinator(cb); }
                                     sel.getSimpleSelectors().add(ss);
                                     cb = null;
                                 .)
@@ -390,7 +390,10 @@ simpleselector<out SimpleSelector ss> = (. ss = new SimpleSelector();
         | pseudo<out String psd>        (.  ss.setPseudo(psd); .)
         )
     )
-    {                                   (.  SimpleSelector child = new SimpleSelector(); .)
+    {                                   (.  if (t.pos + t.val.length() < la.pos) {
+                                                break;
+                                            }
+                                            SimpleSelector child = new SimpleSelector(); .)
         ('#' identity<out ident>        (.  child.setID(ident); .)
         | '.' identity<out ident>       (.  child.setClassName(ident); .)
         | attrib<out Attribute atb>     (.  child.setAttribute(atb); .)
