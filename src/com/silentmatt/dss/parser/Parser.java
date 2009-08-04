@@ -934,6 +934,9 @@ class Parser {
 			}
 		} else SynErr(79);
 		while (StartOf(12)) {
+			if (t.pos + t.val.length() < la.pos) {
+			   break;
+			}
 			SimpleSelector child = new SimpleSelector(); 
 			if (la.kind == 44) {
 				Get();
