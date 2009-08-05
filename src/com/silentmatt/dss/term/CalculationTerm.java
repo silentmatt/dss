@@ -1,5 +1,6 @@
 package com.silentmatt.dss.term;
 
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.calc.CalcExpression;
@@ -28,12 +29,12 @@ public class CalculationTerm extends Term {
     }
 
     @Override
-    public Expression substituteValues(EvaluationState state, boolean withParams, boolean doCalculations) {
+    public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
         // XXX: had "withParams ? state.getParameters() : null". Do we need a withParams flag?
-        calculation.substituteValues(state);
+        calculation.substituteValues(state, container);
 
         if (doCalculations) {
-            Value calc = calculation.calculateValue(state);
+            Value calc = calculation.calculateValue(state, container);
             if (calc != null) {
                 try {
                     return calc.toTerm().toExpression();

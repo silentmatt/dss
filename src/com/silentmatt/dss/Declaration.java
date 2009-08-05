@@ -130,9 +130,9 @@ public class Declaration implements Map.Entry<String, Expression> {
         return old;
     }
 
-    public void substituteValue(EvaluationState state, boolean withParams, boolean doCalculations) {
+    public void substituteValue(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
         Expression value = getExpression();
-        Expression newValue = value.substituteValues(state, withParams, doCalculations);
+        Expression newValue = value.substituteValues(state, container, withParams, doCalculations);
         setExpression(newValue);
     }
 }

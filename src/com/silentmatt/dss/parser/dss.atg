@@ -529,6 +529,8 @@ term<out Term trm> =                        (.  String val = "";
         |
         "param" '(' identity<out ident> ')' (.  trm = new ParamTerm(ident); .)
         |
+        "prop" '(' identity<out ident> ')'  (.  trm = new PropertyTerm(ident); .)
+        |
         "U\\" identity<out ident>           (.  trm = new UnicodeTerm("U\\" + ident); .)
         |
         HexValue<out val>                   (.  trm = new HexTerm(val); .)

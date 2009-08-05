@@ -157,7 +157,7 @@ public class DeclarationList implements List<Declaration> {
             }
 
             for (Declaration dec : properties) {
-                dec.substituteValue(state, true, true);
+                dec.substituteValue(state, this, true, true);
             }
         }
         finally {
@@ -195,7 +195,7 @@ public class DeclarationList implements List<Declaration> {
 
             this.list = newList.list;
             for (int i = 0; i < list.size(); i++) {
-                list.get(i).substituteValue(state, false, doCalculations);
+                list.get(i).substituteValue(state, this, false, doCalculations);
             }
         }
         finally {

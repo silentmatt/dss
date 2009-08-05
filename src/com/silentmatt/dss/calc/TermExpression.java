@@ -1,5 +1,6 @@
 package com.silentmatt.dss.calc;
 
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.term.CalculationTerm;
@@ -26,13 +27,13 @@ public class TermExpression implements CalcExpression {
         this.value = value;
     }
 
-    public Value calculateValue(EvaluationState state) {
-        substituteValues(state);
+    public Value calculateValue(EvaluationState state, DeclarationList container) {
+        substituteValues(state, container);
         if (value instanceof NumberTerm) {
             return new Value((NumberTerm) value);
         }
         else if (value instanceof CalculationTerm) {
-            return ((CalculationTerm) value).getCalculation().calculateValue(state);
+            return ((CalculationTerm) value).getCalculation().calculateValue(state, container);
         }
         else if (value instanceof FunctionTerm) {
             Expression result = ((FunctionTerm) value).applyFunction(state);
@@ -62,10 +63,10 @@ public class TermExpression implements CalcExpression {
         return this.value.toString();
     }
 
-    public void substituteValues(EvaluationState state) {
+    public void substituteValues(EvaluationState state, DeclarationList container) {
         if (value instanceof ReferenceTerm) {
             ReferenceTerm function = (ReferenceTerm) value;
-            Expression variable = function.evaluate(state);
+            Expression variable = function.evaluate(state, container);
             if (variable == null) {
                 state.getErrors().SemErr("missing value: " + function.toString());
                 return;

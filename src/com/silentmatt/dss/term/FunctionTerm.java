@@ -1,6 +1,7 @@
 package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.Color;
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Function;
@@ -165,8 +166,8 @@ public class FunctionTerm extends Term {
     }
 
     @Override
-    public Expression substituteValues(EvaluationState state, boolean withParams, boolean doCalculations) {
-        Expression argument = getExpression().substituteValues(state, withParams, doCalculations);
+    public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
+        Expression argument = getExpression().substituteValues(state, container, withParams, doCalculations);
         Expression result = new FunctionTerm(getName(), argument).applyFunction(state);
         return result != null ? result : toExpression();
     }

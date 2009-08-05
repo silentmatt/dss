@@ -1,5 +1,6 @@
 package com.silentmatt.dss.bool;
 
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 
 /**
@@ -24,12 +25,12 @@ public class BinaryBooleanExpression implements BooleanExpression {
         this.right = right;
     }
 
-    public Boolean evaluate(EvaluationState state) {
-        Boolean leftValue = left.evaluate(state);
+    public Boolean evaluate(EvaluationState state, DeclarationList container) {
+        Boolean leftValue = left.evaluate(state, container);
         if (leftValue == null) {
             return null;
         }
-        Boolean rightValue = right.evaluate(state);
+        Boolean rightValue = right.evaluate(state, container);
         if (rightValue == null) {
             return null;
         }

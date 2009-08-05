@@ -1,5 +1,6 @@
 package com.silentmatt.dss.term;
 
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 
@@ -24,7 +25,7 @@ public class ParamTerm extends ReferenceTerm {
     }
 
     @Override
-    public Expression evaluate(EvaluationState state) {
+    public Expression evaluate(EvaluationState state, DeclarationList container) {
         if (state.getParameters() == null) {
             state.getErrors().SemErr("param is only valid inside a class");
             return null;
@@ -42,7 +43,7 @@ public class ParamTerm extends ReferenceTerm {
     }
 
     @Override
-    public Expression substituteValues(EvaluationState state, boolean withParams, boolean doCalculations) {
-        return withParams ? evaluate(state) : toExpression();
+    public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
+        return withParams ? evaluate(state, container) : toExpression();
     }
 }
