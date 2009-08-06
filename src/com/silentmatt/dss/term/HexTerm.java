@@ -4,21 +4,44 @@ import com.silentmatt.dss.Color;
 import java.util.Locale;
 
 /**
+ * A hexidecimal value, usually a color.
  *
  * @author matt
  */
 public class HexTerm extends Term {
+    /**
+     * The hex digits.
+     */
     private final String value;
 
+    /**
+     * Constructs a HexTerm from a String.
+     *
+     * @param value The hexidecimal digits. The first character should be a '#'
+     * and the remaining characters <em>should</em> be valid hexidecimal digits.
+     * This isn't enforced currently, but it may be in the future.
+     */
     public HexTerm(String value) {
         super();
         this.value = value;
     }
 
+    /**
+     * Gets the hexidecimal digits.
+     *
+     * @return A String of the form "#digits"
+     */
     public String getValue() {
         return value;
     }
 
+    /**
+     * Converts this term into a String.
+     * If the value is a valid color, it may be converted to that color's
+     * shortest form.
+     *
+     * @return The hex string
+     */
     @Override
     public String toString() {
         if (isColor()) {

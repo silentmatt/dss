@@ -14,6 +14,12 @@ public abstract class ReferenceTerm extends Term {
      */
     private final String name;
 
+    /**
+     * Constructor.
+     * Sets the name of the reference.
+     *
+     * @param name The constant/parameter/whatever to reference.
+     */
     public ReferenceTerm(String name) {
         super();
         this.name = name;
@@ -29,12 +35,18 @@ public abstract class ReferenceTerm extends Term {
     }
 
     /**
-     * Gets the param term as a String.
+     * Gets the term as a String.
      *
      * @return A String of the form "{const,param}(name)".
      */
     @Override
     public abstract String toString();
 
+    /**
+     * Gets the referenced expression.
+     *
+     * @param state The current evaluation state, containing the current scopes.
+     * @return The value of the referenced expression, or null if it doesn't exist.
+     */
     public abstract Expression evaluate(EvaluationState state);
 }

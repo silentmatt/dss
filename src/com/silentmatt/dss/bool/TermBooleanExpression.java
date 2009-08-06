@@ -34,7 +34,7 @@ public class TermBooleanExpression implements BooleanExpression {
         if (value.getTerms().size() == 1) {
             Term term = value.getTerms().get(0);
             if (term instanceof NumberTerm) {
-                return ((NumberTerm) term).getDoubleValue() != 0;
+                return ((NumberTerm) term).getValue() != 0;
             }
         }
         String exprString = value.toString();
@@ -58,7 +58,7 @@ public class TermBooleanExpression implements BooleanExpression {
 
     public Boolean evaluate(EvaluationState state) {
         if (value instanceof NumberTerm) {
-            return ((NumberTerm) value).getDoubleValue() != 0;
+            return ((NumberTerm) value).getValue() != 0;
         }
         else if (value instanceof CalculationTerm) {
             Value result = ((CalculationTerm) value).getCalculation().calculateValue(state);

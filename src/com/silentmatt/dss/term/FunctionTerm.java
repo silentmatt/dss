@@ -24,10 +24,19 @@ public class FunctionTerm extends Term {
      */
     private Expression expression;
 
+    /**
+     * Default constructor.
+     */
     public FunctionTerm() {
         super();
     }
 
+    /**
+     * Constructs a FunctionTerm with a default name and parameters.
+     *
+     * @param name The function name
+     * @param expression The parameters
+     */
     public FunctionTerm(String name, Expression expression) {
         super();
         this.name = name;
@@ -73,7 +82,7 @@ public class FunctionTerm extends Term {
     /**
      * Gets the function term as a String.
      *
-     * @return A String of the form "function(expression)".
+     * @return A String of the form "name(expression)".
      */
     @Override
     public String toString() {
@@ -89,6 +98,13 @@ public class FunctionTerm extends Term {
         return txt.toString();
     }
 
+    /**
+     * Calls a program-defined function and returns the result.
+     *
+     * @param state The DSS evaluation state, containing the "functions" scope.
+     * @return The result of calling the function, or null if there's an error
+     *         or the function doesn't exist.
+     */
     public Expression applyFunction(EvaluationState state) {
         Function function = state.getFunctions().get(getName());
         if (function != null) {
@@ -107,6 +123,18 @@ public class FunctionTerm extends Term {
         return toColor() != null;
     }
 
+    /**
+     * Converts the term to a Color object.
+     * Functions that can be colors are rgb, rgba, hsl, and hsla.
+     * The "non-alpha" versions are equivalent to the "alpha" versions. For
+     * example, <code>rgb(255,0,0,128)</code> works, and sets the alpha channel
+     * to 128.
+     *
+     * You can also mix percentages and integer values. Each channel is
+     * considered separately.
+     *
+     * @return The Color corresponding to this function, or null.
+     */
     @Override
     public Color toColor() {
         if ((name.equalsIgnoreCase("rgb") && expression.getTerms().size() == 3)
@@ -153,17 +181,43 @@ public class FunctionTerm extends Term {
         }
     }
 
+    /**
+     * Converts a numeric term to a color channel.
+     * Percentages are scaled from 0 to 255, otherwise, the scalar part is
+     * converted to an integer.
+     *
+     * @param t The numberTerm to convert
+     * @return The RGBA channel value
+     */
     private static int getRGBValue(NumberTerm t) {
         if (t.getUnit() == Unit.Percent) {
-            return (int)(255.0 * t.getDoubleValue() / 100.0);
+            return (int)(255.0 * t.getValue() / 100.0);
         }
-        return (int) t.getDoubleValue();
+        return (int) t.getValue();
     }
 
+    /**
+     * Converts a numeric term to a hue.
+     *
+     * @param t The NumberTerm to convert
+     * @return A hue value from 0 to 255 (as long as t is from 0 to 360)
+     */
     private static int getHueValue(NumberTerm t) {
-        return (int)(t.getDoubleValue() * 255.0 / 360.0);
+        return (int)(t.getValue() * 255.0 / 360.0);
     }
 
+    /**
+     * Performs any substitution in the arguments and calls the function if it
+     * exists.
+     *
+     * @param state The current DSS evaluation state
+     * @param withParams <code>true</code> if <code>ParamTerm</code>s should be
+     *                   evaluated
+     * @param doCalculations <code>true</code> if <code>CalcTerm</code>s should
+     *                       be evaluated
+     * @return The result of the defined function, or <code>toExpression()</code>
+     *         if there is no program-defined function.
+     */
     @Override
     public Expression substituteValues(EvaluationState state, boolean withParams, boolean doCalculations) {
         Expression argument = getExpression().substituteValues(state, withParams, doCalculations);

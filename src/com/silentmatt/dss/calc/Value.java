@@ -35,7 +35,7 @@ public class Value {
         if (thisUnit == null) {
             throw new IllegalArgumentException("term");
         }
-        this.scalar = term.getDoubleValue() * thisUnit.getScale();
+        this.scalar = term.getValue() * thisUnit.getScale();
         this.unit = CalculationUnit.getCanonicalUnit(thisUnit);
     }
 
