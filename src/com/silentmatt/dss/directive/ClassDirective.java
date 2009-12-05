@@ -28,12 +28,16 @@ public class ClassDirective extends DeclarationDirective {
         return className;
     }
 
-    public DeclarationList getParameters() {
+    public DeclarationList getParameters(DeclarationList arguments) {
         return parameters;
     }
 
     public void addParameter(Declaration param) {
         parameters.add(param);
+    }
+
+    public DeclarationList getDeclarations(DeclarationList arguments) {
+        return getDeclarations();
     }
 
     @Override

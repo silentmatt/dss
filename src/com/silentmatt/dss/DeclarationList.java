@@ -138,7 +138,7 @@ public class DeclarationList implements List<Declaration> {
 
         // Make a copy of the properties, to substitute parameters into
         DeclarationList properties = new DeclarationList();
-        for (Declaration prop : clazz.getDeclarations()) {
+        for (Declaration prop : clazz.getDeclarations(classReference.getArguments())) {
             properties.add(new Declaration(prop.getName(), prop.getExpression(), prop.isImportant()));
         }
 
@@ -146,7 +146,7 @@ public class DeclarationList implements List<Declaration> {
         state.pushParameters();
         try {
             // Defaults
-            for (Declaration param : clazz.getParameters()) {
+            for (Declaration param : clazz.getParameters(classReference.getArguments())) {
                 state.getParameters().declare(param.getName(), param.getExpression());
             }
             // Arguments
