@@ -58,11 +58,11 @@ public class Expression {
         return txt.toString();
     }
 
-    public Expression substituteValues(EvaluationState state, boolean withParams, boolean doCalculations) {
+    public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
         Expression newValue = new Expression();
 
         for (Term primitiveValue : getTerms()) {
-            Expression sub = primitiveValue.substituteValues(state, withParams, doCalculations);
+            Expression sub = primitiveValue.substituteValues(state, container, withParams, doCalculations);
             if (sub != null) {
                 for (Term t : sub.getTerms()) {
                     newValue.getTerms().add(t);

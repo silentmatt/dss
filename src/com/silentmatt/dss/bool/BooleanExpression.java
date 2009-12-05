@@ -1,5 +1,6 @@
 package com.silentmatt.dss.bool;
 
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 
 /**
@@ -7,7 +8,7 @@ import com.silentmatt.dss.EvaluationState;
  * @author matt
  */
 public interface BooleanExpression {
-    Boolean evaluate(EvaluationState state);
+    Boolean evaluate(EvaluationState state, DeclarationList container);
 
     /**
      * Gets the relative precidence of the expression.

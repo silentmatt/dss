@@ -82,7 +82,7 @@ public class IfDirective extends Rule {
 
     @Override
     public void evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
-        Boolean result = condition.evaluate(state);
+        Boolean result = condition.evaluate(state, null);
         if (result == null) {
             state.getErrors().SemErr("Invalid condition: " + condition);
         }

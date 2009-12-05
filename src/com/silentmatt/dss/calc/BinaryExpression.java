@@ -1,5 +1,6 @@
 package com.silentmatt.dss.calc;
 
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 
 /**
@@ -25,13 +26,13 @@ public class BinaryExpression implements CalcExpression {
         this.right = right;
     }
 
-    public Value calculateValue(EvaluationState state) {
+    public Value calculateValue(EvaluationState state, DeclarationList container) {
         try {
-            Value leftValue = left.calculateValue(state);
+            Value leftValue = left.calculateValue(state, container);
             if (leftValue == null) {
                 return null;
             }
-            Value rightValue = right.calculateValue(state);
+            Value rightValue = right.calculateValue(state, container);
             if (rightValue == null) {
                 return null;
             }
@@ -54,9 +55,9 @@ public class BinaryExpression implements CalcExpression {
         return null;
     }
 
-    public void substituteValues(EvaluationState state) {
-        left.substituteValues(state);
-        right.substituteValues(state);
+    public void substituteValues(EvaluationState state, DeclarationList container) {
+        left.substituteValues(state, container);
+        right.substituteValues(state, container);
     }
 
     /**

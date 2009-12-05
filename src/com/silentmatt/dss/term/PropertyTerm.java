@@ -5,36 +5,36 @@ import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 
 /**
- * A constant reference.
+ * A property reference.
  *
  * @author Matthew Crumley
  */
-public class ConstTerm extends ReferenceTerm {
-    public ConstTerm(String name) {
+public class PropertyTerm extends ReferenceTerm {
+    public PropertyTerm(String name) {
         super(name);
     }
 
     /**
-     * Gets the const term as a String.
+     * Gets the property reference as a String.
      *
-     * @return A String of the form "const(name)".
+     * @return A String of the form "prop(name)".
      */
     @Override
     public String toString() {
-        return "const(" + getName() + ")";
+        return "prop(" + getName() + ")";
     }
 
     @Override
     public Expression evaluate(EvaluationState state, DeclarationList container) {
-        if (state.getVariables() == null) {
-            state.getErrors().SemErr("Invalid scope");
+        if (container == null) {
+            state.getErrors().SemErr("property reference not valid in this context.");
             return null;
         }
-        return state.getVariables().get(getName());
+        return container.get(getName());
     }
 
     @Override
     public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
-        return evaluate(state, container);
+        return doCalculations ? evaluate(state, container) : toExpression();
     }
 }

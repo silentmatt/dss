@@ -1,6 +1,7 @@
 package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.Color;
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 
@@ -55,7 +56,7 @@ public abstract class Term {
      * @return The resulting expression
      */
     // XXX: Most Terms are going to return a single Term, but ConstTerm and ParamTerm need a full expression...
-    public Expression substituteValues(EvaluationState state, boolean withParams, boolean doCalculations) {
+    public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
         return toExpression();
     }
 

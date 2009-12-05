@@ -1,5 +1,6 @@
 package com.silentmatt.dss.term;
 
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 
@@ -46,7 +47,9 @@ public abstract class ReferenceTerm extends Term {
      * Gets the referenced expression.
      *
      * @param state The current evaluation state, containing the current scopes.
+     * @param container The term's container
+     *
      * @return The value of the referenced expression, or null if it doesn't exist.
      */
-    public abstract Expression evaluate(EvaluationState state);
+    public abstract Expression evaluate(EvaluationState state, DeclarationList container);
 }

@@ -1,5 +1,6 @@
 package com.silentmatt.dss.bool;
 
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.calc.Value;
@@ -56,12 +57,12 @@ public class TermBooleanExpression implements BooleanExpression {
         return truthiness(constValue);
     }
 
-    public Boolean evaluate(EvaluationState state) {
+    public Boolean evaluate(EvaluationState state, DeclarationList container) {
         if (value instanceof NumberTerm) {
             return ((NumberTerm) value).getValue() != 0;
         }
         else if (value instanceof CalculationTerm) {
-            Value result = ((CalculationTerm) value).getCalculation().calculateValue(state);
+            Value result = ((CalculationTerm) value).getCalculation().calculateValue(state, container);
             return result == null ? null : result.getScalarValue() != 0;
         }
         else if (value instanceof FunctionTerm) {
@@ -69,7 +70,7 @@ public class TermBooleanExpression implements BooleanExpression {
             return truthiness(expr);
         }
         else if (value instanceof ReferenceTerm) {
-            Expression expr = ((ReferenceTerm) value).evaluate(state);
+            Expression expr = ((ReferenceTerm) value).evaluate(state, container);
             return truthiness(expr);
         }
         else if (value instanceof ClassReferenceTerm) {
