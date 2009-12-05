@@ -185,7 +185,7 @@ public class DeclarationList implements List<Declaration> {
         try {
             DeclarationList newList = new DeclarationList();
             for (Declaration declaration : list) {
-                if (matches(declaration, "extend")) {
+                if (matches(declaration, "extend") || matches(declaration, "apply")) {
                     newList.addInheritedProperties(state, declaration.getExpression());
                 }
                 else {
