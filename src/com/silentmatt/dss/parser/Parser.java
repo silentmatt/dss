@@ -199,19 +199,7 @@ class Parser {
 					cb = Combinator.PrecededBy; 
 				} else SynErr(71);
 				RuleSet nested = ruleset();
-				rset.addNestedRuleSet(nested);
-				for (Selector s : nested.getSelectors()) {
-				    s.getSimpleSelectors().get(0).setCombinator(cb);
-				}
-				List<Selector> childSelectors = new ArrayList<Selector>(nested.getSelectors());
-				nested.getSelectors().clear();
-				for (Selector parent : rset.getSelectors()) {
-				    for (Selector child : childSelectors) {
-				        Selector combined = new Selector(parent, child);
-				        nested.getSelectors().add(combined);
-				    }
-				}
-				
+				rset.addNestedRuleSet(nested, cb); 
 			}
 		}
 		Expect(22);
