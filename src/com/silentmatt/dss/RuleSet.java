@@ -119,7 +119,7 @@ public class RuleSet extends Rule {
         return text.toString();
     }
 
-    public String toCssString(int nesting, Stack<String> nestedString) {
+    private String toCssString(int nesting, Stack<String> nestedString) {
         String start = Rule.getIndent(nesting);
 
         StringBuilder txt = new StringBuilder();
