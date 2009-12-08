@@ -13,6 +13,7 @@ public class RuleSet extends Rule {
     private final List<Rule> rules = new ArrayList<Rule>();
     private final DeclarationList declarations = new DeclarationList();
     private final List<Selector> selectors = new ArrayList<Selector>();
+    private final List<RuleSet> nestedRuleSets = new ArrayList<RuleSet>();
 
     public DeclarationList getDeclarations() {
         return declarations;
@@ -45,6 +46,14 @@ public class RuleSet extends Rule {
 
     public Expression getValue(String name) {
         return declarations.get(name);
+    }
+
+    public List<RuleSet> getNestedRuleSets() {
+        return nestedRuleSets;
+    }
+
+    public void addNestedRuleSet(RuleSet nested) {
+        nestedRuleSets.add(nested);
     }
 
     @Override
@@ -115,6 +124,13 @@ public class RuleSet extends Rule {
         }
 
         txt.append("\n" + start + "}");
+
+        for (Selector sel : selectors) {
+            for (RuleSet nested : nestedRuleSets) {
+                txt.append("\n").append(start);
+                txt.append(nested.toString(nesting));
+            }
+        }
 
         return txt.toString();
     }

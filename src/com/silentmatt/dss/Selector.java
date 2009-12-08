@@ -8,10 +8,30 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class Selector {
-    private final List<SimpleSelector> simpleSelectors = new ArrayList<SimpleSelector>();
+    private List<SimpleSelector> simpleSelectors = new ArrayList<SimpleSelector>();
+
+    public Selector() {
+    }
+
+    public Selector(Selector parent, Selector child) {
+        simpleSelectors.addAll(parent.simpleSelectors);
+        simpleSelectors.addAll(child.simpleSelectors);
+    }
 
     public List<SimpleSelector> getSimpleSelectors() {
         return simpleSelectors;
+    }
+
+    public void prependSelector(Selector selector) {
+        List<SimpleSelector> existingSelectors = simpleSelectors;
+        simpleSelectors = new ArrayList<SimpleSelector>(selector.getSimpleSelectors());
+        simpleSelectors.addAll(existingSelectors);
+    }
+
+    public Selector copy() {
+        Selector sel = new Selector();
+        sel.simpleSelectors.addAll(simpleSelectors);
+        return sel;
     }
 
     @Override

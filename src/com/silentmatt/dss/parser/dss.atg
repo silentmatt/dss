@@ -342,22 +342,41 @@ directive<out Rule dir> (.  dir = null; .) =
     genericDirective<out dir>
 .
 
-ruleset<out RuleSet rset> =             (.  rset = new RuleSet();
-                                            Selector sel;
-                                            Declaration dec;
-                                            Rule dir;
-                                        .)
+ruleset<out RuleSet rset> =                  (.  rset = new RuleSet();
+                                                 Selector sel;
+                                                 Declaration dec;
+                                                 Rule dir;
+                                                 Combinator cb = null;
+                                             .)
 
-    selector<out sel>                   (.  rset.getSelectors().add(sel); .)
-    { ',' selector<out sel>             (.  rset.getSelectors().add(sel); .)
+    selector<out sel>                        (.  rset.getSelectors().add(sel); .)
+    { ',' selector<out sel>                  (.  rset.getSelectors().add(sel); .)
     }
     '{'
         {
-            declaration<out dec> ';'    (.  rset.addDeclaration(dec); .)
+            declaration<out dec> ';'         (.  rset.addDeclaration(dec); .)
             |
-            classDirective<out dir>     (.  rset.addRule(dir); .)
+            classDirective<out dir>          (.  rset.addRule(dir); .)
             |
-            defineDirective<out dir>    (.  rset.addRule(dir); .)
+            defineDirective<out dir>         (.  rset.addRule(dir); .)
+            |
+            ( '&'                            (.  cb = null; .)
+            | '+'                            (.  cb = Combinator.PrecededImmediatelyBy; .)
+            | '>'                            (.  cb = Combinator.ChildOf; .)
+            | '~'                            (.  cb = Combinator.PrecededBy; .)
+            ) ruleset<out RuleSet nested>    (.  rset.addNestedRuleSet(nested);
+                                                 for (Selector s : nested.getSelectors()) {
+                                                     s.getSimpleSelectors().get(0).setCombinator(cb);
+                                                 }
+                                                 List<Selector> childSelectors = new ArrayList<Selector>(nested.getSelectors());
+                                                 nested.getSelectors().clear();
+                                                 for (Selector parent : rset.getSelectors()) {
+                                                     for (Selector child : childSelectors) {
+                                                         Selector combined = new Selector(parent, child);
+                                                         nested.getSelectors().add(combined);
+                                                     }
+                                                 }
+                                             .)
         }
     '}'
 .
