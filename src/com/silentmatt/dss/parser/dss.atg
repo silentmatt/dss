@@ -214,6 +214,7 @@ parameter<out Declaration dec> =        (. dec = new Declaration(); .)
 classDirective<out ClassDirective dir> =        (.  String ident;
                                                     List<Declaration> parameters = new ArrayList<Declaration>();
                                                     List<Declaration> declarations = new ArrayList<Declaration>();
+                                                    List<Declaration> mdecs;
                                                     Declaration param;
                                                 .)
     "@class"
@@ -227,36 +228,40 @@ classDirective<out ClassDirective dir> =        (.  String ident;
             ]
         '>'
     ]
-    '{' { declaration<out Declaration dec> ';'  (.  declarations.add(dec); .) } '}'
+    '{' { multideclaration<out mdecs> ';'       (.  declarations.addAll(mdecs); .) } '}'
                                                 (.  dir = new ClassDirective(ident, parameters, declarations); .)
 .
 
 defineDirective<out DefineDirective dir> =      (.
                                                     List<Declaration> declarations = new ArrayList<Declaration>();
                                                     boolean global = false;
+                                                    List<Declaration> mdecs;
                                                 .)
     "@define"
     [ "global"                                  (.  global = true; .) ]
     '{'
-        { declaration<out Declaration dec> ';'  (.  declarations.add(dec); .) }
+        { multideclaration<out mdecs> ';'       (.  declarations.addAll(mdecs); .) }
     '}'                                         (.  dir = new DefineDirective(declarations, global); .)
 .
 
-fontFaceDirective<out FontFaceDirective dir> =  (.  List<Declaration> declarations = new ArrayList<Declaration>(); .)
+fontFaceDirective<out FontFaceDirective dir> =  (.  List<Declaration> declarations = new ArrayList<Declaration>();
+                                                    List<Declaration> mdecs;
+                                                .)
     "@font-face"
-    '{' { declaration<out Declaration dec> ';'  (.  declarations.add(dec); .) } '}'
+    '{' { multideclaration<out mdecs> ';'       (.  declarations.addAll(mdecs); .) } '}'
                                                 (.  dir = new FontFaceDirective(declarations); .)
 .
 
 pageDirective<out PageDirective dir> =          (.  List<Declaration> declarations = new ArrayList<Declaration>();
                                                     SimpleSelector ss = null;
+                                                    List<Declaration> mdecs;
                                                 .)
     "@page"
     [ pseudo<out String psd>                    (.  ss = new SimpleSelector();
                                                     ss.setPseudo(psd);
                                                 .)
     ]
-    '{' { declaration<out Declaration dec> ';'  (.  declarations.add(dec); .) } '}'
+    '{' { multideclaration<out mdecs> ';'       (.  declarations.addAll(mdecs); .) } '}'
                                                 (.  dir = new PageDirective(ss, declarations); .)
 .
 
@@ -303,6 +308,7 @@ genericDirective<out GenericDirective dir> =
         '{'
             {
                 // XXX: Order between Declarations and Rules is not preserved.
+                // TODO: Support multideclarations in generic directives
                 declaration<out Declaration dec> ';'    (.  dir.addDeclaration(dec); .)
                 |
                 ruleset<out RuleSet rset>               (.  dir.addRule(rset); .)
@@ -344,7 +350,7 @@ directive<out Rule dir> (.  dir = null; .) =
 
 ruleset<out RuleSet rset> =                  (.  rset = new RuleSet();
                                                  Selector sel;
-                                                 Declaration dec;
+                                                 List<Declaration> decs;
                                                  Rule dir;
                                                  Combinator cb = null;
                                              .)
@@ -354,7 +360,7 @@ ruleset<out RuleSet rset> =                  (.  rset = new RuleSet();
     }
     '{'
         {
-            declaration<out dec> ';'         (.  rset.addDeclaration(dec); .)
+            multideclaration<out decs> ';'   (.  rset.addDeclarations(decs); .)
             |
             classDirective<out dir>          (.  rset.addRule(dir); .)
             |
@@ -437,11 +443,27 @@ pseudo<out String pseudo> =         (.  StringBuilder sb = new StringBuilder(); 
     ')'
     ]                               (.  pseudo = sb.toString(); .)
 .
+
 declaration<out Declaration dec> =  (. dec = new Declaration(); .)
     identity<out String ident>      (. dec.setName(ident); .)
     ':' expr<out Expression exp>    (. dec.setExpression(exp); .)
     [ '!' "important"               (. dec.setImportant(true); .) ]
 .
+
+multideclaration<out List<Declaration> decs> =  (.  decs = new ArrayList<Declaration>();
+                                                    Declaration first = new Declaration();
+                                                .)
+    (( identity<out String ident>               (.  first.setName(ident); decs.add(first); .)
+       {',' identity<out String ident2>         (.  decs.add(new Declaration(ident2, new PropertyTerm(first.getName()).toExpression())); .)}
+     )
+        ':' expr<out Expression exp>            (.  first.setExpression(exp); .)
+        [ '!' "important"                       (.  for (Declaration dec : decs) {
+                                                        dec.setImportant(true);
+                                                    }
+                                                .) ]
+    )
+.
+
 expr<out Expression exp> =  (.  exp = new Expression();
                                 Character sep = null;
                                 Term trm;

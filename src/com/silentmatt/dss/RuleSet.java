@@ -22,8 +22,10 @@ public class RuleSet extends Rule {
         return declarations;
     }
 
-    public void addDeclaration(Declaration declaration) {
-        declarations.add(declaration);
+    public void addDeclarations(List<Declaration> declarations) {
+        for (Declaration declaration : declarations) {
+            this.declarations.add(declaration);
+        }
     }
 
     public List<Selector> getSelectors() {
@@ -60,16 +62,6 @@ public class RuleSet extends Rule {
 
         nested.selectors.setParents(selectors);
         nested.selectors.setCombinator(cb);
-
-        /*List<Selector> childSelectors = new ArrayList<Selector>(nested.getSelectors());
-        nested.selectors.clear();
-
-        for (Selector parent : selectors) {
-             for (Selector child : childSelectors) {
-                 Selector combined = new Selector(parent, cb, child);
-                 nested.selectors.add(combined);
-             }
-         }*/
     }
 
     @Override

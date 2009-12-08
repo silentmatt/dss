@@ -30,11 +30,12 @@ public class PropertyTerm extends ReferenceTerm {
             state.getErrors().SemErr("property reference not valid in this context.");
             return null;
         }
-        return container.get(getName());
+        Expression ret = container.get(getName());
+        return ret != null ? ret : toExpression();
     }
 
     @Override
     public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
-        return doCalculations ? evaluate(state, container) : toExpression();
+        return evaluate(state, container);
     }
 }

@@ -161,7 +161,7 @@ class Parser {
 		RuleSet  rset;
 		rset = new RuleSet();
 		Selector sel;
-		Declaration dec;
+		List<Declaration> decs;
 		Rule dir;
 		Combinator cb = null;
 		
@@ -175,9 +175,9 @@ class Parser {
 		Expect(21);
 		while (StartOf(4)) {
 			if (StartOf(5)) {
-				dec = declaration();
+				decs = multideclaration();
 				Expect(28);
-				rset.addDeclaration(dec); 
+				rset.addDeclarations(decs); 
 			} else if (la.kind == 26) {
 				dir = classDirective();
 				rset.addRule(dir); 
@@ -427,6 +427,7 @@ class Parser {
 		String ident;
 		List<Declaration> parameters = new ArrayList<Declaration>();
 		List<Declaration> declarations = new ArrayList<Declaration>();
+		List<Declaration> mdecs;
 		Declaration param;
 		
 		Expect(26);
@@ -446,9 +447,9 @@ class Parser {
 		}
 		Expect(21);
 		while (StartOf(5)) {
-			Declaration dec = declaration();
+			mdecs = multideclaration();
 			Expect(28);
-			declarations.add(dec); 
+			declarations.addAll(mdecs); 
 		}
 		Expect(22);
 		dir = new ClassDirective(ident, parameters, declarations); 
@@ -459,6 +460,7 @@ class Parser {
 		DefineDirective  dir;
 		List<Declaration> declarations = new ArrayList<Declaration>();
 		boolean global = false;
+		List<Declaration> mdecs;
 		
 		Expect(30);
 		if (la.kind == 31) {
@@ -467,9 +469,9 @@ class Parser {
 		}
 		Expect(21);
 		while (StartOf(5)) {
-			Declaration dec = declaration();
+			mdecs = multideclaration();
 			Expect(28);
-			declarations.add(dec); 
+			declarations.addAll(mdecs); 
 		}
 		Expect(22);
 		dir = new DefineDirective(declarations, global); 
@@ -559,31 +561,43 @@ class Parser {
 		return exp;
 	}
 
-	Declaration  declaration() {
-		Declaration  dec;
-		dec = new Declaration(); 
+	List<Declaration>  multideclaration() {
+		List<Declaration>  decs;
+		decs = new ArrayList<Declaration>();
+		Declaration first = new Declaration();
+		
 		String ident = identity();
-		dec.setName(ident); 
+		first.setName(ident); decs.add(first); 
+		while (la.kind == 39) {
+			Get();
+			String ident2 = identity();
+			decs.add(new Declaration(ident2, new PropertyTerm(first.getName()).toExpression())); 
+		}
 		Expect(25);
 		Expression exp = expr();
-		dec.setExpression(exp); 
+		first.setExpression(exp); 
 		if (la.kind == 56) {
 			Get();
 			Expect(57);
-			dec.setImportant(true); 
+			for (Declaration dec : decs) {
+			   dec.setImportant(true);
+			}
+			
 		}
-		return dec;
+		return decs;
 	}
 
 	FontFaceDirective  fontFaceDirective() {
 		FontFaceDirective  dir;
-		List<Declaration> declarations = new ArrayList<Declaration>(); 
+		List<Declaration> declarations = new ArrayList<Declaration>();
+		List<Declaration> mdecs;
+		
 		Expect(32);
 		Expect(21);
 		while (StartOf(5)) {
-			Declaration dec = declaration();
+			mdecs = multideclaration();
 			Expect(28);
-			declarations.add(dec); 
+			declarations.addAll(mdecs); 
 		}
 		Expect(22);
 		dir = new FontFaceDirective(declarations); 
@@ -594,6 +608,7 @@ class Parser {
 		PageDirective  dir;
 		List<Declaration> declarations = new ArrayList<Declaration>();
 		SimpleSelector ss = null;
+		List<Declaration> mdecs;
 		
 		Expect(33);
 		if (la.kind == 25) {
@@ -604,9 +619,9 @@ class Parser {
 		}
 		Expect(21);
 		while (StartOf(5)) {
-			Declaration dec = declaration();
+			mdecs = multideclaration();
 			Expect(28);
-			declarations.add(dec); 
+			declarations.addAll(mdecs); 
 		}
 		Expect(22);
 		dir = new PageDirective(ss, declarations); 
@@ -892,6 +907,22 @@ class Parser {
 			Get();
 		} else SynErr(80);
 		return dir;
+	}
+
+	Declaration  declaration() {
+		Declaration  dec;
+		dec = new Declaration(); 
+		String ident = identity();
+		dec.setName(ident); 
+		Expect(25);
+		Expression exp = expr();
+		dec.setExpression(exp); 
+		if (la.kind == 56) {
+			Get();
+			Expect(57);
+			dec.setImportant(true); 
+		}
+		return dec;
 	}
 
 	Selector  selector() {
