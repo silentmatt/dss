@@ -7,7 +7,7 @@ import com.silentmatt.dss.calc.*;
 
 COMPILER CSS3
 
-    public CSSDocument CSSDoc;
+    public DSSDocument CSSDoc;
 
         boolean partOfHex(String value) {
             if (value.length() == 7) { return false; }
@@ -115,7 +115,7 @@ PRODUCTIONS
  *--------------------------- Declarations -------------------------------*
  *------------------------------------------------------------------------*/
 
-CSS3 =                      (. CSSDoc = new CSSDocument(); .)
+CSS3 =                      (. CSSDoc = new DSSDocument(); .)
     {"<!--" | "-->"}
     {
         rule<out Rule rule> (. CSSDoc.addRule(rule); .)

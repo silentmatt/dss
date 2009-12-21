@@ -1,5 +1,6 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.css.CssDocument;
 import com.silentmatt.dss.directive.ClassDirective;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -67,7 +68,7 @@ public class DSSEvaluator {
         this.state = new EvaluationState(opts);
     }
 
-    public void evaluate(CSSDocument css) throws MalformedURLException, IOException {
+    public void evaluate(DSSDocument css) throws MalformedURLException, IOException {
         state.pushScope();
         try {
             Rule.evaluateRules(state, css.getRules());

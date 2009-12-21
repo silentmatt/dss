@@ -27,7 +27,7 @@ class Parser {
 	public Scanner scanner;
 	public ErrorReporter errors;
 
-	public CSSDocument CSSDoc;
+	public DSSDocument CSSDoc;
 
         boolean partOfHex(String value) {
             if (value.length() == 7) { return false; }
@@ -125,7 +125,7 @@ class Parser {
 	}
 	
 	void CSS3() {
-		CSSDoc = new CSSDocument(); 
+		CSSDoc = new DSSDocument(); 
 		while (la.kind == 6 || la.kind == 7) {
 			if (la.kind == 6) {
 				Get();

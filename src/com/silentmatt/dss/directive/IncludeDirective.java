@@ -1,6 +1,6 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.CSSDocument;
+import com.silentmatt.dss.DSSDocument;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
@@ -15,7 +15,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class IncludeDirective extends ExpressionDirective {
-    private CSSDocument included;
+    private DSSDocument included;
 
     public IncludeDirective(UrlTerm url) {
         super(new Expression());
@@ -35,7 +35,7 @@ public class IncludeDirective extends ExpressionDirective {
         return new URL(getURLString());
     }
 
-    public CSSDocument getIncludedDocument() {
+    public DSSDocument getIncludedDocument() {
         return included;
     }
 
@@ -47,7 +47,7 @@ public class IncludeDirective extends ExpressionDirective {
     @Override
     public void evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
         URL url = new URL(state.getBaseURL(), this.getURLString());
-        CSSDocument includedDocument = CSSDocument.parse(url.toString(), state.getErrors());
+        DSSDocument includedDocument = DSSDocument.parse(url.toString(), state.getErrors());
         if (includedDocument != null) {
             state.pushBaseURL(url);
             try {

@@ -12,23 +12,23 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
-public class CSSDocument {
+public class DSSDocument {
     private final List<Rule> rules = new ArrayList<Rule>();
 
-    public static CSSDocument parse(String url, ErrorReporter errors) throws IOException {
+    public static DSSDocument parse(String url, ErrorReporter errors) throws IOException {
         return parse(new URL(url), errors);
     }
 
-    public static CSSDocument parse(URL url, ErrorReporter errors) throws IOException {
+    public static DSSDocument parse(URL url, ErrorReporter errors) throws IOException {
         return parse(url.openStream(), errors);
     }
 
-    public static CSSDocument parse(InputStream input, ErrorReporter errors) throws IOException {
+    public static DSSDocument parse(InputStream input, ErrorReporter errors) throws IOException {
         Scanner scanner = new Scanner(input);
         return parse(scanner, errors);
     }
 
-    public static CSSDocument parse(Scanner scanner, ErrorReporter errors) {
+    public static DSSDocument parse(Scanner scanner, ErrorReporter errors) {
         DSSParser parser = new DSSParser(scanner);
         parser.setErrors(errors);
         parser.parse();

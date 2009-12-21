@@ -1,6 +1,6 @@
 package com.silentmatt.dss.parser;
 
-import com.silentmatt.dss.CSSDocument;
+import com.silentmatt.dss.DSSDocument;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.ErrorReporter;
 import com.silentmatt.dss.ExceptionErrorReporter;
@@ -35,7 +35,7 @@ public class DSSParser {
         parser.Parse();
     }
 
-    public CSSDocument getDocument() {
+    public DSSDocument getDocument() {
         return parser.CSSDoc;
     }
 
@@ -52,11 +52,11 @@ public class DSSParser {
         return parser;
     }
 
-    public static CSSDocument parseDocument(String text) {
+    public static DSSDocument parseDocument(String text) {
         return parseDocument(text, null);
     }
 
-    public static CSSDocument parseDocument(String text, ErrorReporter errors) {
+    public static DSSDocument parseDocument(String text, ErrorReporter errors) {
         Parser parser = getParser(text, errors);
         parser.CSS3();
         parser.Expect(0);

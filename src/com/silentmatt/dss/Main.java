@@ -138,7 +138,7 @@ public final class Main {
 
         if (url != null) {
             try {
-                CSSDocument css = CSSDocument.parse(url, errors);
+                DSSDocument css = DSSDocument.parse(url, errors);
                 if (css != null) {
 
                     new DSSEvaluator(opts).evaluate(css);
