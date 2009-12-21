@@ -1,8 +1,6 @@
 package com.silentmatt.dss;
 
-import com.silentmatt.dss.css.CssCombinator;
 import com.silentmatt.dss.css.CssSelector;
-import com.silentmatt.dss.css.CssSimpleSelector;
 import com.silentmatt.dss.util.JoinedList;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,26 +18,8 @@ public class Selector {
     public CssSelector evaluate() {
         CssSelector result = new CssSelector();
 
-        if (parents != null) {
-            for (SimpleSelector ss : parents.getSimpleSelectors()) {
-                result.getSimpleSelectors().add(ss.evaluate());
-            }
-
-            boolean first = true;
-            for (SimpleSelector ss : children.getSimpleSelectors()) {
-                if (first && combinator != null) {
-                    CssSimpleSelector toAppend = ss.evaluate();
-                    toAppend.setCombinator(CssCombinator.fromDss(combinator));
-                    result.getSimpleSelectors().add(toAppend);
-                }
-                first = false;
-                result.getSimpleSelectors().add(ss.evaluate());
-            }
-        }
-        else {
-            for (SimpleSelector ss : simpleSelectors) {
-               result.getSimpleSelectors().add(ss.evaluate());
-            }
+        for (SimpleSelector ss : getActualSimpleSelectors()) {
+           result.getSimpleSelectors().add(ss.evaluate());
         }
 
         return result;
@@ -61,6 +41,36 @@ public class Selector {
 
     public List<SimpleSelector> getSimpleSelectors() {
         return simpleSelectors;
+    }
+
+    private List<SimpleSelector> getActualSimpleSelectors() {
+        List<SimpleSelector> result = new ArrayList<SimpleSelector>();
+
+        if (parents != null) {
+            for (SimpleSelector ss : parents.getActualSimpleSelectors()) {
+                result.add(ss.clone());
+            }
+
+            boolean first = true;
+            for (SimpleSelector ss : children.getSimpleSelectors()) {
+                if (first && combinator != null) {
+                    SimpleSelector toAppend = ss.clone();
+                    toAppend.setCombinator(combinator);
+                    result.add(toAppend);
+                }
+                else {
+                    result.add(ss.clone());
+                }
+                first = false;
+            }
+        }
+        else {
+            for (SimpleSelector ss : simpleSelectors) {
+               result.add(ss);
+            }
+        }
+
+        return result;
     }
 
     @Override

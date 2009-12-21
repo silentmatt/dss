@@ -7,7 +7,7 @@ import com.silentmatt.dss.css.CssSimpleSelector;
  *
  * @author Matthew Crumley
  */
-public class SimpleSelector {
+public class SimpleSelector implements Cloneable {
     // XXX: There was FunctionTerm function after attributes, but it was never used.
     private Combinator combinator;
     private String elementName;
@@ -26,6 +26,19 @@ public class SimpleSelector {
         result.setPseudo(pseudo);
         result.setAttribute(attribute != null ? attribute.evaluate() : null);
         result.setChild(child != null ? child.evaluate() : null);
+        return result;
+    }
+
+    @Override
+    public SimpleSelector clone() {
+        SimpleSelector result = new SimpleSelector();
+        result.setCombinator(combinator);
+        result.setElementName(elementName);
+        result.setID(id);
+        result.setClassName(className);
+        result.setPseudo(pseudo);
+        result.setAttribute(attribute);
+        result.setChild(child);
         return result;
     }
 

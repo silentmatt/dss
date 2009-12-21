@@ -34,8 +34,11 @@ public class CssRuleList extends CssRule {
     public String toString(int nesting) {
         StringBuilder sb = new StringBuilder();
         for (CssRule r : rules) {
-            sb.append(r.toString(nesting)).append('\n');
+            String toAppend = r.toString(nesting);
+            if (toAppend.length() > 0) {
+                sb.append('\n').append(toAppend);
+            }
         }
-        return sb.toString();
+        return sb.length() > 0 ? sb.substring(1).toString() : "";
     }
 }

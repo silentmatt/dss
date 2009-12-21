@@ -2,6 +2,7 @@ package com.silentmatt.dss;
 
 import com.martiansoftware.jsap.*;
 import com.martiansoftware.jsap.stringparsers.FileStringParser;
+import com.silentmatt.dss.css.CssDocument;
 import com.silentmatt.dss.parser.DSSParser;
 import java.io.File;
 import java.io.IOException;
@@ -141,14 +142,15 @@ public final class Main {
                 DSSDocument css = DSSDocument.parse(url, errors);
                 if (css != null) {
 
-                    new DSSEvaluator(opts).evaluate(css);
+                    CssDocument outputDocument = new DSSEvaluator(opts).evaluate(css);
 
                     String cssString;
                     if (config.getBoolean("debug")) {
                         cssString = css.toString();
                     }
                     else {
-                        cssString = css.toCssString();
+                        //cssString = css.toCssString();
+                        cssString = outputDocument.toString();
                     }
 
                     if (out == null) {

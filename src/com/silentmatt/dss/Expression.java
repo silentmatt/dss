@@ -76,10 +76,13 @@ public class Expression {
     }
 
     public CssExpression evaluate(EvaluationState state, DeclarationList container) {
-        Expression newValue = substituteValues(state, container, true, true);
+        // TODO: should doCalculations be true?
+        Expression newValue = substituteValues(state, container, state.getParameters() != null, true);
         CssExpression result = new CssExpression();
         for (Term t : newValue.getTerms()) {
-            result.getTerms().add(new CssTerm(t.toString()));
+            CssTerm cssTerm = new CssTerm(t.toString());
+            cssTerm.setSeperator(t.getSeperator());
+            result.getTerms().add(cssTerm);
         }
         return result;
     }

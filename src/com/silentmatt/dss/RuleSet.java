@@ -176,6 +176,6 @@ public class RuleSet extends Rule {
             state.popScope();
         }
 
-        return result;
+        return result.getRules().size() == 1 ? result.getRules().get(0) : result;
     }
 }
