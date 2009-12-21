@@ -3,6 +3,8 @@ package com.silentmatt.dss.directive;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.css.CssFontFaceDirective;
+import com.silentmatt.dss.css.CssRule;
 import java.util.List;
 
 /**
@@ -19,7 +21,7 @@ public class FontFaceDirective extends DeclarationDirective {
     }
 
     @Override
-    public void evaluate(EvaluationState state, List<Rule> container) {
-        getDeclarations().evaluateStyle(state, true);
+    public CssRule evaluate(EvaluationState state, List<Rule> container) {
+        return new CssFontFaceDirective(getDeclarations().evaluateStyle(state, true));
     }
 }

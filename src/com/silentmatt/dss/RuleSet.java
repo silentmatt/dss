@@ -1,6 +1,8 @@
 package com.silentmatt.dss;
 
-import com.silentmatt.dss.util.JoinedList;
+import com.silentmatt.dss.css.CssRule;
+import com.silentmatt.dss.css.CssRuleList;
+import com.silentmatt.dss.css.CssRuleSet;
 import com.silentmatt.dss.util.JoinedSelectorList;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -151,19 +153,29 @@ public class RuleSet extends Rule {
     }
 
     @Override
-    public void evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
+    public CssRule evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
+        CssRuleList result = new CssRuleList();
         state.pushScope();
         try {
             for (Rule dir : this.getRules()) {
                 dir.evaluate(state, null);
             }
-            this.getDeclarations().evaluateStyle(state, true);
+
+            CssRuleSet crs = new CssRuleSet();
+            for (Selector s : getSelectors()) {
+                crs.getSelectors().add(s.evaluate());
+            }
+            crs.addDeclarations(this.getDeclarations().evaluateStyle(state, true));
+            result.addRule(crs);
+
             for (RuleSet rs : this.getNestedRuleSets()) {
-                rs.evaluate(state, null);
+                result.addRule(rs.evaluate(state, null));
             }
         }
         finally {
             state.popScope();
         }
+
+        return result;
     }
 }

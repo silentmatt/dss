@@ -1,5 +1,7 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.css.CssExpression;
+import com.silentmatt.dss.css.CssTerm;
 import com.silentmatt.dss.term.Term;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,5 +73,14 @@ public class Expression {
         }
 
         return newValue;
+    }
+
+    public CssExpression evaluate(EvaluationState state, DeclarationList container) {
+        Expression newValue = substituteValues(state, container, true, true);
+        CssExpression result = new CssExpression();
+        for (Term t : newValue.getTerms()) {
+            result.getTerms().add(new CssTerm(t.toString()));
+        }
+        return result;
     }
 }

@@ -3,6 +3,8 @@ package com.silentmatt.dss.directive;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.bool.BooleanExpression;
+import com.silentmatt.dss.css.CssRule;
+import com.silentmatt.dss.css.CssRuleList;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
@@ -81,7 +83,7 @@ public class IfDirective extends Rule {
     }
 
     @Override
-    public void evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
+    public CssRule evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
         Boolean result = condition.evaluate(state, null);
         if (result == null) {
             state.getErrors().SemErr("Invalid condition: " + condition);
@@ -89,7 +91,13 @@ public class IfDirective extends Rule {
         rules = result ? ifRules : elseRules;
 
         if (rules != null) {
-            Rule.evaluateRules(state, rules);
+            CssRuleList crl = new CssRuleList();
+            List<CssRule> ruleList = Rule.evaluateRules(state, rules);
+            for (CssRule r : ruleList) {
+                crl.addRule(r);
+            }
+            return crl;
         }
+        return null;
     }
 }

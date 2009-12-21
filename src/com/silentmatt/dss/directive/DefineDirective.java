@@ -6,6 +6,7 @@ import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.Scope;
+import com.silentmatt.dss.css.CssRule;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ public class DefineDirective extends DeclarationDirective {
     }
 
     @Override
-    public void evaluate(EvaluationState state, List<Rule> container) {
+    public CssRule evaluate(EvaluationState state, List<Rule> container) {
         DeclarationList properties = getDeclarations();
         properties.evaluateStyle(state, true);
 
@@ -48,5 +49,6 @@ public class DefineDirective extends DeclarationDirective {
             Declaration property = properties.get(i);
             scope.declare(property.getName(), property.getExpression());
         }
+        return null;
     }
 }

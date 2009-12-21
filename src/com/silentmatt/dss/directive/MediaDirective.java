@@ -3,8 +3,12 @@ package com.silentmatt.dss.directive;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Medium;
 import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.css.CssMediaDirective;
+import com.silentmatt.dss.css.CssMedium;
+import com.silentmatt.dss.css.CssRule;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -92,10 +96,14 @@ public class MediaDirective extends Rule {
     }
 
     @Override
-    public void evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
+    public CssRule evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
         state.pushScope();
         try {
-            Rule.evaluateRules(state, getRules());
+            List<CssMedium> media = new ArrayList<CssMedium>();
+            for (Medium m : mediums) {
+                media.add(CssMedium.valueOf(m.toString()));
+            }
+            return new CssMediaDirective(media, Rule.evaluateRules(state, getRules()));
         }
         finally {
             state.popScope();

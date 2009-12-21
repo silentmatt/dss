@@ -1,7 +1,9 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.css.CssRule;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,12 +23,19 @@ public abstract class Rule {
         return new String(chars);
     }
 
-    public abstract void evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException;
+    public abstract CssRule evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException;
 
-    public static void evaluateRules(EvaluationState state, List<Rule> rules) throws MalformedURLException, IOException {
+    public static List<CssRule> evaluateRules(EvaluationState state, List<Rule> rules) throws MalformedURLException, IOException {
+        List<CssRule> result = new ArrayList<CssRule>();
+
         for (int i = 0; i < rules.size(); i++) {
             Rule rule = rules.get(i);
-            rule.evaluate(state, rules);
+            CssRule r = rule.evaluate(state, rules);
+            if (r != null) {
+                result.add(r);
+            }
         }
+
+        return result;
     }
 }

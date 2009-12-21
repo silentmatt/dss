@@ -4,6 +4,10 @@ import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Medium;
 import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.css.CssImportDirective;
+import com.silentmatt.dss.css.CssMedium;
+import com.silentmatt.dss.css.CssRule;
+import com.silentmatt.dss.css.CssTerm;
 import com.silentmatt.dss.term.UrlTerm;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -40,8 +44,8 @@ public class ImportDirective extends ExpressionDirective {
     }
 
     @Override
-    public void evaluate(EvaluationState state, List<Rule> container) {
-        // Do nothing
+    public CssRule evaluate(EvaluationState state, List<Rule> container) {
+        return new CssImportDirective(new CssTerm(getExpression().toString()), CssMedium.valueOf(medium.toString()));
     }
 
 }

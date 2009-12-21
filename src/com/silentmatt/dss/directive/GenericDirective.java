@@ -6,6 +6,11 @@ import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Medium;
 import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.css.CssGenericDirective;
+import com.silentmatt.dss.css.CssMedium;
+import com.silentmatt.dss.css.CssRule;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,8 +121,20 @@ public class GenericDirective extends Rule {
     }
 
     @Override
-    public void evaluate(EvaluationState state, List<Rule> container) {
-        // Do nothing
+    public CssRule evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
+        CssGenericDirective result = new CssGenericDirective();
+
+        result.getDeclarations().addAll(declarations.evaluateStyle(state, true));
+        for (Rule r : rules) {
+            result.addRule(r.evaluate(state, container));
+        }
+        for (Medium m : mediums) {
+            result.addMedium(CssMedium.valueOf(m.toString()));
+        }
+        result.setName(name);
+        result.setExpression(expression.evaluate(state, declarations));
+
+        return result;
     }
 
 }

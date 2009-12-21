@@ -4,6 +4,9 @@ import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.SimpleSelector;
+import com.silentmatt.dss.css.CssPageDirective;
+import com.silentmatt.dss.css.CssRule;
+import com.silentmatt.dss.css.CssSimpleSelector;
 import java.util.List;
 
 /**
@@ -40,7 +43,9 @@ public class PageDirective extends DeclarationDirective {
     }
 
     @Override
-    public void evaluate(EvaluationState state, List<Rule> container) {
-        getDeclarations().evaluateStyle(state, true);
+    public CssRule evaluate(EvaluationState state, List<Rule> container) {
+        CssSimpleSelector pseudo = new CssSimpleSelector();
+        pseudo.setPseudo(selector.toString().replaceFirst(":", ""));
+        return new CssPageDirective(pseudo, getDeclarations().evaluateStyle(state, true));
     }
 }

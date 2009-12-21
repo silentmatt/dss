@@ -4,6 +4,7 @@ import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.css.CssRule;
 import java.util.List;
 
 /**
@@ -74,8 +75,9 @@ public class ClassDirective extends DeclarationDirective {
     }
 
     @Override
-    public void evaluate(EvaluationState state, List<Rule> container) {
+    public CssRule evaluate(EvaluationState state, List<Rule> container) {
         getDeclarations().evaluateStyle(state, false);
         state.getClasses().declare(className, this);
+        return null;
     }
 }

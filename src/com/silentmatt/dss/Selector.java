@@ -1,5 +1,8 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.css.CssCombinator;
+import com.silentmatt.dss.css.CssSelector;
+import com.silentmatt.dss.css.CssSimpleSelector;
 import com.silentmatt.dss.util.JoinedList;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,34 @@ public class Selector {
     private final Combinator combinator;
     private final Selector parents;
     private final Selector children;
+
+    public CssSelector evaluate() {
+        CssSelector result = new CssSelector();
+
+        if (parents != null) {
+            for (SimpleSelector ss : parents.getSimpleSelectors()) {
+                result.getSimpleSelectors().add(ss.evaluate());
+            }
+
+            boolean first = true;
+            for (SimpleSelector ss : children.getSimpleSelectors()) {
+                if (first && combinator != null) {
+                    CssSimpleSelector toAppend = ss.evaluate();
+                    toAppend.setCombinator(CssCombinator.fromDss(combinator));
+                    result.getSimpleSelectors().add(toAppend);
+                }
+                first = false;
+                result.getSimpleSelectors().add(ss.evaluate());
+            }
+        }
+        else {
+            for (SimpleSelector ss : simpleSelectors) {
+               result.getSimpleSelectors().add(ss.evaluate());
+            }
+        }
+
+        return result;
+    }
 
     public Selector() {
         simpleSelectors = new JoinedList<SimpleSelector>(new ArrayList<SimpleSelector>(), new ArrayList<SimpleSelector>());

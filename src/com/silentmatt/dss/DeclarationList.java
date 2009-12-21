@@ -1,5 +1,6 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.css.CssDeclaration;
 import com.silentmatt.dss.directive.ClassDirective;
 import com.silentmatt.dss.term.ClassReferenceTerm;
 import com.silentmatt.dss.term.Term;
@@ -180,7 +181,10 @@ public class DeclarationList implements List<Declaration> {
         }
     }
 
-    public void evaluateStyle(EvaluationState state, boolean doCalculations) {
+    // FIXME: this modifies this.list
+    public List<CssDeclaration> evaluateStyle(EvaluationState state, boolean doCalculations) {
+        List<CssDeclaration> result = new ArrayList<CssDeclaration>();
+
         state.pushScope();
         try {
             DeclarationList newList = new DeclarationList();
@@ -201,6 +205,11 @@ public class DeclarationList implements List<Declaration> {
         finally {
             state.popScope();
         }
+
+        for (Declaration d : list) {
+            result.add(new CssDeclaration(d.getName(), d.getExpression().evaluate(state, this), d.isImportant()));
+        }
+        return result;
     }
 
     // Map methods

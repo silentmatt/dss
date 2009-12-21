@@ -1,5 +1,7 @@
 package com.silentmatt.dss.css;
 
+import com.silentmatt.dss.AttributeOperator;
+
 /**
  * Specifies the type of comparison for an {@link Attribute} selector.
  *
@@ -44,5 +46,24 @@ public enum CssAttributeOperator {
     @Override
     public String toString() {
         return cssText;
+    }
+
+    public static CssAttributeOperator fromDss(AttributeOperator op) {
+        switch (op) {
+        case BeginsWith:
+            return BeginsWith;
+        case Contains:
+            return Contains;
+        case EndsWith:
+            return EndsWith;
+        case Equals:
+            return Equals;
+        case Hyphenated:
+            return Hyphenated;
+        case InList:
+            return InList;
+        default:
+            return null;
+        }
     }
 }

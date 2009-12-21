@@ -1,5 +1,7 @@
 package com.silentmatt.dss.css;
 
+import com.silentmatt.dss.Combinator;
+
 /**
  * Specifies the type relationship between {@link SimpleSelector}s (child, sibling, etc.).
  * The Combinator is attached to the right-hand selector.
@@ -31,5 +33,18 @@ public enum CssCombinator {
     @Override
     public String toString() {
         return this.cssText;
+    }
+
+    public static CssCombinator fromDss(Combinator c) {
+        switch (c) {
+        case ChildOf:
+            return ChildOf;
+        case PrecededBy:
+            return PrecededBy;
+        case PrecededImmediatelyBy:
+            return PrecededImmediatelyBy;
+        default:
+            return null;
+        }
     }
 }

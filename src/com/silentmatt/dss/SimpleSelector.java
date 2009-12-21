@@ -1,5 +1,8 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.css.CssCombinator;
+import com.silentmatt.dss.css.CssSimpleSelector;
+
 /**
  *
  * @author Matthew Crumley
@@ -13,6 +16,18 @@ public class SimpleSelector {
     private String pseudo;
     private Attribute attribute;
     private SimpleSelector child;
+
+    public CssSimpleSelector evaluate() {
+        CssSimpleSelector result = new CssSimpleSelector();
+        result.setCombinator(combinator != null ? CssCombinator.fromDss(combinator) : null);
+        result.setElementName(elementName);
+        result.setID(id);
+        result.setClassName(className);
+        result.setPseudo(pseudo);
+        result.setAttribute(attribute != null ? attribute.evaluate() : null);
+        result.setChild(child != null ? child.evaluate() : null);
+        return result;
+    }
 
     public Combinator getCombinator() {
         return combinator;

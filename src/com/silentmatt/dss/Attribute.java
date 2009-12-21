@@ -1,5 +1,8 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.css.CssAttribute;
+import com.silentmatt.dss.css.CssAttributeOperator;
+
 /**
  * Represents an attribute selector.
  * Attribute selectors look like this: "[attr=value]".
@@ -11,6 +14,13 @@ public class Attribute {
     private AttributeOperator operator;
     private String value;
 
+    public CssAttribute evaluate() {
+        CssAttribute result = new CssAttribute();
+        result.setOperand(operand);
+        result.setOperator(CssAttributeOperator.fromDss(operator));
+        result.setValue(value);
+        return result;
+    }
     /**
      * Gets the operand (attribute name).
      *

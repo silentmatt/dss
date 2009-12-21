@@ -3,6 +3,9 @@ package com.silentmatt.dss.directive;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.css.CssNamespaceDirective;
+import com.silentmatt.dss.css.CssRule;
+import com.silentmatt.dss.css.CssTerm;
 import com.silentmatt.dss.term.UrlTerm;
 import java.util.List;
 
@@ -29,7 +32,7 @@ public class NamespaceDirective extends ExpressionDirective {
     }
 
     @Override
-    public void evaluate(EvaluationState state, List<Rule> container) {
-        // Do nothing
+    public CssRule evaluate(EvaluationState state, List<Rule> container) {
+        return new CssNamespaceDirective(prefix, new CssTerm(getExpression().toString()));
     }
 }

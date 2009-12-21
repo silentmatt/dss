@@ -1,11 +1,13 @@
 package com.silentmatt.dss;
 
 import com.silentmatt.dss.css.CssDocument;
+import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.directive.ClassDirective;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DSSEvaluator {
@@ -68,10 +70,12 @@ public class DSSEvaluator {
         this.state = new EvaluationState(opts);
     }
 
-    public void evaluate(DSSDocument css) throws MalformedURLException, IOException {
+    public CssDocument evaluate(DSSDocument css) throws MalformedURLException, IOException {
+        CssDocument document = new CssDocument();
         state.pushScope();
         try {
-            Rule.evaluateRules(state, css.getRules());
+            document.getRules().addAll(Rule.evaluateRules(state, css.getRules()));
+            return document;
         }
         finally {
             state.popScope();

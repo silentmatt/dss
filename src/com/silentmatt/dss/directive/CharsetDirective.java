@@ -3,6 +3,9 @@ package com.silentmatt.dss.directive;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.css.CssCharsetDirective;
+import com.silentmatt.dss.css.CssRule;
+import com.silentmatt.dss.css.CssTerm;
 import com.silentmatt.dss.term.Term;
 import java.util.List;
 
@@ -22,7 +25,7 @@ public class CharsetDirective extends ExpressionDirective {
     }
 
     @Override
-    public void evaluate(EvaluationState state, List<Rule> container) {
-        // Do nothing
+    public CssRule evaluate(EvaluationState state, List<Rule> container) {
+        return new CssCharsetDirective(new CssTerm(getExpression().toString()));
     }
 }
