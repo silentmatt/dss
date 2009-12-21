@@ -29,10 +29,11 @@ public class DSSDocument {
     }
 
     public static DSSDocument parse(Scanner scanner, ErrorReporter errors) {
+        int existingErrors = errors.getErrorCount();
         DSSParser parser = new DSSParser(scanner);
         parser.setErrors(errors);
         parser.parse();
-        if (parser.getErrors().getErrorCount() > 0) {
+        if (parser.getErrors().getErrorCount() > existingErrors) {
             return null;
         }
         else {

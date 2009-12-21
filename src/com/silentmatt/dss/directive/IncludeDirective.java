@@ -5,6 +5,7 @@ import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssRule;
+import com.silentmatt.dss.css.CssRuleList;
 import com.silentmatt.dss.term.UrlTerm;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -47,6 +48,7 @@ public class IncludeDirective extends ExpressionDirective {
 
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
+        CssRule result = null;
         URL url = new URL(state.getBaseURL(), this.getURLString());
         DSSDocument includedDocument = DSSDocument.parse(url.toString(), state.getErrors());
         if (includedDocument != null) {
@@ -54,7 +56,7 @@ public class IncludeDirective extends ExpressionDirective {
             try {
                 // Evaluate the first rule, since it's in the same index as the include
                 if (includedDocument.getRules().size() > 0) {
-                    Rule.evaluateRules(state, includedDocument.getRules().subList(0, 1));
+                    result = new CssRuleList(Rule.evaluateRules(state, includedDocument.getRules().subList(0, 1)));
                 }
                 this.included = includedDocument;
             }
@@ -71,6 +73,6 @@ public class IncludeDirective extends ExpressionDirective {
                 }
             }
         }
-        return null;
+        return result;
     }
 }

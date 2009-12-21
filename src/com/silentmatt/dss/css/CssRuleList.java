@@ -10,6 +10,13 @@ import java.util.List;
 public class CssRuleList extends CssRule {
     private final List<CssRule> rules = new ArrayList<CssRule>();
 
+    public CssRuleList() {
+    }
+
+    public CssRuleList(List<CssRule> list) {
+        rules.addAll(list);
+    }
+
     public void addRule(CssRule r) {
         rules.add(r);
     }
