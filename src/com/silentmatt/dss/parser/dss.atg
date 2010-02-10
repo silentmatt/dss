@@ -593,9 +593,18 @@ term<out Term trm> =                        (.  String val = "";
                                                 Declaration dec;
                                                 trm = cls;
                                             .)
-                [ declaration<out dec>      (.  cls.addArgument(dec); .)
+                [ ( declaration<out dec>    (.  cls.addArgument(dec); .)
+                    |
+                    expr<out Expression arg>
+                                            (.  cls.addArgument(new Declaration("", arg)); .)
+                  )
                   { ';'
-                    declaration<out dec>    (.  cls.addArgument(dec); .) }
+                    ( declaration<out dec>  (.  cls.addArgument(dec); .)
+                      |
+                      expr<out Expression arg>
+                                            (.  cls.addArgument(new Declaration("", arg)); .)
+                    )
+                  }
                 ]
             '>')
         ]

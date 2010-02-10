@@ -151,9 +151,34 @@ public class DeclarationList implements List<Declaration> {
                 state.getParameters().declare(param.getName(), param.getExpression());
             }
             // Arguments
+            int argNumber = 0;
             for (Declaration arg : classReference.getArguments()) {
-                if (state.getParameters().declaresKey(arg.getName())) {
-                    state.getParameters().put(arg.getName(), arg.getExpression());
+                String paramName = arg.getName();
+                if (paramName.isEmpty()) {
+                    if (argNumber < 0) {
+                        state.getErrors().SemErr("Positional arguments cannot follow named arguments in " + className);
+                        return;
+                    }
+                    // TODO: Don't call this every time (we already called it before the loop)
+                    DeclarationList formalParameters = clazz.getParameters(classReference.getArguments());
+                    if (argNumber < formalParameters.size()) {
+                        paramName = formalParameters.get(argNumber).getName();
+                    }
+                    else {
+                        state.getErrors().Warning("Too many arguments to class '" + className + "'");
+                        continue;
+                    }
+                    ++argNumber;
+                }
+                else {
+                    argNumber = -1;
+                }
+
+                if (state.getParameters().declaresKey(paramName)) {
+                    state.getParameters().put(paramName, arg.getExpression());
+                }
+                else {
+                    state.getErrors().Warning(className + " does not have a parameter '" + arg.getName() + "'");
                 }
             }
 
