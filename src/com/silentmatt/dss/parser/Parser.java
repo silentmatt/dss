@@ -46,6 +46,9 @@ class Parser {
             List<String> units = Arrays.asList(new String[] { "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz" });
             return units.contains(la.val);
         }
+        boolean isDeclaration() {
+            return la.kind == _ident && scanner.Peek().val.equals(":");
+        }
 
 /*------------------------------------------------------------------------*
  *----- SCANNER DESCRIPTION ----------------------------------------------*
@@ -778,7 +781,7 @@ class Parser {
 					trm = cls;
 					
 					if (StartOf(9)) {
-						if (StartOf(5)) {
+						if (isDeclaration()) {
 							dec = declaration();
 							cls.addArgument(dec); 
 						} else {
@@ -787,7 +790,7 @@ class Parser {
 						}
 						while (la.kind == 28) {
 							Get();
-							if (StartOf(5)) {
+							if (isDeclaration()) {
 								dec = declaration();
 								cls.addArgument(dec); 
 							} else if (StartOf(9)) {
