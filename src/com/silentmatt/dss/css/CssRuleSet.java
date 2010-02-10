@@ -53,6 +53,9 @@ public class CssRuleSet extends CssRule {
     }
 
     public String toString(int nesting) {
+        if (declarations.isEmpty()) {
+            return "";
+        }
         String start = CssRule.getIndent(nesting);
 
         StringBuilder txt = new StringBuilder();
