@@ -143,11 +143,13 @@ public class DeclarationList implements List<Declaration> {
             properties.add(new Declaration(prop.getName(), prop.getExpression(), prop.isImportant()));
         }
 
+        DeclarationList formalParameters = clazz.getParameters(classReference.getArguments());
+
         // Fill in the parameter values
         state.pushParameters();
         try {
             // Defaults
-            for (Declaration param : clazz.getParameters(classReference.getArguments())) {
+            for (Declaration param : formalParameters) {
                 state.getParameters().declare(param.getName(), param.getExpression());
             }
             // Arguments
@@ -159,8 +161,6 @@ public class DeclarationList implements List<Declaration> {
                         state.getErrors().SemErr("Positional arguments cannot follow named arguments in " + className);
                         return;
                     }
-                    // TODO: Don't call this every time (we already called it before the loop)
-                    DeclarationList formalParameters = clazz.getParameters(classReference.getArguments());
                     if (argNumber < formalParameters.size()) {
                         paramName = formalParameters.get(argNumber).getName();
                     }
