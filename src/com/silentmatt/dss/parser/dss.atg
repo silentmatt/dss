@@ -29,6 +29,16 @@ COMPILER CSS3
         boolean isDeclaration() {
             return la.kind == _ident && scanner.Peek().val.equals(":");
         }
+        boolean isNestedSelector() {
+            Token next = la;
+            while (!next.val.equals(";")) {
+                if (next.val.equals("{")) {
+                    return true;
+                }
+                next = scanner.Peek();
+            }
+            return false;
+        }
 
 /*------------------------------------------------------------------------*
  *----- SCANNER DESCRIPTION ----------------------------------------------*
@@ -363,17 +373,19 @@ ruleset<out RuleSet rset> =                  (.  rset = new RuleSet();
     }
     '{'
         {
-            multideclaration<out decs> ';'   (.  rset.addDeclarations(decs); .)
+            IF (!isNestedSelector()) multideclaration<out decs> ';'
+                                             (.  rset.addDeclarations(decs); .)
             |
             classDirective<out dir>          (.  rset.addRule(dir); .)
             |
             defineDirective<out dir>         (.  rset.addRule(dir); .)
             |
-            ( '&'                            (.  cb = null; .)
+                                             (.  cb = null; .)
+            [ '&'                            (.  cb = null; .) /* For backward compatibility */
             | '+'                            (.  cb = Combinator.PrecededImmediatelyBy; .)
             | '>'                            (.  cb = Combinator.ChildOf; .)
             | '~'                            (.  cb = Combinator.PrecededBy; .)
-            ) ruleset<out RuleSet nested>    (.  rset.addNestedRuleSet(nested, cb); .)
+            ] ruleset<out RuleSet nested>    (.  rset.addNestedRuleSet(nested, cb); .)
         }
     '}'
 .
