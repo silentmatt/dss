@@ -59,23 +59,6 @@ class Parser {
             }
             return false;
         }
-        boolean isMultiDeclaration() {
-            Token next = la;
-            boolean even = true;
-            while (true) {
-                if (even && next.kind != _ident) {
-                    return false;
-                }
-                if (!even && next.val.equals(":")) {
-                    return true;
-                }
-                if (!even && !next.val.equals(",")) {
-                    return false;
-                }
-                next = scanner.Peek();
-                even = !even;
-            }
-        }
 
 /*------------------------------------------------------------------------*
  *----- SCANNER DESCRIPTION ----------------------------------------------*
