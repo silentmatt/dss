@@ -96,4 +96,19 @@ public class Selector {
         }
         return txt.toString();
     }
+
+    public static String join(Iterable<Selector> selectors) {
+        boolean first = true;
+        StringBuilder sb = new StringBuilder();
+        for (Selector sel : selectors) {
+            if (first) {
+                first = false;
+            }
+            else {
+                sb.append(", ");
+            }
+            sb.append(sel.toString());
+        }
+        return sb.toString();
+    }
 }

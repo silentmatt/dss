@@ -5,7 +5,6 @@ import com.silentmatt.dss.css.CssRuleList;
 import com.silentmatt.dss.css.CssRuleSet;
 import com.silentmatt.dss.util.JoinedSelectorList;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -15,55 +14,101 @@ import java.util.Stack;
  * @author Matthew Crumley
  */
 public class RuleSet extends Rule {
-    private final List<Rule> rules = new ArrayList<Rule>();
-    private final DeclarationList declarations = new DeclarationList();
-    private JoinedSelectorList selectors = new JoinedSelectorList(new ArrayList<Selector>(), null, new ArrayList<Selector>());
-    private final List<RuleSet> nestedRuleSets = new ArrayList<RuleSet>();
+    private final List<Selector> selectors;
+    private final List<Rule> rules;
+    private final DeclarationBlock declarationBlock;
 
-    public DeclarationList getDeclarations() {
-        return declarations;
+    public RuleSet(List<Selector> selectors, DeclarationBlock block, List<Rule> rules) {
+        this.declarationBlock = block;
+        this.selectors = selectors;
+        this.rules = rules;
     }
 
-    public void addDeclarations(List<Declaration> declarations) {
-        for (Declaration declaration : declarations) {
-            this.declarations.add(declaration);
-        }
+    public RuleSet(List<Selector> selectors, DeclarationBlock block) {
+        this(selectors, block, new ArrayList<Rule>());
+    }
+
+     public RuleSet() {
+        this(new ArrayList<Selector>(), new DeclarationBlock(), new ArrayList<Rule>());
+    }
+
+    public DeclarationBlock getDeclarationBlock() {
+        return declarationBlock;
     }
 
     public List<Selector> getSelectors() {
         return selectors;
     }
 
-    public List<Rule> getRules() {
-        return rules;
+    public void addDeclarations(List<Declaration> declarations) {
+        declarationBlock.addDeclarations(declarations);
+    }
+
+    public void addNestedRuleSet(Combinator cb, RuleSet nested) {
+        declarationBlock.addNestedRuleSet(cb, nested);
+    }
+
+    public void addNestedRuleSet(NestedRuleSet nested) {
+        declarationBlock.addNestedRuleSet(nested);
     }
 
     public void addRule(Rule directive) {
         rules.add(directive);
     }
 
-    public Declaration getDeclaration(String name) {
-        for (Declaration d : declarations) {
-            if (d.getName().equalsIgnoreCase(name)) {
-                return d;
+    @Override
+    public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException{
+        CssRuleList result = new CssRuleList();
+        state.pushScope();
+        try {
+            for (Rule dir : this.getRules()) {
+                dir.evaluate(state, null);
+            }
+
+            CssRuleSet crs = new CssRuleSet();
+            for (Selector s : getSelectors()) {
+                crs.getSelectors().add(s.evaluate());
+            }
+
+            DeclarationBlock resultBlock = declarationBlock.evaluateStyle(state, true);
+
+            // TODO: This is already evaluated, we just need to convert it to CSS...
+            crs.addDeclarations(resultBlock.getDeclarations().evaluateStyle(state, true));
+
+            result.addRule(crs);
+
+            for (NestedRuleSet rs : resultBlock.getNestedRuleSets()) {
+                List<Selector> joinedSelectors = new JoinedSelectorList(getSelectors(), rs.getCombinator(), rs.getSelectors());
+                RuleSet finalRuleSet = new RuleSet(joinedSelectors, rs.getDeclarationBlock());
+                //result.addRule(new NestedRuleSet(getSelectors(), rs.getCombinator(), rs).evaluate(state, null));
+                result.addRule(finalRuleSet.evaluate(state, container));
             }
         }
-        return null;
+        finally {
+            state.popScope();
+        }
+
+        return result.getRules().size() == 1 ? result.getRules().get(0) : result;
+    }
+
+    public Declaration getDeclaration(String name) {
+        return declarationBlock.getDeclaration(name);
+    }
+
+    public DeclarationList getDeclarations() {
+        return declarationBlock.getDeclarations();
+    }
+
+    public List<NestedRuleSet> getNestedRuleSets() {
+        return declarationBlock.getNestedRuleSets();
+    }
+
+    public List<Rule> getRules() {
+        return rules;
     }
 
     public Expression getValue(String name) {
-        return declarations.get(name);
-    }
-
-    public List<RuleSet> getNestedRuleSets() {
-        return nestedRuleSets;
-    }
-
-    public void addNestedRuleSet(RuleSet nested, Combinator cb) {
-        nestedRuleSets.add(nested);
-
-        nested.selectors.setParents(selectors);
-        nested.selectors.setCombinator(cb);
+        return declarationBlock.getValue(name);
     }
 
     @Override
@@ -74,29 +119,16 @@ public class RuleSet extends Rule {
     public String toString(int nesting) {
         String start = Rule.getIndent(nesting);
 
-        StringBuilder txt = new StringBuilder();
-        boolean first = true;
-        for (Selector sel : selectors) {
-            if (first) {
-                first = false;
-                txt.append(start);
-            }
-            else {
-                txt.append(", ");
-            }
-            txt.append(sel.toString());
-        }
+        StringBuilder txt = new StringBuilder(start);
+        txt.append(Selector.join(getSelectors()));
         txt.append(" {");
 
-        for (Rule dir : rules) {
+        for (Rule dir : getRules()) {
             txt.append("\n\t" + start);
             txt.append(dir.toString(nesting + 1));
         }
-        for (Declaration dec : declarations) {
-            txt.append("\n\t" + start);
-            txt.append(dec.toString());
-            txt.append(";");
-        }
+
+        txt.append(declarationBlock.innerString(nesting));
 
         txt.append("\n" + start + "}");
 
@@ -113,12 +145,12 @@ public class RuleSet extends Rule {
         return text.toString();
     }
 
-    private String toCssString(int nesting, Stack<String> nestedString) {
+    protected String toCssString(int nesting, Stack<String> nestedString) {
         String start = Rule.getIndent(nesting);
 
         StringBuilder txt = new StringBuilder();
         boolean first = true;
-        for (Selector sel : selectors) {
+        for (Selector sel : getSelectors()) {
             if (first) {
                 first = false;
                 txt.append(start);
@@ -130,14 +162,14 @@ public class RuleSet extends Rule {
         }
         txt.append(" {");
 
-        for (Rule dir : rules) {
+        for (Rule dir : getRules()) {
             String dirString = dir.toCssString(nesting + 1);
             if (dirString.length() > 0) {
                 txt.append("\n\t" + start);
                 txt.append(dirString);
             }
         }
-        for (Declaration dec : declarations) {
+        for (Declaration dec : getDeclarations()) {
             txt.append("\n\t" + start);
             txt.append(dec);
             txt.append(";");
@@ -145,37 +177,10 @@ public class RuleSet extends Rule {
 
         txt.append("\n" + start + "}");
 
-        for (RuleSet nested : nestedRuleSets) {
+        for (RuleSet nested : getNestedRuleSets()) {
             nestedString.push(nested.toCssString(0, nestedString));
         }
 
         return txt.toString();
-    }
-
-    @Override
-    public CssRule evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
-        CssRuleList result = new CssRuleList();
-        state.pushScope();
-        try {
-            for (Rule dir : this.getRules()) {
-                dir.evaluate(state, null);
-            }
-
-            CssRuleSet crs = new CssRuleSet();
-            for (Selector s : getSelectors()) {
-                crs.getSelectors().add(s.evaluate());
-            }
-            crs.addDeclarations(this.getDeclarations().evaluateStyle(state, true));
-            result.addRule(crs);
-
-            for (RuleSet rs : this.getNestedRuleSets()) {
-                result.addRule(rs.evaluate(state, null));
-            }
-        }
-        finally {
-            state.popScope();
-        }
-
-        return result.getRules().size() == 1 ? result.getRules().get(0) : result;
     }
 }

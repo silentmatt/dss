@@ -47,7 +47,7 @@ public class IncludeDirective extends ExpressionDirective {
     }
 
     @Override
-    public CssRule evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
+    public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         CssRule result = null;
         URL url = new URL(state.getBaseURL(), this.getURLString());
         DSSDocument includedDocument = DSSDocument.parse(url.toString(), state.getErrors());

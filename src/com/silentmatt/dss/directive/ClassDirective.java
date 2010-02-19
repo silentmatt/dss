@@ -1,24 +1,28 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.DeclarationBlock;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.NestedRuleSet;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssRule;
+import java.io.IOException;
 import java.util.List;
 
 /**
  *
  * @author Matthew Crumley
  */
-public class ClassDirective extends DeclarationDirective {
+public class ClassDirective extends Rule {
     private final String className;
     private final DeclarationList parameters;
+    private final DeclarationBlock declarationBlock;
 
-    public ClassDirective(String className, List<Declaration> parameters, List<Declaration> declarations) {
-        super(declarations);
+    public ClassDirective(String className, List<Declaration> parameters, List<Declaration> declarations, List<NestedRuleSet> nestedRuleSets) {
         this.className = className;
         this.parameters = new DeclarationList(parameters);
+        this.declarationBlock = new DeclarationBlock(declarations, nestedRuleSets);
     }
 
     public String getName() {
@@ -38,7 +42,7 @@ public class ClassDirective extends DeclarationDirective {
     }
 
     public DeclarationList getDeclarations(DeclarationList arguments) {
-        return getDeclarations();
+        return declarationBlock.getDeclarations();
     }
 
     @Override
@@ -60,13 +64,17 @@ public class ClassDirective extends DeclarationDirective {
             }
             txt.append(">");
         }
-        txt.append(" ");
-        txt.append(getDeclarationsString(nesting));
+        txt.append(" {");
+
+        txt.append(declarationBlock.innerString(nesting + 1));
+
+        txt.append("\n" + start + "}");
+
         return txt.toString();
     }
 
     public void addDeclartion(Declaration declaration) {
-        getDeclarations().add(declaration);
+        declarationBlock.addDeclaration(declaration);
     }
 
     @Override
@@ -75,9 +83,19 @@ public class ClassDirective extends DeclarationDirective {
     }
 
     @Override
-    public CssRule evaluate(EvaluationState state, List<Rule> container) {
-        getDeclarations().evaluateStyle(state, false);
-        state.getClasses().declare(className, this);
+    public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
+        //declarationBlock.getDeclarations().evaluateStyle(state, false);
+        DeclarationBlock newBlock = declarationBlock.evaluateStyle(state, false);
+        state.getClasses().declare(className, new ClassDirective(className, parameters, newBlock.getDeclarations(), newBlock.getNestedRuleSets()));
         return null;
+    }
+
+    public List<NestedRuleSet> getNestedRuleSets() {
+        return declarationBlock.getNestedRuleSets();
+    }
+
+    @Override
+    public String toString() {
+        return toString(0);
     }
 }

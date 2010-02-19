@@ -228,7 +228,9 @@ classDirective<out ClassDirective dir> =        (.  String ident;
                                                     List<Declaration> parameters = new ArrayList<Declaration>();
                                                     List<Declaration> declarations = new ArrayList<Declaration>();
                                                     List<Declaration> mdecs;
+                                                    List<NestedRuleSet> nested = new ArrayList<NestedRuleSet>();
                                                     Declaration param;
+                                                    Combinator cb;
                                                 .)
     "@class"
     identity<out ident>
@@ -241,8 +243,18 @@ classDirective<out ClassDirective dir> =        (.  String ident;
             ]
         '>'
     ]
-    '{' { multideclaration<out mdecs> ';'       (.  declarations.addAll(mdecs); .) } '}'
-                                                (.  dir = new ClassDirective(ident, parameters, declarations); .)
+    '{' {
+            IF (!isNestedSelector()) multideclaration<out mdecs> ';'
+                                                (.  declarations.addAll(mdecs); .)
+            |
+                                                (.  cb = null; .)
+            [ '&'                               (.  cb = null; .) /* For backward compatibility */
+            | '+'                               (.  cb = Combinator.PrecededImmediatelyBy; .)
+            | '>'                               (.  cb = Combinator.ChildOf; .)
+            | '~'                               (.  cb = Combinator.PrecededBy; .)
+            ] ruleset<out RuleSet nest>         (.  nested.add(new NestedRuleSet(cb, nest)); .)
+        } '}'
+                                                (.  dir = new ClassDirective(ident, parameters, declarations, nested); .)
 .
 
 defineDirective<out DefineDirective dir> =      (.
@@ -385,7 +397,7 @@ ruleset<out RuleSet rset> =                  (.  rset = new RuleSet();
             | '+'                            (.  cb = Combinator.PrecededImmediatelyBy; .)
             | '>'                            (.  cb = Combinator.ChildOf; .)
             | '~'                            (.  cb = Combinator.PrecededBy; .)
-            ] ruleset<out RuleSet nested>    (.  rset.addNestedRuleSet(nested, cb); .)
+            ] ruleset<out RuleSet nested>    (.  rset.addNestedRuleSet(cb, nested); .)
         }
     '}'
 .

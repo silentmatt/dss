@@ -4,6 +4,7 @@ import com.silentmatt.dss.css.CssDeclaration;
 import com.silentmatt.dss.directive.ClassDirective;
 import com.silentmatt.dss.term.ClassReferenceTerm;
 import com.silentmatt.dss.term.Term;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -129,7 +130,7 @@ public class DeclarationList implements List<Declaration> {
         }
     }
 
-    public void addInheritedProperties(EvaluationState state, ClassReferenceTerm classReference) {
+    private void addInheritedProperties(EvaluationState state, ClassReferenceTerm classReference) throws IOException {
         String className = classReference.getName();
         ClassDirective clazz = state.getClasses().get(className);
         if (clazz == null) {
@@ -193,7 +194,7 @@ public class DeclarationList implements List<Declaration> {
         inheritProperties(properties);
     }
 
-    public void addInheritedProperties(EvaluationState state, Expression inherits) {
+    private void addInheritedProperties(EvaluationState state, Expression inherits) throws IOException {
         for (Term inherit : inherits.getTerms()) {
             if (inherit instanceof ClassReferenceTerm) {
                 addInheritedProperties(state, (ClassReferenceTerm) inherit);
@@ -207,7 +208,7 @@ public class DeclarationList implements List<Declaration> {
     }
 
     // FIXME: this modifies this.list
-    public List<CssDeclaration> evaluateStyle(EvaluationState state, boolean doCalculations) {
+    public List<CssDeclaration> evaluateStyle(EvaluationState state, boolean doCalculations) throws IOException {
         List<CssDeclaration> result = new ArrayList<CssDeclaration>();
 
         state.pushScope();

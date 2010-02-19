@@ -7,6 +7,7 @@ import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.Scope;
 import com.silentmatt.dss.css.CssRule;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class DefineDirective extends DeclarationDirective {
     }
 
     @Override
-    public CssRule evaluate(EvaluationState state, List<Rule> container) {
+    public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         DeclarationList properties = getDeclarations();
         properties.evaluateStyle(state, true);
 

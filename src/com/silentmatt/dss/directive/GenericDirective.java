@@ -10,7 +10,6 @@ import com.silentmatt.dss.css.CssGenericDirective;
 import com.silentmatt.dss.css.CssMedium;
 import com.silentmatt.dss.css.CssRule;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,7 +120,7 @@ public class GenericDirective extends Rule {
     }
 
     @Override
-    public CssRule evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
+    public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         CssGenericDirective result = new CssGenericDirective();
 
         result.getDeclarations().addAll(declarations.evaluateStyle(state, true));

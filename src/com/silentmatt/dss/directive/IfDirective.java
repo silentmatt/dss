@@ -83,7 +83,7 @@ public class IfDirective extends Rule {
     }
 
     @Override
-    public CssRule evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
+    public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         Boolean result = condition.evaluate(state, null);
         if (result == null) {
             state.getErrors().SemErr("Invalid condition: " + condition);

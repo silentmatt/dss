@@ -96,7 +96,7 @@ public class MediaDirective extends Rule {
     }
 
     @Override
-    public CssRule evaluate(EvaluationState state, List<Rule> container) throws MalformedURLException, IOException {
+    public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         state.pushScope();
         try {
             List<CssMedium> media = new ArrayList<CssMedium>();

@@ -5,6 +5,7 @@ import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssFontFaceDirective;
 import com.silentmatt.dss.css.CssRule;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public class FontFaceDirective extends DeclarationDirective {
     }
 
     @Override
-    public CssRule evaluate(EvaluationState state, List<Rule> container) {
+    public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         return new CssFontFaceDirective(getDeclarations().evaluateStyle(state, true));
     }
 }
