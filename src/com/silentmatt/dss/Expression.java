@@ -71,6 +71,9 @@ public class Expression {
                     newValue.getTerms().add(t);
                 }
             }
+            else {
+                state.getErrors().SemErr("Error evaluating '" + primitiveValue + "'");
+            }
         }
 
         return newValue;

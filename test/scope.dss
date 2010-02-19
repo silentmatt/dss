@@ -1,3 +1,7 @@
+@define {
+    height: 50%;
+}
+
 html {
     @define global {
         answer: 42px;
