@@ -1,0 +1,11 @@
+@import url(normal.css) all;
+@import url( http://example.com/print.css) print;
+@import url(./relative/all.css) all;
+@import url(/absolute/aural.css) aural;
+@import url( "quoted/braille.css" ) braille;
+@import url('quoted/embossed.css') embossed;
+@import url(//example.com/handheld.css) handheld;
+@import url(projection.css?param=value&p=v) projection;
+@import url(screen.css) screen;
+@import url(tty.css) tty;
+@import url(tv.css) tv;

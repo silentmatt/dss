@@ -11,9 +11,12 @@ import com.martiansoftware.jsap.stringparsers.FileStringParser;
 import com.silentmatt.dss.css.CssDocument;
 import com.silentmatt.dss.parser.DSSParser;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 public final class Main {
@@ -36,7 +39,7 @@ public final class Main {
         private static FileStringParser fileParser = FileStringParser.getParser();
 
         private FileOrURLStringParser() {
-            fileParser.setMustBeFile(true).setMustExist(true);
+            fileParser.setMustBeFile(false).setMustExist(true);
         }
 
         public static FileOrURLStringParser getParser() {
@@ -77,6 +80,11 @@ public final class Main {
                 .setLongFlag("version");
         versionFlag.setHelp("Show version information and exit");
 
+        Switch testFlag = new Switch("test")
+                .setShortFlag('t')
+                .setLongFlag("test");
+        testFlag.setHelp("Run tests in the specified directory");
+
         FlaggedOption defineOpt = new FlaggedOption("define")
                 .setAllowMultipleDeclarations(true)
                 .setRequired(false)
@@ -93,6 +101,7 @@ public final class Main {
 
         try {
             jsap.registerParameter(versionFlag);
+            jsap.registerParameter(testFlag);
             jsap.registerParameter(debugFlag);
             jsap.registerParameter(defineOpt);
             jsap.registerParameter(outOpt);
@@ -119,16 +128,26 @@ public final class Main {
             System.exit(1);
         }
 
+        if (config.getBoolean("test")) {
+            System.exit(runTests(config.getURL("url")));
+        }
+
         URL url = config.getURL("url");
         File out = config.getFile("out", null);
 
         if (out != null) {
             try {
+                if (new File(url.toURI()).isDirectory()) {
+                    throw new MalformedURLException();
+                }
                 if (url.sameFile(out.toURI().toURL())) {
                     System.err.println("Input and output are the same file.");
                     System.exit(1);
                 }
             } catch (MalformedURLException ex) {
+                System.err.println("Invalid file: " + out.getPath());
+                System.exit(1);
+            } catch (URISyntaxException ex) {
                 System.err.println("Invalid file: " + out.getPath());
                 System.exit(1);
             }
@@ -161,11 +180,11 @@ public final class Main {
                     }
 
                     if (out == null) {
-                        System.out.println(cssString);
+                        System.out.print(cssString);
                     }
                     else {
                         PrintStream pout = new PrintStream(out);
-                        pout.println(cssString);
+                        pout.print(cssString);
                         pout.close();
                     }
                 }
@@ -184,5 +203,109 @@ public final class Main {
         if (errors.getErrorCount() > 0) {
             System.exit(1);
         }
+    }
+
+    private static File getTestDirectory(URL directory) {
+        if (directory == null) {
+            try {
+                directory = new URL(".");
+            } catch (MalformedURLException ex) {
+                System.out.println("Fatal error in runTests.");
+                return null;
+            }
+        }
+
+        File dir;
+        try {
+            dir = new File(directory.toURI());
+        } catch (URISyntaxException ex) {
+            dir = null;
+        }
+
+        if (dir != null && !dir.isDirectory()) {
+            dir = null;
+        }
+
+        return dir;
+    }
+
+    private static class DssFilenameFilter implements FilenameFilter {
+        public boolean accept(File directory, String filename) {
+            return filename.toLowerCase().endsWith(".dss");
+        }
+    }
+
+    private static String readFile(File cssFile) {
+        try {
+            RandomAccessFile raf = new RandomAccessFile(cssFile, "r");
+            byte[] contents = new byte[(int)raf.length()];
+            raf.readFully(contents);
+            return new String(contents);
+        }
+        catch (IOException ex) {
+            return null;
+        }
+    }
+
+    private static String testDssFile(URL url) {
+        File cssFile;
+        try {
+            cssFile = new File(new File(url.toURI()).getAbsolutePath().replace(".dss", ".css"));
+            if (!cssFile.exists()) {
+                // HACK: This is an ugly way to do this...
+                throw new URISyntaxException("", "");
+            }
+        } catch (URISyntaxException ex) {
+            return "Could not find css file";
+        }
+
+        ErrorReporter errors = new ExceptionErrorReporter();
+        try {
+            DSSDocument dss = DSSDocument.parse(url, errors);
+            DSSEvaluator.Options opts = new DSSEvaluator.Options(url);
+            opts.setErrors(errors);
+            if (dss != null) {
+                CssDocument css = new DSSEvaluator(opts).evaluate(dss);
+                String correct = readFile(cssFile);
+                if (correct == null) {
+                    return "Could not read css file";
+                }
+                return correct.equals(css.toString()) ? "PASS" : "FAIL";
+            }
+        }
+        catch (Exception ex) {
+            return ex.getMessage();
+        }
+        return "FAIL";
+    }
+
+    private static int runTests(URL directory) {
+        File dir = getTestDirectory(directory);
+        if (dir == null) {
+            System.err.println("Invalid test directory.");
+            return 1;
+        }
+
+        int errors = 0;
+        for (String dssFileName : dir.list(new DssFilenameFilter())) {
+            try {
+                System.out.print(dssFileName.replace(".dss", "") + ": ");
+                String result = testDssFile(new URL(directory, dssFileName));
+                System.out.println(result);
+                if (!result.equals("PASS")) {
+                    ++errors;
+                }
+            } catch (MalformedURLException ex) {
+                System.err.println("Invalid DSS file: " + dssFileName);
+            }
+        }
+
+        if (errors == 0) {
+            System.out.println("All tests passed.");
+        }
+        else {
+            System.out.println(errors + " tests failed.");
+        }
+        return errors;
     }
 }

@@ -1,0 +1,205 @@
+@namespace xml url("http://w3c.org/xml");
+
+@import url(print.css) print;
+
+@charset "utf-8";
+
+@page :first {
+    foo:bar;
+}
+
+@define {
+    foreColor: black, blue, red;
+    backColor: white;
+    width: 42.345%;
+}
+
+@font-face {
+    font-family: Arial;
+    font-size: 12px;
+}
+
+@class centered<width:100px; margin-top: 0; margin-bottom: 0> {
+    width: param(width);
+    margin: param(margin-top) auto param(margin-bottom) auto;
+}
+
+#page_area {
+    apply: centered<width: 40em; margin-top: 2em>;
+}
+
+.centered_small {
+    apply: centered;
+}
+
+.centered_large {
+	apply: centered<width:123>;
+}
+
+@class error {
+    background-color: #ff8888;
+    color: red;
+    font-weight: bold;
+
+    strong {
+        text-decoration: underline;
+    }
+}
+
+@font-face {
+    font-family: Arial, Helvetica, "Times New Roman";
+    font-size: 12px;
+    extend: error;
+}
+
+.error {
+    extend: error;
+}
+
+html {
+    @define global {
+        answer: 42;
+    }
+
+    height: 100%;
+
+    @define {
+       foo: bar;
+        baz: asdf;
+    }
+
+    color: const(foreColor);
+    background-color: const(backColor);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+strong > strong[foo $= bar] {
+    font-style: italic;
+    font-weight: bolder;
+}
+
+@include url(include/inc.dss);
+
+@media print {
+    @class error {
+        extend: error;
+
+        color: blue;
+        border: 1px solid red;
+    }
+
+    html {
+        width:const(width);
+    }
+
+    .area,
+    div.test
+    {
+        font-family:serif;background-color:#fff;
+    }
+
+    div.error {
+        apply: error;
+        border-width: 1px;
+        border-style: solid;
+        border-color: rgb(128,0,0);
+    }
+    
+    span.error {
+        apply: error;
+        border: const(foo);
+    }
+}
+
+empty {
+    width: calc(2 * (1cm + 5mm) / ((3px+4px - -6px)/1px));
+}
+
+#box { // a 100 pixel box (including padding/border)
+    @define {
+        width: 100px;
+        pad: 10px;
+        border: 1px;
+    }
+    border: const(border) solid;
+    padding: const(pad);
+    width: calc(const(width) - 2 * const(pad) - 2 * const(border));
+    font-size: calc(1.4 * 1em);
+}
+
+@define {
+    pi: 3.141592654;
+}
+
+body.hidden {
+    display: none;
+}
+
+body .test {
+    name: string(2n+3);
+    left: calc( 1 * ( calc(4rad * const(pi)) ) ); // 1 * -> sin()
+    top: cos(4grad);
+    color: rgba(1,2,3,4)    ! important;
+    color: #123;
+    background-color: prop(color);
+}
+
+@if ie6 {
+    @class has-layout {
+        zoom: 5;
+        half-zoom: calc(prop(zoom) / 2);
+        zoom2: prop(zoom);
+    }
+}
+@else {
+    @class has-layout {
+    }
+}
+
+.with_layout, parent selector {
+    apply: has-layout;
+    //apply: data<background: foo url(/home/matt/Desktop/dss/image.gif) no-repeat>;
+    > nested span {
+        nested: value;
+        & child, another child {
+            another: property;
+            value: const(pi);
+
+            apply: centered;
+        }
+    }
+}
+
+@class ab {
+	a, b: 100 !important;
+	asdf: prop(width);
+
+    ~ c {
+        alpha: bet;
+    }
+}
+.className {
+	width, height: 4px;
+	apply: ab;
+	foo, bar: baz ! important;
+}
+
+.test {
+	apply: ab;
+}
+
+@class testClass {
+    c: d;
+    > nested {
+        e: f;
+        + after {
+            g: h;
+        }
+    }
+}
+
+.test {
+    a: b;
+    apply: testClass;
+}

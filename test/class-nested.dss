@@ -1,0 +1,36 @@
+@class error {
+    background-color: #ff8888;
+    color: red;
+    font-weight: bold;
+
+    strong {
+        text-decoration: underline;
+    }
+
+    > p {
+        margin: 0;
+    }
+
+    + p {
+        margin-top: 2em;
+    }
+
+    ~ I am {
+        out: of ideas;
+    }
+}
+
+@font-face {
+    font-family: "Font Name";
+    extend: error;
+}
+
+.error {
+    display: block;
+    apply: error;
+    border: 1px solid prop(color);
+}
+
+span.error {
+    apply: error<>;
+}

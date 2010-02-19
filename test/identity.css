@@ -1,0 +1,144 @@
+@namespace xml url("http://w3c.org/xml");
+@import url(print.css) print;
+@charset "utf-8";
+@page :first {
+	foo: bar;
+}
+@font-face {
+	font-family: Arial;
+	font-size: 12px;
+}
+#page_area {
+	width: 40em;
+	margin: 2em auto 0 auto;
+}
+.centered_small {
+	width: 100px;
+	margin: 0 auto 0 auto;
+}
+.centered_large {
+	width: 123;
+	margin: 0 auto 0 auto;
+}
+@font-face {
+	font-family: Arial, Helvetica, "Times New Roman";
+	font-size: 12px;
+	background-color: #F88;
+	color: #F00;
+	font-weight: bold;
+}
+.error {
+	background-color: #F88;
+	color: #F00;
+	font-weight: bold;
+}
+.error strong {
+	text-decoration: underline;
+}
+html {
+	height: 100%;
+	color: #000, #00F, #F00;
+	background-color: #FFF;
+}
+strong > strong[foo$=bar] {
+	font-style: italic;
+	font-weight: bolder;
+}
+a {
+	text-decoration: overline;
+}
+a:hover {
+	background-color: #006400;
+}
+@media print {
+	html {
+		width: 42.345%;
+	}
+	.area, div.test {
+		font-family: serif;
+		background-color: #FFF;
+	}
+	div.error {
+		background-color: #F88;
+		color: #F00;
+		font-weight: bold;
+		color: #00F;
+		border: 1px solid #F00;
+		border-width: 1px;
+		border-style: solid;
+		border-color: #800000;
+	}
+	div.error strong {
+		text-decoration: underline;
+	}
+	span.error {
+		background-color: #F88;
+		color: #F00;
+		font-weight: bold;
+		color: #00F;
+		border: 1px solid #F00;
+		border: 3px dotted #FF2A2B;
+	}
+	span.error strong {
+		text-decoration: underline;
+	}
+}
+empty {
+	width: 6.541489999384615pt;
+}
+#box {
+	border: 1px solid;
+	padding: 10px;
+	width: 78px;
+	font-size: 1.4em;
+}
+body.hidden {
+	display: none;
+}
+body .test {
+	name: string(2n+3);
+	left: 720.0000000940125deg;
+	top: cos(4grad);
+	color: rgba(1,2,3,4) !important;
+	color: #123;
+	background-color: rgba(1,2,3,4);
+}
+.with_layout > nested span, parent selector > nested span {
+	nested: value;
+}
+.with_layout > nested span child, .with_layout > nested span another child, parent selector > nested span child, parent selector > nested span another child {
+	another: property;
+	value: 3.141592654;
+	width: 100px;
+	margin: 0 auto 0 auto;
+}
+.className {
+	width: 4px;
+	height: 4px;
+	a: 100 !important;
+	b: 100 !important;
+	asdf: 4px;
+	foo: baz !important;
+	bar: baz !important;
+}
+.className ~ c {
+	alpha: bet;
+}
+.test {
+	a: 100 !important;
+	b: 100 !important;
+	asdf: prop(width);
+}
+.test ~ c {
+	alpha: bet;
+}
+.test {
+	a: b;
+	c: d;
+}
+.test > nested {
+	e: f;
+}
+.test > nested + after {
+	g: h;
+}

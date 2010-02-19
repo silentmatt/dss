@@ -1,0 +1,11 @@
+a {
+    text-decoration: overline;
+}
+
+a:hover {
+    background-color: darkgreen;
+}
+
+@define global {
+    foo: 3px dotted rgb(255, 42, 43);
+}

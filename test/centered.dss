@@ -1,0 +1,19 @@
+@class centered <
+    width;
+    margin-top: 0;
+    margin-bottom: 0> {
+        width: param(width);
+        margin: param(margin-top) auto param(margin-bottom) auto;
+}
+
+#page_area {
+    apply: centered<width: 40em; margin-top: 2em>;
+}
+
+.centered1 {
+    apply: centered<width: 10em; margin-top: 1em; margin-bottom: 10px>;
+}
+
+.centered1 {
+    apply: centered<width: 20em>;
+}

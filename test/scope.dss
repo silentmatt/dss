@@ -1,0 +1,19 @@
+html {
+    @define global {
+        answer: 42px;
+    }
+
+    @define {
+        height: 100%;
+    }
+
+    > body {
+        height: const(height);
+        width: const(answer);
+    }
+}
+
+p {
+    height: const(height);
+    width: const(answer);
+}

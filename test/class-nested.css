@@ -1,0 +1,42 @@
+@font-face {
+	font-family: "Font Name";
+	background-color: #F88;
+	color: #F00;
+	font-weight: bold;
+}
+.error {
+	display: block;
+	background-color: #F88;
+	color: #F00;
+	font-weight: bold;
+	border: 1px solid #F00;
+}
+.error strong {
+	text-decoration: underline;
+}
+.error > p {
+	margin: 0;
+}
+.error + p {
+	margin-top: 2em;
+}
+.error ~ I am {
+	out: of ideas;
+}
+span.error {
+	background-color: #F88;
+	color: #F00;
+	font-weight: bold;
+}
+span.error strong {
+	text-decoration: underline;
+}
+span.error > p {
+	margin: 0;
+}
+span.error + p {
+	margin-top: 2em;
+}
+span.error ~ I am {
+	out: of ideas;
+}
