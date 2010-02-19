@@ -8,8 +8,17 @@ import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.RuleSet;
 import com.silentmatt.dss.Selector;
-import com.silentmatt.dss.directive.*;
-import com.silentmatt.dss.term.*;
+import com.silentmatt.dss.directive.CharsetDirective;
+import com.silentmatt.dss.directive.ClassDirective;
+import com.silentmatt.dss.directive.DefineDirective;
+import com.silentmatt.dss.directive.FontFaceDirective;
+import com.silentmatt.dss.directive.IfDirective;
+import com.silentmatt.dss.directive.ImportDirective;
+import com.silentmatt.dss.directive.IncludeDirective;
+import com.silentmatt.dss.directive.MediaDirective;
+import com.silentmatt.dss.directive.NamespaceDirective;
+import com.silentmatt.dss.directive.PageDirective;
+import com.silentmatt.dss.term.Term;
 import java.io.ByteArrayInputStream;
 
 /**

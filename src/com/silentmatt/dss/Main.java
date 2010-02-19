@@ -1,13 +1,20 @@
 package com.silentmatt.dss;
 
-import com.martiansoftware.jsap.*;
+import com.martiansoftware.jsap.FlaggedOption;
+import com.martiansoftware.jsap.JSAP;
+import com.martiansoftware.jsap.JSAPException;
+import com.martiansoftware.jsap.JSAPResult;
+import com.martiansoftware.jsap.ParseException;
+import com.martiansoftware.jsap.Switch;
+import com.martiansoftware.jsap.UnflaggedOption;
 import com.martiansoftware.jsap.stringparsers.FileStringParser;
 import com.silentmatt.dss.css.CssDocument;
 import com.silentmatt.dss.parser.DSSParser;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public final class Main {
     private Main() {

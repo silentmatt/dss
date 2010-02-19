@@ -108,7 +108,8 @@ public final class Scope<T> implements Map<String, T> {
      * @see #declaresKey(java.lang.String)
      */
     public boolean containsKey(Object key) {
-        return table.containsKey(key) || (parentScope != null && parentScope.containsKey(key));
+        String sKey = (String) key;
+        return table.containsKey(sKey) || (parentScope != null && parentScope.containsKey(sKey));
     }
 
     /**
@@ -143,13 +144,14 @@ public final class Scope<T> implements Map<String, T> {
     }
 
     public T get(Object key) {
-        T value = table.get(key);
+        String sKey = (String) key;
+        T value = table.get(sKey);
         if (value != null) {
             return value;
         }
         else {
-            if (!table.containsKey(key) && parentScope != null) {
-                return parentScope.get(key);
+            if (!table.containsKey(sKey) && parentScope != null) {
+                return parentScope.get(sKey);
             }
         }
         return null;

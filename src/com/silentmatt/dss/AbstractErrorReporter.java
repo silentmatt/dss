@@ -1,6 +1,6 @@
 package com.silentmatt.dss;
 
-import com.silentmatt.dss.parser.*;
+import com.silentmatt.dss.parser.DSSParser;
 
 /**
  *
