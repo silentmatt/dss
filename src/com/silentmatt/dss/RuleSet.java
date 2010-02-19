@@ -73,7 +73,7 @@ public class RuleSet extends Rule {
             DeclarationBlock resultBlock = declarationBlock.evaluateStyle(state, true);
 
             // TODO: This is already evaluated, we just need to convert it to CSS...
-            crs.addDeclarations(resultBlock.getDeclarations().evaluateStyle(state, true));
+            crs.addDeclarations(resultBlock.getCssDeclarations(state));
 
             result.addRule(crs);
 

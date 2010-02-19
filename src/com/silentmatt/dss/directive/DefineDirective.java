@@ -37,8 +37,7 @@ public class DefineDirective extends DeclarationDirective {
 
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
-        DeclarationList properties = getDeclarations();
-        properties.evaluateStyle(state, true);
+        DeclarationList properties = getDeclarationBlock().evaluateStyle(state, true).getDeclarations();
 
         Scope<Expression> scope = state.getVariables();
         if (isGlobal()) {

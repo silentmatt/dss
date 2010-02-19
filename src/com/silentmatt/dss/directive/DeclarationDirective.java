@@ -1,6 +1,7 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.DeclarationBlock;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
@@ -11,19 +12,23 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public abstract class DeclarationDirective extends Rule {
-    private final DeclarationList declarations;
+    private final DeclarationBlock declarations;
 
     public DeclarationDirective(List<Declaration> declarations) {
         super();
-        this.declarations = new DeclarationList(declarations);
+        this.declarations = new DeclarationBlock(declarations);
     }
 
-    public DeclarationList getDeclarations() {
+    private DeclarationList getDeclarations() {
+        return declarations.getDeclarations();
+    }
+
+    public DeclarationBlock getDeclarationBlock() {
         return declarations;
     }
 
     public void addDeclaration(Declaration declaration) {
-        declarations.add(declaration);
+        declarations.addDeclaration(declaration);
     }
 
     public Expression getValue(String name) {
@@ -32,7 +37,7 @@ public abstract class DeclarationDirective extends Rule {
     }
 
     public Declaration getDeclaration(String name) {
-        for (Declaration d : declarations) {
+        for (Declaration d : declarations.getDeclarations()) {
             if (d.getName().equalsIgnoreCase(name)) {
                 return d;
             }
@@ -45,11 +50,7 @@ public abstract class DeclarationDirective extends Rule {
 
         StringBuilder txt = new StringBuilder("{");
 
-        for (Declaration dec : declarations) {
-            txt.append("\n\t" + start);
-            txt.append(dec.toString());
-            txt.append(";");
-        }
+        txt.append(declarations.innerString(nesting + 1));
 
         txt.append("\n" + start + "}");
 

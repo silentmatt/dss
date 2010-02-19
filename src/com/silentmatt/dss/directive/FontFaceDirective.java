@@ -23,6 +23,6 @@ public class FontFaceDirective extends DeclarationDirective {
 
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
-        return new CssFontFaceDirective(getDeclarations().evaluateStyle(state, true));
+        return new CssFontFaceDirective(getDeclarationBlock().evaluateStyle(state, true).getCssDeclarations(state));
     }
 }

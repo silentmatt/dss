@@ -2,6 +2,7 @@ package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.DeclarationBlock;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Medium;
@@ -18,7 +19,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class GenericDirective extends Rule {
-    private final DeclarationList declarations = new DeclarationList();
+    private final DeclarationBlock declarations = new DeclarationBlock();
     private final List<Rule> rules = new ArrayList<Rule>();
     private final List<Medium> mediums = new ArrayList<Medium>();
     private String name;
@@ -53,11 +54,11 @@ public class GenericDirective extends Rule {
     }
 
     public DeclarationList getDeclarations() {
-        return declarations;
+        return declarations.getDeclarations();
     }
 
     public void addDeclaration(Declaration declaration) {
-        this.declarations.add(declaration);
+        this.declarations.addDeclaration(declaration);
     }
 
     @Override
@@ -89,7 +90,7 @@ public class GenericDirective extends Rule {
             txt.append(m.toString());
         }
 
-        boolean hasBlock = (this.declarations.size() > 0 || this.rules.size() > 0);
+        boolean hasBlock = (this.declarations.getDeclarations().size() > 0 || this.rules.size() > 0);
 
         if (!hasBlock) {
             txt.append(";");
@@ -104,7 +105,7 @@ public class GenericDirective extends Rule {
         }
 
         first = true;
-        for (Declaration dec : declarations) {
+        for (Declaration dec : declarations.getDeclarations()) {
             if (first) { first = false; } else { txt.append(";"); }
             txt.append("\n\t" + start);
             txt.append(dec.toString());
@@ -123,7 +124,7 @@ public class GenericDirective extends Rule {
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         CssGenericDirective result = new CssGenericDirective();
 
-        result.getDeclarations().addAll(declarations.evaluateStyle(state, true));
+        result.getDeclarations().addAll(declarations.evaluateStyle(state, true).getCssDeclarations(state));
         for (Rule r : rules) {
             result.addRule(r.evaluate(state, container));
         }
@@ -131,7 +132,7 @@ public class GenericDirective extends Rule {
             result.addMedium(CssMedium.valueOf(m.toString()));
         }
         result.setName(name);
-        result.setExpression(expression.evaluate(state, declarations));
+        result.setExpression(expression.evaluate(state, declarations.getDeclarations()));
 
         return result;
     }

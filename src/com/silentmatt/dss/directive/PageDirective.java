@@ -47,6 +47,6 @@ public class PageDirective extends DeclarationDirective {
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         CssSimpleSelector pseudo = new CssSimpleSelector();
         pseudo.setPseudo(selector.toString().replaceFirst(":", ""));
-        return new CssPageDirective(pseudo, getDeclarations().evaluateStyle(state, true));
+        return new CssPageDirective(pseudo, getDeclarationBlock().evaluateStyle(state, true).getCssDeclarations(state));
     }
 }

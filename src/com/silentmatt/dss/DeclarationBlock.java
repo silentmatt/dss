@@ -1,5 +1,6 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.css.CssDeclaration;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.directive.ClassDirective;
 import com.silentmatt.dss.term.ClassReferenceTerm;
@@ -22,6 +23,11 @@ public class DeclarationBlock extends Rule {
         this.nestedRuleSets = new ArrayList<NestedRuleSet>();
     }
 
+    public DeclarationBlock(List<Declaration> declarations) {
+        this.declarations = new DeclarationList(declarations);
+        this.nestedRuleSets = new ArrayList<NestedRuleSet>();
+    }
+
     public DeclarationBlock(List<Declaration> declarations, List<NestedRuleSet> nested) {
         this.declarations = new DeclarationList(declarations);
         this.nestedRuleSets = new ArrayList<NestedRuleSet>(nested);
@@ -29,6 +35,14 @@ public class DeclarationBlock extends Rule {
 
     public DeclarationList getDeclarations() {
         return declarations;
+    }
+
+    public List<CssDeclaration> getCssDeclarations(EvaluationState state) {
+        List<CssDeclaration> result = new ArrayList<CssDeclaration>();
+        for (Declaration d : declarations) {
+            result.add(new CssDeclaration(d.getName(), d.getExpression().evaluate(state, declarations), d.isImportant()));
+        }
+        return result;
     }
 
     public void addDeclaration(Declaration declaration) {
