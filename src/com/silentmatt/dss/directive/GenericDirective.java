@@ -116,10 +116,6 @@ public class GenericDirective extends Rule {
         return txt.toString();
     }
 
-    public String toCssString(int nesting) {
-        return toString(nesting);
-    }
-
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         CssGenericDirective result = new CssGenericDirective();

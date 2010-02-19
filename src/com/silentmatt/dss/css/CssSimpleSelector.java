@@ -72,9 +72,16 @@ public class CssSimpleSelector {
 
     @Override
     public String toString() {
+        return toString(false);
+    }
+
+    public String toString(boolean compact) {
         StringBuilder txt = new StringBuilder();
         if (combinator != null) {
-            txt.append(combinator).append(' ');
+            txt.append(combinator);
+            if (!compact) {
+                txt.append(' ');
+            }
         }
         if (elementName != null) { txt.append(elementName); }
         if (id != null) { txt.append("#").append(id); }

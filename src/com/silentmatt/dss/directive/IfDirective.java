@@ -69,19 +69,6 @@ public class IfDirective extends Rule {
         return txt.toString();
     }
 
-    public String toCssString(int nesting) {
-        StringBuilder txt = new StringBuilder();
-
-        if (rules != null) {
-            for (Rule rule : rules) {
-                txt.append(rule.toCssString(nesting));
-                txt.append("\n");
-            }
-        }
-
-        return txt.toString();
-    }
-
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         Boolean result = condition.evaluate(state, null);

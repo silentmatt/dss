@@ -85,6 +85,11 @@ public final class Main {
                 .setLongFlag("test");
         testFlag.setHelp("Run tests in the specified directory");
 
+        Switch compressFlag = new Switch("compress")
+                .setShortFlag('c')
+                .setLongFlag("compress");
+        compressFlag.setHelp("Compress the CSS output.");
+
         FlaggedOption defineOpt = new FlaggedOption("define")
                 .setAllowMultipleDeclarations(true)
                 .setRequired(false)
@@ -103,6 +108,7 @@ public final class Main {
             jsap.registerParameter(versionFlag);
             jsap.registerParameter(testFlag);
             jsap.registerParameter(debugFlag);
+            jsap.registerParameter(compressFlag);
             jsap.registerParameter(defineOpt);
             jsap.registerParameter(outOpt);
 
@@ -175,8 +181,7 @@ public final class Main {
                         cssString = css.toString();
                     }
                     else {
-                        //cssString = css.toCssString();
-                        cssString = outputDocument.toString();
+                        cssString = outputDocument.toString(config.getBoolean("compress"));
                     }
 
                     if (out == null) {

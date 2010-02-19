@@ -67,34 +67,6 @@ public class MediaDirective extends Rule {
         return txt.toString();
     }
 
-    public String toCssString(int nesting) {
-        String start = Rule.getIndent(nesting);
-        StringBuilder txt = new StringBuilder(start);
-        txt.append("@media ");
-
-        boolean first = true;
-        for (Medium m : mediums) {
-            if (first) {
-                first = false;
-            } else {
-                txt.append(", ");
-            }
-            txt.append(m.toString());
-        }
-        txt.append(" {\n");
-
-        for (Rule rule : rules) {
-            String ruleString = rule.toCssString(nesting + 1);
-            if (ruleString.length() > 0) {
-                txt.append(ruleString);
-                txt.append("\n");
-            }
-        }
-
-        txt.append(start).append("}");
-        return txt.toString();
-    }
-
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         state.pushScope();

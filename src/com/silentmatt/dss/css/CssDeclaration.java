@@ -109,8 +109,19 @@ public class CssDeclaration /*implements Map.Entry<String, CssExpression>*/ {
      */
     @Override
     public String toString() {
+        return toString(false);
+    }
+
+    public String toString(boolean compact) {
         StringBuilder txt = new StringBuilder();
-        txt.append(name).append(": ").append(expression).append(important ? " !important" : "");
+        txt.append(name).append(":");
+        if (!compact) {
+            txt.append(' ');
+        }
+        txt.append(expression.toString(compact));
+        if (important) {
+            txt.append(" !important");
+        }
         return txt.toString();
     }
 

@@ -19,4 +19,8 @@ public abstract class CssExpressionDirective extends CssRule {
     public String toString(int nesting) {
         return CssRule.getIndent(nesting) + toString();
     }
+
+    public String toString(boolean compact, int nesting) {
+        return toString();
+    }
 }

@@ -57,15 +57,4 @@ public class DSSDocument {
         }
         return txt.toString();
     }
-
-    public String toCssString() {
-        StringBuilder txt = new StringBuilder();
-        for (Rule r : rules) {
-            String ruleString = r.toCssString(0);
-            if (ruleString.length() > 0) {
-                txt.append(ruleString).append("\n");
-            }
-        }
-        return txt.toString();
-    }
 }

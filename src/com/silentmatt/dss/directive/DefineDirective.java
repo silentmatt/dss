@@ -31,11 +31,6 @@ public class DefineDirective extends DeclarationDirective {
     }
 
     @Override
-    public String toCssString(int nesting) {
-        return "";
-    }
-
-    @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         DeclarationList properties = getDeclarationBlock().evaluateStyle(state, true).getDeclarations();
 

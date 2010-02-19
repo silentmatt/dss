@@ -104,4 +104,9 @@ public class CssGenericDirective extends CssRule {
 
         return txt.toString();
     }
+
+    @Override
+    public String toString(boolean compact, int nesting) {
+        return toString(nesting);
+    }
 }

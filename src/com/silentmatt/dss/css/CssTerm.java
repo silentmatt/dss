@@ -83,4 +83,8 @@ public class CssTerm {
     public String toString() {
         return value;
     }
+
+    public String toString(boolean compact) {
+        return value;
+    }
 }

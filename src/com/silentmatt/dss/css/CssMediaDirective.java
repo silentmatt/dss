@@ -60,4 +60,36 @@ public class CssMediaDirective extends CssRule {
         txt.append(start).append("}");
         return txt.toString();
     }
+
+    @Override
+    public String toString(boolean compact, int nesting) {
+        if (!compact) {
+            return toString(nesting);
+        }
+
+        StringBuilder txt = new StringBuilder();
+        txt.append("@media");
+
+        boolean first = true;
+        for (CssMedium m : mediums) {
+            if (first) {
+                first = false;
+                txt.append(' ');
+            } else {
+                txt.append(',');
+            }
+            txt.append(m.toString());
+        }
+        txt.append('{');
+
+        for (CssRule rule : rules) {
+            String ruleString = rule.toString(compact, nesting);
+            if (ruleString.length() > 0) {
+                txt.append(ruleString);
+            }
+        }
+
+        txt.append('}');
+        return txt.toString();
+    }
 }

@@ -78,11 +78,6 @@ public class ClassDirective extends Rule {
     }
 
     @Override
-    public String toCssString(int nesting) {
-        return "";
-    }
-
-    @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         //declarationBlock.getDeclarations().evaluateStyle(state, false);
         DeclarationBlock newBlock = declarationBlock.evaluateStyle(state, false);

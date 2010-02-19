@@ -1,5 +1,6 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.css.CssColorTerm;
 import com.silentmatt.dss.css.CssExpression;
 import com.silentmatt.dss.css.CssTerm;
 import com.silentmatt.dss.term.Term;
@@ -80,7 +81,13 @@ public class Expression {
         Expression newValue = substituteValues(state, container, state.getParameters() != null, true);
         CssExpression result = new CssExpression();
         for (Term t : newValue.getTerms()) {
-            CssTerm cssTerm = new CssTerm(t.toString());
+            CssTerm cssTerm;
+            if (t.isColor()) {
+                cssTerm = new CssColorTerm(t.toColor());
+            }
+            else {
+                cssTerm = new CssTerm(t.toString());
+            }
             cssTerm.setSeperator(t.getSeperator());
             result.getTerms().add(cssTerm);
         }

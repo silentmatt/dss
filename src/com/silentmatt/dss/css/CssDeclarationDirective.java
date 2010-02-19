@@ -53,6 +53,27 @@ public abstract class CssDeclarationDirective extends CssRule {
         return txt.toString();
     }
 
+    public String getDeclarationsString(boolean compact, int nesting) {
+        if (!compact) {
+            return getDeclarationsString(nesting);
+        }
+
+        StringBuilder txt = new StringBuilder("{");
+
+        int count = 0;
+        for (CssDeclaration dec : declarations) {
+            txt.append(dec.toString(compact));
+            ++count;
+            if (!compact || count < declarations.size()) {
+                txt.append(';');
+            }
+        }
+
+        txt.append('}');
+
+        return txt.toString();
+    }
+
     public abstract String getName();
 
     @Override
@@ -69,7 +90,10 @@ public abstract class CssDeclarationDirective extends CssRule {
         return txt.toString();
     }
 
-    public String toCssString(int nesting) {
-        return toString(nesting);
+    public String toString(boolean compact, int nesting) {
+        StringBuilder txt = new StringBuilder();
+        txt.append(getName());
+        txt.append(getDeclarationsString(compact, nesting));
+        return txt.toString();
     }
 }

@@ -29,4 +29,24 @@ public class CssSelector {
         }
         return txt.toString();
     }
+
+    public String toString(boolean compact) {
+        if (!compact) {
+            return toString();
+        }
+
+        StringBuilder txt = new StringBuilder();
+        boolean first = true;
+
+        for (CssSimpleSelector ss : simpleSelectors) {
+            if (first) {
+                first = false;
+            }
+            else if (!compact || ss.getCombinator() == null) {
+                txt.append(' ');
+            }
+            txt.append(ss.toString(compact));
+        }
+        return txt.toString();
+    }
 }

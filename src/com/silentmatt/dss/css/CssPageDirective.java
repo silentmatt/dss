@@ -24,14 +24,23 @@ public class CssPageDirective extends CssDeclarationDirective {
 
     @Override
     public String toString(int nesting) {
+        return toString(false, nesting);
+    }
+
+    @Override
+    public String toString(boolean compact, int nesting) {
         StringBuilder txt = new StringBuilder("@page");
         if (selector != null) {
-            txt.append(" ");
+            if (!compact) {
+                txt.append(' ');
+            }
             txt.append(selector.toString());
         }
-        txt.append(" ");
+        if (!compact) {
+            txt.append(' ');
+        }
 
-        txt.append(getDeclarationsString(nesting));
+        txt.append(getDeclarationsString(compact, nesting));
         return txt.toString();
     }
 }

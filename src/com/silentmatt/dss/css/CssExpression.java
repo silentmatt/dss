@@ -36,6 +36,10 @@ public class CssExpression {
      */
     @Override
     public String toString() {
+        return toString(false);
+    }
+
+    public String toString(boolean compact) {
         StringBuilder txt = new StringBuilder();
         boolean first = true;
         for (CssTerm t : terms) {
@@ -47,12 +51,12 @@ public class CssExpression {
                 }
                 else {
                     txt.append(t.getSeperator());
-                    if (!t.getSeperator().equals(' ')) {
+                    if (!compact && !t.getSeperator().equals(' ')) {
                         txt.append(" ");
                     }
                 }
             }
-            txt.append(t.toString());
+            txt.append(t.toString(compact));
         }
         return txt.toString();
     }

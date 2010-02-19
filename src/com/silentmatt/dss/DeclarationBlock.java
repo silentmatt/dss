@@ -120,10 +120,6 @@ public class DeclarationBlock extends Rule {
         return getDeclarationsString(nesting);
     }
 
-    public String toCssString(int nesting) {
-        return toString(nesting);
-    }
-
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");

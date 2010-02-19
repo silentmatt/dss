@@ -29,4 +29,20 @@ public class CssDocument {
         }
         return txt.toString();
     }
+
+    public String toString(boolean compact) {
+        if (compact) {
+            StringBuilder txt = new StringBuilder();
+            for (CssRule r : rules) {
+                String ruleString = r.toString(compact, 0);
+                if (ruleString.length() > 0) {
+                    txt.append(ruleString);
+                }
+            }
+            return txt.toString();
+        }
+        else {
+            return toString();
+        }
+    }
 }

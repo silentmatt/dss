@@ -41,4 +41,20 @@ public class CssRuleList extends CssRule {
         }
         return sb.length() > 0 ? sb.substring(1).toString() : "";
     }
+
+    @Override
+    public String toString(boolean compact, int nesting) {
+        if (!compact) {
+            return toString(nesting);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (CssRule r : rules) {
+            String toAppend = r.toString(compact, nesting);
+            if (toAppend.length() > 0) {
+                sb.append(toAppend);
+            }
+        }
+        return sb.toString();
+    }
 }

@@ -53,6 +53,10 @@ public class CssRuleSet extends CssRule {
     }
 
     public String toString(int nesting) {
+        return toString(false, nesting);
+    }
+
+    public String toString(boolean compact, int nesting) {
         if (declarations.isEmpty()) {
             return "";
         }
@@ -63,29 +67,47 @@ public class CssRuleSet extends CssRule {
         for (CssSelector sel : selectors) {
             if (first) {
                 first = false;
-                txt.append(start);
+                if (!compact) {
+                    txt.append(start);
+                }
             }
             else {
-                txt.append(", ");
+                txt.append(',');
+                if (!compact) {
+                    txt.append(' ');
+                }
             }
-            txt.append(sel.toString());
+            txt.append(sel.toString(compact));
         }
-        txt.append(" {");
+
+        txt.append(compact ? "{" : " {");
 
         for (CssRule dir : rules) {
-            String dirString = dir.toString(nesting + 1);
+            String dirString = dir.toString(compact, nesting + 1);
             if (dirString.length() > 0) {
-                txt.append("\n\t" + start);
+                if (!compact) {
+                    txt.append("\n\t" + start);
+                }
                 txt.append(dirString);
             }
         }
+
+        int count = 0;
         for (CssDeclaration dec : declarations) {
-            txt.append("\n\t" + start);
-            txt.append(dec);
-            txt.append(";");
+            if (!compact) {
+                txt.append("\n\t" + start);
+            }
+            txt.append(dec.toString(compact));
+            ++count;
+            if (!compact || count < declarations.size()) {
+                txt.append(";");
+            }
         }
 
-        txt.append("\n" + start + "}");
+        if (!compact) {
+            txt.append("\n" + start);
+        }
+        txt.append("}");
 
         return txt.toString();
     }

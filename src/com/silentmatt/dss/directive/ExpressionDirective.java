@@ -22,8 +22,4 @@ public abstract class ExpressionDirective extends Rule {
     public String toString(int nesting) {
         return Rule.getIndent(nesting) + toString();
     }
-
-    public String toCssString(int nesting) {
-        return toString(nesting);
-    }
 }

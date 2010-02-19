@@ -15,7 +15,6 @@ public abstract class Rule {
     @Override
     public abstract String toString();
     public abstract String toString(int nesting);
-    public abstract String toCssString(int nesting);
 
     protected static String getIndent(int nesting) {
         char[] chars = new char[nesting];
