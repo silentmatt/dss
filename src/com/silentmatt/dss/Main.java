@@ -10,6 +10,7 @@ import com.martiansoftware.jsap.UnflaggedOption;
 import com.martiansoftware.jsap.stringparsers.FileStringParser;
 import com.silentmatt.dss.css.CssDocument;
 import com.silentmatt.dss.parser.DSSParser;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -252,9 +253,48 @@ public final class Main {
         }
     }
 
+    private static String compile(URL url, String dssString, boolean compact) {
+        try {
+            ErrorReporter errors = new ExceptionErrorReporter();
+            DSSDocument dss = DSSDocument.parse(new ByteArrayInputStream(dssString.getBytes()), errors);
+            DSSEvaluator.Options opts = new DSSEvaluator.Options(url);
+            opts.setErrors(errors);
+            return new DSSEvaluator(opts).evaluate(dss).toString(compact);
+        }
+        catch (Exception ex) {
+            return ex.getMessage();
+        }
+    }
+
+    private static int testString(URL url, String dssString, String correct) {
+        String normalCSS = compile(url, dssString, false);
+        if (normalCSS == null) {
+            return 1;
+        }
+        String compressed = compile(url, dssString, true);
+        if (compressed == null) {
+            return 2;
+        }
+        String decompressed = compile(url, compressed, false);
+        if (decompressed == null) {
+            return 2;
+        }
+
+        if (!normalCSS.equals(correct)) {
+            return 1;
+        }
+        if (!decompressed.equals(correct)) {
+            return 2;
+        }
+
+        return 0;
+    }
+
     private static String testDssFile(URL url) {
         File cssFile;
+        File dssFile;
         try {
+            dssFile = new File(url.toURI());
             cssFile = new File(new File(url.toURI()).getAbsolutePath().replace(".dss", ".css"));
             if (!cssFile.exists()) {
                 // HACK: This is an ugly way to do this...
@@ -264,22 +304,13 @@ public final class Main {
             return "Could not find css file";
         }
 
-        ErrorReporter errors = new ExceptionErrorReporter();
-        try {
-            DSSDocument dss = DSSDocument.parse(url, errors);
-            DSSEvaluator.Options opts = new DSSEvaluator.Options(url);
-            opts.setErrors(errors);
-            if (dss != null) {
-                CssDocument css = new DSSEvaluator(opts).evaluate(dss);
-                String correct = readFile(cssFile);
-                if (correct == null) {
-                    return "Could not read css file";
-                }
-                return correct.equals(css.toString()) ? "PASS" : "FAIL";
-            }
-        }
-        catch (Exception ex) {
-            return ex.getMessage();
+        switch (testString(url, readFile(dssFile), readFile(cssFile))) {
+        case 0:
+            return "PASS";
+        case 1:
+            return "FAIL";
+        case 2:
+            return "FAIL (compressed)";
         }
         return "FAIL";
     }
