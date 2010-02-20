@@ -179,6 +179,8 @@ identity<out String ident> =
         | "screen"
         | "tty"
         | "tv"
+        | "important"
+        | "global"
     )   (. ident = t.val; .)
 .
 
@@ -188,6 +190,7 @@ mediaDirective<out MediaDirective mdir> =               (.
                                                         .)
     "@media"
     medium<out Medium m>                                (.  media.add(m); .)
+    { ',' medium<out m>                                 (.  media.add(m); .) }
     '{'
         {
             ruleset<out RuleSet rset>                   (.  rules.add(rset); .)

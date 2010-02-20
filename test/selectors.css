@@ -1,0 +1,21 @@
+strong > strong[foo$=bar] {
+	font-style: italic;
+}
+p + p[foo^=bar] {
+	font-family: Helvetica;
+}
+p + p[foo=bar], p ~ div[asdf] {
+	color: #F00;
+}
+p + p[foo=bar] #id > span, p + p[foo=bar] a:hover, p ~ div[asdf] #id > span, p ~ div[asdf] a:hover {
+	color: #123456;
+}
+[class~=big] {
+	font-size: x-large;
+}
+*[class|=top] {
+	border-top: 1px solid;
+}
+*[class*=hidden] {
+	display: none;
+}

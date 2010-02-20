@@ -1,0 +1,13 @@
+something {
+	first: yes;
+}
+a {
+	text-decoration: overline;
+}
+a:hover {
+	background-color: #006400;
+}
+element {
+	border: 3px dotted #FF2A2B;
+	works: yes;
+}

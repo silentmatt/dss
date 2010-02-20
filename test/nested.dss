@@ -1,0 +1,21 @@
+.error, .important {
+    background-color: #ff8888;
+    color: red;
+    font-weight: bold;
+
+    strong, em {
+        text-decoration: underline;
+    }
+
+    > p, div {
+        margin: 0;
+    }
+
+    + p {
+        margin-top: 2em;
+    }
+
+    ~ I am {
+        out: of ideas;
+    }
+}

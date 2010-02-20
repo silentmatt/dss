@@ -6,6 +6,7 @@ import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.FunctionTerm;
 import com.silentmatt.dss.term.NumberTerm;
+import com.silentmatt.dss.term.ParamTerm;
 import com.silentmatt.dss.term.ReferenceTerm;
 import com.silentmatt.dss.term.Term;
 import java.util.List;
@@ -28,7 +29,7 @@ public class TermExpression implements CalcExpression {
     }
 
     public Value calculateValue(EvaluationState state, DeclarationList container) {
-        substituteValues(state, container);
+        substituteValues(state, container, true);
         if (value instanceof NumberTerm) {
             return new Value((NumberTerm) value);
         }
@@ -63,8 +64,8 @@ public class TermExpression implements CalcExpression {
         return this.value.toString();
     }
 
-    public void substituteValues(EvaluationState state, DeclarationList container) {
-        if (value instanceof ReferenceTerm) {
+    public void substituteValues(EvaluationState state, DeclarationList container, boolean withParams) {
+        if (value instanceof ReferenceTerm && !(!withParams && value instanceof ParamTerm)) {
             ReferenceTerm function = (ReferenceTerm) value;
             Expression variable = function.evaluate(state, container);
             if (variable == null) {

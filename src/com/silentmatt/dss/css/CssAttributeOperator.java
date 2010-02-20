@@ -49,6 +49,9 @@ public enum CssAttributeOperator {
     }
 
     public static CssAttributeOperator fromDss(AttributeOperator op) {
+        if (op == null) {
+            return null;
+        }
         switch (op) {
         case BeginsWith:
             return BeginsWith;

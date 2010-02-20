@@ -58,7 +58,7 @@ public class CalculationTerm extends Term {
     @Override
     public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
         // XXX: had "withParams ? state.getParameters() : null". Do we need a withParams flag?
-        calculation.substituteValues(state, container);
+        calculation.substituteValues(state, container, withParams);
 
         if (doCalculations) {
             Value calc = calculation.calculateValue(state, container);

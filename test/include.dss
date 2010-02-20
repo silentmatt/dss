@@ -1,0 +1,6 @@
+something { first: yes }
+@include url(include/inc.dss);
+element {
+    border: const(foo);
+    apply: includedClass;
+}

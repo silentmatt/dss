@@ -1,0 +1,26 @@
+@media all {
+	span {
+		property: value;
+		inner: class;
+		property: asdf;
+		display: block;
+	}
+}
+elem {
+	property: value;
+}
+@media aural, braille {
+	html {
+		display: none;
+	}
+}
+@media embossed {
+	what {
+		is: embossed;
+	}
+}
+@media handheld, print, projection, screen, tty, tv {
+	everything {
+		else: in here;
+	}
+}

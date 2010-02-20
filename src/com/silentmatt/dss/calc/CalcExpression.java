@@ -41,5 +41,5 @@ public interface CalcExpression {
      * @param parameters Scope for param lookups.
      * @throws CalculationException The expression has invalid Terms.
      */
-    void substituteValues(EvaluationState state, DeclarationList container);
+    void substituteValues(EvaluationState state, DeclarationList container, boolean withParams);
 }

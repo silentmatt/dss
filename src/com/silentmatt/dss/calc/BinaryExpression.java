@@ -55,9 +55,9 @@ public class BinaryExpression implements CalcExpression {
         return null;
     }
 
-    public void substituteValues(EvaluationState state, DeclarationList container) {
-        left.substituteValues(state, container);
-        right.substituteValues(state, container);
+    public void substituteValues(EvaluationState state, DeclarationList container, boolean withParams) {
+        left.substituteValues(state, container, withParams);
+        right.substituteValues(state, container, withParams);
     }
 
     /**

@@ -1,0 +1,10 @@
+@class ab {
+	a, b: 100 !important;
+	asdf: prop(width);
+}
+
+.className {
+	width, height: 4px;
+	apply: ab;
+	foo, bar: baz ! important;
+}

@@ -54,14 +54,20 @@ public class IncludeDirective extends ExpressionDirective {
         if (includedDocument != null) {
             state.pushBaseURL(url);
             try {
-                // Evaluate the first rule, since it's in the same index as the include
-                if (includedDocument.getRules().size() > 0) {
-                    result = new CssRuleList(Rule.evaluateRules(state, includedDocument.getRules().subList(0, 1)));
-                    if (((CssRuleList) result).getRules().size() == 1) {
-                        result = ((CssRuleList) result).getRules().get(0);
+                state.pushScope();
+                try {
+                    // Evaluate the first rule, since it's in the same index as the include
+                    if (includedDocument.getRules().size() > 0) {
+                        result = new CssRuleList(Rule.evaluateRules(state, includedDocument.getRules().subList(0, 1)));
+                        if (((CssRuleList) result).getRules().size() == 1) {
+                            result = ((CssRuleList) result).getRules().get(0);
+                        }
                     }
+                    this.included = includedDocument;
                 }
-                this.included = includedDocument;
+                finally {
+                    state.popScope();
+                }
             }
             finally {
                 state.popBaseURL();

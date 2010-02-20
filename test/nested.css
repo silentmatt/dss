@@ -1,0 +1,17 @@
+.error, .important {
+	background-color: #F88;
+	color: #F00;
+	font-weight: bold;
+}
+.error strong, .error em, .important strong, .important em {
+	text-decoration: underline;
+}
+.error > p, .error > div, .important > p, .important > div {
+	margin: 0;
+}
+.error + p, .important + p {
+	margin-top: 2em;
+}
+.error ~ I am, .important ~ I am {
+	out: of ideas;
+}

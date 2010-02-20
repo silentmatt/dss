@@ -1,0 +1,41 @@
+@define {
+    ie6: yes;
+}
+
+@if ie6 {
+    @class has-layout {
+        zoom: 1;
+    }
+}
+@else {
+    @class has-layout {
+        incorrect: branch;
+    }
+}
+
+div {
+    apply: has-layout;
+}
+
+@if ie6 && firefox {
+    asdf {
+        foo: bar;
+    }
+}
+@else {
+    fdsa {
+        answer: 42;
+    }
+}
+
+@if (ie6 && (firefox || calc(1))) {
+    asdf {
+        foo: bar;
+    }
+}
+
+@if ie5 || (ie6 && 0) {
+    this should {
+        not: be here;
+    }
+}

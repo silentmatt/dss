@@ -1,0 +1,42 @@
+@class foo<val> {
+    property: param(val);
+}
+
+@media all {
+    @class foo2<val> {
+        apply: foo<param(val)>;
+    }
+
+    @class foo {
+        apply: foo<value>;
+        inner: class;
+    }
+
+    span {
+        apply: foo;
+        apply: foo2<asdf>;
+        display: block; // evil laugh
+    }
+}
+
+elem {
+    apply: foo<value>;
+}
+
+@media aural, braille {
+    html {
+        display: none; // I apologize to any blind people who may be offended.
+    }
+}
+
+@media embossed {
+    what {
+        is: embossed; // ?
+    }
+}
+
+@media handheld, print, projection, screen, tty, tv {
+    everything {
+        else: in here;
+    }
+}

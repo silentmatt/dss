@@ -1,0 +1,17 @@
+@define {
+    pi: 3.141592653589793;
+}
+
+@class rad2deg<r> {
+    angle: calc(param(r) * 180 / const(pi));
+}
+
+something {
+    width: calc(2 * (1cm + 5mm) / ((3px+4px - -6px)/1px) + calc(3pt + 4in));
+    height: calc(2 * const(pi));
+}
+
+circle {
+    apply: rad2deg<calc(2 * const(pi))>;
+    left: calc( 1 * ( calc(4rad * const(pi)) ) );
+}

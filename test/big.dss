@@ -72,8 +72,6 @@ html {
     background-color: const(backColor);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
 strong > strong[foo $= bar] {
     font-style: italic;
     font-weight: bolder;
