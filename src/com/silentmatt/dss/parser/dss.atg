@@ -31,13 +31,16 @@ COMPILER CSS3
         }
         boolean isNestedSelector() {
             Token next = la;
-            while (!next.val.equals(";")) {
+            while (!next.val.equals(";") && !next.val.equals("}")) {
                 if (next.val.equals("{")) {
                     return true;
                 }
                 next = scanner.Peek();
             }
             return false;
+        }
+        boolean endOfBlock() {
+            return la.val.equals("}");
         }
 
 /*------------------------------------------------------------------------*
@@ -244,8 +247,13 @@ classDirective<out ClassDirective dir> =        (.  String ident;
         '>'
     ]
     '{' {
-            IF (!isNestedSelector()) multideclaration<out mdecs> ';'
-                                                (.  declarations.addAll(mdecs); .)
+            IF (!isNestedSelector()) multideclaration<out mdecs>
+                                                (.  declarations.addAll(mdecs);
+                                                    if (endOfBlock()) {
+                                                        break;
+                                                    }
+                                                .)
+                ';'
             |
                                                 (.  cb = null; .)
             [ '&'                               (.  cb = null; .) /* For backward compatibility */
@@ -265,7 +273,12 @@ defineDirective<out DefineDirective dir> =      (.
     "@define"
     [ "global"                                  (.  global = true; .) ]
     '{'
-        { multideclaration<out mdecs> ';'       (.  declarations.addAll(mdecs); .) }
+        { multideclaration<out mdecs>           (.  declarations.addAll(mdecs);
+                                                    if (endOfBlock()) {
+                                                        break;
+                                                    }
+                                                .)
+          ';' }
     '}'                                         (.  dir = new DefineDirective(declarations, global); .)
 .
 
@@ -273,8 +286,13 @@ fontFaceDirective<out FontFaceDirective dir> =  (.  List<Declaration> declaratio
                                                     List<Declaration> mdecs;
                                                 .)
     "@font-face"
-    '{' { multideclaration<out mdecs> ';'       (.  declarations.addAll(mdecs); .) } '}'
-                                                (.  dir = new FontFaceDirective(declarations); .)
+    '{' { multideclaration<out mdecs>
+                                                (.  declarations.addAll(mdecs);
+                                                    if (endOfBlock()) {
+                                                        break;
+                                                    }
+                                                .)
+        ';' } '}'                               (.  dir = new FontFaceDirective(declarations); .)
 .
 
 pageDirective<out PageDirective dir> =          (.  List<Declaration> declarations = new ArrayList<Declaration>();
@@ -286,8 +304,12 @@ pageDirective<out PageDirective dir> =          (.  List<Declaration> declaratio
                                                     ss.setPseudo(psd);
                                                 .)
     ]
-    '{' { multideclaration<out mdecs> ';'       (.  declarations.addAll(mdecs); .) } '}'
-                                                (.  dir = new PageDirective(ss, declarations); .)
+    '{' { multideclaration<out mdecs>           (.  declarations.addAll(mdecs);
+                                                    if (endOfBlock()) {
+                                                        break;
+                                                    }
+                                                .)
+          ';' } '}'                             (.  dir = new PageDirective(ss, declarations); .)
 .
 
 importDirective<out ImportDirective dir> =
@@ -334,11 +356,16 @@ genericDirective<out GenericDirective dir> =
             {
                 // XXX: Order between Declarations and Rules is not preserved.
                 // TODO: Support multideclarations in generic directives
-                declaration<out Declaration dec> ';'    (.  dir.addDeclaration(dec); .)
+                declaration<out Declaration dec>        (.  dir.addDeclaration(dec);
+                                                            if (endOfBlock()) {
+                                                                break;
+                                                            }
+                                                        .)
+                ';'
                 |
                 ruleset<out RuleSet rset>               (.  dir.addRule(rset); .)
                 |
-                directive<out Rule dr>             (.  dir.addRule(dr); .)
+                directive<out Rule dr>                  (.  dir.addRule(dr); .)
             }
         '}'
         |
@@ -385,8 +412,13 @@ ruleset<out RuleSet rset> =                  (.  rset = new RuleSet();
     }
     '{'
         {
-            IF (!isNestedSelector()) multideclaration<out decs> ';'
-                                             (.  rset.addDeclarations(decs); .)
+            (IF (!isNestedSelector()) multideclaration<out decs>)
+                                             (.  rset.addDeclarations(decs);
+                                                 if (endOfBlock()) {
+                                                     break;
+                                                 }
+                                             .)
+            ';'
             |
             classDirective<out dir>          (.  rset.addRule(dir); .)
             |
@@ -644,32 +676,35 @@ term<out Term trm> =                        (.  String val = "";
         ]
         ( integer | decimal )               (.  val += t.val; trm = new NumberTerm(Double.parseDouble(val)); .)
         (
-            // TODO: This gets lost because val isn't used to construct the NumberTerm
-            IF(la.val.equalsIgnoreCase("n"))
-            (
-            /* func(4n+1) */
-                "n"                         (.  val += t.val; .)
-                [ ( "+"                     (.  val += '+'; .)
-                    |
-                    "-"                     (.  val += '-'; .)
-                  )
-                    integer                 (.  val += t.val; .)
-                ]
-            )                               (. trm = new StringTerm(val); val = ""; .)
-            |                               // TODO: Do we knoe trm is a NumberTerm?
-            "%"                             (.  ((NumberTerm) trm).setUnit(Unit.Percent); .)
+            IF (endOfBlock())               (.  ((NumberTerm) trm).setValue(Double.parseDouble(val)); .)
             |
-            [
-                IF(isUnit())
-                    identity<out ident>     (.  try {
+            (
+                // TODO: This gets lost because val isn't used to construct the NumberTerm
+                IF(la.val.equalsIgnoreCase("n"))
+                (
+                /* func(4n+1) */
+                    "n"                     (.  val += t.val; .)
+                    [ ( "+"                 (.  val += '+'; .)
+                        |
+                        "-"                 (.  val += '-'; .)
+                      )
+                        integer             (.  val += t.val; .)
+                    ]
+                )                           (. trm = new StringTerm(val); val = ""; .)
+                |                           // TODO: Do we knoe trm is a NumberTerm?
+                "%"                         (.  ((NumberTerm) trm).setUnit(Unit.Percent); .)
+                |
+                [
+                    IF(isUnit())
+                        identity<out ident> (.  try {
                                                     // TODO: What if trm isn't a NumberTerm?
                                                     ((NumberTerm) trm).setUnit(Unit.parse(ident));
                                                 } catch (IllegalArgumentException ex) {
                                                     errors.SemErr(t.line, t.col, "Unrecognized unit '" + ident + "'");
                                                 }
                                             .)
-            ]
-        )                                   (.  if (trm instanceof NumberTerm) {
+                ]
+            )                               (.  if (trm instanceof NumberTerm) {
                                                     ((NumberTerm) trm).setValue(Double.parseDouble(val));
                                                 }
                                                 else if (trm instanceof StringTerm) {
@@ -677,6 +712,7 @@ term<out Term trm> =                        (.  String val = "";
                                                     strTrm.setValue(strTrm.getValue() + val);
                                                 }
                                             .)
+        )
     )
 .
 
