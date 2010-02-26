@@ -1,0 +1,11 @@
+@define {
+	name: value;
+}
+
+.test {
+	property0: const(name);
+	property1: function(const(name));
+	property2: function(fun(const(name)));
+	property4: function(prop(property0));
+	property3: function(calc(1 + 2));
+}

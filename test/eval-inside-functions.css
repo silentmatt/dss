@@ -1,0 +1,7 @@
+.test {
+	property0: value;
+	property1: function(value);
+	property2: function(fun(value));
+	property4: function(value);
+	property3: function(3);
+}

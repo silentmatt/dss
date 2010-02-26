@@ -1,0 +1,5 @@
+// FIXME: support quoted urls (without url())
+@include url(include-test-b.dss);
+@define global {
+    a: 20%;
+}

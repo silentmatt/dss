@@ -1,0 +1,10 @@
+// FIXME: support quoted urls
+@include url(include/include-test-a.dss);
+// TODO: Only include each file once?
+//@include url(include/include-test-a.dss);
+
+#import-test {
+  apply: mixin;
+  width: 10px;
+  height: calc(const(a) + 10%);
+}

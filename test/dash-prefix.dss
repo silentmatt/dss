@@ -1,0 +1,23 @@
+@define {
+  global_color: #010101;
+  red_color: red;
+  green_color: green;
+}
+
+@class gradient <local_color: #030303> {
+  background-image: -moz-linear-gradient(top, bottom, from(param(local_color)), to(const(global_color)));
+  background-image: -webkit-gradient(linear, left top, left bottom, from(param(local_color)), to(const(global_color)));
+}
+
+.test1 {
+  apply: gradient;
+}
+
+.test2 {
+  apply: gradient<#020202>;
+}
+
+.test3 {
+  background-image: -moz-linear-gradient(top, bottom, from(const(red_color)), to(const(green_color)));
+  background-image: -webkit-gradient(linear, left top, left bottom, from(const(red_color)), to(const(green_color)));
+}

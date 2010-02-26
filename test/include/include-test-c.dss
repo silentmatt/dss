@@ -1,0 +1,7 @@
+
+@include url(include-test-d.css);
+@define global { c: red; }
+
+#import {
+  color: const(c);
+}

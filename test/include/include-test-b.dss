@@ -1,0 +1,11 @@
+// TODO: support implied .dss extension?
+@include url(include-test-c.dss);
+
+@define global {
+  b: 100%;
+}
+
+@class mixin {
+  height: 10px;
+  color: const(c);
+}
