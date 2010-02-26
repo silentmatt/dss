@@ -28,6 +28,10 @@ public class TermExpression implements CalcExpression {
         this.value = value;
     }
 
+    public TermExpression clone() {
+        return new TermExpression(value.clone());
+    }
+
     public Value calculateValue(EvaluationState state, DeclarationList container) {
         substituteValues(state, container, true);
         if (value instanceof NumberTerm) {

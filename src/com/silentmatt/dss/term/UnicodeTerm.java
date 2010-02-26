@@ -19,6 +19,12 @@ public class UnicodeTerm extends Term {
         this.value = value;
     }
 
+    public UnicodeTerm clone() {
+        UnicodeTerm result = new UnicodeTerm(value);
+        result.setSeperator(getSeperator());
+        return result;
+    }
+
     /**
      * Gets the string value.
      * @return The value of this term.

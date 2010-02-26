@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
-public class Expression {
+public class Expression implements Cloneable {
     private final List<Term> terms = new ArrayList<Term>();
 
     public Expression() {
@@ -22,6 +22,15 @@ public class Expression {
 
     public Expression(Term term) {
         terms.add(term);
+    }
+
+    @Override
+    public Expression clone() {
+        Expression result = new Expression();
+        for (Term t : terms) {
+            result.terms.add(t.clone());
+        }
+        return result;
     }
 
     /**

@@ -44,6 +44,12 @@ public class FunctionTerm extends Term {
         this.expression = expression;
     }
 
+    public FunctionTerm clone() {
+        FunctionTerm result = new FunctionTerm(name, expression.clone());
+        result.setSeperator(getSeperator());
+        return result;
+    }
+
     /**
      * Gets the name of the function.
      *

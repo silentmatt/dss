@@ -14,6 +14,11 @@ public class ConstTerm extends ReferenceTerm {
         super(name);
     }
 
+    public ConstTerm clone() {
+        ConstTerm result = new ConstTerm(getName());
+        result.setSeperator(getSeperator());
+        return result;
+    }
     /**
      * Gets the const term as a String.
      *

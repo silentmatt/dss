@@ -14,6 +14,12 @@ public class ParamTerm extends ReferenceTerm {
         super(name);
     }
 
+    public ParamTerm clone() {
+        ParamTerm result = new ParamTerm(getName());
+        result.setSeperator(getSeperator());
+        return result;
+    }
+
     /**
      * Gets the param term as a String.
      *

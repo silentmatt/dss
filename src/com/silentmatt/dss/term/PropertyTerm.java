@@ -14,6 +14,12 @@ public class PropertyTerm extends ReferenceTerm {
         super(name);
     }
 
+    public PropertyTerm clone() {
+        PropertyTerm result = new PropertyTerm(getName());
+        result.setSeperator(getSeperator());
+        return result;
+    }
+
     /**
      * Gets the property reference as a String.
      *

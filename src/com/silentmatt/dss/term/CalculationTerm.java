@@ -28,6 +28,12 @@ public class CalculationTerm extends Term {
         this.calculation = calculation;
     }
 
+    public CalculationTerm clone() {
+        CalculationTerm result = new CalculationTerm(calculation.clone());
+        result.setSeperator(getSeperator());
+        return result;
+    }
+
     /**
      * Gets the expression to evaluate.
      *

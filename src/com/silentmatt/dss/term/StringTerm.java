@@ -23,6 +23,12 @@ public class StringTerm extends Term {
         this.value = value;
     }
 
+    public StringTerm clone() {
+        StringTerm result = new StringTerm(value);
+        result.setSeperator(getSeperator());
+        return result;
+    }
+
     /**
      * Gets the string value how it appeared in the DSS text.
      * Keywords will be unquoted; strings will be surrounded by single or double quotes.

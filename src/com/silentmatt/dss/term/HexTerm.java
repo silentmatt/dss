@@ -26,6 +26,11 @@ public class HexTerm extends Term {
         this.value = value;
     }
 
+    public HexTerm clone() {
+        HexTerm result = new HexTerm(value);
+        result.setSeperator(getSeperator());
+        return result;
+    }
     /**
      * Gets the hexidecimal digits.
      *

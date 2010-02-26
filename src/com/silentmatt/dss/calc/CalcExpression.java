@@ -42,4 +42,6 @@ public interface CalcExpression {
      * @throws CalculationException The expression has invalid Terms.
      */
     void substituteValues(EvaluationState state, DeclarationList container, boolean withParams);
+
+    CalcExpression clone();
 }

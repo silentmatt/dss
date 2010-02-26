@@ -33,6 +33,15 @@ public class ClassReferenceTerm extends Term {
         this.name = name;
     }
 
+    public ClassReferenceTerm clone() {
+        ClassReferenceTerm result = new ClassReferenceTerm(name);
+        result.setSeperator(getSeperator());
+        for (Declaration d : arguments) {
+            result.arguments.add(new Declaration(d.getName(), d.getExpression().clone(), d.isImportant()));
+        }
+        return result;
+    }
+
     /**
      * Gets the name of the class being referenced.
      *

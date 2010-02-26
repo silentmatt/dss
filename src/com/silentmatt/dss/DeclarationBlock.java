@@ -173,7 +173,7 @@ public class DeclarationBlock extends Rule {
         // Make a copy of the properties, to substitute parameters into
         DeclarationList properties = new DeclarationList();
         for (Declaration prop : clazz.getDeclarations(args)) {
-            properties.add(new Declaration(prop.getName(), prop.getExpression(), prop.isImportant()));
+            properties.add(new Declaration(prop.getName(), prop.getExpression().clone(), prop.isImportant()));
         }
 
         state.pushParameters();

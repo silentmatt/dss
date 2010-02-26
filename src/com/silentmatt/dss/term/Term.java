@@ -13,7 +13,7 @@ import com.silentmatt.dss.Expression;
  *
  * @author Matthew Crumley
  */
-public abstract class Term {
+public abstract class Term implements Cloneable {
     /**
      * The separator preceeding this term.
      */
@@ -96,4 +96,7 @@ public abstract class Term {
      */
     @Override
     public abstract String toString();
+
+    @Override
+    public abstract Term clone();
 }

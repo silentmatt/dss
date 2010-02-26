@@ -30,6 +30,12 @@ public class NumberTerm extends Term {
         this.unit = Unit.None;
     }
 
+    public NumberTerm clone() {
+        NumberTerm result = new NumberTerm(value);
+        result.setSeperator(getSeperator());
+        result.setUnit(unit);
+        return result;
+    }
     /**
      * Gets the sign of the number.
      *

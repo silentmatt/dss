@@ -21,6 +21,12 @@ public class UrlTerm extends Term {
         value = url;
     }
 
+    public UrlTerm clone() {
+        UrlTerm result = new UrlTerm(value);
+        result.setSeperator(getSeperator());
+        return result;
+    }
+
     /**
      * Gets the URL string.
      *

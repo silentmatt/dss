@@ -26,6 +26,11 @@ public class BinaryExpression implements CalcExpression {
         this.right = right;
     }
 
+    @Override
+    public BinaryExpression clone() {
+        return new BinaryExpression(operation, left.clone(), right.clone());
+    }
+
     public Value calculateValue(EvaluationState state, DeclarationList container) {
         try {
             Value leftValue = left.calculateValue(state, container);
