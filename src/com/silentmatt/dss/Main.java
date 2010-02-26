@@ -86,6 +86,10 @@ public final class Main {
                 .setLongFlag("test");
         testFlag.setHelp("Run tests in the specified directory");
 
+        Switch colorFlag = new Switch("color")
+                .setLongFlag("color");
+        colorFlag.setHelp("Colorize test output");
+
         Switch compressFlag = new Switch("compress")
                 .setShortFlag('c')
                 .setLongFlag("compress");
@@ -108,6 +112,7 @@ public final class Main {
         try {
             jsap.registerParameter(versionFlag);
             jsap.registerParameter(testFlag);
+            jsap.registerParameter(colorFlag);
             jsap.registerParameter(debugFlag);
             jsap.registerParameter(compressFlag);
             jsap.registerParameter(defineOpt);
@@ -136,7 +141,7 @@ public final class Main {
         }
 
         if (config.getBoolean("test")) {
-            System.exit(runTests(config.getURL("url")));
+            System.exit(runTests(config.getURL("url"), config.getBoolean("color")));
         }
 
         URL url = config.getURL("url");
@@ -315,7 +320,18 @@ public final class Main {
         return "FAIL";
     }
 
-    private static int runTests(URL directory) {
+    private static void showResult(String result, boolean color) {
+        if (!color) {
+            System.out.println(result);
+        }
+        else if (result.equals("PASS")) {
+            System.out.println("\033[32mPASS\033[0m");
+        }
+        else {
+            System.out.println("\033[31m" + result + "\033[0m");
+        }
+    }
+    private static int runTests(URL directory, boolean color) {
         File dir = getTestDirectory(directory);
         if (dir == null) {
             System.err.println("Invalid test directory.");
@@ -327,7 +343,7 @@ public final class Main {
             try {
                 System.out.print(dssFileName.replace(".dss", "") + ": ");
                 String result = testDssFile(new URL(directory, dssFileName));
-                System.out.println(result);
+                showResult(result, color);
                 if (!result.equals("PASS")) {
                     ++errors;
                 }
@@ -337,10 +353,20 @@ public final class Main {
         }
 
         if (errors == 0) {
-            System.out.println("All tests passed.");
+            if (color) {
+                System.out.println("\033[32mAll tests passed.\033[0m");
+            }
+            else {
+                System.out.println("All tests passed.");
+            }
         }
         else {
-            System.out.println(errors + " tests failed.");
+            if (color) {
+                System.out.println("\033[31m" + errors + " tests failed.\033[0m");
+            }
+            else {
+                System.out.println(errors + " tests failed.");
+            }
         }
         return errors;
     }
