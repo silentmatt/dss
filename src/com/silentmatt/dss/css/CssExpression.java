@@ -51,7 +51,7 @@ public class CssExpression {
                 }
                 else {
                     txt.append(t.getSeperator());
-                    if (!compact && !t.getSeperator().equals(' ')) {
+                    if (!compact && t.getSeperator().equals(',')) {
                         txt.append(" ");
                     }
                 }
