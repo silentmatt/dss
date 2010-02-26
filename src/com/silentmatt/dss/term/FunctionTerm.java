@@ -229,6 +229,10 @@ public class FunctionTerm extends Term {
     public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
         Expression argument = getExpression().substituteValues(state, container, withParams, doCalculations);
         Expression result = new FunctionTerm(getName(), argument).applyFunction(state);
-        return result != null ? result : toExpression();
+        if (result == null) {
+            result = new FunctionTerm(getName(), argument).toExpression();
+        }
+        result.getTerms().get(0).setSeperator(getSeperator());
+        return result;
     }
 }
