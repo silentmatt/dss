@@ -35,7 +35,12 @@ public class ConstTerm extends ReferenceTerm {
             state.getErrors().SemErr("Invalid scope");
             return null;
         }
-        return state.getVariables().get(getName());
+        Expression result = state.getVariables().get(getName());
+        if (result != null && result.getTerms().size() > 0) {
+            result = result.clone();
+            result.getTerms().get(0).setSeperator(getSeperator());
+        }
+        return result;
     }
 
     @Override

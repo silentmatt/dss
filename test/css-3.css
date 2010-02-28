@@ -31,7 +31,6 @@ li:nth-child(4n+1), li:nth-child(-5n), li:nth-child(n+1), li:nth-child(-n+2) {
 a[href^="http://"] {
 	color: #000;
 }
-
 a[href$="http://"] {
 	color: #000;
 }

@@ -2,12 +2,15 @@ package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.DeclarationBlock;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.NestedRuleSet;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.Scope;
 import com.silentmatt.dss.css.CssRule;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,18 +35,17 @@ public class DefineDirective extends DeclarationDirective {
 
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
-        DeclarationList properties = getDeclarationBlock().evaluateStyle(state, true).getDeclarations();
-
         Scope<Expression> scope = state.getVariables();
         if (isGlobal()) {
             while (scope.parent() != null) {
                 scope = scope.parent();
             }
         }
-        for (int i = 0; i < properties.size(); i++) {
-            Declaration property = properties.get(i);
-            scope.declare(property.getName(), property.getExpression());
+
+        for (Declaration declaration : getDeclarationBlock().getDeclarations()) {
+            scope.declare(declaration.getName(), declaration.getExpression());
         }
+
         return null;
     }
 }

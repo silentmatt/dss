@@ -138,7 +138,7 @@ body .test {
     name: string(2n+3);
     left: calc( 1 * ( calc(4rad * const(pi)) ) ); // 1 * -> sin()
     top: cos(4grad);
-    color: rgba(1,2,3,4)    ! important;
+    color: rgba(1,2,3,.4)    ! important;
     color: #123;
     background-color: prop(color);
 }

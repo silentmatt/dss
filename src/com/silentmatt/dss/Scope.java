@@ -56,6 +56,15 @@ public final class Scope<T> implements Map<String, T> {
         table.putAll(initial);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Entry<String, T> e : entrySet()) {
+            sb.append(e.getKey() + ": " + e.getValue()).append("\n");
+        }
+        return sb.toString();
+    }
+
     /**
      * Gets the parent Scope.
      *

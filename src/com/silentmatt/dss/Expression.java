@@ -60,7 +60,7 @@ public class Expression implements Cloneable {
                 }
                 else {
                     txt.append(t.getSeperator());
-                    if (!t.getSeperator().equals(' ')) {
+                    if (t.getSeperator() == null || t.getSeperator().equals(',')) {
                         txt.append(" ");
                     }
                 }

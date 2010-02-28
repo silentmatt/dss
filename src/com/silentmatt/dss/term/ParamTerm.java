@@ -37,6 +37,7 @@ public class ParamTerm extends ReferenceTerm {
             return null;
         }
         Expression value = state.getParameters().get(getName());
+
         if (value == null) {
             if (state.getParameters().containsKey(getName())) {
                 state.getErrors().SemErr("Missing required class parameter: " + getName());
@@ -45,6 +46,11 @@ public class ParamTerm extends ReferenceTerm {
                 state.getErrors().SemErr("Invalid class parameter: " + getName());
             }
         }
+        else if (value.getTerms().size() > 0) {
+            value = value.clone();
+            value.getTerms().get(0).setSeperator(getSeperator());
+        }
+
         return value;
     }
 

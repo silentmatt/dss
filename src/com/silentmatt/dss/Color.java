@@ -201,7 +201,7 @@ public class Color {
     }
 
     public String toRGBAString() {
-        return "rgba(" + red + "," + green + "," + blue + "," + alpha  + ")";
+        return "rgba(" + red + ", " + green + ", " + blue + ", " + (alpha / 255.0) + ")";
     }
 
     public String toNameString() {

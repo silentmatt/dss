@@ -158,7 +158,7 @@ public class FunctionTerm extends Term {
                 case 0: fr = getRGBValue((NumberTerm) term); break;
                 case 1: fg = getRGBValue((NumberTerm) term); break;
                 case 2: fb = getRGBValue((NumberTerm) term); break;
-                case 3: fa = getRGBValue((NumberTerm) term); break;
+                case 3: fa = getAlphaValue((NumberTerm) term); break;
                 default: break;
                 }
             }
@@ -176,7 +176,7 @@ public class FunctionTerm extends Term {
                 case 0: h = getHueValue((NumberTerm) term); break;
                 case 1: s = getRGBValue((NumberTerm) term); break;
                 case 2: v = getRGBValue((NumberTerm) term); break;
-                case 3: a = getRGBValue((NumberTerm) term); break;
+                case 3: a = getAlphaValue((NumberTerm) term); break;
                 default: break;
                 }
             }
@@ -211,6 +211,16 @@ public class FunctionTerm extends Term {
      */
     private static int getHueValue(NumberTerm t) {
         return (int)(t.getValue() * 255.0 / 360.0);
+    }
+
+    /**
+     * Converts a numeric term to a hue.
+     *
+     * @param t The NumberTerm to convert
+     * @return A hue value from 0 to 255 (as long as t is from 0 to 360)
+     */
+    private static int getAlphaValue(NumberTerm t) {
+        return (int)(t.getValue() * 255.0);
     }
 
     /**

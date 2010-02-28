@@ -78,7 +78,7 @@ TOKENS
 
     ident = ['-'] (letter | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars))) { letter | digit | '-' | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars)) }.
     integer = digit {digit}.
-    decimal = digit {digit} '.' {digit}.
+    decimal = {digit} '.' {digit}.
     stringLit =
       ("\"" { dqStringChar
            | "\\" ( "b" | "t" | "n" | "f" | "r" | "\"" | "\'" | "\\" | "\n"
@@ -493,15 +493,44 @@ attrib<out Attribute atb> =         (.  atb = new Attribute();
         )
         ( identity<out ident>       (.  atb.setValue(ident); .)
         | QuotedString<out quote>   (.  atb.setValue(quote); .)
+        | (integer | decimal)       (.  atb.setValue(t.val); .)
         )
     ] ']'
 .
 
-pseudo<out String pseudo> =         (.  StringBuilder sb = new StringBuilder(); .)
-    ':' [ ':' ]
+pseudo<out String pseudo> =         (.  StringBuilder sb = new StringBuilder();
+                                        boolean haveOpenParen = false;
+                                    .)
+    ':' [ ':'                       (.  sb.append(":"); .) ]
     identity<out String ident>      (.  sb.append(ident); .)
     [ '('
-        expr<out Expression exp>    (.  sb.append("(").append(exp).append(")"); .)
+        (( [ "+"                    (.  sb.append("(").append(t.val);
+                                        haveOpenParen = true; .)
+             |
+             "-"                    (.  sb.append("(").append(t.val);
+                                        haveOpenParen = true; .)
+           ]
+           [ integer                (.  if (!haveOpenParen) {
+                                            sb.append("(");
+                                            haveOpenParen = true;
+                                        }
+                                        sb.append(t.val); .)
+           ]
+           [  ("n" | "-n")          (.  if (!haveOpenParen) {
+                                            sb.append("(");
+                                            haveOpenParen = true;
+                                        }
+                                        sb.append(t.val); .)
+                [
+                    ("+" | "-")     (.  sb.append(t.val); .)
+                    integer         (.  sb.append(t.val); .)
+                ]
+           ]
+        )                           (.  sb.append(")"); .)
+        |
+        simpleselector<out SimpleSelector ss>
+                                    (.  sb.append("(").append(ss).append(")"); .)
+        )
     ')'
     ]                               (.  pseudo = sb.toString(); .)
 .
@@ -533,6 +562,7 @@ expr<out Expression exp> =  (.  exp = new Expression();
     term<out trm>           (.  exp.getTerms().add(trm); .)
     { [ ('/'                (.  sep = '/'; .)
         | ','               (.  sep = ','; .)
+        | '='               (.  sep = '='; .)
         ) ]
         term<out trm>       (.
                                 if (sep != null) { trm.setSeperator(sep); }
@@ -636,12 +666,13 @@ term<out Term trm> =                        (.  String val = "";
             |
             '.'                             (.  ((StringTerm) trm).setValue(trm.toString() + t.val); .)
             identity<out ident>             (.  ((StringTerm) trm).setValue(trm.toString() + ident); .)
-            |
+/*            |
             '='                             (.  ((StringTerm) trm).setValue(trm.toString() + t.val); .)
             (   identity<out ident>         (.  ((StringTerm) trm).setValue(trm.toString() + ident); .)
                 |
                 integer                     (.  ((StringTerm) trm).setValue(trm.toString() + t.val); .)
             )
+*/
         }
         [
             '(' expr<out exp>               (.  FunctionTerm func = new FunctionTerm();

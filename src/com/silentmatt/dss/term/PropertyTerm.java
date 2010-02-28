@@ -37,6 +37,10 @@ public class PropertyTerm extends ReferenceTerm {
             return null;
         }
         Expression ret = container.get(getName());
+        if (ret != null && ret.getTerms().size() > 0) {
+            ret = ret.clone();
+            ret.getTerms().get(0).setSeperator(getSeperator());
+        }
         return ret != null ? ret : toExpression();
     }
 
