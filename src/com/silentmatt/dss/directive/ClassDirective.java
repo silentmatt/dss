@@ -6,6 +6,7 @@ import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.NestedRuleSet;
 import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.Scope;
 import com.silentmatt.dss.css.CssRule;
 import java.io.IOException;
 import java.util.List;
@@ -18,10 +19,12 @@ public class ClassDirective extends Rule {
     private final String className;
     private final DeclarationList parameters;
     private final DeclarationBlock declarationBlock;
+    private final boolean global;
 
-    public ClassDirective(String className, List<Declaration> parameters, List<Declaration> declarations, List<NestedRuleSet> nestedRuleSets) {
+    public ClassDirective(String className, List<Declaration> parameters, boolean global, List<Declaration> declarations, List<NestedRuleSet> nestedRuleSets) {
         this.className = className;
         this.parameters = new DeclarationList(parameters);
+        this.global = global;
         this.declarationBlock = new DeclarationBlock(declarations, nestedRuleSets);
     }
 
@@ -64,6 +67,9 @@ public class ClassDirective extends Rule {
             }
             txt.append(">");
         }
+        if (isGlobal()) {
+            txt.append(" global");
+        }
         txt.append(" {");
 
         txt.append(declarationBlock.innerString(nesting + 1));
@@ -77,11 +83,23 @@ public class ClassDirective extends Rule {
         declarationBlock.addDeclaration(declaration);
     }
 
+    public boolean isGlobal() {
+        return global;
+    }
+
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         //declarationBlock.getDeclarations().evaluateStyle(state, false);
         DeclarationBlock newBlock = declarationBlock.evaluateStyle(state, false);
-        state.getClasses().declare(className, new ClassDirective(className, parameters, newBlock.getDeclarations(), newBlock.getNestedRuleSets()));
+        Scope<ClassDirective> scope = state.getClasses();
+        if (isGlobal()) {
+            while (scope.parent() != null) {
+                scope = scope.parent();
+            }
+        }
+
+        // XXX: Do we really need to create a new instance here?
+        scope.declare(className, new ClassDirective(className, parameters, global, newBlock.getDeclarations(), newBlock.getNestedRuleSets()));
         return null;
     }
 

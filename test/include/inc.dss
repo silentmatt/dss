@@ -10,6 +10,6 @@ a:hover {
     foo: 3px dotted rgb(255, 42, 43);
 }
 
-@class includedClass {
+@class includedClass global {
     works: yes;
 }

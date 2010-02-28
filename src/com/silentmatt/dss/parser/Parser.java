@@ -467,6 +467,7 @@ class Parser {
 		List<NestedRuleSet> nested = new ArrayList<NestedRuleSet>();
 		Declaration param;
 		Combinator cb;
+		boolean global = false;
 		
 		Expect(29);
 		ident = identity();
@@ -482,6 +483,10 @@ class Parser {
 				}
 			}
 			Expect(32);
+		}
+		if (la.kind == 21) {
+			Get();
+			global = true; 
 		}
 		Expect(24);
 		while (StartOf(8)) {
@@ -515,7 +520,7 @@ class Parser {
 			}
 		}
 		Expect(25);
-		dir = new ClassDirective(ident, parameters, declarations, nested); 
+		dir = new ClassDirective(ident, parameters, global, declarations, nested); 
 		return dir;
 	}
 

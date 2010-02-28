@@ -1,6 +1,7 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.DSSDocument;
+import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
@@ -56,14 +57,16 @@ public class IncludeDirective extends ExpressionDirective {
             try {
                 state.pushScope();
                 try {
-                    // Evaluate the first rule, since it's in the same index as the include
-                    if (includedDocument.getRules().size() > 0) {
-                        result = new CssRuleList(Rule.evaluateRules(state, includedDocument.getRules().subList(0, 1)));
-                        if (((CssRuleList) result).getRules().size() == 1) {
-                            result = ((CssRuleList) result).getRules().get(0);
-                        }
-                    }
                     this.included = includedDocument;
+                    return new CssRuleList(Rule.evaluateRules(state, includedDocument.getRules()));
+//                    // Evaluate the first rule, since it's in the same index as the include
+//                    if (includedDocument.getRules().size() > 0) {
+//                        result = new CssRuleList(Rule.evaluateRules(state, includedDocument.getRules().subList(0, 1)));
+//                        if (((CssRuleList) result).getRules().size() == 1) {
+//                            result = ((CssRuleList) result).getRules().get(0);
+//                        }
+//                    }
+//                    this.included = includedDocument;
                 }
                 finally {
                     state.popScope();
@@ -73,14 +76,14 @@ public class IncludeDirective extends ExpressionDirective {
                 state.popBaseURL();
             }
 
-            int index = container.indexOf(this);
-            if (index != -1) {
-                container.remove(index);
-                for (Rule r : includedDocument.getRules()) {
-                    container.add(index, r);
-                    index++;
-                }
-            }
+//            int index = container.indexOf(this);
+//            if (index != -1) {
+//                container.remove(index);
+//                for (Rule r : includedDocument.getRules()) {
+//                    container.add(index, r);
+//                    index++;
+//                }
+//            }
         }
         return result;
     }

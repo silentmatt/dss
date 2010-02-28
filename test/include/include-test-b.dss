@@ -5,7 +5,7 @@
   b: 100%;
 }
 
-@class mixin {
+@class mixin global {
   height: 10px;
   color: const(c);
 }

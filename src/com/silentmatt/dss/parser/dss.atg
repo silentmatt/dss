@@ -237,6 +237,7 @@ classDirective<out ClassDirective dir> =        (.  String ident;
                                                     List<NestedRuleSet> nested = new ArrayList<NestedRuleSet>();
                                                     Declaration param;
                                                     Combinator cb;
+                                                    boolean global = false;
                                                 .)
     "@class"
     identity<out ident>
@@ -248,6 +249,9 @@ classDirective<out ClassDirective dir> =        (.  String ident;
                 }
             ]
         '>'
+    ]
+    [
+        "global"                                (.  global = true; .)
     ]
     '{' {
             IF (!isNestedSelector()) multideclaration<out mdecs>
@@ -265,7 +269,7 @@ classDirective<out ClassDirective dir> =        (.  String ident;
             | '~'                               (.  cb = Combinator.PrecededBy; .)
             ] ruleset<out RuleSet nest>         (.  nested.add(new NestedRuleSet(cb, nest)); .)
         } '}'
-                                                (.  dir = new ClassDirective(ident, parameters, declarations, nested); .)
+                                                (.  dir = new ClassDirective(ident, parameters, global, declarations, nested); .)
 .
 
 defineDirective<out DefineDirective dir> =      (.
