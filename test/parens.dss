@@ -1,0 +1,30 @@
+.parens {
+  @define {
+    var: 1px;
+  }
+  border: calc(const(var) * 2) solid black;
+  margin: calc(const(var) * 1) calc(const(var) + 2px) calc(4 * 4) 3;
+  width: calc(6 * 6);
+  padding: 2px calc(6px * 6);
+}
+
+.more-parens {
+  @define {
+    var: calc(2 * 2);
+  }
+  padding: calc(2 * const(var)) 4 4 calc(const(var) * 1px);
+  width: calc(const(var) * const(var) * 6);
+  height: calc((7 * 7) + (8 * 8));
+  margin: calc(4 * (5 + 5) / 2 - (const(var) * 2));
+  margin: calc((6 * 6) * 1px);
+}
+
+.nested-parens {
+  width: calc(2 * (4 * (2 + (1 + 6))) - 1);
+  height: calc(((2+3)*(2+3) / (9-4)) + 1);
+}
+
+.mixed-units {
+  margin: 2px 4em 1 5pc;
+  padding: calc(2px + 4px) 1em 2px 2;
+}

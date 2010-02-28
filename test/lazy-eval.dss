@@ -1,0 +1,8 @@
+@define {
+  var: const(a);
+  a: 100%;
+}
+
+.lazy-eval {
+  width: const(var);
+}
