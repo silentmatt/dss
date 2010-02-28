@@ -7,7 +7,6 @@ import com.silentmatt.dss.css.CssMediaDirective;
 import com.silentmatt.dss.css.CssMedium;
 import com.silentmatt.dss.css.CssRule;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 

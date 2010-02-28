@@ -28,6 +28,7 @@ public class TermExpression implements CalcExpression {
         this.value = value;
     }
 
+    @Override
     public TermExpression clone() {
         return new TermExpression(value.clone());
     }

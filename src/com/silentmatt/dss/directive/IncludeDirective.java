@@ -1,7 +1,6 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.DSSDocument;
-import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;

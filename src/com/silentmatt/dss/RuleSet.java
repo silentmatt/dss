@@ -7,7 +7,6 @@ import com.silentmatt.dss.util.JoinedSelectorList;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 /**
  *

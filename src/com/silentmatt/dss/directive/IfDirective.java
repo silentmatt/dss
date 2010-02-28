@@ -6,7 +6,6 @@ import com.silentmatt.dss.bool.BooleanExpression;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.css.CssRuleList;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 
 /**

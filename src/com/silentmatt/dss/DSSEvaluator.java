@@ -1,13 +1,11 @@
 package com.silentmatt.dss;
 
 import com.silentmatt.dss.css.CssDocument;
-import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.directive.ClassDirective;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DSSEvaluator {
