@@ -5,3 +5,9 @@ nbproject/private/
 nbproject/findbugs.settings
 nbproject/pmd.settings
 nbproject/sqe.properties
+src/com/silentmatt/dss/util/EmptyList.java
+src/com/silentmatt/dss/util/SingletonList.java
+src/com/silentmatt/dss/util/SpecializedList.java
+src/com/silentmatt/dss/Base64.java
+src/com/silentmatt/dss/DataClass.java
+function-example.txt
