@@ -7,9 +7,6 @@ package com.silentmatt.dss;
 public class ExceptionErrorReporter extends AbstractErrorReporter {
     private int count = 0;
 
-    public ExceptionErrorReporter() {
-    }
-
     protected void addError(String msg) {
         count++;
         throw new RuntimeException(msg);

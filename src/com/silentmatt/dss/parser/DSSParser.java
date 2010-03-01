@@ -26,7 +26,7 @@ import java.io.ByteArrayInputStream;
  * @author matt
  */
 public class DSSParser {
-    private Parser parser;
+    private final Parser parser;
 
     public DSSParser(Scanner scanner) {
         parser = new Parser(scanner);

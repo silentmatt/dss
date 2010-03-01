@@ -589,7 +589,7 @@ orExpression<out BooleanExpression expr> = (. BooleanExpression left, right; Boo
     }
 .
 
-andExpression<out BooleanExpression expr> = (. BooleanExpression left, right; BooleanOperation op; .)
+andExpression<out BooleanExpression expr> = (. BooleanExpression left, right;.)
     notExpression<out left> (. expr = left; .)
     {
         "&&" notExpression<out right> (. expr = new BinaryBooleanExpression(BooleanOperation.AND, expr, right); .)

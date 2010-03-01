@@ -1239,7 +1239,7 @@ class Parser {
 
 	BooleanExpression  andExpression() {
 		BooleanExpression  expr;
-		BooleanExpression left, right; BooleanOperation op; 
+		BooleanExpression left, right;
 		left = notExpression();
 		expr = left; 
 		while (la.kind == 63) {

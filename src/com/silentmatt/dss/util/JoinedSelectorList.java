@@ -42,14 +42,10 @@ public class JoinedSelectorList extends AbstractList<Selector> {
         int pIndex = index / childrenSize;
         int cIndex = index % childrenSize;
 
-        if (parents.size() == 0) {
+        if (parents.isEmpty()) {
             return children.get(cIndex);
         }
-        if (combinator != null) {
-            int i = combinator.hashCode();
-        }
-        Selector value = new Selector(parents.get(pIndex), combinator, children.get(cIndex));
-        return value;
+        return new Selector(parents.get(pIndex), combinator, children.get(cIndex));
     }
 
     @Override
@@ -64,7 +60,7 @@ public class JoinedSelectorList extends AbstractList<Selector> {
 
     @Override
     public int size() {
-        if (parents.size() == 0) {
+        if (parents.isEmpty()) {
             return children.size();
         }
         return parents.size() * children.size();

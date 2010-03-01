@@ -16,7 +16,6 @@ public class IfDirective extends Rule {
     private final BooleanExpression condition;
     private final List<Rule> ifRules;
     private final List<Rule> elseRules;
-    private List<Rule> rules = null;
 
     public IfDirective(BooleanExpression condition, List<Rule> ifRules, List<Rule> elseRules) {
         super();
@@ -74,7 +73,7 @@ public class IfDirective extends Rule {
         if (result == null) {
             state.getErrors().SemErr("Invalid condition: " + condition);
         }
-        rules = result ? ifRules : elseRules;
+        List<Rule> rules = result ? ifRules : elseRules;
 
         if (rules != null) {
             CssRuleList crl = new CssRuleList();

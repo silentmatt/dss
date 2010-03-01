@@ -16,7 +16,7 @@ import java.util.Set;
  * @author Matthew Crumley
  */
 public class DeclarationList implements List<Declaration> {
-    private List<Declaration> list = new ArrayList<Declaration>();
+    private final List<Declaration> list = new ArrayList<Declaration>();
     private final Map<String, Expression> mapView = new DeclarationListMapView();
 
     public DeclarationList() {
@@ -262,7 +262,7 @@ public class DeclarationList implements List<Declaration> {
         }
 
         private class DeclarationListKeySet implements Set<String> {
-            final Set<String> keys = new LinkedHashSet<String>();
+            private final Set<String> keys = new LinkedHashSet<String>();
 
             public DeclarationListKeySet() {
                 for (Declaration declaration : DeclarationList.this.list) {

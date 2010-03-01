@@ -10,7 +10,7 @@ import java.util.List;
 public class CssRuleSet extends CssRule {
     private final List<CssRule> rules = new ArrayList<CssRule>();
     private final List<CssDeclaration> declarations = new ArrayList<CssDeclaration>();
-    private List<CssSelector> selectors = new ArrayList<CssSelector>();
+    private final List<CssSelector> selectors = new ArrayList<CssSelector>();
 
     public List<CssDeclaration> getDeclarations() {
         return declarations;

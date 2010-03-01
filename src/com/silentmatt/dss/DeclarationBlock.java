@@ -69,18 +69,6 @@ public class DeclarationBlock extends Rule {
         return null;
     }
 
-    @Deprecated
-    public String getDeclarationsString(int nesting) {
-        String start = Rule.getIndent(nesting);
-        StringBuilder txt = new StringBuilder();
-
-        txt.append("{");
-        txt.append(innerString(nesting + 1));
-        txt.append("\n" + start + "}");
-
-        return txt.toString();
-    }
-
     public String innerString(int nesting) {
         String start = Rule.getIndent(nesting);
         StringBuilder txt = new StringBuilder("");
@@ -117,7 +105,14 @@ public class DeclarationBlock extends Rule {
     }
 
     public String toString(int nesting) {
-        return getDeclarationsString(nesting);
+        String start = Rule.getIndent(nesting);
+        StringBuilder txt = new StringBuilder();
+
+        txt.append("{");
+        txt.append(innerString(nesting + 1));
+        txt.append("\n" + start + "}");
+
+        return txt.toString();
     }
 
     @Override

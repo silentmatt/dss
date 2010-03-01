@@ -316,8 +316,9 @@ public final class Main {
             return "FAIL";
         case 2:
             return "FAIL (compressed)";
+        default:
+            return "FAIL";
         }
-        return "FAIL";
     }
 
     private static void showResult(String result, boolean color) {
