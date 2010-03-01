@@ -47,10 +47,6 @@ public class RuleSet extends Rule {
         declarationBlock.addNestedRuleSet(cb, nested);
     }
 
-    public void addNestedRuleSet(NestedRuleSet nested) {
-        declarationBlock.addNestedRuleSet(nested);
-    }
-
     public void addRule(Rule directive) {
         rules.add(directive);
     }

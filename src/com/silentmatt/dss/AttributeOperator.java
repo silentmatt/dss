@@ -39,7 +39,8 @@ public enum AttributeOperator {
     private AttributeOperator(String cssText) {
         this.cssText = cssText;
     }
-    private String cssText;
+
+    private final String cssText;
 
     @Override
     public String toString() {

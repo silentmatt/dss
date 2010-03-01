@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -85,8 +84,8 @@ public final class Scope<T> implements Map<String, T> {
         return new Scope<T>(this);
     }
 
-    private Scope<T> parentScope;
-    private Map<String, T> table;
+    private final Scope<T> parentScope;
+    private final Map<String, T> table;
 
     /**
      * Gets the number of entries in the Scope.

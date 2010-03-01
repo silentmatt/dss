@@ -94,19 +94,19 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
      *
      * @see #fromCssUnit(cssUnit)
      */
-    private static Map<Unit, CalculationUnit> cssToUnitMap;
+    private static final Map<Unit, CalculationUnit> cssToUnitMap;
     /**
      * Mapping from a CalculationUnit to the corresponding CSS {@link Unit}.
      *
      * @see #toCssUnit(com.silentmatt.dss.expression.CalculationUnit)
      */
-    private static Map<CalculationUnit, Unit> unitToCssMap;
+    private static final Map<CalculationUnit, Unit> unitToCssMap;
     /**
      * Mapping from a CalculationUnit to it's corresponding canonical unit.
      *
      * @see #getCanonicalUnit(com.silentmatt.dss.expression.CalculationUnit)
      */
-    private static Map<CalculationUnit, CalculationUnit> canonicalUnit;
+    private static final Map<CalculationUnit, CalculationUnit> canonicalUnit;
 
     static {
         cssToUnitMap = new HashMap<Unit, CalculationUnit>();

@@ -43,7 +43,7 @@ public class CssTerm {
     }
 
     /**
-     * The separator preceeding this term.
+     * The separator preceding this term.
      */
     private Character seperator;
 
@@ -59,19 +59,10 @@ public class CssTerm {
     /**
      * Sets the separator.
      *
-     * @param Seperator The separator to preceed this term.
+     * @param Seperator The separator to precede this term.
      */
     public void setSeperator(Character seperator) {
         this.seperator = seperator;
-    }
-
-    /**
-     * Converts this term into an expression.
-     *
-     * @return A new Expression with <code>this</code> as its single term.
-     */
-    public CssExpression toExpression() {
-        return new CssExpression(this);
     }
 
     /**

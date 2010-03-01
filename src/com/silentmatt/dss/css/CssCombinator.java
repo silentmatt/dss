@@ -24,7 +24,7 @@ public enum CssCombinator {
      */
     PrecededBy("~");
 
-    private String cssText;
+    private final String cssText;
 
     private CssCombinator(String cssText) {
         this.cssText = cssText;

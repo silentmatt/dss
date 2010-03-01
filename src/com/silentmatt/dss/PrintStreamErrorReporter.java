@@ -8,7 +8,7 @@ import java.io.PrintStream;
  */
 public class PrintStreamErrorReporter extends AbstractErrorReporter {
     private int count = 0;
-    private java.io.PrintStream errorStream;
+    private final java.io.PrintStream errorStream;
 
     public PrintStreamErrorReporter() {
         this(System.err);

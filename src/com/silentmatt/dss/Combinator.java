@@ -22,7 +22,7 @@ public enum Combinator {
      */
     PrecededBy("~");
 
-    private String cssText;
+    private final String cssText;
 
     private Combinator(String cssText) {
         this.cssText = cssText;

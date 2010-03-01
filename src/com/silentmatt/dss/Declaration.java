@@ -125,9 +125,7 @@ public class Declaration implements Map.Entry<String, Expression> {
     }
 
     public Expression setValue(Expression arg0) {
-        Expression old = getExpression();
-        setExpression(arg0);
-        return old;
+        throw new UnsupportedOperationException();
     }
 
     public void substituteValue(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {

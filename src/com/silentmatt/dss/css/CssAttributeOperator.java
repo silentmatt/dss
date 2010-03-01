@@ -41,7 +41,7 @@ public enum CssAttributeOperator {
     private CssAttributeOperator(String cssText) {
         this.cssText = cssText;
     }
-    private String cssText;
+    private final String cssText;
 
     @Override
     public String toString() {

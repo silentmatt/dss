@@ -2,7 +2,6 @@ package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationBlock;
-import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
 import java.util.List;
@@ -17,10 +16,6 @@ public abstract class DeclarationDirective extends Rule {
     public DeclarationDirective(List<Declaration> declarations) {
         super();
         this.declarations = new DeclarationBlock(declarations);
-    }
-
-    private DeclarationList getDeclarations() {
-        return declarations.getDeclarations();
     }
 
     public DeclarationBlock getDeclarationBlock() {

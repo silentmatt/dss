@@ -24,10 +24,6 @@ public class IncludeDirective extends ExpressionDirective {
         getExpression().getTerms().add(url);
     }
 
-    public IncludeDirective(Expression url) {
-        super(url);
-    }
-
     public String getURLString() {
         // TODO: Remove need for cast
         return ((UrlTerm) getExpression().getTerms().get(0)).getValue();

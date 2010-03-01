@@ -151,7 +151,7 @@ public class Color {
     public static final Color Yellow = new Color(0xFF, 0xFF, 0x00, "Yellow");
     public static final Color YellowGreen = new Color(0x9A, 0xCD, 0x32, "YellowGreen");
 
-    private static Map<String, Color> namedColors = new HashMap<String, Color>();
+    private static final Map<String, Color> namedColors = new HashMap<String, Color>();
     static {
         for (Field field : Color.class.getFields()) {
             if (Color.class.isAssignableFrom(field.getType())) {

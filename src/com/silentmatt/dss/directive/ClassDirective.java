@@ -79,7 +79,7 @@ public class ClassDirective extends Rule {
         return txt.toString();
     }
 
-    public void addDeclartion(Declaration declaration) {
+    public void addDeclaration(Declaration declaration) {
         declarationBlock.addDeclaration(declaration);
     }
 
