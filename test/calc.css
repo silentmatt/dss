@@ -1,8 +1,11 @@
 something {
 	width: 297.5414899993846pt;
+	width2: 297.5414899993846pt;
 	height: 6.283185307179586;
 }
 circle {
 	angle: 360;
+	angle: 540;
 	left: 720deg;
+	top: 720deg;
 }

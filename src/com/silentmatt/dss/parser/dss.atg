@@ -635,8 +635,10 @@ termExpression<out CalcExpression expr> (. expr = null; Term trm; CalcExpression
     term<out trm> (. expr = new TermExpression(trm); .)
 .
 
-calculation<out CalcExpression expr> =
-"calc" "(" lengthExpression<out expr> ")"
+calculation<out CalcExpression expr> =  (.  expr = null; .)
+(("calc" "(" lengthExpression<out expr> ")")
+|
+(       "[" lengthExpression<out expr> "]"))
 .
 
 term<out Term trm> =                        (.  String val = "";
