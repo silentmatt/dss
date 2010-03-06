@@ -1,5 +1,4 @@
-// FIXME: support quoted urls
-@include url(include/include-test-a.dss);
+@include "include/include-test-a.dss";
 // TODO: Only include each file once?
 //@include url(include/include-test-a.dss);
 

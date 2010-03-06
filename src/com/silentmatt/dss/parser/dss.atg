@@ -330,8 +330,13 @@ importDirective<out ImportDirective dir> =
 .
 
 includeDirective<out IncludeDirective dir> =
+                                        (.  dir = null; .)
     "@include"
-    URI<out String url> (. dir = new IncludeDirective(new UrlTerm(url)); .)
+    (
+        URI<out String url>             (.  dir = new IncludeDirective(new UrlTerm(url)); .)
+        |
+        QuotedString<out String url>    (.  dir = new IncludeDirective(new UrlTerm(url.substring(1, url.length()-1))); .)
+    )
     ';'
 .
 
