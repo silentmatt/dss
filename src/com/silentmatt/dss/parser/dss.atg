@@ -663,6 +663,9 @@ term<out Term trm> =                        (.  String val = "";
         |
         "prop" '(' identity<out ident> ')'  (.  trm = new PropertyTerm(ident); .)
         |
+        "ruleset" '(' selector<out Selector s> ')'
+                                            (.  trm = new RuleSetClassReferenceTerm(s); .)
+        |
         "U\\" identity<out ident>           (.  trm = new UnicodeTerm("U\\" + ident); .)
         |
         HexValue<out val>                   (.  trm = new HexTerm(val); .)

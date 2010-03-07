@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,6 +19,7 @@ public final class EvaluationState {
     private Scope<Expression> variables;
     private Scope<Expression> parameters = null;
     private final Map<String, Function> functions = new HashMap<String, Function>();
+    private final LinkedList<List<RuleSet>> ruleSetScope = new LinkedList<List<RuleSet>>();
 
     public EvaluationState(DSSEvaluator.Options opts) {
         this.baseURL = new LinkedList<URL>();
@@ -52,9 +54,13 @@ public final class EvaluationState {
         return functions;
     }
 
-    public void pushBaseURL(URL newBase) {
+    public List<List<RuleSet>> getRuleSets() {
+        return ruleSetScope;
+    }
+
+    public void pushBaseURL(URL newBase, List<RuleSet> currentRuleSetScope) {
         baseURL.push(newBase);
-        pushScope();
+        pushScope(currentRuleSetScope);
     }
 
     public void popBaseURL() {
@@ -62,14 +68,16 @@ public final class EvaluationState {
         baseURL.pop();
     }
 
-    public void pushScope() {
+    public void pushScope(List<RuleSet> currentRuleSetScope) {
         classes = new Scope<ClassDirective>(classes);
         variables = new Scope<Expression>(variables);
+        ruleSetScope.addLast(currentRuleSetScope);
     }
 
     public void popScope() {
         classes = classes.parent();
         variables = variables.parent();
+        ruleSetScope.removeLast();
     }
 
     public void pushParameters() {

@@ -1,15 +1,18 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.DSSDocument;
+import com.silentmatt.dss.DSSEvaluator;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.RuleSet;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.css.CssRuleList;
 import com.silentmatt.dss.term.UrlTerm;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,9 +51,9 @@ public class IncludeDirective extends ExpressionDirective {
         URL url = new URL(state.getBaseURL(), this.getURLString());
         DSSDocument includedDocument = DSSDocument.parse(url.toString(), state.getErrors());
         if (includedDocument != null) {
-            state.pushBaseURL(url);
+            state.pushBaseURL(url, Rule.getRuleSets(includedDocument.getRules()));
             try {
-                state.pushScope();
+                state.pushScope(new ArrayList<RuleSet>()); // Why do this if pushBaseURL already did?
                 try {
                     this.included = includedDocument;
                     return new CssRuleList(Rule.evaluateRules(state, includedDocument.getRules()));

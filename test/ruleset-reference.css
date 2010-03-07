@@ -1,0 +1,24 @@
+#content > span.className {
+	font-size: larger;
+}
+#content > span.className span {
+	color: #F00;
+}
+@media print {
+	#content > span.className {
+		color: #F0F;
+	}
+	.sameAsClassName {
+		font-size: larger;
+		color: #F0F;
+	}
+	.sameAsClassName span {
+		color: #F00;
+	}
+}
+.sameAgain but outside {
+	font-size: larger;
+}
+.sameAgain but outside span {
+	color: #F00;
+}

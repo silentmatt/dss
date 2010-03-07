@@ -5,7 +5,9 @@ import com.silentmatt.dss.directive.ClassDirective;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DSSEvaluator {
@@ -70,7 +72,7 @@ public class DSSEvaluator {
 
     public CssDocument evaluate(DSSDocument css) throws MalformedURLException, IOException {
         CssDocument document = new CssDocument();
-        state.pushScope();
+        state.pushScope(Rule.getRuleSets(css.getRules()));
         try {
             document.getRules().addAll(Rule.evaluateRules(state, css.getRules()));
             return document;

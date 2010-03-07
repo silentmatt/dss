@@ -54,7 +54,7 @@ public class RuleSet extends Rule {
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException{
         CssRuleList result = new CssRuleList();
-        state.pushScope();
+        state.pushScope(declarationBlock.getRuleSetScope());
         try {
             for (Rule dir : this.getRules()) {
                 dir.evaluate(state, null);

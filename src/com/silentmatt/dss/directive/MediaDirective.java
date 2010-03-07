@@ -68,7 +68,7 @@ public class MediaDirective extends Rule {
 
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
-        state.pushScope();
+        state.pushScope(Rule.getRuleSets(getRules()));
         try {
             List<CssMedium> media = new ArrayList<CssMedium>();
             for (Medium m : mediums) {

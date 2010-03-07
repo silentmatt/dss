@@ -1,0 +1,20 @@
+#content > span.className {
+    font-size: larger;
+    span {
+        color: red;
+    }
+}
+
+@media print {
+    #content > span.className {
+        color: #F0F;
+    }
+
+    .sameAsClassName {
+        apply: ruleset( #content>span.className );
+    }
+}
+
+.sameAgain but outside {
+    apply: ruleset(#content > span.className);
+}

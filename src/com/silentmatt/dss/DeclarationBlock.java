@@ -3,7 +3,9 @@ package com.silentmatt.dss;
 import com.silentmatt.dss.css.CssDeclaration;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.directive.ClassDirective;
+import com.silentmatt.dss.directive.RuleSetClass;
 import com.silentmatt.dss.term.ClassReferenceTerm;
+import com.silentmatt.dss.term.RuleSetClassReferenceTerm;
 import com.silentmatt.dss.term.Term;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -193,6 +195,26 @@ public class DeclarationBlock extends Rule {
         }
     }
 
+    private static ClassDirective lookupRuleSet(RuleSetClassReferenceTerm crt, List<List<RuleSet>> ruleSets) {
+        String needle = crt.getSelector().toString();
+        boolean found = false;
+
+        List<RuleSet> allRuleSets = new ArrayList<RuleSet>();
+
+        for (List<RuleSet> rsList : ruleSets) {
+            for (RuleSet rs : rsList) {
+                for (Selector s : rs.getSelectors()) {
+                    if (s.toString().equals(needle)) {
+                        found = true;
+                        allRuleSets.add(rs);
+                    }
+                }
+            }
+        }
+
+        return found ? new RuleSetClass(allRuleSets) : null;
+    }
+
     private static void addInheritedProperties(DeclarationBlock result, EvaluationState state, Expression inherits) throws MalformedURLException, IOException {
         for (Term inherit : inherits.getTerms()) {
             ClassReferenceTerm crt;
@@ -205,7 +227,15 @@ public class DeclarationBlock extends Rule {
                 crt = new ClassReferenceTerm(inherit.toString());
             }
 
-            ClassDirective clazz = state.getClasses().get(crt.getName());
+            ClassDirective clazz = null;
+            // TODO: Move this logic to EvaluationState?
+            if (crt instanceof RuleSetClassReferenceTerm) {
+                clazz = lookupRuleSet((RuleSetClassReferenceTerm) crt, state.getRuleSets());
+            }
+            else {
+                clazz = state.getClasses().get(crt.getName());
+            }
+
             if (clazz == null) {
                 state.getErrors().SemErr("no such class: " + crt.getName());
                 return;
@@ -220,8 +250,16 @@ public class DeclarationBlock extends Rule {
         return evaluateStyle(result, state, doCalculations);
     }
 
+    protected List<RuleSet> getRuleSetScope() {
+        List<RuleSet> result = new ArrayList<RuleSet>(nestedRuleSets.size());
+        for (NestedRuleSet nrs : nestedRuleSets) {
+            result.add(nrs);
+        }
+        return result;
+    }
+
     protected DeclarationBlock evaluateStyle(DeclarationBlock result, EvaluationState state, boolean doCalculations) throws IOException {
-        state.pushScope();
+        state.pushScope(getRuleSetScope());
         try {
             for (Declaration declaration : getDeclarations()) {
                 if (matches(declaration, "extend") || matches(declaration, "apply")) {

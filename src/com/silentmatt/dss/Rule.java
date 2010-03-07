@@ -37,4 +37,14 @@ public abstract class Rule {
 
         return result;
     }
+
+    public static List<RuleSet> getRuleSets(List<Rule> rules) {
+        List<RuleSet> result = new ArrayList<RuleSet>(rules.size());
+        for (Rule r : rules) {
+            if (r instanceof RuleSet) {
+                result.add((RuleSet) r);
+            }
+        }
+        return result;
+    }
 }
