@@ -19,6 +19,7 @@ import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 
 public final class Main {
     private Main() {
@@ -340,7 +341,9 @@ public final class Main {
         }
 
         int errors = 0;
-        for (String dssFileName : dir.list(new DssFilenameFilter())) {
+        String[] dirList = dir.list(new DssFilenameFilter());
+        Arrays.sort(dirList);
+        for (String dssFileName : dirList) {
             try {
                 System.out.print(dssFileName.replace(".dss", "") + ": ");
                 String result = testDssFile(new URL(directory, dssFileName));
