@@ -1,0 +1,61 @@
+@class mixin <a: 1px; b: 50%> {
+  width: calc(@a * 5);
+  height: calc(@b - 1%);
+}
+
+@class mixiny
+<a: 0; b: 0> {
+  margin: @a;
+  padding: @b;
+}
+
+@class hidden<> {
+  color: transparent;
+}
+
+.two-args {
+  color: blue;
+  apply: mixin<2px; 100%>;
+}
+
+.one-arg {
+  apply: mixin<3px>;
+}
+
+.no-parens {
+  apply: mixin;
+}
+
+.no-args {
+  apply: mixin<>;
+}
+
+.var-args {
+  @define { var: 9; }
+  apply: mixin<@var; calc(@var * 2 * 1%)>;
+}
+
+.multi-mix {
+  apply: mixin<2px; 30%>;
+  apply: mixiny<4; 5>;
+}
+
+@class maxa<arg1: 10; arg2: #f00> {
+  padding: calc(@arg1 * 2px);
+  color: @arg2;
+}
+
+body {
+  apply: maxa<15>;
+}
+
+@define {
+  glob: 5;
+}
+@class global-mixin<a:2> {
+  width: calc(@glob + @a);
+}
+
+.scope-mix {
+  apply: global-mixin<3>;
+}

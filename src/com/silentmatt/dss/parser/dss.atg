@@ -77,6 +77,7 @@ CHARACTERS
 TOKENS
 
     ident = ['-'] (letter | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars))) { letter | digit | '-' | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars)) }.
+    atref = '@' ['-'] (letter | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars))) { letter | digit | '-' | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars)) }.
     integer = digit {digit}.
     decimal = {digit} '.' {digit}.
     stringLit =
@@ -183,6 +184,8 @@ identity<out String ident> =
         | "global"
     )   (. ident = t.val; .)
 .
+
+atReference<out String ident> = atref  (. ident = t.val.substring(1); .) .
 
 mediaDirective<out MediaDirective mdir> =               (.
                                                             List<Medium> media = new ArrayList<Medium>();
@@ -662,6 +665,8 @@ term<out Term trm> =                        (.  String val = "";
         "param" '(' identity<out ident> ')' (.  trm = new ParamTerm(ident); .)
         |
         "prop" '(' identity<out ident> ')'  (.  trm = new PropertyTerm(ident); .)
+        |
+        atReference<out ident>              (.  trm = new AtReferenceTerm(ident); .)
         |
         "ruleset" '(' selector<out Selector s> ')'
                                             (.  trm = new RuleSetClassReferenceTerm(s); .)
