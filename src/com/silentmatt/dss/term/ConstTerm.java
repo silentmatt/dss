@@ -19,6 +19,7 @@ public class ConstTerm extends ReferenceTerm {
         result.setSeperator(getSeperator());
         return result;
     }
+
     /**
      * Gets the const term as a String.
      *
