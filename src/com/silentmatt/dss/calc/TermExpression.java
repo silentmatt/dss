@@ -56,7 +56,7 @@ public class TermExpression implements CalcExpression {
     }
 
     public int getPrecidence() {
-        return 3;
+        return 4;
     }
 
     /**

@@ -70,7 +70,7 @@ public class BinaryExpression implements CalcExpression {
      *
      * The resulting String will be parsable to an identical BinaryExpression.
      *
-     * @return The String repressentation of this expression.
+     * @return The String representation of this expression.
      */
     @Override
     public String toString() {

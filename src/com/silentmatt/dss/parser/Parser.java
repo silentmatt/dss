@@ -1367,7 +1367,11 @@ class Parser {
 	CalcExpression  termExpression() {
 		CalcExpression  expr;
 		expr = null; Term trm; CalcExpression exp; 
-		if (la.kind == 56) {
+		if (la.kind == 57) {
+			Get();
+			exp = termExpression();
+			expr = new NegationExpression(exp); 
+		} else if (la.kind == 56) {
 			Get();
 			exp = lengthExpression();
 			Expect(59);

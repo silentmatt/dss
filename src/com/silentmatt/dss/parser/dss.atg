@@ -637,10 +637,12 @@ multiplicativeExpression<out CalcExpression expr> = (. CalcExpression left, righ
     }
 .
 
-termExpression<out CalcExpression expr> (. expr = null; Term trm; CalcExpression exp; .) =
-    '(' lengthExpression<out exp> ')' (. expr = exp; .)
+termExpression<out CalcExpression expr> (.  expr = null; Term trm; CalcExpression exp; .) =
+    '-' termExpression<out exp>         (. expr = new NegationExpression(exp); .)
     |
-    term<out trm> (. expr = new TermExpression(trm); .)
+    '(' lengthExpression<out exp> ')'   (. expr = exp; .)
+    |
+    term<out trm>                       (. expr = new TermExpression(trm); .)
 .
 
 calculation<out CalcExpression expr> =  (.  expr = null; .)
