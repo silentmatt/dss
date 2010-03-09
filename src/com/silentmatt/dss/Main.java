@@ -33,7 +33,7 @@ public final class Main {
     }
 
     private static void printVersion() {
-        System.out.println("DSS 0.1b");
+        System.out.println("DSS 0.2");
     }
 
     @SuppressWarnings("deprecation")
