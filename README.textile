@@ -2,8 +2,8 @@ DSS stands for Dynamic Style Sheets.
 
 h3. Features
 
-* defined constants
-* "classes" (groups of properties/values that can be inserted into a rule)
+* Constants
+* "Classes" (groups of properties/values that can be inserted into a rule)
   Classes can have parameters, with optional default values.
 
 <pre>
@@ -12,8 +12,8 @@ h3. Features
     margin: param(margin) auto;
 }
 </pre>
-* includes (@import, but not restricted to the beginning of the stylesheet, and DSS does the inclusion, not the browser).
-* calculated values
+* Includes (@import, but not restricted to the beginning of the stylesheet, and DSS does the inclusion, not the browser).
+* Calculated values
 
 <pre>
 @define {
@@ -21,8 +21,9 @@ h3. Features
 }
 
 .box {
-    border: const(border-size) solid;
-    width: calc(100px - 2 * const(border-size)); /* subtract the border size */
+    border: @border-size solid;
+    width: calc(100px - 2 * @border-size); /* subtract the border size */
+    height: [ prop(width) / 1.6 ]; /* Make the ratio 16:10 */
 }
 </pre>
 * Conditional rules (if/else). "&&" (and), "||" (or), "^" (exclusive or) and "!" (not) operators are supported. For numeric/calculated terms, non-zero is true. Class reference terms (the parameter list is required, but can be empty) are true if the class exists in the current scope. const() and param() terms are false if they don't exist or their value is "false" or "no". All other terms are assumed to be constant references, except URLs, which are not supported, and the keywords "true" and "false".
@@ -42,10 +43,11 @@ h3. Features
     }
 }
 </pre>
+* Compressed output. Unnecessary whitespace is removed from the output.
 
 h3. Planned Features
 
-Eventually, it will probably support minimized output, and some automatic cross-browser properties. For example:
+Eventually, some automatic cross-browser properties. For example:
 
 <pre>
 .semitransparent {
@@ -55,11 +57,19 @@ Eventually, it will probably support minimized output, and some automatic cross-
 
 Would turn into:
 
-<pre>.semitransparent{opacity:0.5;-moz-opacity:0.5;-khtml-opacity:0.5;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";filter:alpha(opacity=50);}</pre>
+<pre>
+.semitransparent {
+    opacity: 0.5;
+    -moz-opacity: 0.5;
+    -khtml-opacity: 0.5;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: alpha(opacity=50);
+}
+</pre>
 
 h3. Usage
 
-There's no documentation in the code (yet), but the Main class is very simple, so it should be easy to figure out how to use the library.
+There's not much documentation in the code (yet), but the Main class is very simple, so it should be easy to figure out how to use the library.
 
 There's a simple command-line DSS processor included with the library. You can run it like this:
 
