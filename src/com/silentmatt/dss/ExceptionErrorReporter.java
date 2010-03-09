@@ -1,6 +1,8 @@
 package com.silentmatt.dss;
 
 /**
+ * An {@link ErrorReporter} implementation that throws a {@link RuntimeException}
+ * when an error is reported.
  *
  * @author Matthew Crumley
  */

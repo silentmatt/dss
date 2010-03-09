@@ -3,6 +3,7 @@ package com.silentmatt.dss;
 import com.silentmatt.dss.parser.DSSParser;
 
 /**
+ * A skeletal implementation of the {@link ErrorReporter} interface.
  *
  * @author Matthew Crumley
  */
