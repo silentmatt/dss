@@ -1,8 +1,9 @@
 package com.silentmatt.dss;
 
 import com.silentmatt.dss.css.CssDeclaration;
-import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.directive.ClassDirective;
+import com.silentmatt.dss.directive.DeclarationDirective;
+import com.silentmatt.dss.directive.GenericDirective;
 import com.silentmatt.dss.directive.RuleSetClass;
 import com.silentmatt.dss.term.ClassReferenceTerm;
 import com.silentmatt.dss.term.RuleSetClassReferenceTerm;
@@ -13,32 +14,72 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Represents a block of declarations in a DSS document.
+ *
+ * DeclarationBlock is the part of a rule that is surrounded by brackets.
+ * 
+ * DeclarationBlocks are attached to {@link RuleSet}, {@link ClassDirective},
+ * {@link DeclarationDirective}, and {@link GenericDirective} objects.
  *
  * @author Matthew Crumley
  */
-public class DeclarationBlock extends Rule {
+public class DeclarationBlock {
     private final DeclarationList declarations;
     private final List<NestedRuleSet> nestedRuleSets;
 
+    /**
+     * Constructs an empty DeclarationBlock.
+     */
     public DeclarationBlock() {
         this.declarations = new DeclarationList();
         this.nestedRuleSets = new ArrayList<NestedRuleSet>();
     }
 
+    /**
+     * Constructs a DeclarationBlock, containing a list of {@link Declaration}s.
+     *
+     * @param declarations The Declarations to intialize the block with. Declarations
+     * are copied from the list by reference, so later changes to the list will
+     * not affect the DeclarationBlock and vice versa, but changes to the
+     * Declarations themselves will be reflected in the block.
+     */
     public DeclarationBlock(List<Declaration> declarations) {
         this.declarations = new DeclarationList(declarations);
         this.nestedRuleSets = new ArrayList<NestedRuleSet>();
     }
 
+    /**
+     * Constructs a DeclarationBlock, containing a list of {@link Declaration}s
+     * and {@link NestedRuleSet}s.
+     *
+     * @param declarations The Declarations to initialize the block with. As with
+     * {@link #DeclarationBlock(java.util.List), the Declarations are copied into
+     * a new list.
+     *
+     * @param nested The NestedRuleSets to initialize the block with. Like the
+     * declarations, nested RuleSets are copied into a new list.
+     */
     public DeclarationBlock(List<Declaration> declarations, List<NestedRuleSet> nested) {
         this.declarations = new DeclarationList(declarations);
         this.nestedRuleSets = new ArrayList<NestedRuleSet>(nested);
     }
 
+    /**
+     * Gets the list of Declarations in the block.
+     *
+     * @return The block's DeclarationList.
+     */
     public DeclarationList getDeclarations() {
         return declarations;
     }
 
+    /**
+     * Evaluates the declations, to convert them into CssDeclarations.
+     *
+     * @param state The current {@link EvaluationState}.
+     *
+     * @return A {@link List} of {@link CssDeclaration}s.
+     */
     public List<CssDeclaration> getCssDeclarations(EvaluationState state) {
         List<CssDeclaration> result = new ArrayList<CssDeclaration>();
         for (Declaration d : declarations) {
@@ -47,21 +88,46 @@ public class DeclarationBlock extends Rule {
         return result;
     }
 
+    /**
+     * Adds a Declaration to the end of the block.
+     *
+     * @param declaration The {@link Declaration} to add.
+     */
     public void addDeclaration(Declaration declaration) {
         declarations.add(declaration);
     }
 
+    /**
+     * Appends the Declarations in a list to the end of the block.
+     *
+     * @param declarations A {@link List} of {@link Declaration}s to add.
+     */
     public void addDeclarations(List<Declaration> declarations) {
         for (Declaration declaration : declarations) {
             this.declarations.add(declaration);
         }
     }
 
+    /**
+     * Gets a property value by name.
+     *
+     * @param name The name of the property to get.
+     *
+     * @return The property's value as an {@link Expression}, or null if it
+     * doesn't exist.
+     */
     public Expression getValue(String name) {
         Declaration declaration = getDeclaration(name);
         return (declaration != null) ? declaration.getExpression() : null;
     }
 
+    /**
+     * Gets a Declaration by name.
+     *
+     * @param name The property name to get.
+     *
+     * @return A {@link Declaration} with the specified name, or null if none exists.
+     */
     public Declaration getDeclaration(String name) {
         for (Declaration d : declarations) {
             if (d.getName().equalsIgnoreCase(name)) {
@@ -71,6 +137,16 @@ public class DeclarationBlock extends Rule {
         return null;
     }
 
+    /**
+     * Gets the string representation of the declarations and nested rule sets in the block.
+     * 
+     * @param nesting The desired nesting level.
+     *
+     * @return The serialized form of the block without the surrounding brackets.
+     *
+     * @see {@link #toString()}
+     * @see {@link #toString(int)}
+     */
     public String innerString(int nesting) {
         String start = Rule.getIndent(nesting);
         StringBuilder txt = new StringBuilder("");
@@ -89,23 +165,59 @@ public class DeclarationBlock extends Rule {
         return txt.toString();
     }
 
+    /**
+     * Adds a RuleSet inside the block.
+     *
+     * @param cb The {@link Combinator} to apply to the RuleSet's selectors.
+     * @param nested The {@link RuleSet} to nest inside the block.
+     */
     public void addNestedRuleSet(Combinator cb, RuleSet nested) {
         nestedRuleSets.add(new NestedRuleSet(cb, nested));
     }
 
+    /**
+     * Adds a NestedRuleSet inside the block.
+     *
+     * @param nested The {@link NestedRuleSet} to nest inside the block.
+     */
     public void addNestedRuleSet(NestedRuleSet nested) {
         nestedRuleSets.add(nested);
     }
 
+    /**
+     * Gets a list of nested RuleSets.
+     *
+     * @return The {@link List} of {@link NestedRuleSet} objects.
+     */
     public List<NestedRuleSet> getNestedRuleSets() {
         return nestedRuleSets;
     }
 
+    /**
+     * Gets the string representation of the block.
+     *
+     * The block will be at the outermost nesting level (no leading indentation).
+     *
+     * @return The serialized representation of the block, including the brackets.
+     *
+     * @see {@link #toString(int)}
+     * @see {@link #innerString(int)}
+     */
     @Override
     public String toString() {
         return toString(0);
     }
 
+    /**
+     * Gets the string representation of the block, at the specified nesting level.
+     *
+     * @param nesting The desired nesting level.
+     *
+     * @return The serialized representation of the block, including the brackets.
+     *
+     * @see {@link #toString()}
+     * @see {@link #innerString(int)}
+     */
     public String toString(int nesting) {
         String start = Rule.getIndent(nesting);
         StringBuilder txt = new StringBuilder();
@@ -115,11 +227,6 @@ public class DeclarationBlock extends Rule {
         txt.append("\n" + start + "}");
 
         return txt.toString();
-    }
-
-    @Override
-    public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private static boolean matches(Declaration declaration, String name) {
@@ -245,6 +352,16 @@ public class DeclarationBlock extends Rule {
         }
     }
 
+    /**
+     * Evaluates the block, and returns the result.
+     *
+     * @param state The current {@link EvaluationState}.
+     * @param doCalculations true if calc(...) terms should be evaluated.
+     *
+     * @return The result of the evaluation.
+     *
+     * @throws IOException
+     */
     public DeclarationBlock evaluateStyle(EvaluationState state, boolean doCalculations) throws IOException {
         DeclarationBlock result = new DeclarationBlock(new DeclarationList(), new ArrayList<NestedRuleSet>(nestedRuleSets));
         return evaluateStyle(result, state, doCalculations);

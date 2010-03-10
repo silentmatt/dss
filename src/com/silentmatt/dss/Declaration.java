@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  * Represents a DSS declaration (name-value pair).
- * Declarations are in this form: "name : term [,] term ... [!important]".
+ * Declarations are in this form: "name : term [, or /] term ... [!important]".
  *
  * Besides representing the basic CSS declarations, they are passed as arguments
  * to parameterized classes.
@@ -53,7 +53,7 @@ public class Declaration implements Map.Entry<String, Expression> {
     /**
      * Gets the property name.
      *
-     * @return The name (left side of the ':'.
+     * @return The name (left side of the ':').
      */
     public String getName() {
         return name;
@@ -62,10 +62,10 @@ public class Declaration implements Map.Entry<String, Expression> {
     /**
      * Sets the property name.
      *
-     * @param Name The property name.
+     * @param name The property name.
      */
-    public void setName(String Name) {
-        this.name = Name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -116,19 +116,42 @@ public class Declaration implements Map.Entry<String, Expression> {
         return txt.toString();
     }
 
+    /**
+     * Same as {@link #getName()}.
+     *
+     * This method is to allow Declarations to be used as {@link Map} entries.
+     *
+     * @return The property name.
+     */
     public String getKey() {
         return getName();
     }
 
+    /**
+     * Same as {@link #getValue()}.
+     *
+     * This method is to allow Declarations to be used as {@link Map} entries.
+     *
+     * @return The value of the property.
+     */
     public Expression getValue() {
         return getExpression();
     }
 
+    /**
+     * Throws an {@link UnsupportedOperationException} to disallow modification in a {@link Map}.
+     *
+     * @param arg0 Ignored
+     *
+     * @return Nothing
+     *
+     * @throws UnsupportedOperationException
+     */
     public Expression setValue(Expression arg0) {
         throw new UnsupportedOperationException();
     }
 
-    public void substituteValue(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
+    protected void substituteValue(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
         Expression value = getExpression();
         Expression newValue = value.substituteValues(state, container, withParams, doCalculations);
         setExpression(newValue);

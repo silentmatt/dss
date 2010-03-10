@@ -12,6 +12,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
+ * A list of {@link Declaration}s that also acts like a {@link Map}.
+ *
+ * All of the methods from {@link Map} that are compatible with the {@link List}
+ * interface can be used on a DeclarationList. If you need an actual Map, call
+ * {@link #asMap()} to get a Map-view of the list.
  *
  * @author Matthew Crumley
  */
@@ -19,9 +24,17 @@ public class DeclarationList implements List<Declaration> {
     private final List<Declaration> list = new ArrayList<Declaration>();
     private final Map<String, Expression> mapView = new DeclarationListMapView();
 
+    /**
+     * Constructs an empty DeclarationList.
+     */
     public DeclarationList() {
     }
 
+    /**
+     * Constructs a DeclarationList containing the Declarations from the specified list.
+     *
+     * @param declarations {@link List} of {@link Declaration}s to copy.
+     */
     public DeclarationList(List<Declaration> declarations) {
         list.addAll(declarations);
     }
@@ -205,6 +218,10 @@ public class DeclarationList implements List<Declaration> {
         }
     }
 
+    /**
+     * Gets a view of the list that implements the {@link Map} interface}.
+     * @return
+     */
     public Map<String, Expression> asMap() {
         return this.mapView;
     }

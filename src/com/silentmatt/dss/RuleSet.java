@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * A DSS rule set.
+ * 
  * @author Matthew Crumley
  */
 public class RuleSet extends Rule {
@@ -17,36 +18,81 @@ public class RuleSet extends Rule {
     private final List<Rule> rules;
     private final DeclarationBlock declarationBlock;
 
+    /**
+     * Constructs a RuleSet with the specified selector list, declaration block, and nested rules.
+     *
+     * @param selectors The {@link List} of {@link Selector}s.
+     * @param block The {@link DeclarationBlock}.
+     * @param rules A {@link List} of nested DSS {@link Rule}s.
+     */
     public RuleSet(List<Selector> selectors, DeclarationBlock block, List<Rule> rules) {
         this.declarationBlock = block;
         this.selectors = selectors;
         this.rules = rules;
     }
 
+    /**
+     * Constructs a RuleSet with the specified selector list and declaration block.
+     *
+     * @param selectors The {@link List} of {@link Selector}s.
+     * @param block The {@link DeclarationBlock}.
+     */
     public RuleSet(List<Selector> selectors, DeclarationBlock block) {
         this(selectors, block, new ArrayList<Rule>());
     }
 
-     public RuleSet() {
+    /**
+     * Default Constructor.
+     */
+    public RuleSet() {
         this(new ArrayList<Selector>(), new DeclarationBlock(), new ArrayList<Rule>());
     }
 
+    /**
+     * Gets the DeclarationBlock.
+     *
+     * @return The rule set's {@link DeclarationBlock}.
+     */
     public DeclarationBlock getDeclarationBlock() {
         return declarationBlock;
     }
 
+    /**
+     * Gets the rule set's selectors.
+     *
+     * @return A {@link List} of {@link Selector}s.
+     */
     public List<Selector> getSelectors() {
         return selectors;
     }
 
+    /**
+     * Adds a list of Declarations to the RuleSet.
+     *
+     * @param declarations The {@link List} of {@link Declaration}s to add.
+     */
     public void addDeclarations(List<Declaration> declarations) {
         declarationBlock.addDeclarations(declarations);
     }
 
+    /**
+     * Adds a nested RuleSet to this RuleSet.
+     *
+     * @param cb The {@link Combinator} to apply to the nested RuleSet's selectors.
+     * @param nested The {@link RuleSet} to nest inside this one.
+     */
     public void addNestedRuleSet(Combinator cb, RuleSet nested) {
         declarationBlock.addNestedRuleSet(cb, nested);
     }
 
+    /**
+     * Adds a nested Rule to the RuleSet.
+     *
+     * The nested rule should be a DSS directive, not another rule set.
+     * Use {@link #addNestedRuleSet(Combinator, RuleSet)} for nesting RuleSets.
+     *
+     * @param directive The DSS rule to add to the RuleSet.
+     */
     public void addRule(Rule directive) {
         rules.add(directive);
     }
@@ -86,22 +132,50 @@ public class RuleSet extends Rule {
         return result.getRules().size() == 1 ? result.getRules().get(0) : result;
     }
 
+    /**
+     * Gets a Declaration by name.
+     * @param name The property name to get.
+     * @return A {@link Declaration} with the specified name, or null if none exists.
+     */
     public Declaration getDeclaration(String name) {
         return declarationBlock.getDeclaration(name);
     }
 
+    /**
+     * Gets the list of Declarations from the RuleSet's block.
+     *
+     * @return The RuleSet's DeclarationList.
+     */
     public DeclarationList getDeclarations() {
         return declarationBlock.getDeclarations();
     }
 
+    /**
+     * Gets the nested RuleSets.
+     * 
+     * @return A {@link List} of {@link NestedRuleSet}s.
+     */
     public List<NestedRuleSet> getNestedRuleSets() {
         return declarationBlock.getNestedRuleSets();
     }
 
+    /**
+     * Gets the nested DSS directives.
+     *
+     * @return A {@link List} of {@link Rule}s.
+     */
     public List<Rule> getRules() {
         return rules;
     }
 
+    /**
+     * Gets a property value by name.
+     *
+     * @param name The name of the property to get.
+     *
+     * @return The property's value as an {@link Expression}, or null if it
+     * doesn't exist.
+     */
     public Expression getValue(String name) {
         return declarationBlock.getValue(name);
     }

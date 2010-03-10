@@ -17,13 +17,28 @@ import java.util.List;
 public class Expression implements Cloneable {
     private final List<Term> terms = new ArrayList<Term>();
 
+    /**
+     * Constructs an empty Expression.
+     */
     public Expression() {
     }
 
+    /**
+     * Constructs an Expression containing a single Term.
+     *
+     * @param term The {@link Term} to create the expression from.
+     *
+     * @see {@link Term#toExpression()}
+     */
     public Expression(Term term) {
         terms.add(term);
     }
 
+    /**
+     * Creates a deep copy of the Expression.
+     *
+     * @return A new Expression that is identical to this one.
+     */
     @Override
     public Expression clone() {
         Expression result = new Expression();
@@ -70,6 +85,15 @@ public class Expression implements Cloneable {
         return txt.toString();
     }
 
+    /**
+     * Substitutes the values of DSS-specific terms into the expression.
+     *
+     * @param state The current {@link EvaluationState}.
+     * @param container The {@link DeclarationList} that the expression is contained in.
+     * @param withParams true if param terms should be substituted.
+     * @param doCalculations true if calc terms should be substituted.
+     * @return
+     */
     public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
         Expression newValue = new Expression();
 
@@ -88,6 +112,14 @@ public class Expression implements Cloneable {
         return newValue;
     }
 
+    /**
+     * Evaluate the Expression, converting it to a CssExpression.
+     *
+     * @param state The current {@link EvaluationState}.
+     * @param container The {@link DeclarationList} the Expression is contained in.
+     *
+     * @return The {@link CssExpression} result of the evaluation.
+     */
     public CssExpression evaluate(EvaluationState state, DeclarationList container) {
         // TODO: should doCalculations be true?
         Expression newValue = substituteValues(state, container, state.getParameters() != null, true);

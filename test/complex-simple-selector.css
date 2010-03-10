@@ -1,0 +1,6 @@
+a.someClass[href^=https\:]:active {
+	color: #F00;
+}
+a.someClass.another-one[href^=https\:][rel=alternate] {
+	text-decoration: underline;
+}

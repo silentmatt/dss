@@ -14,6 +14,11 @@ public class Attribute {
     private AttributeOperator operator;
     private String value;
 
+    /**
+     * Converts the attribute selector to a {@link CssAttribute} object.
+     *
+     * @return the equivalent CssAttribute object.
+     */
     public CssAttribute evaluate() {
         CssAttribute result = new CssAttribute();
         result.setOperand(operand);
@@ -21,6 +26,7 @@ public class Attribute {
         result.setValue(value);
         return result;
     }
+
     /**
      * Gets the operand (attribute name).
      *

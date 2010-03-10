@@ -6,7 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * A CSS selector.
  *
+ * A selector is made up of one or more {@link SimpleSelector}s, separated by
+ * {@link Combinator}s, like {@link Combinator#ChildOf} ("&gt;"),
+ * {@link Combinator#PrecededBy} ("+"), etc. A null combinator represents the
+ * descendent combinator. @todo Eventually, null will be replaced by an enum value.
+ * 
  * @author Matthew Crumley
  */
 public class Selector {
@@ -15,6 +21,14 @@ public class Selector {
     private final Selector parents;
     private final Selector children;
 
+    /**
+     * Evaluate the Selector.
+     *
+     * This just converts the Selector to an equivalent {@link CssSelector}, since
+     * there are currently no special features for DSS selectors.
+     *
+     * @return A {@link CssSelector} that corresponds to this Selector.
+     */
     public CssSelector evaluate() {
         CssSelector result = new CssSelector();
 
@@ -25,6 +39,9 @@ public class Selector {
         return result;
     }
 
+    /**
+     * Default constructor.
+     */
     public Selector() {
         simpleSelectors = new JoinedList<SimpleSelector>(new ArrayList<SimpleSelector>(), new ArrayList<SimpleSelector>());
         parents = null;
@@ -32,6 +49,13 @@ public class Selector {
         combinator = null;
     }
 
+    /**
+     * Constructs a Selector by joining two Selectors with a Combinator.
+     *
+     * @param parent The first part of the selector.
+     * @param cb The {@link Combinator} to combine the two parts with.
+     * @param child The second part of the selector.
+     */
     public Selector(Selector parent, Combinator cb, Selector child) {
         parents = parent;
         children = child;
@@ -39,6 +63,11 @@ public class Selector {
         combinator = cb;
     }
 
+    /**
+     * Gets the list of SimpleSelectors that makes up this Selector.
+     *
+     * @return A {@link List} of {@link SimpleSelector}s.
+     */
     public List<SimpleSelector> getSimpleSelectors() {
         return simpleSelectors;
     }
@@ -97,6 +126,13 @@ public class Selector {
         return txt.toString();
     }
 
+    /**
+     * Generates a selector list as a string from a collection of Selectors.
+     *
+     * @param selectors An {@link Iterable} collection of Selectors.
+     *
+     * @return A CSS selector list, i.e. the selectors separated by commas.
+     */
     public static String join(Iterable<Selector> selectors) {
         boolean first = true;
         StringBuilder sb = new StringBuilder();

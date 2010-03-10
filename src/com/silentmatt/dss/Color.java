@@ -6,7 +6,8 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- *
+ * Represents a CSS color.
+ * 
  * @author Matthew Crumley
  */
 public class Color {
@@ -167,6 +168,14 @@ public class Color {
     private final int red, green, blue, alpha;
     private final String name;
 
+    /**
+     * Constructs a Color from red, green, and blue channels.
+     * The alpha channel is defaulted to 255 (fully opaque).
+     *
+     * @param red The red channel, from [0, 255].
+     * @param green The green channel, from [0, 255].
+     * @param blue the blue channel, from [0, 255].
+     */
     public Color(int red, int green, int blue) {
         this.red = red;
         this.green = green;
@@ -175,7 +184,7 @@ public class Color {
         this.name = null;
     }
 
-    public Color(int red, int green, int blue, String name) {
+    private Color(int red, int green, int blue, String name) {
         this.red = red;
         this.green = green;
         this.blue = blue;
@@ -183,6 +192,14 @@ public class Color {
         this.name = name.toLowerCase();
     }
 
+    /**
+     * Constructs a Color from red, green, blue, and alpha channels.
+     *
+     * @param red The red channel, from [0, 255].
+     * @param green The green channel, from [0, 255].
+     * @param blue The blue channel, from [0, 255].
+     * @param alpha The alpha channel, from [0, 255].
+     */
     public Color(int red, int green, int blue, int alpha) {
         this.red = red;
         this.green = green;
@@ -191,6 +208,11 @@ public class Color {
         this.name = null;
     }
 
+    /**
+     * Gets the color in CSS hexidecimal format. The alpha channel is ignored.
+     *
+     * @return The color in "#RRGGBB" format.
+     */
     public String toHexString() {
         if ((red & 0x0F) == ((red >> 4) & 0x0F) &&
             (green & 0x0F) == ((green >> 4) & 0x0F) &&
@@ -200,10 +222,20 @@ public class Color {
         return String.format("#%02X%02X%02X", red, green, blue);
     }
 
+    /**
+     * Gets the color as rgba(...) format.
+     *
+     * @return the color in "rgba(r, g, b, a.aa)" format.
+     */
     public String toRGBAString() {
         return "rgba(" + red + ", " + green + ", " + blue + ", " + (alpha / 255.0) + ")";
     }
 
+    /**
+     * Gets the color name if it exists, or the default representation.
+     *
+     * @return A CSS color name, or {@link #toString()}.
+     */
     public String toNameString() {
         if (name != null) {
             return name;
@@ -217,11 +249,24 @@ public class Color {
         return thisString;
     }
 
+    /**
+     * Gets the default string representation of the color.
+     *
+     * @return {@link #toHexString()} if the alpha channel is 255, otherwise,
+     * {@link #toRGBAString()}.
+     */
     @Override
     public String toString() {
         return alpha == 255 ? toHexString() : toRGBAString();
     }
 
+    /**
+     * Compares two colors for channel-wise equality.
+     *
+     * @param other The Color to compare to this one.
+     *
+     * @return true iff <var>other</var> is identical to this Color.
+     */
     public boolean equals(Color other) {
         return this.red == other.red && this.green == other.green && this.blue == other.blue && this.alpha == other.alpha;
     }

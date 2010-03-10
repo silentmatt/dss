@@ -1,6 +1,7 @@
 package com.silentmatt.dss;
 
 /**
+ * Enumeration of possible CSS media types.
  *
  * @author Matthew Crumley
  */
