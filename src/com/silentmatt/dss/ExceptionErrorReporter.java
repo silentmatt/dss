@@ -2,19 +2,32 @@ package com.silentmatt.dss;
 
 /**
  * An {@link ErrorReporter} implementation that throws a {@link RuntimeException}
- * when an error is reported.
+ * when an error is reported. Warnings are passed through to another ErrorReporter.
  *
  * @author Matthew Crumley
  */
 public class ExceptionErrorReporter extends AbstractErrorReporter {
-    private int count = 0;
+    private int errorCount = 0;
+    private final ErrorReporter warningReporter;
 
-    protected void addError(String msg) {
-        count++;
-        throw new RuntimeException(msg);
+    public ExceptionErrorReporter(ErrorReporter warningReporter) {
+        this.warningReporter = warningReporter;
     }
 
     public int getErrorCount() {
-        return count;
+        return errorCount;
+    }
+
+    public void addError(Message msg) {
+        errorCount++;
+        throw new RuntimeException(msg.toString());
+    }
+
+    public void addWarning(Message msg) {
+        warningReporter.addWarning(msg);
+    }
+
+    public int getWarningCount() {
+        return warningReporter.getWarningCount();
     }
 }

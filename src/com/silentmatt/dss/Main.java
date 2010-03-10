@@ -261,7 +261,7 @@ public final class Main {
 
     private static String compile(URL url, String dssString, boolean compact) {
         try {
-            ErrorReporter errors = new ExceptionErrorReporter();
+            ErrorReporter errors = new ExceptionErrorReporter(new NullErrorReporter());
             DSSDocument dss = DSSDocument.parse(new ByteArrayInputStream(dssString.getBytes()), errors);
             DSSEvaluator.Options opts = new DSSEvaluator.Options(url);
             opts.setErrors(errors);

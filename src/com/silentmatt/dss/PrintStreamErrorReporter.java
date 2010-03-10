@@ -9,7 +9,8 @@ import java.io.PrintStream;
  * @author Matthew Crumley
  */
 public class PrintStreamErrorReporter extends AbstractErrorReporter {
-    private int count = 0;
+    private int errorCount = 0;
+    private int warningCount = 0;
     private final java.io.PrintStream errorStream;
 
     /**
@@ -30,12 +31,21 @@ public class PrintStreamErrorReporter extends AbstractErrorReporter {
         errorStream = out;
     }
 
-    protected void addError(String msg) {
-        errorStream.println(msg);
-        count++;
+    public int getErrorCount() {
+        return errorCount;
     }
 
-    public int getErrorCount() {
-        return count;
+    public int getWarningCount() {
+        return warningCount;
+    }
+
+    public void addError(Message error) {
+        errorStream.println(error);
+        errorCount++;
+    }
+
+    public void addWarning(Message warning) {
+        errorStream.println(warning);
+        warningCount++;
     }
 }

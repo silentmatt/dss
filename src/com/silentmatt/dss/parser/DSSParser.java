@@ -5,6 +5,7 @@ import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.ErrorReporter;
 import com.silentmatt.dss.ExceptionErrorReporter;
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.NullErrorReporter;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.RuleSet;
 import com.silentmatt.dss.Selector;
@@ -54,7 +55,7 @@ public class DSSParser {
 
     private static Parser getParser(String text, ErrorReporter errors) {
         Parser parser = new Parser(new Scanner(new ByteArrayInputStream(text.getBytes())));
-        parser.errors = errors != null ? errors : new ExceptionErrorReporter();
+        parser.errors = errors != null ? errors : new ExceptionErrorReporter(new NullErrorReporter());
         parser.la = new Token();
 		parser.la.val = "";
 		parser.Get();
