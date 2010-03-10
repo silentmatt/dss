@@ -4,7 +4,7 @@ import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 
 /**
- * A CalcExpression that represents a binary operation.
+ * A CalcExpression that negates its operand.
  *
  * @author Matthew Crumley
  */
@@ -12,7 +12,7 @@ public class NegationExpression implements CalcExpression {
     private final CalcExpression expr;
 
     /**
-     * Constructs a NegationExpression with operand.
+     * Constructs a NegationExpression with the specified operand.
      *
      * @param expr The operand.
      */

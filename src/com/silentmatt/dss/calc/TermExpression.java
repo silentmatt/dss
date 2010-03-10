@@ -12,7 +12,7 @@ import com.silentmatt.dss.term.Term;
 import java.util.List;
 
 /**
- * A CalcExpression that evaluates to a simple CSS {@link Term}.
+ * A CalcExpression that evaluates to a simple DSS {@link Term}.
  *
  * @author Matthew Crumley
  */
@@ -20,7 +20,7 @@ public class TermExpression implements CalcExpression {
     private Term value;
 
     /**
-     * Constructs a TermExpression from a CSS Term.
+     * Constructs a TermExpression from a DSS Term.
      *
      * @param value The Term this expression will return.
      */

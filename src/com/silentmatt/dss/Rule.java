@@ -19,7 +19,7 @@ public abstract class Rule {
      * @return The serialized form of the DSS Rule. If parsed, it should result
      * in an equivalent Rule.
      *
-     * @see {@link #toString(int)}
+     * @see #toString(int)
      *
      * @todo Shouldn't this be implemented here, since it should always be "return toString(0);"?
      */
@@ -33,7 +33,7 @@ public abstract class Rule {
      *
      * @return The serialized form of the Rule.
      *
-     * @see {@link #toString()}
+     * @see #toString()
      */
     public abstract String toString(int nesting);
 

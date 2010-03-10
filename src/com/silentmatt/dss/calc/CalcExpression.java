@@ -43,5 +43,10 @@ public interface CalcExpression {
      */
     void substituteValues(EvaluationState state, DeclarationList container, boolean withParams);
 
+    /**
+     * Makes an exact, deep copy of the CalcExpression.
+     *
+     * @return A deep copy of this expression.
+     */
     CalcExpression clone();
 }

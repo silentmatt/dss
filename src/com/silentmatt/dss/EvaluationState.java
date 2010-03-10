@@ -112,7 +112,7 @@ public final class EvaluationState {
      * @param currentRuleSetScope The current list of {@link RuleSet}s being
      * evaluated.
      * 
-     * @see {@link #pushScope(java.util.List)}
+     * @see #pushScope(java.util.List)
      */
     public void pushBaseURL(URL newBase, List<RuleSet> currentRuleSetScope) {
         baseURL.push(newBase);

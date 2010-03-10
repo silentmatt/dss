@@ -173,7 +173,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
      * Gets the CalculationUnit that corresponds to a given {@link Unit}.
      *
      * @param cssUnit The CSS Unit to convert.
-     * @return The corresponding Calculation Unit or null if none exists.
+     * @return The corresponding CalculationUnit or null if none exists.
      */
     public static CalculationUnit fromCssUnit(Unit cssUnit) {
         if (cssUnit == null) {

@@ -28,7 +28,7 @@ public class Expression implements Cloneable {
      *
      * @param term The {@link Term} to create the expression from.
      *
-     * @see {@link Term#toExpression()}
+     * @see Term#toExpression()
      */
     public Expression(Term term) {
         terms.add(term);

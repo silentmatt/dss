@@ -144,8 +144,8 @@ public class DeclarationBlock {
      *
      * @return The serialized form of the block without the surrounding brackets.
      *
-     * @see {@link #toString()}
-     * @see {@link #toString(int)}
+     * @see #toString()
+     * @see #toString(int)
      */
     public String innerString(int nesting) {
         String start = Rule.getIndent(nesting);
@@ -200,8 +200,8 @@ public class DeclarationBlock {
      *
      * @return The serialized representation of the block, including the brackets.
      *
-     * @see {@link #toString(int)}
-     * @see {@link #innerString(int)}
+     * @see #toString(int)
+     * @see #innerString(int)
      */
     @Override
     public String toString() {
@@ -215,8 +215,8 @@ public class DeclarationBlock {
      *
      * @return The serialized representation of the block, including the brackets.
      *
-     * @see {@link #toString()}
-     * @see {@link #innerString(int)}
+     * @see #toString()
+     * @see #innerString(int)
      */
     public String toString(int nesting) {
         String start = Rule.getIndent(nesting);
