@@ -10,8 +10,7 @@ import java.util.List;
  *
  * A selector is made up of one or more {@link SimpleSelector}s, separated by
  * {@link Combinator}s, like {@link Combinator#ChildOf} ("&gt;"),
- * {@link Combinator#PrecededBy} ("+"), etc. A null combinator represents the
- * descendent combinator. @todo Eventually, null will be replaced by an enum value.
+ * {@link Combinator#PrecededBy} ("+"), etc.
  * 
  * @author Matthew Crumley
  */
@@ -46,7 +45,7 @@ public class Selector {
         simpleSelectors = new JoinedList<SimpleSelector>(new ArrayList<SimpleSelector>(), new ArrayList<SimpleSelector>());
         parents = null;
         children = null;
-        combinator = null;
+        combinator = Combinator.Descendant;
     }
 
     /**
@@ -82,7 +81,7 @@ public class Selector {
 
             boolean first = true;
             for (SimpleSelector ss : children.getSimpleSelectors()) {
-                if (first && combinator != null) {
+                if (first) {
                     SimpleSelector toAppend = ss.clone();
                     toAppend.setCombinator(combinator);
                     result.add(toAppend);
@@ -110,7 +109,7 @@ public class Selector {
         if (parents != null) {
             txt.append(parents);
 
-            if (combinator != null) {
+            if (combinator != Combinator.Descendant) {
                 txt.append(' ').append(combinator);
             }
             txt.append(' ');

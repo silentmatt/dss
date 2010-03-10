@@ -265,8 +265,8 @@ classDirective<out ClassDirective dir> =        (.  String ident;
                                                 .)
                 ';'
             |
-                                                (.  cb = null; .)
-            [ '&'                               (.  cb = null; .) /* For backward compatibility */
+                                                (.  cb = Combinator.Descendant; .)
+            [ '&'                               (.  cb = Combinator.Descendant; .) /* For backward compatibility */
             | '+'                               (.  cb = Combinator.PrecededImmediatelyBy; .)
             | '>'                               (.  cb = Combinator.ChildOf; .)
             | '~'                               (.  cb = Combinator.PrecededBy; .)
@@ -419,7 +419,7 @@ ruleset<out RuleSet rset> =                  (.  rset = new RuleSet();
                                                  Selector sel;
                                                  List<Declaration> decs;
                                                  Rule dir;
-                                                 Combinator cb = null;
+                                                 Combinator cb = Combinator.Descendant;
                                              .)
 
     selector<out sel>                        (.  rset.getSelectors().add(sel); .)
@@ -439,8 +439,8 @@ ruleset<out RuleSet rset> =                  (.  rset = new RuleSet();
             |
             defineDirective<out dir>         (.  rset.addRule(dir); .)
             |
-                                             (.  cb = null; .)
-            [ '&'                            (.  cb = null; .) /* For backward compatibility */
+                                             (.  cb = Combinator.Descendant; .)
+            [ '&'                            (.  cb = Combinator.Descendant; .) /* For backward compatibility */
             | '+'                            (.  cb = Combinator.PrecededImmediatelyBy; .)
             | '>'                            (.  cb = Combinator.ChildOf; .)
             | '~'                            (.  cb = Combinator.PrecededBy; .)
@@ -451,16 +451,16 @@ ruleset<out RuleSet rset> =                  (.  rset = new RuleSet();
 
 selector<out Selector sel> =    (.  sel = new Selector();
                                     SimpleSelector ss;
-                                    Combinator cb = null;
+                                    Combinator cb = Combinator.Descendant;
                                 .)
     simpleselector<out ss>      (.  sel.getSimpleSelectors().add(ss); .)
     { [ ('+'                    (.  cb = Combinator.PrecededImmediatelyBy; .)
         | '>'                   (.  cb = Combinator.ChildOf; .)
         | '~'                   (.  cb = Combinator.PrecededBy; .)
         ) ]
-        simpleselector<out ss>  (.  if (cb != null) { ss.setCombinator(cb); }
+        simpleselector<out ss>  (.  ss.setCombinator(cb);
                                     sel.getSimpleSelectors().add(ss);
-                                    cb = null;
+                                    cb = Combinator.Descendant;
                                 .)
     }
 .

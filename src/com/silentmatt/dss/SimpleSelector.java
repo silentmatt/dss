@@ -19,7 +19,7 @@ import com.silentmatt.dss.css.CssSimpleSelector;
  */
 public class SimpleSelector implements Cloneable {
     // XXX: There was FunctionTerm function after attributes, but it was never used.
-    private Combinator combinator;
+    private Combinator combinator = Combinator.Descendant;
     private String elementName;
     private String id;
     private String className;
@@ -34,7 +34,7 @@ public class SimpleSelector implements Cloneable {
      */
     public CssSimpleSelector evaluate() {
         CssSimpleSelector result = new CssSimpleSelector();
-        result.setCombinator(combinator != null ? CssCombinator.fromDss(combinator) : null);
+        result.setCombinator(CssCombinator.fromDss(combinator));
         result.setElementName(elementName);
         result.setID(id);
         result.setClassName(className);
@@ -209,7 +209,7 @@ public class SimpleSelector implements Cloneable {
     @Override
     public String toString() {
         StringBuilder txt = new StringBuilder();
-        if (combinator != null) {
+        if (combinator != Combinator.Descendant) {
             txt.append(combinator).append(' ');
         }
         if (elementName != null) { txt.append(elementName); }

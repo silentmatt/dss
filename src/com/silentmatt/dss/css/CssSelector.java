@@ -42,7 +42,7 @@ public class CssSelector {
             if (first) {
                 first = false;
             }
-            else if (!compact || ss.getCombinator() == null) {
+            else if (!compact || ss.getCombinator() == CssCombinator.Descendant) {
                 txt.append(' ');
             }
             txt.append(ss.toString(compact));

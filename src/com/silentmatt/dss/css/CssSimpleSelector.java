@@ -6,7 +6,7 @@ package com.silentmatt.dss.css;
  */
 public class CssSimpleSelector {
     // XXX: There was FunctionTerm function after attributes, but it was never used.
-    private CssCombinator combinator;
+    private CssCombinator combinator = CssCombinator.Descendant;
     private String elementName;
     private String id;
     private String className;
@@ -77,7 +77,7 @@ public class CssSimpleSelector {
 
     public String toString(boolean compact) {
         StringBuilder txt = new StringBuilder();
-        if (combinator != null) {
+        if (combinator != CssCombinator.Descendant) {
             txt.append(combinator);
             if (!compact) {
                 txt.append(' ');

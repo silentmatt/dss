@@ -180,7 +180,7 @@ class Parser {
 		Selector sel;
 		List<Declaration> decs;
 		Rule dir;
-		Combinator cb = null;
+		Combinator cb = Combinator.Descendant;
 		
 		sel = selector();
 		rset.getSelectors().add(sel); 
@@ -206,11 +206,11 @@ class Parser {
 				dir = defineDirective();
 				rset.addRule(dir); 
 			} else {
-				cb = null; 
+				cb = Combinator.Descendant; 
 				if (StartOf(5)) {
 					if (la.kind == 34) {
 						Get();
-						cb = null; 
+						cb = Combinator.Descendant; 
 					} else if (la.kind == 35) {
 						Get();
 						cb = Combinator.PrecededImmediatelyBy; 
@@ -507,11 +507,11 @@ class Parser {
 				
 				Expect(32);
 			} else {
-				cb = null; 
+				cb = Combinator.Descendant; 
 				if (StartOf(5)) {
 					if (la.kind == 34) {
 						Get();
-						cb = null; 
+						cb = Combinator.Descendant; 
 					} else if (la.kind == 35) {
 						Get();
 						cb = Combinator.PrecededImmediatelyBy; 
@@ -1095,7 +1095,7 @@ class Parser {
 		Selector  sel;
 		sel = new Selector();
 		SimpleSelector ss;
-		Combinator cb = null;
+		Combinator cb = Combinator.Descendant;
 		
 		ss = simpleselector();
 		sel.getSimpleSelectors().add(ss); 
@@ -1113,9 +1113,9 @@ class Parser {
 				}
 			}
 			ss = simpleselector();
-			if (cb != null) { ss.setCombinator(cb); }
+			ss.setCombinator(cb);
 			sel.getSimpleSelectors().add(ss);
-			cb = null;
+			cb = Combinator.Descendant;
 			
 		}
 		return sel;

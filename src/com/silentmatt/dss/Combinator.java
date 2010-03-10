@@ -4,11 +4,14 @@ package com.silentmatt.dss;
  * Specifies the type relationship between {@link SimpleSelector}s (child, sibling, etc.).
  * The Combinator is attached to the right-hand selector.
  *
- * @todo Add DescendantOf
- *
  * @author Matthew Crumley
  */
 public enum Combinator {
+    /**
+     * Descendant selector: parent child
+     */
+    Descendant(" "),
+
     /**
      * Child selector (immediate descendent): parent > child
      */

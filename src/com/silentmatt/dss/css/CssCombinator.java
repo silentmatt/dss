@@ -10,6 +10,11 @@ import com.silentmatt.dss.Combinator;
  */
 public enum CssCombinator {
     /**
+     * Descendant selector: parent child
+     */
+    Descendant(" "),
+
+    /**
      * Child selector (immediate descendent): parent > child
      */
     ChildOf(">"),
@@ -37,6 +42,8 @@ public enum CssCombinator {
 
     public static CssCombinator fromDss(Combinator c) {
         switch (c) {
+        case Descendant:
+            return Descendant;
         case ChildOf:
             return ChildOf;
         case PrecededBy:
