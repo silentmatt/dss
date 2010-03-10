@@ -1,6 +1,5 @@
 package com.silentmatt.dss.bool;
 
-import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.calc.Value;
@@ -13,16 +12,22 @@ import com.silentmatt.dss.term.Term;
 import com.silentmatt.dss.term.UrlTerm;
 
 /**
+ * A DSS Term expression.
  *
- * @author matt
+ * For numeric terms, zero is false; any other value is true.
+ * Any term (including const/param/etc.) that evaluates to "false" or "no" is false,
+ * everything else is true.
+ * Class references (i.e. className<>) are true if the class exists in the current scope.
+ *
+ * @author Matthew Crumley
  */
 public class TermBooleanExpression implements BooleanExpression {
     private final Term value;
 
     /**
-     * Constructs a TermExpression from a CSS Term.
+     * Constructs a TermExpression from a DSS Term.
      *
-     * @param value The Term this expression will return.
+     * @param value The {@link Term} this expression will return.
      */
     public TermBooleanExpression(Term value) {
         this.value = value;
@@ -57,12 +62,12 @@ public class TermBooleanExpression implements BooleanExpression {
         return truthiness(constValue);
     }
 
-    public Boolean evaluate(EvaluationState state, DeclarationList container) {
+    public Boolean evaluate(EvaluationState state) {
         if (value instanceof NumberTerm) {
             return ((NumberTerm) value).getValue() != 0;
         }
         else if (value instanceof CalculationTerm) {
-            Value result = ((CalculationTerm) value).getCalculation().calculateValue(state, container);
+            Value result = ((CalculationTerm) value).getCalculation().calculateValue(state, null);
             return result == null ? null : result.getScalarValue() != 0;
         }
         else if (value instanceof FunctionTerm) {
@@ -70,7 +75,7 @@ public class TermBooleanExpression implements BooleanExpression {
             return truthiness(expr);
         }
         else if (value instanceof ReferenceTerm) {
-            Expression expr = ((ReferenceTerm) value).evaluate(state, container);
+            Expression expr = ((ReferenceTerm) value).evaluate(state, null);
             return truthiness(expr);
         }
         else if (value instanceof ClassReferenceTerm) {

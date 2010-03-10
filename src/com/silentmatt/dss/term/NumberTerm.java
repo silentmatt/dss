@@ -5,7 +5,7 @@ import com.silentmatt.dss.Unit;
 /**
  * A numeric term, with its associated unit.
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class NumberTerm extends Term {
     /**

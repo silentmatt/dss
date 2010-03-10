@@ -5,7 +5,7 @@ import com.silentmatt.dss.Color;
 /**
  * A string or keyword term.
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class StringTerm extends Term {
     /**

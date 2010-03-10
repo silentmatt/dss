@@ -1,8 +1,10 @@
 package com.silentmatt.dss.bool;
 
 /**
+ * Binary boolean operator.
  *
- * @author matt
+ * @see {@link BinaryBooleanExpression}.
+ * @author Matthew Crumley
  */
 public enum BooleanOperation {
     AND,

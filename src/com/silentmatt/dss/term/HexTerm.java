@@ -6,7 +6,7 @@ import java.util.Locale;
 /**
  * A hexidecimal value, usually a color.
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class HexTerm extends Term {
     /**

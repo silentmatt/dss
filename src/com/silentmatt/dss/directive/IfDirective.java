@@ -69,7 +69,7 @@ public class IfDirective extends Rule {
 
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
-        Boolean result = condition.evaluate(state, null);
+        Boolean result = condition.evaluate(state);
         if (result == null) {
             state.getErrors().SemErr("Invalid condition: " + condition);
         }

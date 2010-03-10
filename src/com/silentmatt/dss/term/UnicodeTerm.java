@@ -5,7 +5,7 @@ import java.util.Locale;
 /**
  * A unicode string.
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class UnicodeTerm extends Term {
     private final String value;

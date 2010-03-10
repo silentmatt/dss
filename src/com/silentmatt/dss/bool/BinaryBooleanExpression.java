@@ -1,11 +1,11 @@
 package com.silentmatt.dss.bool;
 
-import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 
 /**
- *
- * @author matt
+ * Generic BooleanExpression node for binary operators.
+ * 
+ * @author Matthew Crumley
  */
 public class BinaryBooleanExpression implements BooleanExpression {
     private final BooleanOperation operation;
@@ -25,12 +25,12 @@ public class BinaryBooleanExpression implements BooleanExpression {
         this.right = right;
     }
 
-    public Boolean evaluate(EvaluationState state, DeclarationList container) {
-        Boolean leftValue = left.evaluate(state, container);
+    public Boolean evaluate(EvaluationState state) {
+        Boolean leftValue = left.evaluate(state);
         if (leftValue == null) {
             return null;
         }
-        Boolean rightValue = right.evaluate(state, container);
+        Boolean rightValue = right.evaluate(state);
         if (rightValue == null) {
             return null;
         }
@@ -53,7 +53,7 @@ public class BinaryBooleanExpression implements BooleanExpression {
      *
      * The resulting String will be parsable to an identical BinaryBooleanExpression.
      *
-     * @return The String repressentation of this expression.
+     * @return The String representation of this expression.
      */
     @Override
     public String toString() {

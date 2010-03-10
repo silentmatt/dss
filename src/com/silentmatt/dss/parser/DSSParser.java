@@ -23,7 +23,7 @@ import java.io.ByteArrayInputStream;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class DSSParser {
     private final Parser parser;

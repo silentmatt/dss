@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class JoinedList<E> extends AbstractList<E> {
     private final List<E> front;

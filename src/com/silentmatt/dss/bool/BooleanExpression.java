@@ -1,14 +1,20 @@
 package com.silentmatt.dss.bool;
 
-import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 
 /**
- *
- * @author matt
+ * Represents a boolean expression.
+ * 
+ * @author Matthew Crumley
  */
 public interface BooleanExpression {
-    Boolean evaluate(EvaluationState state, DeclarationList container);
+    /**
+     * Evaluate the expression.
+     * 
+     * @param state The current {@link EvaluationState}.
+     * @return A {@link Boolean}, or null if the expression has an error.
+     */
+    Boolean evaluate(EvaluationState state);
 
     /**
      * Gets the relative precidence of the expression.

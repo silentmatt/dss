@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class JoinedSelectorList extends AbstractList<Selector> {
     private List<Selector> parents;

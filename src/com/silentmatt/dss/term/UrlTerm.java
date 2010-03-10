@@ -3,7 +3,7 @@ package com.silentmatt.dss.term;
 /**
  * A URL term.
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class UrlTerm extends Term {
     /**

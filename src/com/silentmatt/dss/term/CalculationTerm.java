@@ -10,7 +10,7 @@ import com.silentmatt.dss.calc.Value;
 /**
  * A "calc(...)" term.
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class CalculationTerm extends Term {
     /**

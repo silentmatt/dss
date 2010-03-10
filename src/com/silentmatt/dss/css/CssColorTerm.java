@@ -9,7 +9,7 @@ import com.silentmatt.dss.Color;
 
 /**
  *
- * @author matt
+ * @author Matthew Crumley
  */
 public class CssColorTerm extends CssTerm {
     private final Color color;
