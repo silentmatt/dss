@@ -34,7 +34,7 @@ public class CssPageDirective extends CssDeclarationDirective {
             if (!compact) {
                 txt.append(' ');
             }
-            txt.append(selector.toString());
+            txt.append(selector.toString(compact));
         }
         if (!compact) {
             txt.append(' ');

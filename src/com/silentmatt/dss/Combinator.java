@@ -8,6 +8,11 @@ package com.silentmatt.dss;
  */
 public enum Combinator {
     /**
+     * Special combinator that squeezes the two simple selectors into one.
+     */
+    None(""),
+
+    /**
      * Descendant selector: parent child
      */
     Descendant(" "),
@@ -31,6 +36,7 @@ public enum Combinator {
 
     private Combinator(String cssText) {
         this.cssText = cssText;
+
     }
 
     @Override

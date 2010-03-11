@@ -18,6 +18,14 @@
     ~ I am {
         out: of ideas;
     }
+
+    &:hover {
+        outline: thin;
+    }
+
+    & :hover {
+        outline: none;
+    }
 }
 
 @font-face {

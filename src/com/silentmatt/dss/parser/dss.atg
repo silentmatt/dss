@@ -266,8 +266,14 @@ classDirective<out ClassDirective dir> =        (.  String ident;
                 ';'
             |
                                                 (.  cb = Combinator.Descendant; .)
-            [ '&'                               (.  cb = Combinator.Descendant; .) /* For backward compatibility */
-            | '+'                               (.  cb = Combinator.PrecededImmediatelyBy; .)
+            [ '&' ]                             (.  if (t.pos + t.val.length() == la.pos) {
+                                                        cb = Combinator.None;
+                                                    }
+                                                    else {
+                                                        cb = Combinator.Descendant;
+                                                    }
+                                                .)
+            [ '+'                               (.  cb = Combinator.PrecededImmediatelyBy; .)
             | '>'                               (.  cb = Combinator.ChildOf; .)
             | '~'                               (.  cb = Combinator.PrecededBy; .)
             ] ruleset<out RuleSet nest>         (.  nested.add(new NestedRuleSet(cb, nest)); .)
@@ -440,8 +446,14 @@ ruleset<out RuleSet rset> =                  (.  rset = new RuleSet();
             defineDirective<out dir>         (.  rset.addRule(dir); .)
             |
                                              (.  cb = Combinator.Descendant; .)
-            [ '&'                            (.  cb = Combinator.Descendant; .) /* For backward compatibility */
-            | '+'                            (.  cb = Combinator.PrecededImmediatelyBy; .)
+            [ '&' ]                          (.  if (t.pos + t.val.length() == la.pos) {
+                                                     cb = Combinator.None;
+                                                 }
+                                                 else {
+                                                     cb = Combinator.Descendant;
+                                                 }
+                                             .)
+            [ '+'                            (.  cb = Combinator.PrecededImmediatelyBy; .)
             | '>'                            (.  cb = Combinator.ChildOf; .)
             | '~'                            (.  cb = Combinator.PrecededBy; .)
             ] ruleset<out RuleSet nested>    (.  rset.addNestedRuleSet(cb, nested); .)
@@ -479,7 +491,8 @@ simpleselector<out SimpleSelector ss> = (. ss = new SimpleSelector();
     {                                   (.  if (t.pos + t.val.length() < la.pos) {
                                                 break;
                                             }
-                                            SimpleSelector child = new SimpleSelector(); .)
+                                            SimpleSelector child = new SimpleSelector();
+                                        .)
         ('#' identity<out ident>        (.  child.setID(ident); .)
         | '.' identity<out ident>       (.  child.setClassName(ident); .)
         | attrib<out Attribute atb>     (.  child.setAttribute(atb); .)

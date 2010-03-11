@@ -19,3 +19,13 @@
         out: of ideas;
     }
 }
+
+a {
+    text-decoration: none;
+    &:hover span, .hover span {
+        text-decoration: underline;
+    }
+    & :hover, .hover {
+        color: #F00;
+    }
+}

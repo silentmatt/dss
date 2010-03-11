@@ -15,3 +15,12 @@
 .error ~ I am, .important ~ I am {
 	out: of ideas;
 }
+a {
+	text-decoration: none;
+}
+a:hover span, a.hover span {
+	text-decoration: underline;
+}
+a :hover, a .hover {
+	color: #F00;
+}
