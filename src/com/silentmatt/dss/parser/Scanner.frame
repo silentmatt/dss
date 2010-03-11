@@ -320,9 +320,10 @@ public class Scanner {
 			if (ch1 != 0xBB || ch2 != 0xBF) {
 				throw new FatalError("Illegal byte order mark at start of file");
 			}
-			buffer = new UTF8Buffer(buffer); col = 0;
+			col = 0;
 			NextCh();
 		}
+                buffer = new UTF8Buffer(buffer);
 		pt = tokens = new Token();  // first token is a dummy
 	}
 	
