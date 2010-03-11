@@ -21,11 +21,9 @@ public class CssSelector {
     @Override
     public String toString() {
         StringBuilder txt = new StringBuilder();
-        boolean first = true;
 
         for (CssSimpleSelector ss : simpleSelectors) {
-            if (first) { first = false; } else { txt.append(" "); }
-            txt.append(ss);
+            txt.append(ss.toString());
         }
         return txt.toString();
     }
@@ -36,15 +34,7 @@ public class CssSelector {
         }
 
         StringBuilder txt = new StringBuilder();
-        boolean first = true;
-
         for (CssSimpleSelector ss : simpleSelectors) {
-            if (first) {
-                first = false;
-            }
-            else if (!compact || ss.getCombinator() == CssCombinator.Descendant) {
-                txt.append(' ');
-            }
             txt.append(ss.toString(compact));
         }
         return txt.toString();

@@ -207,11 +207,18 @@ class Parser {
 				rset.addRule(dir); 
 			} else {
 				cb = Combinator.Descendant; 
-				if (StartOf(5)) {
-					if (la.kind == 34) {
-						Get();
-						cb = Combinator.Descendant; 
-					} else if (la.kind == 35) {
+				if (la.kind == 34) {
+					Get();
+				}
+				if (t.pos + t.val.length() == la.pos) {
+				   cb = Combinator.None;
+				}
+				else {
+				    cb = Combinator.Descendant;
+				}
+				
+				if (la.kind == 33 || la.kind == 35 || la.kind == 36) {
+					if (la.kind == 35) {
 						Get();
 						cb = Combinator.PrecededImmediatelyBy; 
 					} else if (la.kind == 33) {
@@ -446,7 +453,7 @@ class Parser {
 			media.add(m); 
 		}
 		Expect(25);
-		while (StartOf(6)) {
+		while (StartOf(5)) {
 			if (StartOf(2)) {
 				RuleSet rset = ruleset();
 				rules.add(rset); 
@@ -481,7 +488,7 @@ class Parser {
 		ident = identity();
 		if (la.kind == 31) {
 			Get();
-			if (StartOf(7)) {
+			if (StartOf(6)) {
 				param = parameter();
 				parameters.add(param); 
 				while (la.kind == 32) {
@@ -497,7 +504,7 @@ class Parser {
 			global = true; 
 		}
 		Expect(25);
-		while (StartOf(8)) {
+		while (StartOf(7)) {
 			if (!isNestedSelector()) {
 				mdecs = multideclaration();
 				declarations.addAll(mdecs);
@@ -508,11 +515,18 @@ class Parser {
 				Expect(32);
 			} else {
 				cb = Combinator.Descendant; 
-				if (StartOf(5)) {
-					if (la.kind == 34) {
-						Get();
-						cb = Combinator.Descendant; 
-					} else if (la.kind == 35) {
+				if (la.kind == 34) {
+					Get();
+				}
+				if (t.pos + t.val.length() == la.pos) {
+				   cb = Combinator.None;
+				}
+				else {
+				    cb = Combinator.Descendant;
+				}
+				
+				if (la.kind == 33 || la.kind == 35 || la.kind == 36) {
+					if (la.kind == 35) {
 						Get();
 						cb = Combinator.PrecededImmediatelyBy; 
 					} else if (la.kind == 33) {
@@ -544,7 +558,7 @@ class Parser {
 			global = true; 
 		}
 		Expect(25);
-		while (StartOf(7)) {
+		while (StartOf(6)) {
 			mdecs = multideclaration();
 			declarations.addAll(mdecs);
 			if (endOfBlock()) {
@@ -628,7 +642,7 @@ class Parser {
 		
 		trm = term();
 		exp.getTerms().add(trm); 
-		while (StartOf(9)) {
+		while (StartOf(8)) {
 			if (la.kind == 24 || la.kind == 49 || la.kind == 61) {
 				if (la.kind == 61) {
 					Get();
@@ -683,7 +697,7 @@ class Parser {
 		
 		Expect(38);
 		Expect(25);
-		while (StartOf(7)) {
+		while (StartOf(6)) {
 			mdecs = multideclaration();
 			declarations.addAll(mdecs);
 			if (endOfBlock()) {
@@ -711,7 +725,7 @@ class Parser {
 			
 		}
 		Expect(25);
-		while (StartOf(7)) {
+		while (StartOf(6)) {
 			mdecs = multideclaration();
 			declarations.addAll(mdecs);
 			if (endOfBlock()) {
@@ -739,7 +753,7 @@ class Parser {
 		sb.append(ident); 
 		if (la.kind == 56) {
 			Get();
-			if (StartOf(10)) {
+			if (StartOf(9)) {
 				if (la.kind == 35 || la.kind == 57) {
 					if (la.kind == 35) {
 						Get();
@@ -800,7 +814,7 @@ class Parser {
 		Expect(40);
 		String url = URI();
 		trm = new UrlTerm(url); 
-		if (StartOf(11)) {
+		if (StartOf(10)) {
 			m = medium();
 		}
 		Expect(32);
@@ -925,7 +939,7 @@ class Parser {
 					Declaration dec;
 					trm = cls;
 					
-					if (StartOf(12)) {
+					if (StartOf(11)) {
 						if (isDeclaration()) {
 							dec = declaration();
 							cls.addArgument(dec); 
@@ -938,7 +952,7 @@ class Parser {
 							if (isDeclaration()) {
 								dec = declaration();
 								cls.addArgument(dec); 
-							} else if (StartOf(12)) {
+							} else if (StartOf(11)) {
 								Expression arg = expr();
 								cls.addArgument(new Declaration("", arg)); 
 							} else SynErr(79);
@@ -967,7 +981,7 @@ class Parser {
 			val += t.val; trm = new NumberTerm(Double.parseDouble(val)); 
 			if (endOfBlock()) {
 				((NumberTerm) trm).setValue(Double.parseDouble(val)); 
-			} else if (StartOf(13)) {
+			} else if (StartOf(12)) {
 				if (la.val.equalsIgnoreCase("n")) {
 					Expect(19);
 					val += t.val; 
@@ -986,7 +1000,7 @@ class Parser {
 				} else if (la.kind == 71) {
 					Get();
 					((NumberTerm) trm).setUnit(Unit.Percent); 
-				} else if (StartOf(14)) {
+				} else if (StartOf(13)) {
 					if (isUnit()) {
 						ident = identity();
 						try {
@@ -1020,7 +1034,7 @@ class Parser {
 		String url = null;
 		
 		Expect(43);
-		if (StartOf(7)) {
+		if (StartOf(6)) {
 			ident = identity();
 		}
 		if (la.kind == 6) {
@@ -1040,8 +1054,8 @@ class Parser {
 		dir = new GenericDirective();
 		dir.setName("@" + ident);
 		
-		if (StartOf(12)) {
-			if (StartOf(12)) {
+		if (StartOf(11)) {
+			if (StartOf(11)) {
 				Expression exp = expr();
 				dir.setExpression(exp); 
 			} else {
@@ -1052,7 +1066,7 @@ class Parser {
 		if (la.kind == 25) {
 			Get();
 			while (StartOf(1)) {
-				if (StartOf(7)) {
+				if (StartOf(6)) {
 					Declaration dec = declaration();
 					dir.addDeclaration(dec);
 					if (endOfBlock()) {
@@ -1099,7 +1113,7 @@ class Parser {
 		
 		ss = simpleselector();
 		sel.getSimpleSelectors().add(ss); 
-		while (StartOf(15)) {
+		while (StartOf(14)) {
 			if (la.kind == 33 || la.kind == 35 || la.kind == 36) {
 				if (la.kind == 35) {
 					Get();
@@ -1127,13 +1141,13 @@ class Parser {
 		SimpleSelector parent = ss;
 		String ident;
 		
-		if (StartOf(7)) {
+		if (StartOf(6)) {
 			ident = identity();
 			ss.setElementName(ident); 
 		} else if (la.kind == 45) {
 			Get();
 			ss.setElementName("*"); 
-		} else if (StartOf(16)) {
+		} else if (StartOf(15)) {
 			if (la.kind == 46) {
 				Get();
 				ident = identity();
@@ -1150,11 +1164,12 @@ class Parser {
 				ss.setPseudo(psd); 
 			}
 		} else SynErr(86);
-		while (StartOf(16)) {
+		while (StartOf(15)) {
 			if (t.pos + t.val.length() < la.pos) {
 			   break;
 			}
-			SimpleSelector child = new SimpleSelector(); 
+			SimpleSelector child = new SimpleSelector();
+			
 			if (la.kind == 46) {
 				Get();
 				ident = identity();
@@ -1186,7 +1201,7 @@ class Parser {
 		Expect(48);
 		ident = identity();
 		atb.setOperand(ident); 
-		if (StartOf(17)) {
+		if (StartOf(16)) {
 			switch (la.kind) {
 			case 49: {
 				Get();
@@ -1219,7 +1234,7 @@ class Parser {
 				break;
 			}
 			}
-			if (StartOf(7)) {
+			if (StartOf(6)) {
 				ident = identity();
 				atb.setValue(ident); 
 			} else if (la.kind == 5) {
@@ -1280,7 +1295,7 @@ class Parser {
 	BooleanExpression  notExpression() {
 		BooleanExpression  expr;
 		BooleanExpression exp; expr = null; 
-		if (StartOf(18)) {
+		if (StartOf(17)) {
 			exp = primaryBooleanExpression();
 			expr = exp; 
 		} else if (la.kind == 60) {
@@ -1299,7 +1314,7 @@ class Parser {
 			exp = booleanExpression();
 			Expect(59);
 			expr = exp; 
-		} else if (StartOf(12)) {
+		} else if (StartOf(11)) {
 			trm = term();
 			expr = new TermBooleanExpression(trm); 
 		} else SynErr(90);
@@ -1376,7 +1391,7 @@ class Parser {
 			exp = lengthExpression();
 			Expect(59);
 			expr = exp; 
-		} else if (StartOf(12)) {
+		} else if (StartOf(11)) {
 			trm = term();
 			expr = new TermExpression(trm); 
 		} else SynErr(93);
@@ -1438,7 +1453,6 @@ class Parser {
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,T, x,x,T,x, x,x,x,x, x,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,T,T,x, x,T,T,T, T,T,x,x, x,x,x,x, x,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,T,T,x, x,x,x,x, x,T,x,x, x,T,x,x, x,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,T,x,x, x,T,T,T, T,x,x,x, x,x,x,x, x,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},

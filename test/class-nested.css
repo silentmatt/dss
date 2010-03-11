@@ -23,6 +23,12 @@
 .error ~ I am {
 	out: of ideas;
 }
+.error:hover {
+	outline: thin;
+}
+.error :hover {
+	outline: none;
+}
 span.error {
 	background-color: #F88;
 	color: #F00;
@@ -39,4 +45,10 @@ span.error + p {
 }
 span.error ~ I am {
 	out: of ideas;
+}
+span.error:hover {
+	outline: thin;
+}
+span.error :hover {
+	outline: none;
 }

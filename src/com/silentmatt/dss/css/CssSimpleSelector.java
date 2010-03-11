@@ -77,20 +77,14 @@ public class CssSimpleSelector {
 
     public String toString(boolean compact) {
         StringBuilder txt = new StringBuilder();
-        if (combinator != CssCombinator.Descendant) {
-            txt.append(combinator);
-            if (!compact) {
-                txt.append(' ');
-            }
-        }
+        txt.append(compact ? combinator.toCompactString() : combinator.toString());
         if (elementName != null) { txt.append(elementName); }
         if (id != null) { txt.append("#").append(id); }
         if (className != null) { txt.append(".").append(className); }
         if (pseudo != null) { txt.append(":").append(pseudo); }
         if (attribute != null) { txt.append(attribute); }
         if (child != null) {
-            if (child.elementName != null) { txt.append(" "); }
-            txt.append(child);
+            txt.append(child.toString(compact));
         }
         return txt.toString();
     }

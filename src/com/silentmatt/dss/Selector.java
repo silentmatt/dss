@@ -1,6 +1,7 @@
 package com.silentmatt.dss;
 
 import com.silentmatt.dss.css.CssSelector;
+import com.silentmatt.dss.css.CssSimpleSelector;
 import com.silentmatt.dss.util.JoinedList;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +32,21 @@ public class Selector {
     public CssSelector evaluate() {
         CssSelector result = new CssSelector();
 
+        CssSimpleSelector previous = null;
         for (SimpleSelector ss : getActualSimpleSelectors()) {
-           result.getSimpleSelectors().add(ss.evaluate());
+            if (ss.getCombinator() == Combinator.None && previous != null) {
+                // TODO: It might be better to do this in JoinedSelectorList, or we could remove...
+                // [Css]SimpleSelector#child altogether, and just use Combinator.None for that.
+                CssSimpleSelector end = previous;
+                while (end.getChild() != null) {
+                    end = end.getChild();
+                }
+                end.setChild(ss.evaluate());
+            }
+            else {
+                previous = ss.evaluate();
+                result.getSimpleSelectors().add(previous);
+            }
         }
 
         return result;
