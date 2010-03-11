@@ -22,7 +22,7 @@
 
 a {
     text-decoration: none;
-    &:hover, .hover {
+    &:hover span, .hover span {
         text-decoration: underline;
     }
     & :hover, .hover {
