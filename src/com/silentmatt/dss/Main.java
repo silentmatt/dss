@@ -366,10 +366,10 @@ public final class Main {
         }
         else {
             if (color) {
-                System.out.println("\033[31m" + errors + " tests failed.\033[0m");
+                System.out.println("\033[31m" + errors + " test" + (errors != 1 ? "s" : "") + " failed.\033[0m");
             }
             else {
-                System.out.println(errors + " tests failed.");
+                System.out.println(errors + " test" + (errors != 1 ? "s" : "") + " failed.");
             }
         }
         return errors;
