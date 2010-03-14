@@ -339,12 +339,17 @@ importDirective<out ImportDirective dir> =
 .
 
 includeDirective<out IncludeDirective dir> =
-                                        (.  dir = null; .)
+                                        (.  dir = null;
+                                            boolean literal = false;
+                                        .)
     "@include"
+    [
+        "literal"                       (.  literal = true; .)
+    ]
     (
-        URI<out String url>             (.  dir = new IncludeDirective(new UrlTerm(url)); .)
+        URI<out String url>             (.  dir = new IncludeDirective(new UrlTerm(url), literal); .)
         |
-        QuotedString<out String url>    (.  dir = new IncludeDirective(new UrlTerm(url.substring(1, url.length()-1))); .)
+        QuotedString<out String url>    (.  dir = new IncludeDirective(new UrlTerm(url.substring(1, url.length()-1)), literal); .)
     )
     ';'
 .

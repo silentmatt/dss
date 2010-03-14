@@ -5,10 +5,14 @@ import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.RuleSet;
+import com.silentmatt.dss.css.CssLiteralText;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.css.CssRuleList;
 import com.silentmatt.dss.term.UrlTerm;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,10 +24,12 @@ import java.util.List;
  */
 public class IncludeDirective extends ExpressionDirective {
     private DSSDocument included;
+    private final boolean literal;
 
-    public IncludeDirective(UrlTerm url) {
+    public IncludeDirective(UrlTerm url, boolean literal) {
         super(new Expression());
         getExpression().getTerms().add(url);
+        this.literal = literal;
     }
 
     public String getURLString() {
@@ -39,15 +45,24 @@ public class IncludeDirective extends ExpressionDirective {
         return included;
     }
 
+    public boolean isRaw() {
+        return literal;
+    }
+
     @Override
     public String toString() {
-        return "@include " + getExpression() + ";";
+        return "@include " + (literal ? "literal " : "") + getExpression() + ";";
     }
 
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         CssRule result = null;
         URL url = new URL(state.getBaseURL(), this.getURLString());
+
+        if (literal) {
+            return evaluateLiteral(url);
+        }
+
         DSSDocument includedDocument = DSSDocument.parse(url.toString(), state.getErrors());
         if (includedDocument != null) {
             state.pushBaseURL(url, Rule.getRuleSets(includedDocument.getRules()));
@@ -56,14 +71,6 @@ public class IncludeDirective extends ExpressionDirective {
                 try {
                     this.included = includedDocument;
                     return new CssRuleList(Rule.evaluateRules(state, includedDocument.getRules()));
-//                    // Evaluate the first rule, since it's in the same index as the include
-//                    if (includedDocument.getRules().size() > 0) {
-//                        result = new CssRuleList(Rule.evaluateRules(state, includedDocument.getRules().subList(0, 1)));
-//                        if (((CssRuleList) result).getRules().size() == 1) {
-//                            result = ((CssRuleList) result).getRules().get(0);
-//                        }
-//                    }
-//                    this.included = includedDocument;
                 }
                 finally {
                     state.popScope();
@@ -72,16 +79,31 @@ public class IncludeDirective extends ExpressionDirective {
             finally {
                 state.popBaseURL();
             }
-
-//            int index = container.indexOf(this);
-//            if (index != -1) {
-//                container.remove(index);
-//                for (Rule r : includedDocument.getRules()) {
-//                    container.add(index, r);
-//                    index++;
-//                }
-//            }
         }
         return result;
+    }
+
+    private CssRule evaluateLiteral(URL url) throws IOException {
+        return new CssLiteralText(convertStreamToString(url.openStream()));
+    }
+
+    private static String convertStreamToString(InputStream is) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            String line;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+            // Remove the last newline we added - it gets added back in the output
+            if (sb.length() > 0) {
+                sb.setLength(sb.length() - 1);
+            }
+        } finally {
+            is.close();
+        }
+
+        return sb.toString();
     }
 }
