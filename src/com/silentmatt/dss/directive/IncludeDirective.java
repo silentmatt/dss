@@ -60,7 +60,7 @@ public class IncludeDirective extends ExpressionDirective {
         URL url = new URL(state.getBaseURL(), this.getURLString());
 
         if (literal) {
-            return evaluateLiteral(url);
+            return evaluateLiteral(state, url);
         }
 
         DSSDocument includedDocument = DSSDocument.parse(url.toString(), state.getErrors());
@@ -70,6 +70,9 @@ public class IncludeDirective extends ExpressionDirective {
                 state.pushScope(new ArrayList<RuleSet>()); // Why do this if pushBaseURL already did?
                 try {
                     this.included = includedDocument;
+                    if (state.getIncludeCallback() != null) {
+                        state.getIncludeCallback().call(url);
+                    }
                     return new CssRuleList(Rule.evaluateRules(state, includedDocument.getRules()));
                 }
                 finally {
@@ -83,8 +86,12 @@ public class IncludeDirective extends ExpressionDirective {
         return result;
     }
 
-    private CssRule evaluateLiteral(URL url) throws IOException {
-        return new CssLiteralText(convertStreamToString(url.openStream()));
+    private CssRule evaluateLiteral(EvaluationState state, URL url) throws IOException {
+        CssRule result = new CssLiteralText(convertStreamToString(url.openStream()));
+        if (result != null && state.getIncludeCallback() != null) {
+            state.getIncludeCallback().call(url);
+        }
+        return result;
     }
 
     private static String convertStreamToString(InputStream is) throws IOException {

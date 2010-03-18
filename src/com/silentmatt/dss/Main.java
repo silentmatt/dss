@@ -8,6 +8,7 @@ import com.martiansoftware.jsap.ParseException;
 import com.martiansoftware.jsap.Switch;
 import com.martiansoftware.jsap.UnflaggedOption;
 import com.martiansoftware.jsap.stringparsers.FileStringParser;
+import com.silentmatt.dss.DSSEvaluator.Options;
 import com.silentmatt.dss.css.CssDocument;
 import com.silentmatt.dss.parser.DSSParser;
 import java.io.ByteArrayInputStream;
@@ -20,8 +21,100 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Date;
 
 public final class Main {
+
+    private static void processFile(URL url, ErrorReporter errors, Options opts, JSAPResult config, File out) {
+        try {
+            DSSDocument css = DSSDocument.parse(url, errors);
+            if (css != null) {
+                CssDocument outputDocument = new DSSEvaluator(opts).evaluate(css);
+                String cssString;
+                if (config.getBoolean("debug")) {
+                    cssString = css.toString();
+                } else {
+                    cssString = outputDocument.toString(config.getBoolean("compress"));
+                }
+                if (out == null) {
+                    System.out.print(cssString);
+                } else {
+                    PrintStream pout = new PrintStream(out);
+                    pout.print(cssString);
+                    pout.close();
+                }
+            }
+        } catch (MalformedURLException ex) {
+            errors.SemErr("DSS: Invalid URL");
+        } catch (IOException ex) {
+            errors.SemErr("DSS: I/O error: " + ex.getMessage());
+        }
+    }
+
+    private static void watchFile(URL url, ErrorReporter errors, Options opts, JSAPResult config, File out) {
+        File dssFile;
+        try {
+            dssFile = new File(url.toURI());
+        } catch (URISyntaxException ex) {
+            System.err.println("Error converting a URL to a URI.");
+            return;
+        }
+
+        final FileWatcher watcher = new FileWatcher(Arrays.asList(dssFile, out));
+        System.out.println("Watching file: " + dssFile);
+
+        opts.setIncludeCallback(new URLCallback() {
+            public void call(URL url) {
+                try {
+                    if (url.toURI().getScheme().equalsIgnoreCase("file")) {
+                        File f = new File(url.toURI());
+                        if (watcher.addFile(f)) {
+                            System.out.println("    Watching file: " + f);
+                        }
+                    }
+                } catch (URISyntaxException ex) {
+                    // Nothing we can do
+                }
+            }
+        });
+
+        System.out.println("Compiling.");
+        processFile(url, errors, opts, config, out);
+        watcher.ignoreChanges(out);
+        System.out.println("Done Compiling.");
+
+        while (true) {
+            if (watcher.filesChanged()) {
+                System.out.println(new Date().toString() + " -- File changed. Recompiling.");
+                int oldErrorCount = errors.getErrorCount();
+                processFile(url, errors, opts, config, out);
+                int errorCount = errors.getErrorCount();
+                watcher.ignoreChanges(out);
+                System.out.println("Done Compiling.");
+
+                if (config.getBoolean("notify")) {
+                    String message;
+                    if (errorCount != oldErrorCount) {
+                        message = "Error compiling " + dssFile + ".";
+                    }
+                    else {
+                        message = "Done compiling " + dssFile + ".";
+                    }
+                    try {
+                        Runtime.getRuntime().exec(new String[]{ "notify-send", "-t", "2000", message });
+                    } catch (IOException ex) {
+                        // Do nothing
+                    }
+                }
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                System.exit(0);
+            }
+        }
+    }
+
     private Main() {
     }
 
@@ -96,6 +189,16 @@ public final class Main {
                 .setLongFlag("compress");
         compressFlag.setHelp("Compress the CSS output.");
 
+        Switch watchFlag = new Switch("watch")
+                .setShortFlag('w')
+                .setLongFlag("watch");
+        watchFlag.setHelp("Re-process the file any time it changes.");
+
+        Switch notifyFlag = new Switch("notify")
+                .setShortFlag('n')
+                .setLongFlag("notify");
+        notifyFlag.setHelp("Pop-up a notification with notify-send when watched files are finished.");
+
         FlaggedOption defineOpt = new FlaggedOption("define")
                 .setAllowMultipleDeclarations(true)
                 .setRequired(false)
@@ -116,6 +219,8 @@ public final class Main {
             jsap.registerParameter(colorFlag);
             jsap.registerParameter(debugFlag);
             jsap.registerParameter(compressFlag);
+            jsap.registerParameter(watchFlag);
+            jsap.registerParameter(notifyFlag);
             jsap.registerParameter(defineOpt);
             jsap.registerParameter(outOpt);
 
@@ -177,33 +282,11 @@ public final class Main {
         }
 
         if (url != null) {
-            try {
-                DSSDocument css = DSSDocument.parse(url, errors);
-                if (css != null) {
-
-                    CssDocument outputDocument = new DSSEvaluator(opts).evaluate(css);
-
-                    String cssString;
-                    if (config.getBoolean("debug")) {
-                        cssString = css.toString();
-                    }
-                    else {
-                        cssString = outputDocument.toString(config.getBoolean("compress"));
-                    }
-
-                    if (out == null) {
-                        System.out.print(cssString);
-                    }
-                    else {
-                        PrintStream pout = new PrintStream(out);
-                        pout.print(cssString);
-                        pout.close();
-                    }
-                }
-            } catch (MalformedURLException ex) {
-                errors.SemErr("DSS: Invalid URL");
-            } catch (IOException ex) {
-                errors.SemErr("DSS: I/O error: " + ex.getMessage());
+            if (config.getBoolean("watch")) {
+                watchFile(url, errors, opts, config, out);
+            }
+            else {
+                processFile(url, errors, opts, config, out);
             }
         }
         else {

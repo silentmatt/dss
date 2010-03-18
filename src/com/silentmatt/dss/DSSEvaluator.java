@@ -3,7 +3,6 @@ package com.silentmatt.dss;
 import com.silentmatt.dss.css.CssDocument;
 import com.silentmatt.dss.directive.ClassDirective;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +24,7 @@ public class DSSEvaluator {
         private Scope<ClassDirective> classes = new Scope<ClassDirective>(null);
         private Scope<Expression> variables = new Scope<Expression>(null);
         private Map<String, Function> functions = new HashMap<String, Function>();
+        private URLCallback includeCallback = null;
 
         /**
          * Constructs an Options object for a given URL.
@@ -33,6 +33,24 @@ public class DSSEvaluator {
          */
         public Options(URL url) {
             baseURL = url;
+        }
+
+        /**
+         * Sets a callback that gets called when a file is included.
+         *
+         * @param callback The callback handler.
+         */
+        public void setIncludeCallback(URLCallback callback) {
+            this.includeCallback = callback;
+        }
+
+        /**
+         * Gets the callback that will be called when a file is included.
+         *
+         * @return The callback handler.
+         */
+        public URLCallback getIncludeCallback() {
+            return this.includeCallback;
         }
 
         /**

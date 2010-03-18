@@ -21,6 +21,7 @@ public final class EvaluationState {
     private Scope<Expression> parameters = null;
     private final Map<String, Function> functions = new HashMap<String, Function>();
     private final LinkedList<List<RuleSet>> ruleSetScope = new LinkedList<List<RuleSet>>();
+    private final URLCallback includeCallback;
 
     /**
      * Constructs an EvalationState with specified options.
@@ -34,6 +35,16 @@ public final class EvaluationState {
         this.classes = new Scope<ClassDirective>(opts.getClasses());
         this.variables = new Scope<Expression>(opts.getVariables());
         this.functions.putAll(opts.getFunctions());
+        this.includeCallback = opts.getIncludeCallback();
+    }
+
+    /**
+     * Gets the include callback.
+     * 
+     * @return The {@link URLCallback} to handle includes.
+     */
+    public URLCallback getIncludeCallback() {
+        return this.includeCallback;
     }
 
     /**
