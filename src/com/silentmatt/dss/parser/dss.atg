@@ -23,8 +23,7 @@ COMPILER CSS3
         }
         boolean isUnit() {
             if (la.kind != 1) { return false; }
-            List<String> units = Arrays.asList(new String[] { "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz" });
-            return units.contains(la.val);
+            List<String> units = Arrays.asList(new String[] { "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz", "dpi", "dpcm" });            return units.contains(la.val);
         }
         boolean isDeclaration() {
             return la.kind == _ident && scanner.Peek().val.equals(":");
@@ -187,13 +186,43 @@ identity<out String ident> =
 
 atReference<out String ident> = atref  (. ident = t.val.substring(1); .) .
 
+mediaQuery<out MediaQuery query> =                      (.  String expr, q = ""; .)
+    ( (
+        [ "only"                                        (.  q = "only "; .)
+          |
+          "not"                                         (.  q = "not "; .)
+        ]
+        identity<out String type>                       (.  q += type; .)
+        {
+          "and" mediaExpression<out expr>               (.  q += " and " + expr; .)
+        }
+      )
+    |
+      (
+        mediaExpression<out expr>                       (.  q += expr; .)
+        {
+            "and" mediaExpression<out expr>             (.  q += " and " + expr; .)
+        }
+      )
+    )                                                   (.  query = new MediaQuery(q); .)
+.
+
+mediaExpression<out String expr> =
+    "("
+        identity<out String e>                          (.  expr = e; .)
+        [
+            ":" expr<out Expression exp>                (.  expr += ":" + exp; .)
+        ]
+    ")"                                                 (.  expr = "(" + expr + ")"; .)
+.
+
 mediaDirective<out MediaDirective mdir> =               (.
-                                                            List<Medium> media = new ArrayList<Medium>();
+                                                            List<MediaQuery> media = new ArrayList<MediaQuery>();
                                                             List<Rule> rules = new ArrayList<Rule>();
                                                         .)
     "@media"
-    medium<out Medium m>                                (.  media.add(m); .)
-    { ',' medium<out m>                                 (.  media.add(m); .) }
+    mediaQuery<out MediaQuery m>                        (.  media.add(m); .)
+    { ',' mediaQuery<out m>                             (.  media.add(m); .) }
     '{'
         {
             ruleset<out RuleSet rset>                   (.  rules.add(rset); .)
@@ -329,12 +358,12 @@ pageDirective<out PageDirective dir> =          (.  List<Declaration> declaratio
 .
 
 importDirective<out ImportDirective dir> =
-                        (.  Medium m = Medium.all;
+                        (.  MediaQuery m = new MediaQuery("all");
                             UrlTerm trm;
                         .)
     "@import"
     URI<out String url> (.  trm = new UrlTerm(url); .)
-    [ medium<out m> ]
+    [ mediaQuery<out m> ]
     ';'                 (.  dir = new ImportDirective(trm, m); .)
 .
 
@@ -532,7 +561,10 @@ pseudo<out String pseudo> =         (.  StringBuilder sb = new StringBuilder();
                                         boolean haveOpenParen = false;
                                     .)
     ':' [ ':'                       (.  sb.append(":"); .) ]
-    identity<out String ident>      (.  sb.append(ident); .)
+    ( identity<out String ident>    (.  sb.append(ident); .)
+      |
+      "not"                         (.  sb.append("not"); .)
+    )
     [ '('
         (( [ "+"                    (.  sb.append("(").append(t.val);
                                         haveOpenParen = true; .)

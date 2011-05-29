@@ -8,15 +8,15 @@ import java.net.URL;
  * @author Matthew Crumley
  */
 public class CssImportDirective extends CssExpressionDirective {
-    private final CssMedium medium;
+    private final CssMediaQuery medium;
 
-    public CssImportDirective(CssTerm url, CssMedium medium) {
+    public CssImportDirective(CssTerm url, CssMediaQuery medium) {
         super(new CssExpression());
         getExpression().getTerms().add(url);
         this.medium = medium;
     }
 
-    public CssMedium getMedium() {
+    public CssMediaQuery getMedium() {
         return medium;
     }
 

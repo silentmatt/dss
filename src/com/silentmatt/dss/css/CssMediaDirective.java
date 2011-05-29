@@ -7,16 +7,16 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class CssMediaDirective extends CssRule {
-    private final List<CssMedium> mediums;
+    private final List<CssMediaQuery> mediums;
     private final List<CssRule> rules;
 
-    public CssMediaDirective(List<CssMedium> mediums, List<CssRule> rules) {
+    public CssMediaDirective(List<CssMediaQuery> mediums, List<CssRule> rules) {
         super();
         this.mediums = mediums;
         this.rules = rules;
     }
 
-    public List<CssMedium> getMediums() {
+    public List<CssMediaQuery> getMediums() {
         return mediums;
     }
 
@@ -39,7 +39,7 @@ public class CssMediaDirective extends CssRule {
         txt.append("@media ");
 
         boolean first = true;
-        for (CssMedium m : mediums) {
+        for (CssMediaQuery m : mediums) {
             if (first) {
                 first = false;
             } else {
@@ -71,7 +71,7 @@ public class CssMediaDirective extends CssRule {
         txt.append("@media");
 
         boolean first = true;
-        for (CssMedium m : mediums) {
+        for (CssMediaQuery m : mediums) {
             if (first) {
                 first = false;
                 txt.append(' ');

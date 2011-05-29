@@ -35,7 +35,7 @@ div {
 }
 
 @if ie5 || (ie6 && 0) {
-    this should {
-        not: be here;
+    this {
+        should-not: be here;
     }
 }

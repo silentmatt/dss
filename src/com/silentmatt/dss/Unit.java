@@ -112,7 +112,15 @@ public enum Unit {
     /**
      * Kilohertz: kHz.
      */
-    kHz;
+    kHz,
+    /**
+     * Dots per inch: dpi.
+     */
+    DPI,
+    /**
+     * Dots per centimeter: dpcm.
+     */
+    DPCM;
 
     /**
      * Gets the unit as a CSS-compatible String.

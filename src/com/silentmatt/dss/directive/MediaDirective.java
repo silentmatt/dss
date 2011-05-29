@@ -1,10 +1,10 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.EvaluationState;
-import com.silentmatt.dss.Medium;
+import com.silentmatt.dss.MediaQuery;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssMediaDirective;
-import com.silentmatt.dss.css.CssMedium;
+import com.silentmatt.dss.css.CssMediaQuery;
 import com.silentmatt.dss.css.CssRule;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,16 +15,16 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class MediaDirective extends Rule {
-    private final List<Medium> mediums;
+    private final List<MediaQuery> mediums;
     private final List<Rule> rules;
 
-    public MediaDirective(List<Medium> mediums, List<Rule> rules) {
+    public MediaDirective(List<MediaQuery> mediums, List<Rule> rules) {
         super();
         this.mediums = mediums;
         this.rules = rules;
     }
 
-    public List<Medium> getMediums() {
+    public List<MediaQuery> getMediums() {
         return mediums;
     }
 
@@ -47,7 +47,7 @@ public class MediaDirective extends Rule {
         txt.append("@media ");
 
         boolean first = true;
-        for (Medium m : mediums) {
+        for (MediaQuery m : mediums) {
             if (first) {
                 first = false;
             } else {
@@ -70,9 +70,9 @@ public class MediaDirective extends Rule {
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         state.pushScope(Rule.getRuleSets(getRules()));
         try {
-            List<CssMedium> media = new ArrayList<CssMedium>();
-            for (Medium m : mediums) {
-                media.add(CssMedium.valueOf(m.toString()));
+            List<CssMediaQuery> media = new ArrayList<CssMediaQuery>();
+            for (MediaQuery m : mediums) {
+                media.add(new CssMediaQuery(m.toString()));
             }
             return new CssMediaDirective(media, Rule.evaluateRules(state, getRules()));
         }

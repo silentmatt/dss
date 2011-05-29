@@ -2,10 +2,10 @@ package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
-import com.silentmatt.dss.Medium;
+import com.silentmatt.dss.MediaQuery;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssImportDirective;
-import com.silentmatt.dss.css.CssMedium;
+import com.silentmatt.dss.css.CssMediaQuery;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.css.CssTerm;
 import com.silentmatt.dss.term.UrlTerm;
@@ -18,15 +18,15 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class ImportDirective extends ExpressionDirective {
-    private final Medium medium;
+    private final MediaQuery medium;
 
-    public ImportDirective(UrlTerm url, Medium medium) {
+    public ImportDirective(UrlTerm url, MediaQuery medium) {
         super(new Expression());
         getExpression().getTerms().add(url);
         this.medium = medium;
     }
 
-    public Medium getMedium() {
+    public MediaQuery getMedium() {
         return medium;
     }
 
@@ -45,7 +45,7 @@ public class ImportDirective extends ExpressionDirective {
 
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) {
-        return new CssImportDirective(new CssTerm(getExpression().toString()), CssMedium.valueOf(medium.toString()));
+        return new CssImportDirective(new CssTerm(getExpression().toString()), new CssMediaQuery(medium.toString()));
     }
 
 }

@@ -19,6 +19,42 @@
     }
 }
 
+@media screen    and    (color) {
+    p {
+        color: red;
+    }
+}
+
+@media all and ( min-width : 500px ) {
+    body {
+        width: 500px;
+    }
+}
+
+@media (min-width:500px), only print and (min-width: 11in) {
+    body {
+        width: 500px;
+    }
+}
+
+@media (orientation: portrait) {
+    body {
+        width: 300px;
+    }
+}
+
+@media all and (orientation: portrait) {
+    body {
+        width: 300px;
+    }
+}
+
+@media not screen and (min-resolution: 300dpi) {
+    body {
+        width: 3000px;
+    }
+}
+
 elem {
     apply: foo<value>;
 }
