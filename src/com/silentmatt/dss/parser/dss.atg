@@ -181,6 +181,14 @@ identity<out String ident> =
         | "tv"
         | "important"
         | "global"
+        | "calc"
+        | "only"
+        | "not"
+        | "and"
+        | "literal"
+        | "const"
+        | "param"
+        | "ruleset"
     )   (. ident = t.val; .)
 .
 
