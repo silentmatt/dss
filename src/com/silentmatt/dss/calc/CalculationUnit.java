@@ -1,6 +1,7 @@
 package com.silentmatt.dss.calc;
 
 import com.silentmatt.dss.Unit;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,82 +13,113 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
     /**
      * a scalar (dimensionless) unit
      */
-    public static final CalculationUnit None = new CalculationUnit(1, 0,0,0,0,0,0, Unit.None);
+    public static final CalculationUnit None = new CalculationUnit(1, 0,0,0,0,0,0,0,0,0,0,0,0, Unit.None);
 
     /**
      * pixels
      */
-    public static final CalculationUnit PX = new CalculationUnit( 1, 1,0,0,0,0,0, Unit.PX);
+    public static final CalculationUnit PX = new CalculationUnit( 1, 1,0,0,0,0,0,0,0,0,0,0,0, Unit.PX);
 
     /**
      * percentage
      */
-    public static final CalculationUnit Percent = new CalculationUnit( 1, 0,1,0,0,0,0, Unit.Percent);
+    public static final CalculationUnit Percent = new CalculationUnit( 1, 0,1,0,0,0,0,0,0,0,0,0,0, Unit.Percent);
 
     /**
      * inches
      */
-    public static final CalculationUnit IN = new CalculationUnit(            72, 0,0,1,0,0,0, Unit.IN);
+    public static final CalculationUnit IN = new CalculationUnit(            72, 0,0,1,0,0,0,0,0,0,0,0,0, Unit.IN);
     /**
      * millimeters
      */
-    public static final CalculationUnit MM = new CalculationUnit(.0393700787*72, 0,0,1,0,0,0, Unit.MM);
+    public static final CalculationUnit MM = new CalculationUnit(.0393700787*72, 0,0,1,0,0,0,0,0,0,0,0,0, Unit.MM);
     /**
      * centimeters
      */
-    public static final CalculationUnit CM = new CalculationUnit(0.393700787*72, 0,0,1,0,0,0, Unit.CM);
+    public static final CalculationUnit CM = new CalculationUnit(0.393700787*72, 0,0,1,0,0,0,0,0,0,0,0,0, Unit.CM);
     /**
      * points (1/72 of an inch)
      */
-    public static final CalculationUnit PT = new CalculationUnit(             1, 0,0,1,0,0,0, Unit.PT);
+    public static final CalculationUnit PT = new CalculationUnit(             1, 0,0,1,0,0,0,0,0,0,0,0,0, Unit.PT);
     /**
      * picas
      */
-    public static final CalculationUnit PC = new CalculationUnit(            12, 0,0,1,0,0,0, Unit.PC);
+    public static final CalculationUnit PC = new CalculationUnit(            12, 0,0,1,0,0,0,0,0,0,0,0,0, Unit.PC);
 
     /**
      * degrees
      */
-    public static final CalculationUnit DEG  = new CalculationUnit(          1, 0,0,0,1,0,0, Unit.DEG);
+    public static final CalculationUnit DEG  = new CalculationUnit(          1, 0,0,0,1,0,0,0,0,0,0,0,0, Unit.DEG);
     /**
      * grads/grades/gradians
      */
-    public static final CalculationUnit GRAD = new CalculationUnit(   9.0/10.0, 0,0,0,1,0,0, Unit.GRAD);
+    public static final CalculationUnit GRAD = new CalculationUnit(   9.0/10.0, 0,0,0,1,0,0,0,0,0,0,0,0, Unit.GRAD);
     /**
      * radians
      */
-    public static final CalculationUnit RAD  = new CalculationUnit(180/Math.PI, 0,0,0,1,0,0, Unit.RAD);
+    public static final CalculationUnit RAD  = new CalculationUnit(180/Math.PI, 0,0,0,1,0,0,0,0,0,0,0,0, Unit.RAD);
     /**
      * turns/revolutions
      */
-    public static final CalculationUnit TURN = new CalculationUnit(        360, 0,0,0,1,0,0, Unit.TURN);
+    public static final CalculationUnit TURN = new CalculationUnit(        360, 0,0,0,1,0,0,0,0,0,0,0,0, Unit.TURN);
 
     /**
      * milliseconds
      */
-    public static final CalculationUnit MS = new CalculationUnit(   1, 0,0,0,0,1,0, Unit.MS);
+    public static final CalculationUnit MS = new CalculationUnit(   1, 0,0,0,0,1,0,0,0,0,0,0,0, Unit.MS);
     /**
      * seconds
      */
-    public static final CalculationUnit S  = new CalculationUnit(1000, 0,0,0,0,1,0, Unit.S);
+    public static final CalculationUnit S  = new CalculationUnit(1000, 0,0,0,0,1,0,0,0,0,0,0,0, Unit.S);
 
     /**
      * Hertz (1/s)
      */
-    public static final CalculationUnit Hz  = new CalculationUnit(   1, 0,0,0,0,-1,0, Unit.Hz);
+    public static final CalculationUnit Hz  = new CalculationUnit(   1, 0,0,0,0,-1,0,0,0,0,0,0,0, Unit.Hz);
     /**
      * kilohertz
      */
-    public static final CalculationUnit kHz = new CalculationUnit(1000, 0,0,0,0,-1,0, Unit.kHz);
+    public static final CalculationUnit kHz = new CalculationUnit(1000, 0,0,0,0,-1,0,0,0,0,0,0,0, Unit.kHz);
 
     /**
      * em
      */
-    public static final CalculationUnit EM = new CalculationUnit(  1, 0,0,0,0,0,1, Unit.EM);
+    public static final CalculationUnit EM = new CalculationUnit(  1, 0,0,0,0,0,1,0,0,0,0,0,0, Unit.EM);
     /**
      * ex (1/2 em)
      */
-    public static final CalculationUnit EX = new CalculationUnit(0.5, 0,0,0,0,0,1, Unit.EX);
+    public static final CalculationUnit EX = new CalculationUnit(0.5, 0,0,0,0,0,1,0,0,0,0,0,0, Unit.EX);
+
+    /**
+     * layout-grid size
+     */
+    public static final CalculationUnit GD  = new CalculationUnit(1, 0,0,0,0,0,0,1,0,0,0,0,0, Unit.GD);
+
+    /**
+     * root element font size (rem)
+     */
+    public static final CalculationUnit REM = new CalculationUnit(1, 0,0,0,0,0,0,0,1,0,0,0,0, Unit.REM);
+
+    /**
+     * viewport width
+     */
+    public static final CalculationUnit VW  = new CalculationUnit(1, 0,0,0,0,0,0,0,0,1,0,0,0, Unit.VW);
+
+    /**
+     * viewport height
+     */
+    public static final CalculationUnit VH  = new CalculationUnit(1, 0,0,0,0,0,0,0,0,0,1,0,0, Unit.VH);
+
+    /**
+     * Minumum of viewport height or width
+     */
+    public static final CalculationUnit VM  = new CalculationUnit(1, 0,0,0,0,0,0,0,0,0,0,1,0, Unit.VM);
+
+    /**
+     * Width of the "0" character
+     */
+    public static final CalculationUnit CH  = new CalculationUnit(1, 0,0,0,0,0,0,0,0,0,0,0,1, Unit.CH);
+
 
     /**
      * Mapping from a CSS {@link Unit} to the corresponding CalculationUnit.
@@ -109,7 +141,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
     private static final Map<CalculationUnit, CalculationUnit> canonicalUnit;
 
     static {
-        cssToUnitMap = new HashMap<Unit, CalculationUnit>();
+        cssToUnitMap = new EnumMap<Unit, CalculationUnit>(Unit.class);
         unitToCssMap = new HashMap<CalculationUnit, Unit>();
         canonicalUnit = new HashMap<CalculationUnit, CalculationUnit>();
 
@@ -139,6 +171,13 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
         cssToUnitMap.put(Unit.EM, CalculationUnit.EM);
         cssToUnitMap.put(Unit.EX, CalculationUnit.EX);
 
+        cssToUnitMap.put(Unit.GD, CalculationUnit.GD);
+        cssToUnitMap.put(Unit.REM, CalculationUnit.REM);
+        cssToUnitMap.put(Unit.VW, CalculationUnit.VW);
+        cssToUnitMap.put(Unit.VH, CalculationUnit.VH);
+        cssToUnitMap.put(Unit.VM, CalculationUnit.VM);
+        cssToUnitMap.put(Unit.CH, CalculationUnit.CH);
+
         canonicalUnit.put(None, None);
         canonicalUnit.put(PX, PX);
         canonicalUnit.put(Percent, Percent);
@@ -148,6 +187,12 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
         canonicalUnit.put(S, S);
         canonicalUnit.put(Hz, Hz);
         canonicalUnit.put(EM, EM);
+        canonicalUnit.put(GD, GD);
+        canonicalUnit.put(REM, REM);
+        canonicalUnit.put(VW, VW);
+        canonicalUnit.put(VH, VH);
+        canonicalUnit.put(VM, VM);
+        canonicalUnit.put(CH, CH);
 
         unitToCssMap.put(None, Unit.None);
         unitToCssMap.put(PX, Unit.PX);
@@ -158,6 +203,12 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
         unitToCssMap.put(S, Unit.S);
         unitToCssMap.put(Hz, Unit.Hz);
         unitToCssMap.put(EM, Unit.EM);
+        unitToCssMap.put(GD, Unit.GD);
+        unitToCssMap.put(REM, Unit.REM);
+        unitToCssMap.put(VW, Unit.VW);
+        unitToCssMap.put(VH, Unit.VH);
+        unitToCssMap.put(VM, Unit.VM);
+        unitToCssMap.put(CH, Unit.CH);
     }
 
     private final double scale;
@@ -167,6 +218,12 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
     private final int length;
     private final int angle;
     private final int time;
+    private final int gdLength;
+    private final int remLength;
+    private final int vwLength;
+    private final int vhLength;
+    private final int vmLength;
+    private final int chLength;
     private final Unit cssUnit;
 
     /**
@@ -218,9 +275,15 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
      * @param angle Angle
      * @param time Time (negative for frequency)
      * @param fontLength Font-relative dimension em/ex
+     * @param gdLength Grid-relative dimension (gd)
+     * @param remLength Root element length
+     * @param vwLength Viewport-width-relative dimension
+     * @param vhLength Viewport-height-relative dimension
+     * @param vmLength Viewport-relative dimension
+     * @param chLength "0"-character-relative dimension
      * @param cssUnit The corresponding CSS unit, if applicable
      */
-    private CalculationUnit(double scale, int pxLength, int percent, int length, int angle, int time, int fontLength, Unit cssUnit) {
+    private CalculationUnit(double scale, int pxLength, int percent, int length, int angle, int time, int fontLength, int gdLength, int remLength, int vwLength, int vhLength, int vmLength, int chLength, Unit cssUnit) {
         this.scale = scale;
         this.pxLength = pxLength;
         this.percent = percent;
@@ -228,6 +291,12 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
         this.angle = angle;
         this.time = time;
         this.fontLength = fontLength;
+        this.gdLength = gdLength;
+        this.remLength = remLength;
+        this.vwLength = vwLength;
+        this.vhLength = vhLength;
+        this.vmLength = vmLength;
+        this.chLength = chLength;
         this.cssUnit = cssUnit;
     }
 
@@ -247,7 +316,13 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
                 length == other.length &&
                 angle == other.angle &&
                 time == other.time &&
-                fontLength == other.fontLength;
+                fontLength == other.fontLength &&
+                gdLength == other.gdLength &&
+                remLength == other.remLength &&
+                vwLength == other.vwLength &&
+                vhLength == other.vhLength &&
+                vmLength == other.vmLength &&
+                chLength == other.chLength;
     }
 
     /**
@@ -266,6 +341,12 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
                 angle + other.angle,
                 time + other.time,
                 fontLength + other.fontLength,
+                gdLength + other.gdLength,
+                remLength + other.remLength,
+                vwLength + other.vwLength,
+                vhLength + other.vhLength,
+                vmLength + other.vmLength,
+                chLength + other.chLength,
                 null);
     }
 
@@ -285,6 +366,12 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
                 angle - other.angle,
                 time - other.time,
                 fontLength - other.fontLength,
+                gdLength - other.gdLength,
+                remLength - other.remLength,
+                vwLength - other.vwLength,
+                vhLength - other.vhLength,
+                vmLength - other.vmLength,
+                chLength - other.chLength,
                 null);
     }
 
@@ -320,6 +407,24 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
         if (fontLength != other.fontLength) {
             return fontLength - other.fontLength;
         }
+        if (gdLength != other.gdLength) {
+            return gdLength - other.gdLength;
+        }
+        if (remLength != other.remLength) {
+            return remLength - other.remLength;
+        }
+        if (vwLength != other.vwLength) {
+            return vwLength - other.vwLength;
+        }
+        if (vhLength != other.vhLength) {
+            return vhLength - other.vhLength;
+        }
+        if (vmLength != other.vmLength) {
+            return vmLength - other.vmLength;
+        }
+        if (chLength != other.chLength) {
+            return chLength - other.chLength;
+        }
         return 0;
     }
 
@@ -331,7 +436,18 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
      */
     @Override
     public int hashCode() {
-        return fontLength * 100000 + percent * 10000 + angle * 1000 + length * 100 + pxLength * 10 + time;
+        return  chLength   * 1000000 +
+                vmLength   * 1000000 +
+                vhLength   * 1000000 +
+                vwLength   * 1000000 +
+                remLength  * 1000000 +
+                gdLength   * 1000000 +
+                fontLength * 100000 +
+                percent    * 10000 +
+                angle      * 1000 +
+                length     * 100 +
+                pxLength   * 10 +
+                time;
     }
 
     /**
@@ -352,7 +468,13 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
                this.length == other.length &&
                this.angle == other.angle &&
                this.time == other.time &&
-               this.fontLength == other.fontLength;
+               this.fontLength == other.fontLength &&
+               this.gdLength == other.gdLength &&
+               this.remLength == other.remLength &&
+               this.vwLength == other.vwLength &&
+               this.vhLength == other.vhLength &&
+               this.vmLength == other.vmLength &&
+               this.chLength == other.chLength;
     }
 
     /**
@@ -373,89 +495,173 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
 
         StringBuilder sb = new StringBuilder();
         if (pxLength > 1) {
-            sb.append(" px^" + pxLength);
+            sb.append(" px^").append(pxLength);
         }
         else if (pxLength == 1) {
             sb.append(" px");
         }
 
         if (fontLength > 1) {
-            sb.append(" em^" + fontLength);
+            sb.append(" em^").append(fontLength);
         }
         else if (fontLength == 1) {
             sb.append(" em");
         }
 
         if (percent > 1) {
-            sb.append(" %^" + percent);
+            sb.append(" %^").append(percent);
         }
         else if (percent == 1) {
             sb.append(" %");
         }
 
         if (length > 1) {
-            sb.append(" pt^" + length);
+            sb.append(" pt^").append(length);
         }
         else if (length == 1) {
             sb.append(" pt");
         }
 
         if (this.angle > 1) {
-            sb.append(" deg^" + angle);
+            sb.append(" deg^").append(angle);
         }
         else if (angle == 1) {
             sb.append(" deg");
         }
 
         if (time > 1) {
-            sb.append(" s^" + time);
+            sb.append(" s^").append(time);
         }
         else if (time == 1) {
             sb.append(" s");
         }
 
+        if (gdLength > 1) {
+            sb.append(" gd^").append(gdLength);
+        }
+        else if (gdLength == 1) {
+            sb.append(" gd");
+        }
+
+        if (remLength > 1) {
+            sb.append(" rem^").append(remLength);
+        }
+        else if (remLength == 1) {
+            sb.append(" rem");
+        }
+
+        if (vwLength > 1) {
+            sb.append(" vw^").append(vwLength);
+        }
+        else if (vwLength == 1) {
+            sb.append(" vw");
+        }
+
+        if (vhLength > 1) {
+            sb.append(" vh^").append(vhLength);
+        }
+        else if (vhLength == 1) {
+            sb.append(" vh");
+        }
+
+        if (vmLength > 1) {
+            sb.append(" vm^").append(vmLength);
+        }
+        else if (vmLength == 1) {
+            sb.append(" vm");
+        }
+
+        if (chLength > 1) {
+            sb.append(" ch^").append(chLength);
+        }
+        else if (chLength == 1) {
+            sb.append(" ch");
+        }
+
         sb.append("/");
 
         if (pxLength < -1) {
-            sb.append("px^" + -pxLength + " ");
+            sb.append("px^").append(-pxLength).append(" ");
         }
         else if (pxLength == -1) {
             sb.append("px ");
         }
 
         if (fontLength < -1) {
-            sb.append("em^" + -fontLength + " ");
+            sb.append("em^").append(-fontLength).append(" ");
         }
         else if (fontLength == -1) {
             sb.append("em ");
         }
 
         if (percent < -1) {
-            sb.append("%^" + -percent + " ");
+            sb.append("%^").append(-percent).append(" ");
         }
         else if (percent == -1) {
             sb.append("% ");
         }
 
         if (length < -1) {
-            sb.append("pt^" + -length + " ");
+            sb.append("pt^").append(-length).append(" ");
         }
         else if (length == -1) {
             sb.append("pt ");
         }
 
         if (this.angle < -1) {
-            sb.append("deg^" + -angle + " ");
+            sb.append("deg^").append(-angle).append(" ");
         }
         else if (angle == -1) {
             sb.append("deg ");
         }
 
         if (time < -1) {
-            sb.append("s^" + -time + " ");
+            sb.append("s^").append(-time).append(" ");
         }
         else if (time == -1) {
             sb.append("s ");
+        }
+
+        if (gdLength < -1) {
+            sb.append("gd^").append(-gdLength).append(" ");
+        }
+        else if (gdLength == -1) {
+            sb.append("gd ");
+        }
+
+        if (remLength < -1) {
+            sb.append("rem^").append(-remLength).append(" ");
+        }
+        else if (remLength == -1) {
+            sb.append("rem ");
+        }
+
+        if (vwLength < -1) {
+            sb.append("vw^").append(-vwLength).append(" ");
+        }
+        else if (vwLength == -1) {
+            sb.append("vw ");
+        }
+
+        if (vhLength < -1) {
+            sb.append("vh^").append(-vhLength).append(" ");
+        }
+        else if (vhLength == -1) {
+            sb.append("vh ");
+        }
+
+        if (vmLength < -1) {
+            sb.append("vm^").append(-vmLength).append(" ");
+        }
+        else if (vmLength == -1) {
+            sb.append("vm ");
+        }
+
+        if (chLength < -1) {
+            sb.append("ch^").append(-chLength).append(" ");
+        }
+        else if (chLength == -1) {
+            sb.append("ch ");
         }
 
         String res = sb.toString().trim();
