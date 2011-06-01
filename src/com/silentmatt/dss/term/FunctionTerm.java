@@ -5,7 +5,13 @@ import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Function;
+import com.silentmatt.dss.HSLColor;
+import com.silentmatt.dss.RGBFColor;
+import com.silentmatt.dss.RGBIColor;
 import com.silentmatt.dss.Unit;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A function "call" term.
@@ -114,6 +120,9 @@ public class FunctionTerm extends Term {
      */
     public Expression applyFunction(EvaluationState state) {
         Function function = state.getFunctions().get(getName());
+        if (function == null) {
+            function = builtinFunctions.get(getName());
+        }
         if (function != null) {
             try {
                 return function.call(this, state);
@@ -130,12 +139,96 @@ public class FunctionTerm extends Term {
         return toColor() != null;
     }
 
+    private boolean isRGBIColor() {
+        try {
+            List<Term> channels = expression.getTerms();
+            if (!(name.equalsIgnoreCase("rgb") || name.equalsIgnoreCase("rgba"))) {
+                return false;
+            }
+            if (!(channels.size() == 3 || channels.size() == 4)) {
+                return false;
+            }
+            if (((NumberTerm) channels.get(0)).getUnit() != Unit.None) {
+                return false;
+            }
+            if (((NumberTerm) channels.get(1)).getUnit() != Unit.None) {
+                return false;
+            }
+            if (((NumberTerm) channels.get(2)).getUnit() != Unit.None) {
+                return false;
+            }
+            if (channels.size() == 4 && ((NumberTerm) channels.get(3)).getUnit() != Unit.None) {
+                return false;
+            }
+            return true;
+        }
+        catch (ClassCastException ex) {
+            return false;
+        }
+    }
+
+    private boolean isRGBFColor() {
+        try {
+            List<Term> channels = expression.getTerms();
+            if (!(name.equalsIgnoreCase("rgb") || name.equalsIgnoreCase("rgba"))) {
+                return false;
+            }
+            if (!(channels.size() == 3 || channels.size() == 4)) {
+                return false;
+            }
+            if (((NumberTerm) channels.get(0)).getUnit() != Unit.Percent) {
+                return false;
+            }
+            if (((NumberTerm) channels.get(1)).getUnit() != Unit.Percent) {
+                return false;
+            }
+            if (((NumberTerm) channels.get(2)).getUnit() != Unit.Percent) {
+                return false;
+            }
+            if (channels.size() == 4 && ((NumberTerm) channels.get(3)).getUnit() != Unit.None) {
+                return false;
+            }
+            return true;
+        }
+        catch (ClassCastException ex) {
+            return false;
+        }
+    }
+
+    private boolean isHSLColor() {
+        try {
+            List<Term> channels = expression.getTerms();
+            if (!(name.equalsIgnoreCase("hsl") || name.equalsIgnoreCase("hsla"))) {
+                return false;
+            }
+            if (!(channels.size() == 3 || channels.size() == 4)) {
+                return false;
+            }
+            if (((NumberTerm) channels.get(0)).getUnit() != Unit.None) {
+                return false;
+            }
+            if (((NumberTerm) channels.get(1)).getUnit() != Unit.Percent) {
+                return false;
+            }
+            if (((NumberTerm) channels.get(2)).getUnit() != Unit.Percent) {
+                return false;
+            }
+            if (channels.size() == 4 && ((NumberTerm) channels.get(3)).getUnit() != Unit.None) {
+                return false;
+            }
+            return true;
+        }
+        catch (ClassCastException ex) {
+            return false;
+        }
+    }
+
     /**
      * Converts the term to a Color object.
      * Functions that can be colors are rgb, rgba, hsl, and hsla.
      * The "non-alpha" versions are equivalent to the "alpha" versions. For
-     * example, <code>rgb(255,0,0,128)</code> works, and sets the alpha channel
-     * to 128.
+     * example, <code>rgb(255,0,0,0.5)</code> works, and sets the alpha channel
+     * to 0.5.
      *
      * You can also mix percentages and integer values. Each channel is
      * considered separately.
@@ -144,83 +237,37 @@ public class FunctionTerm extends Term {
      */
     @Override
     public Color toColor() {
-        if ((name.equalsIgnoreCase("rgb") && expression.getTerms().size() == 3)
-            || (name.equalsIgnoreCase("rgba") && expression.getTerms().size() == 4)
-            ) {
-            int fr = 0, fg = 0, fb = 0, fa = 255;
-            for (int i = 0; i < expression.getTerms().size(); i++) {
-                Term term = expression.getTerms().get(i);
-                if (!(term instanceof NumberTerm) ||
-                        (i > 0 && (term.getSeperator() == null || !term.getSeperator().equals(','))) ) {
-                    return null;
-                }
-                switch (i) {
-                case 0: fr = getRGBValue((NumberTerm) term); break;
-                case 1: fg = getRGBValue((NumberTerm) term); break;
-                case 2: fb = getRGBValue((NumberTerm) term); break;
-                case 3: fa = getAlphaValue((NumberTerm) term); break;
-                default: break;
-                }
-            }
-            return new Color(fr, fg, fb, fa);
-        } else if ((name.equalsIgnoreCase("hsl") && expression.getTerms().size() == 3)
-            || (name.equalsIgnoreCase("hsla") && expression.getTerms().size() == 4)
-            ) {
-            int h = 0, s = 0, v = 0, a = 255;
-            for (int i = 0; i < expression.getTerms().size(); i++) {
-                Term term = expression.getTerms().get(i);
-                if (!(term instanceof NumberTerm) || term.getSeperator() == null || !term.getSeperator().equals(',') ) {
-                    return null;
-                }
-                switch (i) {
-                case 0: h = getHueValue((NumberTerm) term); break;
-                case 1: s = getRGBValue((NumberTerm) term); break;
-                case 2: v = getRGBValue((NumberTerm) term); break;
-                case 3: a = getAlphaValue((NumberTerm) term); break;
-                default: break;
-                }
-            }
-            java.awt.Color jColor = java.awt.Color.getHSBColor(h, s, v);
-            return new Color(jColor.getRed(), jColor.getGreen(), jColor.getBlue(), a);
+        List<Term> terms = expression.getTerms();
+        double a = 1.0;
+
+        if (terms.size() == 4 && terms.get(3) instanceof NumberTerm) {
+            a = ((NumberTerm) terms.get(3)).getValue();
+        }
+
+        if (this.isRGBIColor()) {
+            int r = (int) ((NumberTerm) terms.get(0)).getValue();
+            int g = (int) ((NumberTerm) terms.get(1)).getValue();
+            int b = (int) ((NumberTerm) terms.get(2)).getValue();
+            
+            return new RGBIColor(r, g, b, a);
+        }
+        else if (this.isRGBFColor()) {
+            double r = ((NumberTerm) terms.get(0)).getValue() / 100.0;
+            double g = ((NumberTerm) terms.get(1)).getValue() / 100.0;
+            double b = ((NumberTerm) terms.get(2)).getValue() / 100.0;
+
+            return new RGBFColor(r, g, b, a);
+        }
+        else if (this.isHSLColor()) {
+            int h = (int) ((NumberTerm) terms.get(0)).getValue();
+            double s = ((NumberTerm) terms.get(1)).getValue() / 100.0;
+            double l = ((NumberTerm) terms.get(2)).getValue() / 100.0;
+
+            return new HSLColor(h, s, l, a);
         }
         else {
             return null;
         }
-    }
-
-    /**
-     * Converts a numeric term to a color channel.
-     * Percentages are scaled from 0 to 255, otherwise, the scalar part is
-     * converted to an integer.
-     *
-     * @param t The numberTerm to convert
-     * @return The RGBA channel value
-     */
-    private static int getRGBValue(NumberTerm t) {
-        if (t.getUnit() == Unit.Percent) {
-            return (int)(255.0 * t.getValue() / 100.0);
-        }
-        return (int) t.getValue();
-    }
-
-    /**
-     * Converts a numeric term to a hue.
-     *
-     * @param t The NumberTerm to convert
-     * @return A hue value from 0 to 255 (as long as t is from 0 to 360)
-     */
-    private static int getHueValue(NumberTerm t) {
-        return (int)(t.getValue() * 255.0 / 360.0);
-    }
-
-    /**
-     * Converts a numeric term to a hue.
-     *
-     * @param t The NumberTerm to convert
-     * @return A hue value from 0 to 255 (as long as t is from 0 to 360)
-     */
-    private static int getAlphaValue(NumberTerm t) {
-        return (int)(t.getValue() * 255.0);
     }
 
     /**
@@ -245,4 +292,284 @@ public class FunctionTerm extends Term {
         result.getTerms().get(0).setSeperator(getSeperator());
         return result;
     }
+
+    private static final Map<String, Function> builtinFunctions = new HashMap<String, Function>();
+    static {
+        Function hueshift = new HueShift();
+        builtinFunctions.put("compose", new ComposeFunction());
+        builtinFunctions.put("whiten", new OverlayFunction(Color.White));
+        builtinFunctions.put("blacken", new OverlayFunction(Color.Black));
+        builtinFunctions.put("lighten", new Lighten());
+        builtinFunctions.put("darken", new Darken());
+        builtinFunctions.put("saturate", new Saturate());
+        builtinFunctions.put("desaturate", new Desaturate());
+        builtinFunctions.put("hueshift", hueshift);
+        builtinFunctions.put("spin", hueshift);
+        builtinFunctions.put("fadein", new FadeIn());
+        builtinFunctions.put("fadeout", new FadeOut());
+
+        builtinFunctions.put("toHSL", new Function() {
+            public Expression call(FunctionTerm function, EvaluationState state) {
+                List<Term> args = function.getExpression().getTerms();
+                if (!(args.size() == 1 && args.get(0).isColor())) {
+                    return function.toExpression();
+                }
+                return args.get(0).toColor().toHSLColor().toTerm().toExpression();
+            }
+        });
+        builtinFunctions.put("toRGB", new Function() {
+            public Expression call(FunctionTerm function, EvaluationState state) {
+                List<Term> args = function.getExpression().getTerms();
+                if (!(args.size() == 1 && args.get(0).isColor())) {
+                    return function.toExpression();
+                }
+                return args.get(0).toColor().toRGBFColor().toTerm().toExpression();
+            }
+        });
+        builtinFunctions.put("alpha", new Function() {
+            public Expression call(FunctionTerm function, EvaluationState state) {
+                List<Term> args = function.getExpression().getTerms();
+                if (!(args.size() == 2 && args.get(0).isColor() && args.get(1) instanceof NumberTerm)) {
+                    return function.toExpression();
+                }
+                double alpha = ((NumberTerm) args.get(1)).getValue();
+                return args.get(0).toColor().withAlpha(alpha).toTerm().toExpression();
+            }
+        });
+    }
+
+    private static class ComposeFunction implements Function {
+        public RGBFColor call(Color foregroud, Color background, double alpha) {
+            RGBFColor f = foregroud.toRGBFColor();
+            RGBFColor b = background.toRGBFColor();
+
+            double af = f.getAlpha() * alpha;
+            double ab = b.getAlpha();
+            double inv_af = 1.0 - af;
+            double ap = af + inv_af * ab;
+            double rp = (f.getRed()   * af + inv_af * b.getRed()   * ab) / ap;
+            double gp = (f.getGreen() * af + inv_af * b.getGreen() * ab) / ap;
+            double bp = (f.getBlue()  * af + inv_af * b.getBlue()  * ab) / ap;
+
+            return new RGBFColor(rp, gp, bp, ap);
+        }
+
+        public Expression call(FunctionTerm function, EvaluationState state) {
+            List<Term> params = function.getExpression().getTerms();
+            if (!(params.size() == 2 || params.size() == 3)) {
+                return function.toExpression();
+            }
+            Term bottom = params.get(0);
+            Term top = params.get(1);
+            Term alpha = null;
+            if (params.size() == 3) {
+                alpha = params.get(2);
+            }
+
+            if (!(bottom.isColor() && top.isColor() && (alpha == null || alpha instanceof NumberTerm))) {
+                return function.toExpression();
+            }
+
+            Color f = top.toColor();
+            Color b = bottom.toColor();
+            double a = 0.5;
+            if (alpha != null) {
+                a = (double)((NumberTerm) alpha).getValue();
+                if (((NumberTerm) alpha).getUnit() == Unit.Percent) {
+                    a /= 100.0;
+                }
+            }
+
+            return call(f, b, a).toTerm().toExpression();
+        }
+    }
+
+    private static class OverlayFunction extends ComposeFunction {
+        private final Color toOverlay;
+
+        public OverlayFunction(Color toOverlay) {
+            this.toOverlay = toOverlay;
+        }
+
+        @Override
+        public Expression call(FunctionTerm function, EvaluationState state) {
+            List<Term> params = function.getExpression().getTerms();
+            if (!(params.size() == 1 || params.size() == 2)) {
+                return function.toExpression();
+            }
+            Term color = params.get(0);
+            Term amount = null;
+
+            if (params.size() == 2) {
+                amount = params.get(1);
+            }
+
+            if (!(color.isColor() && (amount == null || amount instanceof NumberTerm))) {
+                return function.toExpression();
+            }
+
+            double a = 0.1;
+            if (amount != null) {
+                a = ((NumberTerm) amount).getValue();
+                if (((NumberTerm) amount).getUnit() == Unit.Percent) {
+                    a /= 100.0;
+                }
+            }
+
+            return call(toOverlay, color.toColor(), a).toTerm().toExpression();
+        }
+
+    }
+
+    private static abstract class ColorScalarFunction implements Function {
+        protected double defaultValue, percentAdjust;
+
+        protected ColorScalarFunction(double defaultValue, double percentAdjust) {
+            this.defaultValue = defaultValue;
+            this.percentAdjust = percentAdjust;
+        }
+
+        protected ColorScalarFunction() {
+            this(0.1, 1.0);
+        }
+
+        protected abstract Color calculate(Color c, double scalar);
+
+        protected double toScalar(NumberTerm a) {
+            double scalar;
+            if (a != null && (a.getUnit() == Unit.None || a.getUnit() == Unit.Percent)) {
+                scalar = a.getValue();
+                if (a.getUnit() == Unit.Percent) {
+                    scalar = (scalar / 100.0) * percentAdjust;
+                }
+            }
+            else {
+                scalar = defaultValue;
+            }
+
+            return scalar;
+        }
+
+        public Expression call(FunctionTerm function, EvaluationState state) {
+            List<Term> params = function.getExpression().getTerms();
+            if (!(params.size() == 1 || params.size() == 2)) {
+                return function.toExpression();
+            }
+            Term color = params.get(0);
+            Term amount = null;
+
+            if (params.size() == 2) {
+                amount = params.get(1);
+            }
+
+            if (!(color.isColor() && (amount == null || amount instanceof NumberTerm))) {
+                return function.toExpression();
+            }
+
+            HSLColor c = color.toColor().toHSLColor();
+            return calculate(color.toColor(), toScalar((NumberTerm) amount)).toTerm().toExpression();
+        }
+    }
+
+    private static class Lighten extends ColorScalarFunction {
+        @Override
+        protected Color calculate(Color c, double scalar) {
+            HSLColor hsl = c.toHSLColor();
+            return new HSLColor(hsl.getHue(), hsl.getSaturation(), hsl.getLightness() + scalar, hsl.getAlpha());
+        }
+    }
+
+    private static class Darken extends ColorScalarFunction {
+        @Override
+        protected Color calculate(Color c, double scalar) {
+            HSLColor hsl = c.toHSLColor();
+            return new HSLColor(hsl.getHue(), hsl.getSaturation(), hsl.getLightness() - scalar, hsl.getAlpha());
+        }
+    }
+
+    private static class Saturate extends ColorScalarFunction {
+        @Override
+        protected Color calculate(Color c, double scalar) {
+            HSLColor hsl = c.toHSLColor();
+            return new HSLColor(hsl.getHue(), hsl.getSaturation() + scalar, hsl.getLightness(), hsl.getAlpha());
+        }
+    }
+
+    private static class Desaturate extends ColorScalarFunction {
+        @Override
+        protected Color calculate(Color c, double scalar) {
+            HSLColor hsl = c.toHSLColor();
+            return new HSLColor(hsl.getHue(), hsl.getSaturation() - scalar, hsl.getLightness(), hsl.getAlpha());
+        }
+    }
+
+    private static class HueShift extends ColorScalarFunction {
+        public HueShift() {
+            super(30.0, 360.0);
+        }
+
+        @Override
+        protected Color calculate(Color c, double scalar) {
+            HSLColor hsl = c.toHSLColor();
+            return new HSLColor(hsl.getHue() + (int)(Math.round(scalar) % 360), hsl.getSaturation(), hsl.getLightness(), hsl.getAlpha());
+        }
+    }
+
+    private static class FadeIn extends ColorScalarFunction {
+        @Override
+        protected Color calculate(Color c, double scalar) {
+            HSLColor hsl = c.toHSLColor();
+            return new HSLColor(hsl.getHue(), hsl.getSaturation(), hsl.getLightness(), hsl.getAlpha() + scalar);
+        }
+    }
+
+    private static class FadeOut extends ColorScalarFunction {
+        @Override
+        protected Color calculate(Color c, double scalar) {
+            HSLColor hsl = c.toHSLColor();
+            return new HSLColor(hsl.getHue(), hsl.getSaturation(), hsl.getLightness(), hsl.getAlpha()- scalar);
+        }
+    }
+
+/*    private static class BrightnessFunction implements Function {
+        private boolean inverse;
+
+        public BrightnessFunction(boolean inverse) {
+            this.inverse = inverse;
+        }
+
+        @Override
+        public Expression call(FunctionTerm function, EvaluationState state) {
+            List<Term> params = function.getExpression().getTerms();
+            if (!(params.size() == 1 || params.size() == 2)) {
+                return function.toExpression();
+            }
+            Term color = params.get(0);
+            Term amount = null;
+
+            if (params.size() == 2) {
+                amount = params.get(1);
+            }
+
+            if (!(color.isColor() && (amount == null || amount instanceof NumberTerm))) {
+                return function.toExpression();
+            }
+
+            double a = 0.1;
+            if (amount != null) {
+                a = ((NumberTerm) amount).getValue();
+                if (((NumberTerm) amount).getUnit() == Unit.Percent) {
+                    a /= 100.0;
+                }
+            }
+
+            if (inverse) {
+                a = -a;
+            }
+
+            HSLColor c = color.toColor().toHSLColor();
+            return new HSLColor(c.getHue(), c.getSaturation(), c.getLightness() + a, c.getAlpha()).toTerm().toExpression();
+        }
+    }
+*/
 }

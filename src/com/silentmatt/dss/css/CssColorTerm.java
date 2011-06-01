@@ -22,11 +22,12 @@ public class CssColorTerm extends CssTerm {
     @Override
     public String toString(boolean compact) {
         if (!compact) {
-            return toString();
+            return color.toRGBColor().toString();
+            //return toString();
         }
 
-        String name = color.toNameString();
-        String numeric = color.toString();
+        String name = color.toRGBColor().toNameString();
+        String numeric = color.toRGBColor().toString();
         if (name.length() < numeric.length()) {
             return name;
         }

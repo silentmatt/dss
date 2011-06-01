@@ -55,6 +55,12 @@
     }
 }
 
+@media screen and (device-aspect-ratio: 16/9) {
+    * {
+        widescreen: nice;
+    }
+}
+
 elem {
     apply: foo<value>;
 }

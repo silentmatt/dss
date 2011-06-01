@@ -1,6 +1,7 @@
 package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.Color;
+import com.silentmatt.dss.RGBIColor;
 import java.util.Locale;
 
 /**
@@ -81,7 +82,7 @@ public class HexTerm extends Term {
             int r = Integer.parseInt(hex.substring(0, 2), 16);
             int g = Integer.parseInt(hex.substring(2, 4), 16);
             int b = Integer.parseInt(hex.substring(4), 16);
-            return new Color(r, g, b, 255);
+            return new RGBIColor(r, g, b, 1.0);
         }
         catch (NumberFormatException ex) {
             return null;

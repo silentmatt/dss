@@ -36,6 +36,11 @@
 		width: 3000px;
 	}
 }
+@media screen and (device-aspect-ratio:16/9) {
+	* {
+		widescreen: nice;
+	}
+}
 elem {
 	property: value;
 }
