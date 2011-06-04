@@ -1,0 +1,10 @@
+@define {
+    background: red;
+}
+
+header {
+    width: param(width);
+    background: param(background);
+    background-color: const(background);
+    color: @color;
+}

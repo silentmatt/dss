@@ -4,3 +4,9 @@ element {
     border: const(foo);
     apply: includedClass;
 }
+
+@include 'include/header.dss' {
+    width: 960px;
+    background: #eeeeff;
+    color: white;
+}

@@ -1,6 +1,9 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.DSSDocument;
+import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.DeclarationBlock;
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Rule;
@@ -25,11 +28,13 @@ import java.util.List;
 public class IncludeDirective extends ExpressionDirective {
     private DSSDocument included;
     private final boolean literal;
+    private final DeclarationList parameters;
 
-    public IncludeDirective(UrlTerm url, boolean literal) {
+    public IncludeDirective(UrlTerm url, boolean literal, List<Declaration> parameters) {
         super(new Expression());
         getExpression().getTerms().add(url);
         this.literal = literal;
+        this.parameters = new DeclarationList(parameters);
     }
 
     public String getURLString() {
@@ -50,8 +55,31 @@ public class IncludeDirective extends ExpressionDirective {
     }
 
     @Override
+    public String toString(int nesting) {
+        String start = Rule.getIndent(nesting);
+        StringBuilder txt = new StringBuilder(start);
+
+        txt.append("@include ");
+        if (literal) {
+            txt.append("literal ");
+        }
+        txt.append(getExpression());
+
+        if (parameters.isEmpty()) {
+            txt.append(";");
+        }
+        else {
+            txt.append(" {");
+            txt.append(new DeclarationBlock(parameters).innerString(nesting));
+            txt.append("\n").append(start).append("}");
+        }
+
+        return txt.toString();
+    }
+
+    @Override
     public String toString() {
-        return "@include " + (literal ? "literal " : "") + getExpression() + ";";
+        return toString(0);
     }
 
     @Override
@@ -69,11 +97,18 @@ public class IncludeDirective extends ExpressionDirective {
             try {
                 state.pushScope(new ArrayList<RuleSet>()); // Why do this if pushBaseURL already did?
                 try {
-                    this.included = includedDocument;
-                    if (state.getIncludeCallback() != null) {
-                        state.getIncludeCallback().call(url);
+                    try {
+                        state.pushParameters();
+                        setArguments(state, parameters);
+                        this.included = includedDocument;
+                        if (state.getIncludeCallback() != null) {
+                            state.getIncludeCallback().call(url);
+                        }
+                        return new CssRuleList(Rule.evaluateRules(state, includedDocument.getRules()));
                     }
-                    return new CssRuleList(Rule.evaluateRules(state, includedDocument.getRules()));
+                    finally {
+                        state.popParameters();
+                    }
                 }
                 finally {
                     state.popScope();
@@ -112,5 +147,11 @@ public class IncludeDirective extends ExpressionDirective {
         }
 
         return sb.toString();
+    }
+
+    private static void setArguments(EvaluationState state, DeclarationList args) {
+        for (Declaration arg : args) {
+            state.getParameters().declare(arg.getName(), arg.getExpression());
+        }
     }
 }

@@ -11,3 +11,9 @@ element {
 	border: 3px dotted #FF2A2B;
 	works: yes;
 }
+header {
+	width: 960px;
+	background: #EEF;
+	background-color: #F00;
+	color: #FFF;
+}

@@ -376,19 +376,33 @@ importDirective<out ImportDirective dir> =
 .
 
 includeDirective<out IncludeDirective dir> =
-                                        (.  dir = null;
-                                            boolean literal = false;
-                                        .)
+                                            (.  dir = null;
+                                                boolean literal = false;
+                                                List<Declaration> declarations = new ArrayList<Declaration>();
+                                                UrlTerm includeUrl = null;
+                                                List<Declaration> mdecs;
+                                            .)
     "@include"
     [
-        "literal"                       (.  literal = true; .)
+        "literal"                           (.  literal = true; .)
     ]
     (
-        URI<out String url>             (.  dir = new IncludeDirective(new UrlTerm(url), literal); .)
+        URI<out String url>                 (.  includeUrl = new UrlTerm(url); .)
         |
-        QuotedString<out String url>    (.  dir = new IncludeDirective(new UrlTerm(url.substring(1, url.length()-1)), literal); .)
+        QuotedString<out String url>        (.  includeUrl = new UrlTerm(url.substring(1, url.length()-1)); .)
     )
-    ';'
+    (
+        ';'
+        |
+        '{'
+            { multideclaration<out mdecs>   (.  declarations.addAll(mdecs);
+                                                if (endOfBlock()) {
+                                                    break;
+                                                }
+                                            .)
+            ';' }
+        '}'
+    )                                       (.  dir = new IncludeDirective(includeUrl, literal, declarations); .)
 .
 
 charsetDirective<out CharsetDirective dir> =

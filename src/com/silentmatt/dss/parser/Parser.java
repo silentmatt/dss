@@ -685,6 +685,9 @@ class Parser {
 		IncludeDirective  dir;
 		dir = null;
 		boolean literal = false;
+		List<Declaration> declarations = new ArrayList<Declaration>();
+		UrlTerm includeUrl = null;
+		List<Declaration> mdecs;
 		
 		Expect(51);
 		if (la.kind == 27) {
@@ -693,12 +696,27 @@ class Parser {
 		}
 		if (la.kind == 6) {
 			String url = URI();
-			dir = new IncludeDirective(new UrlTerm(url), literal); 
+			includeUrl = new UrlTerm(url); 
 		} else if (la.kind == 5) {
 			String url = QuotedString();
-			dir = new IncludeDirective(new UrlTerm(url.substring(1, url.length()-1)), literal); 
+			includeUrl = new UrlTerm(url.substring(1, url.length()-1)); 
 		} else SynErr(82);
-		Expect(42);
+		if (la.kind == 42) {
+			Get();
+		} else if (la.kind == 36) {
+			Get();
+			while (StartOf(5)) {
+				mdecs = multideclaration();
+				declarations.addAll(mdecs);
+				if (endOfBlock()) {
+				    break;
+				}
+				
+				Expect(42);
+			}
+			Expect(37);
+		} else SynErr(83);
+		dir = new IncludeDirective(includeUrl, literal, declarations); 
 		return dir;
 	}
 
@@ -840,7 +858,7 @@ class Parser {
 		} else if (la.kind == 25) {
 			Get();
 			sb.append("not"); 
-		} else SynErr(83);
+		} else SynErr(84);
 		if (la.kind == 31) {
 			Get();
 			if (StartOf(9)) {
@@ -889,7 +907,7 @@ class Parser {
 			} else if (StartOf(2)) {
 				SimpleSelector ss = simpleselector();
 				sb.append("(").append(ss).append(")"); 
-			} else SynErr(84);
+			} else SynErr(85);
 			Expect(33);
 		}
 		pseudo = sb.toString(); 
@@ -1024,7 +1042,7 @@ class Parser {
 							} else if (StartOf(11)) {
 								Expression arg = expr();
 								cls.addArgument(new Declaration("", arg)); 
-							} else SynErr(85);
+							} else SynErr(86);
 						}
 					}
 					Expect(43);
@@ -1044,7 +1062,7 @@ class Parser {
 				Get();
 			} else if (la.kind == 4) {
 				Get();
-			} else SynErr(86);
+			} else SynErr(87);
 			val += t.val; trm = new NumberTerm(Double.parseDouble(val)); 
 			if (endOfBlock()) {
 				((NumberTerm) trm).setValue(Double.parseDouble(val)); 
@@ -1078,7 +1096,7 @@ class Parser {
 						}
 						
 					}
-				} else SynErr(87);
+				} else SynErr(88);
 				if (trm instanceof NumberTerm) {
 				   ((NumberTerm) trm).setValue(Double.parseDouble(val));
 				}
@@ -1087,8 +1105,8 @@ class Parser {
 				    strTrm.setValue(strTrm.getValue() + val);
 				}
 				
-			} else SynErr(88);
-		} else SynErr(89);
+			} else SynErr(89);
+		} else SynErr(90);
 		return trm;
 	}
 
@@ -1105,7 +1123,7 @@ class Parser {
 			url = URI();
 		} else if (la.kind == 5) {
 			url = QuotedString();
-		} else SynErr(90);
+		} else SynErr(91);
 		Expect(42);
 		dir = new NamespaceDirective(ident, new UrlTerm(url)); 
 		return dir;
@@ -1149,7 +1167,7 @@ class Parser {
 			Expect(37);
 		} else if (la.kind == 42) {
 			Get();
-		} else SynErr(91);
+		} else SynErr(92);
 		return dir;
 	}
 
@@ -1227,7 +1245,7 @@ class Parser {
 				String psd = pseudo();
 				ss.setPseudo(psd); 
 			}
-		} else SynErr(92);
+		} else SynErr(93);
 		while (StartOf(16)) {
 			if (t.pos + t.val.length() < la.pos) {
 			   break;
@@ -1311,7 +1329,7 @@ class Parser {
 					Get();
 				}
 				atb.setValue(t.val); 
-			} else SynErr(93);
+			} else SynErr(94);
 		}
 		Expect(65);
 		return atb;
@@ -1339,7 +1357,7 @@ class Parser {
 		} else if (la.kind == 71) {
 			Get();
 			op = BooleanOperation.XOR; 
-		} else SynErr(94);
+		} else SynErr(95);
 		return op;
 	}
 
@@ -1366,7 +1384,7 @@ class Parser {
 			Get();
 			exp = notExpression();
 			expr = new NotExpression(exp); 
-		} else SynErr(95);
+		} else SynErr(96);
 		return expr;
 	}
 
@@ -1381,7 +1399,7 @@ class Parser {
 		} else if (StartOf(11)) {
 			trm = term();
 			expr = new TermBooleanExpression(trm); 
-		} else SynErr(96);
+		} else SynErr(97);
 		return expr;
 	}
 
@@ -1413,7 +1431,7 @@ class Parser {
 		} else if (la.kind == 66) {
 			Get();
 			op = Operation.Subtract; 
-		} else SynErr(97);
+		} else SynErr(98);
 		return op;
 	}
 
@@ -1426,7 +1444,7 @@ class Parser {
 		} else if (la.kind == 69) {
 			Get();
 			op = Operation.Divide; 
-		} else SynErr(98);
+		} else SynErr(99);
 		return op;
 	}
 
@@ -1458,7 +1476,7 @@ class Parser {
 		} else if (StartOf(11)) {
 			trm = term();
 			expr = new TermExpression(trm); 
-		} else SynErr(99);
+		} else SynErr(100);
 		return expr;
 	}
 
@@ -1474,7 +1492,7 @@ class Parser {
 			Get();
 			expr = lengthExpression();
 			Expect(65);
-		} else SynErr(100);
+		} else SynErr(101);
 		return expr;
 	}
 
@@ -1491,7 +1509,7 @@ class Parser {
 		} else if (la.kind == 1) {
 			Get();
 			sb.append(t.val); found = true; 
-		} else SynErr(101);
+		} else SynErr(102);
 		if (!found && partOfHex(sb.toString())) {
 			Expect(1);
 			sb.append(t.val); 
@@ -1620,25 +1638,26 @@ class Parser {
 			case 80: s = "invalid identity"; break;
 			case 81: s = "invalid mediaQuery"; break;
 			case 82: s = "invalid includeDirective"; break;
-			case 83: s = "invalid pseudo"; break;
+			case 83: s = "invalid includeDirective"; break;
 			case 84: s = "invalid pseudo"; break;
-			case 85: s = "invalid term"; break;
+			case 85: s = "invalid pseudo"; break;
 			case 86: s = "invalid term"; break;
 			case 87: s = "invalid term"; break;
 			case 88: s = "invalid term"; break;
 			case 89: s = "invalid term"; break;
-			case 90: s = "invalid namespaceDirective"; break;
-			case 91: s = "invalid genericDirective"; break;
-			case 92: s = "invalid simpleselector"; break;
-			case 93: s = "invalid attrib"; break;
-			case 94: s = "invalid orop"; break;
-			case 95: s = "invalid notExpression"; break;
-			case 96: s = "invalid primaryBooleanExpression"; break;
-			case 97: s = "invalid addop"; break;
-			case 98: s = "invalid mulop"; break;
-			case 99: s = "invalid termExpression"; break;
-			case 100: s = "invalid calculation"; break;
-			case 101: s = "invalid HexValue"; break;
+			case 90: s = "invalid term"; break;
+			case 91: s = "invalid namespaceDirective"; break;
+			case 92: s = "invalid genericDirective"; break;
+			case 93: s = "invalid simpleselector"; break;
+			case 94: s = "invalid attrib"; break;
+			case 95: s = "invalid orop"; break;
+			case 96: s = "invalid notExpression"; break;
+			case 97: s = "invalid primaryBooleanExpression"; break;
+			case 98: s = "invalid addop"; break;
+			case 99: s = "invalid mulop"; break;
+			case 100: s = "invalid termExpression"; break;
+			case 101: s = "invalid calculation"; break;
+			case 102: s = "invalid HexValue"; break;
 			default: s = "error " + n; break;
 		}
 		return s;
