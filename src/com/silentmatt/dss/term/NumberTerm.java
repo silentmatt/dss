@@ -1,6 +1,7 @@
 package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.Unit;
+import java.text.DecimalFormat;
 
 /**
  * A numeric term, with its associated unit.
@@ -105,10 +106,8 @@ public class NumberTerm extends Term {
     public String toString() {
         StringBuilder txt = new StringBuilder();
 
-        String valueString = Double.toString(value);
-        if (valueString.endsWith(".0")) {
-            valueString = valueString.substring(0, valueString.length() - 2);
-        }
+        DecimalFormat format = new DecimalFormat("#.######");
+        String valueString = format.format(value);
         txt.append(valueString);
         if (unit != null) {
             txt.append(unit.toString());
