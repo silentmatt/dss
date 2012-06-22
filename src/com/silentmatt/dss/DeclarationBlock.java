@@ -247,14 +247,14 @@ public class DeclarationBlock {
             String paramName = arg.getName();
             if (paramName.isEmpty()) {
                 if (argNumber < 0) {
-                    state.getErrors().SemErr("Positional arguments cannot follow named arguments in " + clazz.getName());
+                    state.getErrors().SemErr("Positional arguments cannot follow named arguments in " + clazz.getClassName());
                     return;
                 }
                 if (argNumber < formalParameters.size()) {
                     paramName = formalParameters.get(argNumber).getName();
                 }
                 else {
-                    state.getErrors().Warning("Too many arguments to class '" + clazz.getName() + "'");
+                    state.getErrors().Warning("Too many arguments to class '" + clazz.getClassName() + "'");
                     continue;
                 }
                 ++argNumber;
@@ -267,7 +267,7 @@ public class DeclarationBlock {
                 state.getParameters().put(paramName, arg.getExpression());
             }
             else {
-                state.getErrors().Warning(clazz.getName() + " does not have a parameter '" + arg.getName() + "'");
+                state.getErrors().Warning(clazz.getClassName() + " does not have a parameter '" + arg.getName() + "'");
             }
         }
     }
