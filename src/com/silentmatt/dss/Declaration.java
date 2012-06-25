@@ -11,11 +11,36 @@ import java.util.Map;
  *
  * @author Matthew Crumley
  */
-public class Declaration implements Map.Entry<String, Expression> {
-    /**
-     * Default constructor.
-     */
-    public Declaration() {
+@Immutable
+public final class Declaration implements Map.Entry<String, Expression> {
+
+    public static class Builder {
+        String name;
+        Expression expression;
+        boolean important;
+        
+        public String getName() {
+            return name;
+        }
+
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+        
+        public Builder setExpression(Expression expr) {
+            this.expression = expr;
+            return this;
+        }
+
+        public Builder setImportant(boolean important) {
+            this.important = important;
+            return this;
+        }
+        
+        public Declaration build() {
+            return new Declaration(name, expression, important);
+        }
     }
 
     /**
@@ -24,6 +49,7 @@ public class Declaration implements Map.Entry<String, Expression> {
     public Declaration(String name, Expression expression) {
         this.name = name;
         this.expression = expression;
+        this.important = false;
     }
 
     /**
@@ -38,17 +64,17 @@ public class Declaration implements Map.Entry<String, Expression> {
     /**
      * The property name to the left of the ':'.
      */
-    private String name;
+    private final String name;
 
     /**
      * The "!important" flag.
      */
-    private boolean important;
+    private final boolean important;
 
     /**
      * The expression to the right of the ':'.
      */
-    private Expression expression;
+    private final Expression expression;
 
     /**
      * Gets the property name.
@@ -57,15 +83,6 @@ public class Declaration implements Map.Entry<String, Expression> {
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * Sets the property name.
-     *
-     * @param name The property name.
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**
@@ -78,30 +95,12 @@ public class Declaration implements Map.Entry<String, Expression> {
     }
 
     /**
-     * Turns the "!important" flag on or off.
-     *
-     * @param important Whether "!important" should be included or not.
-     */
-    public void setImportant(boolean important) {
-        this.important = important;
-    }
-
-    /**
      * Gets the expression (right side of the ':').
      *
      * @return The value of the property being set.
      */
     public Expression getExpression() {
         return expression;
-    }
-
-    /**
-     * Sets the expression (right side of the ':').
-     *
-     * @param Expression The value to assign to the property.
-     */
-    public void setExpression(Expression Expression) {
-        this.expression = Expression;
     }
 
     /**
@@ -151,9 +150,8 @@ public class Declaration implements Map.Entry<String, Expression> {
         throw new UnsupportedOperationException();
     }
 
-    protected void substituteValue(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
-        Expression value = getExpression();
-        Expression newValue = value.substituteValues(state, container, withParams, doCalculations);
-        setExpression(newValue);
+    protected Declaration substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
+        Expression newValue = getExpression().substituteValues(state, container, withParams, doCalculations);
+        return new Declaration(getName(), newValue, important);
     }
 }

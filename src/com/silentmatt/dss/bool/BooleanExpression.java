@@ -1,12 +1,14 @@
 package com.silentmatt.dss.bool;
 
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.Immutable;
 
 /**
  * Represents a boolean expression.
  * 
  * @author Matthew Crumley
  */
+@Immutable
 public interface BooleanExpression {
     /**
      * Evaluate the expression.

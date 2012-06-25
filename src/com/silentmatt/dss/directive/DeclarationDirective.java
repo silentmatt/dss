@@ -2,28 +2,26 @@ package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationBlock;
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Rule;
-import java.util.List;
 
 /**
  *
  * @author Matthew Crumley
  */
+@Immutable
 public abstract class DeclarationDirective extends Rule {
     private final DeclarationBlock declarations;
 
-    public DeclarationDirective(List<Declaration> declarations) {
+    public DeclarationDirective(DeclarationList declarations) {
         super();
         this.declarations = new DeclarationBlock(declarations);
     }
 
     public DeclarationBlock getDeclarationBlock() {
         return declarations;
-    }
-
-    public void addDeclaration(Declaration declaration) {
-        declarations.addDeclaration(declaration);
     }
 
     public Expression getValue(String name) {
@@ -47,7 +45,7 @@ public abstract class DeclarationDirective extends Rule {
 
         txt.append(declarations.innerString(nesting + 1));
 
-        txt.append("\n" + start + "}");
+        txt.append("\n").append(start).append("}");
 
         return txt.toString();
     }
@@ -59,6 +57,7 @@ public abstract class DeclarationDirective extends Rule {
         return toString(0);
     }
 
+    @Override
     public String toString(int nesting) {
         String start = Rule.getIndent(nesting);
         StringBuilder txt = new StringBuilder(start);

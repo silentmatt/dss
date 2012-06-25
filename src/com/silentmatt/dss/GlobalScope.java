@@ -1,11 +1,7 @@
 package com.silentmatt.dss;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * A Map from Strings to <code>T</code>s, that can inherit from other <code>Scope</scope>s.

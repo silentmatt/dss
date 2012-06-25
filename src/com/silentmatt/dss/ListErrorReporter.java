@@ -13,10 +13,12 @@ public class ListErrorReporter extends AbstractErrorReporter {
     private final List<Message> errors = new LinkedList<Message>();
     private final List<Message> warnings = new LinkedList<Message>();
 
+    @Override
     public int getErrorCount() {
         return errors.size();
     }
 
+    @Override
     public int getWarningCount() {
         return warnings.size();
     }
@@ -39,10 +41,12 @@ public class ListErrorReporter extends AbstractErrorReporter {
         return errors;
     }
 
+    @Override
     public void addError(Message msg) {
         errors.add(msg);
     }
 
+    @Override
     public void addWarning(Message msg) {
         warnings.add(msg);
     }

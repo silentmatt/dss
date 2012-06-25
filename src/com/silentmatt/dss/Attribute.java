@@ -9,10 +9,39 @@ import com.silentmatt.dss.css.CssAttributeOperator;
  *
  * @author Matthew Crumley
  */
-public class Attribute {
-    private String operand;
-    private AttributeOperator operator;
-    private String value;
+@Immutable
+public final class Attribute {
+    public static class Builder {
+        private String operand;
+        private AttributeOperator operator;
+        private String value;
+
+        public void setOperand(String operand) {
+            this.operand = operand;
+        }
+
+        public void setOperator(AttributeOperator operator) {
+            this.operator = operator;
+        }
+
+        public void setValue(String Value) {
+            this.value = Value;
+        }
+        
+        public Attribute build() {
+            return new Attribute(operand, operator, value);
+        }
+    }
+
+    private final String operand;
+    private final AttributeOperator operator;
+    private final String value;
+
+    public Attribute(String operand, AttributeOperator operator, String value) {
+        this.operand = operand;
+        this.operator = operator;
+        this.value = value;
+    }
 
     /**
      * Converts the attribute selector to a {@link CssAttribute} object.
@@ -37,15 +66,6 @@ public class Attribute {
     }
 
     /**
-     * Sets the operand (attribute name).
-     *
-     * @param Operand The attribute name to be compared.
-     */
-    public void setOperand(String operand) {
-        this.operand = operand;
-    }
-
-    /**
      * Gets the selector's operator.
      *
      * @return An {@link AttributeOperator} representing the type of comparison.
@@ -55,30 +75,12 @@ public class Attribute {
     }
 
     /**
-     * Sets the selector's operator.
-     *
-     * @param operator An {@link AttributeOperator} specifying the type of comparison.
-     */
-    public void setOperator(AttributeOperator operator) {
-        this.operator = operator;
-    }
-
-    /**
      * Gets the value to compare the attribute to.
      *
      * @return The String being compared to the attribute.
      */
     public String getValue() {
         return value;
-    }
-
-    /**
-     * Sets the value to compare the attribute to.
-     *
-     * @param Value The String to compare the attribute to.
-     */
-    public void setValue(String Value) {
-        this.value = Value;
     }
 
     /**

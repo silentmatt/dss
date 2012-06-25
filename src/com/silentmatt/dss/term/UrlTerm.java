@@ -1,11 +1,14 @@
 package com.silentmatt.dss.term;
 
+import com.silentmatt.dss.Immutable;
+
 /**
  * A URL term.
  *
  * @author Matthew Crumley
  */
-public class UrlTerm extends Term {
+@Immutable
+public final class UrlTerm extends Term {
     /**
      * The URL string.
      */
@@ -17,14 +20,19 @@ public class UrlTerm extends Term {
      * @param url The URL
      */
     public UrlTerm(String url) {
-        super();
+        super(null);
         value = url;
     }
 
-    public UrlTerm clone() {
-        UrlTerm result = new UrlTerm(value);
-        result.setSeperator(getSeperator());
-        return result;
+    /**
+     * Constructs a UrlTerm from a url string and a separator.
+     *
+     * @param sep The separator
+     * @param url The URL
+     */
+    public UrlTerm(Character sep, String url) {
+        super(sep);
+        value = url;
     }
 
     /**
@@ -44,5 +52,10 @@ public class UrlTerm extends Term {
     @Override
     public String toString() {
         return "url(" + value + ")";
+    }
+
+    @Override
+    public UrlTerm withSeparator(Character separator) {
+        return new UrlTerm(separator, value);
     }
 }

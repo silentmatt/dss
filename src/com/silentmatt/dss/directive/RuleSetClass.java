@@ -3,39 +3,42 @@ package com.silentmatt.dss.directive;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.NestedRuleSet;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.RuleSet;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.util.JoinedList;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  *
  * @author Matthew Crumley
  */
-public class RuleSetClass extends ClassDirective {
+@Immutable
+public final class RuleSetClass extends ClassDirective {
     private final List<RuleSet> rulesets;
 
     public RuleSetClass(List<RuleSet> rs) {
-        super("<anonymous class>", new DeclarationList(), true, getDeclarations(rs), getNestedRuleSets(rs));
-        this.rulesets = rs;
+        super("<anonymous class>", DeclarationList.EMPTY, true, new DeclarationList(getDeclarations(rs)), getNestedRuleSets(rs));
+        this.rulesets = Collections.unmodifiableList(rs);
     }
 
     private static List<Declaration> getDeclarations(List<RuleSet> rulesets) {
         if (rulesets.isEmpty()) {
-            return new ArrayList<Declaration>(0);
+            return DeclarationList.EMPTY.toList();
         }
 
-        List<Declaration> result = rulesets.get(0).getDeclarations();
+        List<Declaration> result = rulesets.get(0).getDeclarations().toList();
         boolean first = true;
         for (RuleSet rs : rulesets) {
             if (first) {
                 first = false;
             }
             else {
-                result = new JoinedList<Declaration>(result, rs.getDeclarations());
+                result = new JoinedList<Declaration>(result, rs.getDeclarations().toList());
             }
         }
         return result;
@@ -62,11 +65,6 @@ public class RuleSetClass extends ClassDirective {
     @Override
     public String getName() {
         return "@anonymous-class";
-    }
-
-    @Override
-    public void addParameter(Declaration param) {
-        throw new UnsupportedOperationException("Cannot add a parameter to a RuleSetClass.");
     }
 
     @Override

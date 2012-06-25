@@ -4,6 +4,7 @@ import com.silentmatt.dss.css.CssSelector;
 import com.silentmatt.dss.css.CssSimpleSelector;
 import com.silentmatt.dss.util.JoinedList;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,7 +16,25 @@ import java.util.List;
  * 
  * @author Matthew Crumley
  */
-public class Selector {
+@Immutable
+public final class Selector {
+    public static class Builder {
+        private final List<SimpleSelector> simpleSelectors;
+
+        public Builder() {
+            simpleSelectors = new ArrayList<SimpleSelector>();
+        }
+        
+        public Builder addSimpleSelector(SimpleSelector ss) {
+            simpleSelectors.add(ss);
+            return this;
+        }
+        
+        public Selector build() {
+            return new Selector(simpleSelectors);
+        }
+    }
+
     private final List<SimpleSelector> simpleSelectors;
     private final Combinator combinator;
     private final Selector parents;
@@ -53,12 +72,13 @@ public class Selector {
     }
 
     /**
-     * Default constructor.
+     * Constructs a Selector from a list of SimpleSelectors.
+     *
+     * @param simpleSelectors The list of SimpleSelectors.
      */
-    public Selector() {
-        simpleSelectors = new JoinedList<SimpleSelector>(new ArrayList<SimpleSelector>(), new ArrayList<SimpleSelector>());
-        parents = null;
-        children = null;
+    public Selector(List<SimpleSelector> simpleSelectors) {
+        this.simpleSelectors = Collections.unmodifiableList(simpleSelectors);
+        parents = children = null;
         combinator = Combinator.Descendant;
     }
 
@@ -90,18 +110,16 @@ public class Selector {
 
         if (parents != null) {
             for (SimpleSelector ss : parents.getActualSimpleSelectors()) {
-                result.add(ss.clone());
+                result.add(ss);
             }
 
             boolean first = true;
             for (SimpleSelector ss : children.getSimpleSelectors()) {
                 if (first) {
-                    SimpleSelector toAppend = ss.clone();
-                    toAppend.setCombinator(combinator);
-                    result.add(toAppend);
+                    result.add(ss.withCombinator(combinator));
                 }
                 else {
-                    result.add(ss.clone());
+                    result.add(ss);
                 }
                 first = false;
             }
@@ -112,7 +130,7 @@ public class Selector {
             }
         }
 
-        return result;
+        return Collections.unmodifiableList(result);
     }
 
     @Override

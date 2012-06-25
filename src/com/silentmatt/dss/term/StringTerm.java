@@ -1,17 +1,19 @@
 package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.Color;
+import com.silentmatt.dss.Immutable;
 
 /**
  * A string or keyword term.
  *
  * @author Matthew Crumley
  */
-public class StringTerm extends Term {
+@Immutable
+public final class StringTerm extends Term {
     /**
      * The String value.
      */
-    private String value;
+    private final String value;
 
     /**
      * Constructs a StringTerm from a String.
@@ -19,14 +21,18 @@ public class StringTerm extends Term {
      * @param value The String value
      */
     public StringTerm(String value) {
-        super();
+        super(null);
         this.value = value;
     }
 
-    public StringTerm clone() {
-        StringTerm result = new StringTerm(value);
-        result.setSeperator(getSeperator());
-        return result;
+    /**
+     * Constructs a StringTerm from a String.
+     *
+     * @param value The String value
+     */
+    public StringTerm(Character sep, String value) {
+        super(sep);
+        this.value = value;
     }
 
     /**
@@ -37,15 +43,6 @@ public class StringTerm extends Term {
      */
     public String getValue() {
         return value;
-    }
-
-    /**
-     * Sets the string value.
-     *
-     * @param Value The String
-     */
-    public void setValue(String Value) {
-        this.value = Value;
     }
 
     /**
@@ -88,5 +85,10 @@ public class StringTerm extends Term {
         } catch (IllegalArgumentException ex) {
             return null;
         }
+    }
+
+    @Override
+    public StringTerm withSeparator(Character separator) {
+        return new StringTerm(separator, value);
     }
 }

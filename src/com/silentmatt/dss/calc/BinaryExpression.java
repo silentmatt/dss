@@ -16,7 +16,7 @@ public class BinaryExpression implements CalcExpression {
     /**
      * Constructs a BinaryExpression with an operator and the two operands.
      *
-     * @param operation The oparation to perform.
+     * @param operation The operation to perform.
      * @param left The left operand.
      * @param right The right operand.
      */
@@ -27,10 +27,6 @@ public class BinaryExpression implements CalcExpression {
     }
 
     @Override
-    public BinaryExpression clone() {
-        return new BinaryExpression(operation, left.clone(), right.clone());
-    }
-
     public Value calculateValue(EvaluationState state, DeclarationList container) {
         try {
             Value leftValue = left.calculateValue(state, container);
@@ -60,9 +56,9 @@ public class BinaryExpression implements CalcExpression {
         return null;
     }
 
-    public void substituteValues(EvaluationState state, DeclarationList container, boolean withParams) {
-        left.substituteValues(state, container, withParams);
-        right.substituteValues(state, container, withParams);
+    @Override
+    public CalcExpression withSubstitutedValues(EvaluationState state, DeclarationList container, boolean withParams) {
+        return new BinaryExpression(operation, left.withSubstitutedValues(state, container, withParams), right.withSubstitutedValues(state, container, withParams));
     }
 
     /**
@@ -106,6 +102,7 @@ public class BinaryExpression implements CalcExpression {
         return sb.toString();
     }
 
+    @Override
     public int getPrecidence() {
         int precidence;
         switch (operation) {

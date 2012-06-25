@@ -1,7 +1,7 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.EvaluationState;
-import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.MediaQuery;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssImportDirective;
@@ -17,12 +17,12 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
-public class ImportDirective extends ExpressionDirective {
+@Immutable
+public final class ImportDirective extends ExpressionDirective {
     private final MediaQuery medium;
 
     public ImportDirective(UrlTerm url, MediaQuery medium) {
-        super(new Expression());
-        getExpression().getTerms().add(url);
+        super(url.toExpression());
         this.medium = medium;
     }
 

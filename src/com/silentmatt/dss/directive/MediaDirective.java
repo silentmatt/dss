@@ -1,6 +1,7 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.MediaQuery;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssMediaDirective;
@@ -8,20 +9,22 @@ import com.silentmatt.dss.css.CssMediaQuery;
 import com.silentmatt.dss.css.CssRule;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  *
  * @author Matthew Crumley
  */
-public class MediaDirective extends Rule {
+@Immutable
+public final class MediaDirective extends Rule {
     private final List<MediaQuery> mediums;
     private final List<Rule> rules;
 
     public MediaDirective(List<MediaQuery> mediums, List<Rule> rules) {
         super();
-        this.mediums = mediums;
-        this.rules = rules;
+        this.mediums = Collections.unmodifiableList(mediums);
+        this.rules = Collections.unmodifiableList(rules);
     }
 
     public List<MediaQuery> getMediums() {
@@ -37,10 +40,7 @@ public class MediaDirective extends Rule {
         return toString(0);
     }
 
-    public void addRule(Rule rule) {
-        this.rules.add(rule);
-    }
-
+    @Override
     public String toString(int nesting) {
         String start = Rule.getIndent(nesting);
         StringBuilder txt = new StringBuilder(start);

@@ -2,6 +2,7 @@ package com.silentmatt.dss.bool;
 
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.calc.Value;
 import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.ClassReferenceTerm;
@@ -21,7 +22,8 @@ import com.silentmatt.dss.term.UrlTerm;
  *
  * @author Matthew Crumley
  */
-public class TermBooleanExpression implements BooleanExpression {
+@Immutable
+public final class TermBooleanExpression implements BooleanExpression {
     private final Term value;
 
     /**
@@ -62,6 +64,7 @@ public class TermBooleanExpression implements BooleanExpression {
         return truthiness(constValue);
     }
 
+    @Override
     public Boolean evaluate(EvaluationState state) {
         if (value instanceof NumberTerm) {
             return ((NumberTerm) value).getValue() != 0;
@@ -88,6 +91,7 @@ public class TermBooleanExpression implements BooleanExpression {
         return evaluateAsString(state, value);
     }
 
+    @Override
     public int getPrecidence() {
         return 4;
     }

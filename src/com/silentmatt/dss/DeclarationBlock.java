@@ -11,6 +11,7 @@ import com.silentmatt.dss.term.Term;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,29 +24,85 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
+@Immutable
 public class DeclarationBlock {
+    public static class Builder {
+        public Builder() {
+        }
+        
+        public Builder(List<Declaration> decs, List<NestedRuleSet> rulesets) {
+            declarations.addAll(decs);
+            nestedRuleSets.addAll(rulesets);
+        }
+
+        private final List<Declaration> declarations = new ArrayList<Declaration>();
+        private final List<NestedRuleSet> nestedRuleSets = new ArrayList<NestedRuleSet>();
+
+        public List<Declaration> getDeclarations() {
+            return declarations;
+        }
+
+        /**
+        * Adds a Declaration to the end of the block.
+        *
+        * @param declaration The {@link Declaration} to add.
+        */
+        public Builder addDeclaration(Declaration declaration) {
+            declarations.add(declaration);
+            return this;
+        }
+
+        /**
+        * Appends the Declarations in a list to the end of the block.
+        *
+        * @param declarations A {@link List} of {@link Declaration}s to add.
+        */
+        public Builder addDeclarations(List<Declaration> declarations) {
+            this.declarations.addAll(declarations);
+            return this;
+        }
+
+        /**
+        * Adds a RuleSet inside the block.
+        *
+        * @param cb The {@link Combinator} to apply to the RuleSet's selectors.
+        * @param nested The {@link RuleSet} to nest inside the block.
+        */
+        public Builder addNestedRuleSet(Combinator cb, RuleSet nested) {
+            nestedRuleSets.add(new NestedRuleSet(cb, nested));
+            return this;
+        }
+
+        /**
+        * Adds a NestedRuleSet inside the block.
+        *
+        * @param nested The {@link NestedRuleSet} to nest inside the block.
+        */
+        public Builder addNestedRuleSet(NestedRuleSet nested) {
+            nestedRuleSets.add(nested);
+            return this;
+        }
+
+        public DeclarationBlock build() {
+            return new DeclarationBlock(new DeclarationList(declarations), nestedRuleSets);
+        }
+    }
+
     private final DeclarationList declarations;
     private final List<NestedRuleSet> nestedRuleSets;
 
     /**
-     * Constructs an empty DeclarationBlock.
-     */
-    public DeclarationBlock() {
-        this.declarations = new DeclarationList();
-        this.nestedRuleSets = new ArrayList<NestedRuleSet>();
-    }
-
-    /**
      * Constructs a DeclarationBlock, containing a list of {@link Declaration}s.
      *
-     * @param declarations The Declarations to intialize the block with. Declarations
+     * @param declarations The Declarations to initialize the block with. Declarations
      * are copied from the list by reference, so later changes to the list will
      * not affect the DeclarationBlock and vice versa, but changes to the
      * Declarations themselves will be reflected in the block.
      */
-    public DeclarationBlock(List<Declaration> declarations) {
-        this.declarations = new DeclarationList(declarations);
-        this.nestedRuleSets = new ArrayList<NestedRuleSet>();
+    @SuppressWarnings("unchecked")
+    public DeclarationBlock(DeclarationList declarations) {
+        this.declarations = declarations;
+        this.nestedRuleSets = (List<NestedRuleSet>)Collections.EMPTY_LIST;
     }
 
     /**
@@ -59,9 +116,9 @@ public class DeclarationBlock {
      * @param nested The NestedRuleSets to initialize the block with. Like the
      * declarations, nested RuleSets are copied into a new list.
      */
-    public DeclarationBlock(List<Declaration> declarations, List<NestedRuleSet> nested) {
-        this.declarations = new DeclarationList(declarations);
-        this.nestedRuleSets = new ArrayList<NestedRuleSet>(nested);
+    public DeclarationBlock(DeclarationList declarations, List<NestedRuleSet> nested) {
+        this.declarations = declarations;
+        this.nestedRuleSets = Collections.unmodifiableList(nested);
     }
 
     /**
@@ -74,7 +131,7 @@ public class DeclarationBlock {
     }
 
     /**
-     * Evaluates the declations, to convert them into CssDeclarations.
+     * Evaluates the declarations, to convert them into CssDeclarations.
      *
      * @param state The current {@link EvaluationState}.
      *
@@ -86,26 +143,6 @@ public class DeclarationBlock {
             result.add(new CssDeclaration(d.getName(), d.getExpression().evaluate(state, declarations), d.isImportant()));
         }
         return result;
-    }
-
-    /**
-     * Adds a Declaration to the end of the block.
-     *
-     * @param declaration The {@link Declaration} to add.
-     */
-    public void addDeclaration(Declaration declaration) {
-        declarations.add(declaration);
-    }
-
-    /**
-     * Appends the Declarations in a list to the end of the block.
-     *
-     * @param declarations A {@link List} of {@link Declaration}s to add.
-     */
-    public void addDeclarations(List<Declaration> declarations) {
-        for (Declaration declaration : declarations) {
-            this.declarations.add(declaration);
-        }
     }
 
     /**
@@ -163,25 +200,6 @@ public class DeclarationBlock {
         }
 
         return txt.toString();
-    }
-
-    /**
-     * Adds a RuleSet inside the block.
-     *
-     * @param cb The {@link Combinator} to apply to the RuleSet's selectors.
-     * @param nested The {@link RuleSet} to nest inside the block.
-     */
-    public void addNestedRuleSet(Combinator cb, RuleSet nested) {
-        nestedRuleSets.add(new NestedRuleSet(cb, nested));
-    }
-
-    /**
-     * Adds a NestedRuleSet inside the block.
-     *
-     * @param nested The {@link NestedRuleSet} to nest inside the block.
-     */
-    public void addNestedRuleSet(NestedRuleSet nested) {
-        nestedRuleSets.add(nested);
     }
 
     /**
@@ -272,20 +290,21 @@ public class DeclarationBlock {
         }
     }
 
-    private static void addInheritedProperties(DeclarationBlock result, EvaluationState state, ClassDirective clazz, DeclarationList args) throws IOException {
-        DeclarationList list = result.getDeclarations();
+    private static void addInheritedProperties(DeclarationBlock.Builder result, EvaluationState state, ClassDirective clazz, DeclarationList args) throws IOException {
+        List<Declaration> list = result.getDeclarations();
         // Make a copy of the properties, to substitute parameters into
-        DeclarationList properties = new DeclarationList();
+        ArrayList<Declaration> properties = new ArrayList<Declaration>();
         for (Declaration prop : clazz.getDeclarations(args)) {
-            properties.add(new Declaration(prop.getName(), prop.getExpression().clone(), prop.isImportant()));
+            properties.add(new Declaration(prop.getName(), prop.getExpression(), prop.isImportant()));
         }
 
         state.pushParameters();
         try {
             setArguments(state, clazz, args);
 
-            for (Declaration dec : properties) {
-                dec.substituteValue(state, list, true, true);
+            for (int i = 0; i < properties.size(); i++) {
+                Declaration dec = properties.get(i);
+                properties.set(i, dec.substituteValues(state, new DeclarationList(list), true, true));
             }
         }
         finally {
@@ -322,7 +341,7 @@ public class DeclarationBlock {
         return found ? new RuleSetClass(allRuleSets) : null;
     }
 
-    private static void addInheritedProperties(DeclarationBlock result, EvaluationState state, Expression inherits) throws MalformedURLException, IOException {
+    private static void addInheritedProperties(DeclarationBlock.Builder result, EvaluationState state, Expression inherits) throws MalformedURLException, IOException {
         for (Term inherit : inherits.getTerms()) {
             ClassReferenceTerm crt;
             if (inherit instanceof ClassReferenceTerm) {
@@ -331,7 +350,7 @@ public class DeclarationBlock {
             else {
                 // XXX: May want to split ClassReferenceTerm into SimpleCRT and ParameterizedCRT
                 // so this doesn't need to create a new arguments list every time (SCRT would share one)
-                crt = new ClassReferenceTerm(inherit.toString());
+                crt = new ClassReferenceTerm(null, inherit.toString());
             }
 
             ClassDirective clazz = null;
@@ -363,7 +382,7 @@ public class DeclarationBlock {
      * @throws IOException
      */
     public DeclarationBlock evaluateStyle(EvaluationState state, boolean doCalculations) throws IOException {
-        DeclarationBlock result = new DeclarationBlock(new DeclarationList(), new ArrayList<NestedRuleSet>(nestedRuleSets));
+        DeclarationBlock.Builder result = new DeclarationBlock.Builder(new ArrayList<Declaration>(), new ArrayList<NestedRuleSet>(nestedRuleSets));
         return evaluateStyle(result, state, doCalculations);
     }
 
@@ -375,7 +394,7 @@ public class DeclarationBlock {
         return result;
     }
 
-    protected DeclarationBlock evaluateStyle(DeclarationBlock result, EvaluationState state, boolean doCalculations) throws IOException {
+    protected DeclarationBlock evaluateStyle(DeclarationBlock.Builder result, EvaluationState state, boolean doCalculations) throws IOException {
         state.pushScope(getRuleSetScope());
         try {
             for (Declaration declaration : getDeclarations()) {
@@ -388,13 +407,14 @@ public class DeclarationBlock {
             }
 
             for (int i = 0; i < result.getDeclarations().size(); i++) {
-                result.getDeclarations().get(i).substituteValue(state, result.getDeclarations(), false, doCalculations);
+                Declaration dec = result.getDeclarations().get(i).substituteValues(state, new DeclarationList(result.getDeclarations()), false, doCalculations);
+                result.getDeclarations().set(i, dec);
             }
         }
         finally {
             state.popScope();
         }
 
-        return result;
+        return result.build();
     }
 }

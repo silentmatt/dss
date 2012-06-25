@@ -4,20 +4,26 @@ import com.silentmatt.dss.Color;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 
 /**
  * A DSS term.
  * Terms make up expressions and have an optional separator.
  * For example, in the "font-family" property, font names are separated by commas.
- * The separator is associtated with the term to the right.
+ * The separator is associated with the term to the right.
  *
  * @author Matthew Crumley
  */
+@Immutable
 public abstract class Term implements Cloneable {
     /**
      * The separator preceeding this term.
      */
-    private Character seperator;
+    private final Character seperator;
+    
+    public Term(Character seperator) {
+        this.seperator = seperator;
+    }
 
     /**
      * Gets the separator.
@@ -29,13 +35,11 @@ public abstract class Term implements Cloneable {
     }
 
     /**
-     * Sets the separator.
+     * Gets a new Term with the specified separator.
      *
-     * @param Seperator The separator to preceed this term.
+     * @param seperator The character separating this term from the previous term, or <code>null</code>.
      */
-    public void setSeperator(Character seperator) {
-        this.seperator = seperator;
-    }
+    public abstract Term withSeparator(Character separator);
 
     /**
      * Converts this term into an expression.
@@ -96,7 +100,4 @@ public abstract class Term implements Cloneable {
      */
     @Override
     public abstract String toString();
-
-    @Override
-    public abstract Term clone();
 }

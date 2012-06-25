@@ -2,6 +2,9 @@ package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationList;
+import com.silentmatt.dss.Immutable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A term that references a class with parameters.
@@ -10,7 +13,34 @@ import com.silentmatt.dss.DeclarationList;
  *
  * @author Matthew Crumley
  */
+@Immutable
 public class ClassReferenceTerm extends Term {
+    public static class Builder {
+        private final String name;
+        private final ArrayList<Declaration> arguments = new ArrayList<Declaration>();
+
+        public Builder(String name) {
+            this.name = name;
+        }
+
+        /**
+        * Adds an argument to the arguments list.
+        *
+        * The declaration will be appended to the current list of arguments.
+        *
+        * @param argument The CSS Declaration to append to the argument list.
+        *
+        * @see #setArguments(java.util.List)
+        */
+        public void addArgument(Declaration argument) {
+            arguments.add(argument);
+        }
+        
+        public ClassReferenceTerm build() {
+            return new ClassReferenceTerm(null, name, new DeclarationList(arguments)); // FIXME: Missing term separator
+        }
+    }
+
     /**
      * The class name being referenced.
      */
@@ -19,27 +49,34 @@ public class ClassReferenceTerm extends Term {
     /**
      * The arguments to be passed to the class.
      */
-    private final DeclarationList arguments = new DeclarationList();
+    private final DeclarationList arguments;
 
     /**
-     * Constructs a ClassReference from a class name.
+     * Constructs a ClassReference from a class name and arguments.
      *
+     * @param sep The separator
      * @param name The name of the class to reference.
      *
      * @see #setName(java.lang.String)
      */
-    public ClassReferenceTerm(String name) {
-        super();
+    public ClassReferenceTerm(Character sep, String name, DeclarationList args) {
+        super(sep);
         this.name = name;
+        this.arguments = args;
     }
 
-    public ClassReferenceTerm clone() {
-        ClassReferenceTerm result = new ClassReferenceTerm(name);
-        result.setSeperator(getSeperator());
-        for (Declaration d : arguments) {
-            result.arguments.add(new Declaration(d.getName(), d.getExpression().clone(), d.isImportant()));
-        }
-        return result;
+    /**
+     * Constructs a ClassReference from a class name.
+     *
+     * @param sep The separator
+     * @param name The name of the class to reference.
+     *
+     * @see #setName(java.lang.String)
+     */
+    public ClassReferenceTerm(Character sep, String name) {
+        super(sep);
+        this.name = name;
+        this.arguments = DeclarationList.EMPTY;
     }
 
     /**
@@ -59,19 +96,6 @@ public class ClassReferenceTerm extends Term {
      */
     public DeclarationList getArguments() {
         return arguments;
-    }
-
-    /**
-     * Adds an argument to the arguments list.
-     *
-     * The declaration will be appended to the current list of arguments.
-     *
-     * @param argument The CSS Declaration to append to the argument list.
-     *
-     * @see #setArguments(java.util.List)
-     */
-    public void addArgument(Declaration argument) {
-        arguments.add(argument);
     }
 
     /**
@@ -95,5 +119,10 @@ public class ClassReferenceTerm extends Term {
         }
         txt.append(">");
         return txt.toString();
+    }
+
+    @Override
+    public ClassReferenceTerm withSeparator(Character separator) {
+        return new ClassReferenceTerm(separator, name, arguments);
     }
 }

@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
  * An RGB Color
  * @author Matthew Crumley
  */
+@Immutable
 public final class HSLColor extends Color {
     private final int hue;
     private final double saturation, lightness, alpha;
@@ -172,16 +173,16 @@ public final class HSLColor extends Color {
     }
 
     public FunctionTerm toTerm() {
-        Expression expr = new Expression();
+        Expression.Builder expr = new Expression.Builder();
         NumberTerm h = new NumberTerm(hue);
-        NumberTerm s = new NumberTerm(saturation * 100); s.setUnit(Unit.Percent); s.setSeperator(',');
-        NumberTerm l = new NumberTerm(lightness * 100);  l.setUnit(Unit.Percent); l.setSeperator(',');
-        NumberTerm a = new NumberTerm(alpha);            a.setUnit(Unit.None);    a.setSeperator(',');
-        expr.getTerms().add(h);
-        expr.getTerms().add(s);
-        expr.getTerms().add(l);
-        expr.getTerms().add(a);
-        return new FunctionTerm("hsla", expr);
+        NumberTerm s = new NumberTerm(',', saturation * 100, Unit.Percent);
+        NumberTerm l = new NumberTerm(',', lightness * 100, Unit.Percent);
+        NumberTerm a = new NumberTerm(',', alpha, Unit.None);
+        expr.addTerm(h)
+            .addTerm(s)
+            .addTerm(l)
+            .addTerm(a);
+        return new FunctionTerm("hsla", expr.build());
     }
 
     @Override

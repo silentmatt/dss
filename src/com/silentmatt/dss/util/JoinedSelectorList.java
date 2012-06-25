@@ -1,29 +1,24 @@
 package com.silentmatt.dss.util;
 
 import com.silentmatt.dss.Combinator;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Selector;
 import java.util.AbstractList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  *
  * @author Matthew Crumley
  */
-public class JoinedSelectorList extends AbstractList<Selector> {
-    private List<Selector> parents;
+@Immutable
+public final class JoinedSelectorList extends AbstractList<Selector> {
+    private final List<Selector> parents;
     private final List<Selector> children;
-    private Combinator combinator;
+    private final Combinator combinator;
 
     public List<Selector> getParents() {
         return parents;
-    }
-
-    public void setParents(List<Selector> parents) {
-        this.parents = parents;
-    }
-
-    public void setCombinator(Combinator cb) {
-        combinator = cb;
     }
 
     public List<Selector> getChildren() {
@@ -31,8 +26,8 @@ public class JoinedSelectorList extends AbstractList<Selector> {
     }
 
     public JoinedSelectorList(List<Selector> parents, Combinator cb, List<Selector> children) {
-        this.parents = parents;
-        this.children = children;
+        this.parents = Collections.unmodifiableList(parents);
+        this.children = Collections.unmodifiableList(children);
         this.combinator = cb;
     }
 
@@ -55,7 +50,8 @@ public class JoinedSelectorList extends AbstractList<Selector> {
 
     @Override
     public boolean add(Selector value) {
-        return children.add(value);
+        throw new UnsupportedOperationException();
+        //return children.add(value);
     }
 
     @Override

@@ -175,24 +175,24 @@ class Parser {
 
 	RuleSet  ruleset() {
 		RuleSet  rset;
-		rset = new RuleSet();
+		RuleSet.Builder rsetb = new RuleSet.Builder();
 		Selector sel;
 		List<Declaration> decs;
 		Rule dir;
 		Combinator cb = Combinator.Descendant;
 		
 		sel = selector();
-		rset.getSelectors().add(sel); 
+		rsetb.addSelector(sel); 
 		while (la.kind == 35) {
 			Get();
 			sel = selector();
-			rset.getSelectors().add(sel); 
+			rsetb.addSelector(sel); 
 		}
 		Expect(36);
 		while (StartOf(4)) {
 			if (!isNestedSelector()) {
 				decs = multideclaration();
-				rset.addDeclarations(decs);
+				rsetb.addDeclarations(decs);
 				if (endOfBlock()) {
 				    break;
 				}
@@ -200,10 +200,10 @@ class Parser {
 				Expect(42);
 			} else if (la.kind == 40) {
 				dir = classDirective();
-				rset.addRule(dir); 
+				rsetb.addRule(dir); 
 			} else if (la.kind == 47) {
 				dir = defineDirective();
-				rset.addRule(dir); 
+				rsetb.addRule(dir); 
 			} else {
 				cb = Combinator.Descendant; 
 				if (la.kind == 44) {
@@ -229,10 +229,11 @@ class Parser {
 					}
 				}
 				RuleSet nested = ruleset();
-				rset.addNestedRuleSet(cb, nested); 
+				rsetb.addNestedRuleSet(cb, nested); 
 			}
 		}
 		Expect(37);
+		rset = rsetb.build(); 
 		return rset;
 	}
 
@@ -520,12 +521,12 @@ class Parser {
 
 	Expression  expr() {
 		Expression  exp;
-		exp = new Expression();
+		Expression.Builder expb = new Expression.Builder();
 		Character sep = null;
 		Term trm;
 		
 		trm = term();
-		exp.getTerms().add(trm); 
+		expb.addTerm(trm); 
 		while (StartOf(6)) {
 			if (la.kind == 35 || la.kind == 59 || la.kind == 69) {
 				if (la.kind == 69) {
@@ -540,11 +541,12 @@ class Parser {
 				}
 			}
 			trm = term();
-			if (sep != null) { trm.setSeperator(sep); }
-			exp.getTerms().add(trm);
+			if (sep != null) { trm = trm.withSeparator(sep); }
+			expb.addTerm(trm);
 			sep = null;
 			
 		}
+		exp = expb.build(); 
 		return exp;
 	}
 
@@ -651,7 +653,7 @@ class Parser {
 			}
 		}
 		Expect(37);
-		dir = new ClassDirective(ident, parameters, global, declarations, nested); 
+		dir = new ClassDirective(ident, new DeclarationList(parameters), global, new DeclarationList(declarations), nested); 
 		return dir;
 	}
 
@@ -677,7 +679,7 @@ class Parser {
 			Expect(42);
 		}
 		Expect(37);
-		dir = new DefineDirective(declarations, global); 
+		dir = new DefineDirective(new DeclarationList(declarations), global); 
 		return dir;
 	}
 
@@ -756,28 +758,29 @@ class Parser {
 
 	Declaration  parameter() {
 		Declaration  dec;
-		dec = new Declaration(); 
+		Declaration.Builder decb = new Declaration.Builder(); 
 		String ident = identity();
-		dec.setName(ident); 
+		decb.setName(ident); 
 		if (la.kind == 32) {
 			Get();
 			Expression exp = expr();
-			dec.setExpression(exp); 
+			decb.setExpression(exp); 
 		}
+		dec = decb.build(); 
 		return dec;
 	}
 
 	List<Declaration>  multideclaration() {
 		List<Declaration>  decs;
-		decs = new ArrayList<Declaration>();
-		Declaration first = new Declaration();
+		ArrayList<Declaration.Builder> decbs = new ArrayList<Declaration.Builder>();
+		Declaration.Builder first = new Declaration.Builder();
 		
 		String ident = identity();
-		first.setName(ident); decs.add(first); 
+		first.setName(ident); decbs.add(first); 
 		while (la.kind == 35) {
 			Get();
 			String ident2 = identity();
-			decs.add(new Declaration(ident2, new PropertyTerm(first.getName()).toExpression())); 
+			decbs.add(new Declaration.Builder().setName(ident2).setExpression(new PropertyTerm(first.getName()).toExpression())); 
 		}
 		Expect(32);
 		Expression exp = expr();
@@ -785,11 +788,15 @@ class Parser {
 		if (la.kind == 68) {
 			Get();
 			Expect(21);
-			for (Declaration dec : decs) {
-			   dec.setImportant(true);
+			for (Declaration.Builder decb : decbs) {
+			   decb.setImportant(true);
 			}
 			
 		}
+		decs = new ArrayList<Declaration>(decbs.size());
+		for (Declaration.Builder decb : decbs) {
+		    decs.add(decb.build());
+		} 
 		return decs;
 	}
 
@@ -810,7 +817,7 @@ class Parser {
 			Expect(42);
 		}
 		Expect(37);
-		dir = new FontFaceDirective(declarations); 
+		dir = new FontFaceDirective(new DeclarationList(declarations)); 
 		return dir;
 	}
 
@@ -824,7 +831,7 @@ class Parser {
 		if (la.kind == 32) {
 			String psd = pseudo();
 			ss = new SimpleSelector();
-			ss.setPseudo(psd);
+			ss = ss.withPseudo(psd);
 			
 		}
 		Expect(36);
@@ -838,7 +845,7 @@ class Parser {
 			Expect(42);
 		}
 		Expect(37);
-		dir = new PageDirective(ss, declarations); 
+		dir = new PageDirective(ss, new DeclarationList(declarations)); 
 		return dir;
 	}
 
@@ -992,39 +999,35 @@ class Parser {
 			trm = new CalculationTerm(expression); 
 		} else if (StartOf(5)) {
 			ident = identity();
-			trm = new StringTerm(ident); 
+			String trmValue = ident; 
 			while (la.kind == 32 || la.kind == 57) {
 				if (la.kind == 32) {
 					Get();
-					((StringTerm) trm).setValue(trm.toString() + t.val); 
+					trmValue += t.val; 
 					if (la.kind == 32) {
 						Get();
-						((StringTerm) trm).setValue(trm.toString() + t.val); 
+						trmValue += t.val; 
 					}
 					ident = identity();
-					((StringTerm) trm).setValue(trm.toString() + ident); 
+					trmValue += ident; 
 				} else {
 					Get();
-					((StringTerm) trm).setValue(trm.toString() + t.val); 
+					trmValue += t.val; 
 					ident = identity();
-					((StringTerm) trm).setValue(trm.toString() + ident); 
+					trmValue += ident; 
 				}
 			}
+			trm = new StringTerm(trmValue); 
 			if (la.kind == 31 || la.kind == 41) {
 				if (la.kind == 31) {
 					Get();
 					exp = expr();
-					FunctionTerm func = new FunctionTerm();
-					func.setName(trm.toString());
-					func.setExpression(exp);
-					trm = func;
-					
+					trm = new FunctionTerm(trm.toString(), exp); 
 					Expect(33);
 				} else {
 					Get();
-					ClassReferenceTerm cls = new ClassReferenceTerm(trm.toString());
+					ClassReferenceTerm.Builder cls = new ClassReferenceTerm.Builder(trm.toString());
 					Declaration dec;
-					trm = cls;
 					
 					if (StartOf(11)) {
 						if (isDeclaration()) {
@@ -1046,6 +1049,7 @@ class Parser {
 						}
 					}
 					Expect(43);
+					trm = cls.build(); 
 				}
 			}
 		} else if (StartOf(12)) {
@@ -1065,7 +1069,7 @@ class Parser {
 			} else SynErr(87);
 			val += t.val; trm = new NumberTerm(Double.parseDouble(val)); 
 			if (endOfBlock()) {
-				((NumberTerm) trm).setValue(Double.parseDouble(val)); 
+				trm = ((NumberTerm) trm).withValue(Double.parseDouble(val)); 
 			} else if (StartOf(13)) {
 				if (la.val.equalsIgnoreCase("n")) {
 					Expect(19);
@@ -1084,13 +1088,13 @@ class Parser {
 					trm = new StringTerm(val); val = ""; 
 				} else if (la.kind == 75) {
 					Get();
-					((NumberTerm) trm).setUnit(Unit.Percent); 
+					trm = ((NumberTerm) trm).withUnit(Unit.Percent); 
 				} else if (StartOf(14)) {
 					if (isUnit()) {
 						ident = identity();
 						try {
 						   // TODO: What if trm isn't a NumberTerm?
-						   ((NumberTerm) trm).setUnit(Unit.parse(ident));
+						   trm = ((NumberTerm) trm).withUnit(Unit.parse(ident));
 						} catch (IllegalArgumentException ex) {
 						    errors.SemErr(t.line, t.col, "Unrecognized unit '" + ident + "'");
 						}
@@ -1098,11 +1102,10 @@ class Parser {
 					}
 				} else SynErr(88);
 				if (trm instanceof NumberTerm) {
-				   ((NumberTerm) trm).setValue(Double.parseDouble(val));
+				   trm = ((NumberTerm) trm).withValue(Double.parseDouble(val));
 				}
 				else if (trm instanceof StringTerm) {
-				    StringTerm strTrm = (StringTerm) trm;
-				    strTrm.setValue(strTrm.getValue() + val);
+				    trm = new StringTerm(((StringTerm)trm).getValue() + val);
 				}
 				
 			} else SynErr(89);
@@ -1133,16 +1136,16 @@ class Parser {
 		GenericDirective  dir;
 		Expect(54);
 		String ident = identity();
-		dir = new GenericDirective();
-		dir.setName("@" + ident);
+		GenericDirective.Builder dirb = new GenericDirective.Builder();
+		dirb.setName("@" + ident);
 		
 		if (StartOf(11)) {
 			if (StartOf(11)) {
 				Expression exp = expr();
-				dir.setExpression(exp); 
+				dirb.setExpression(exp); 
 			} else {
 				Medium m = medium();
-				dir.addMedium(m); 
+				dirb.addMedium(m); 
 			}
 		}
 		if (la.kind == 36) {
@@ -1150,7 +1153,7 @@ class Parser {
 			while (StartOf(1)) {
 				if (StartOf(5)) {
 					Declaration dec = declaration();
-					dir.addDeclaration(dec);
+					dirb.addDeclaration(dec);
 					if (endOfBlock()) {
 					    break;
 					}
@@ -1158,43 +1161,45 @@ class Parser {
 					Expect(42);
 				} else if (StartOf(2)) {
 					RuleSet rset = ruleset();
-					dir.addRule(rset); 
+					dirb.addRule(rset); 
 				} else {
 					Rule dr = directive();
-					dir.addRule(dr); 
+					dirb.addRule(dr); 
 				}
 			}
 			Expect(37);
 		} else if (la.kind == 42) {
 			Get();
 		} else SynErr(92);
+		dir = dirb.build(); 
 		return dir;
 	}
 
 	Declaration  declaration() {
 		Declaration  dec;
-		dec = new Declaration(); 
+		Declaration.Builder decb = new Declaration.Builder(); 
 		String ident = identity();
-		dec.setName(ident); 
+		decb.setName(ident); 
 		Expect(32);
 		Expression exp = expr();
-		dec.setExpression(exp); 
+		decb.setExpression(exp); 
 		if (la.kind == 68) {
 			Get();
 			Expect(21);
-			dec.setImportant(true); 
+			decb.setImportant(true); 
 		}
+		dec = decb.build(); 
 		return dec;
 	}
 
 	Selector  selector() {
 		Selector  sel;
-		sel = new Selector();
+		Selector.Builder selb = new Selector.Builder();
 		SimpleSelector ss;
 		Combinator cb = Combinator.Descendant;
 		
 		ss = simpleselector();
-		sel.getSimpleSelectors().add(ss); 
+		selb.addSimpleSelector(ss); 
 		while (StartOf(15)) {
 			if (la.kind == 43 || la.kind == 45 || la.kind == 46) {
 				if (la.kind == 45) {
@@ -1209,48 +1214,49 @@ class Parser {
 				}
 			}
 			ss = simpleselector();
-			ss.setCombinator(cb);
-			sel.getSimpleSelectors().add(ss);
+			ss = ss.withCombinator(cb);
+			selb.addSimpleSelector(ss);
 			cb = Combinator.Descendant;
 			
 		}
+		sel = selb.build(); 
 		return sel;
 	}
 
 	SimpleSelector  simpleselector() {
 		SimpleSelector  ss;
-		ss = new SimpleSelector();
-		SimpleSelector parent = ss;
+		SimpleSelector.Builder ssb = new SimpleSelector.Builder();
+		SimpleSelector.Builder parent = ssb;
 		String ident;
 		
 		if (StartOf(5)) {
 			ident = identity();
-			ss.setElementName(ident); 
+			ssb.setElementName(ident); 
 		} else if (la.kind == 55) {
 			Get();
-			ss.setElementName("*"); 
+			ssb.setElementName("*"); 
 		} else if (StartOf(16)) {
 			if (la.kind == 56) {
 				Get();
 				ident = identity();
-				ss.setID(ident); 
+				ssb.setID(ident); 
 			} else if (la.kind == 57) {
 				Get();
 				ident = identity();
-				ss.setClassName(ident); 
+				ssb.setClassName(ident); 
 			} else if (la.kind == 58) {
 				Attribute atb = attrib();
-				ss.setAttribute(atb); 
+				ssb.setAttribute(atb); 
 			} else {
 				String psd = pseudo();
-				ss.setPseudo(psd); 
+				ssb.setPseudo(psd); 
 			}
 		} else SynErr(93);
 		while (StartOf(16)) {
 			if (t.pos + t.val.length() < la.pos) {
 			   break;
 			}
-			SimpleSelector child = new SimpleSelector();
+			SimpleSelector.Builder child = new SimpleSelector.Builder();
 			
 			if (la.kind == 56) {
 				Get();
@@ -1271,67 +1277,69 @@ class Parser {
 			parent = child;
 			
 		}
+		ss = ssb.build(); 
 		return ss;
 	}
 
 	Attribute  attrib() {
 		Attribute  atb;
-		atb = new Attribute();
+		Attribute.Builder atbb = new Attribute.Builder();
 		String quote;
 		String ident;
 		
 		Expect(58);
 		ident = identity();
-		atb.setOperand(ident); 
+		atbb.setOperand(ident); 
 		if (StartOf(17)) {
 			switch (la.kind) {
 			case 59: {
 				Get();
-				atb.setOperator(AttributeOperator.Equals); 
+				atbb.setOperator(AttributeOperator.Equals); 
 				break;
 			}
 			case 60: {
 				Get();
-				atb.setOperator(AttributeOperator.InList); 
+				atbb.setOperator(AttributeOperator.InList); 
 				break;
 			}
 			case 61: {
 				Get();
-				atb.setOperator(AttributeOperator.Hyphenated); 
+				atbb.setOperator(AttributeOperator.Hyphenated); 
 				break;
 			}
 			case 62: {
 				Get();
-				atb.setOperator(AttributeOperator.EndsWith); 
+				atbb.setOperator(AttributeOperator.EndsWith); 
 				break;
 			}
 			case 63: {
 				Get();
-				atb.setOperator(AttributeOperator.BeginsWith); 
+				atbb.setOperator(AttributeOperator.BeginsWith); 
 				break;
 			}
 			case 64: {
 				Get();
-				atb.setOperator(AttributeOperator.Contains); 
+				atbb.setOperator(AttributeOperator.Contains); 
 				break;
 			}
 			}
 			if (StartOf(5)) {
 				ident = identity();
-				atb.setValue(ident); 
+				atbb.setValue(ident); 
 			} else if (la.kind == 5) {
 				quote = QuotedString();
-				atb.setValue(quote); 
+				atbb.setValue(quote); 
 			} else if (la.kind == 3 || la.kind == 4) {
 				if (la.kind == 3) {
 					Get();
 				} else {
 					Get();
 				}
-				atb.setValue(t.val); 
+				atbb.setValue(t.val); 
 			} else SynErr(94);
 		}
 		Expect(65);
+		atb = atbb.build(); 
 		return atb;
 	}
 

@@ -17,16 +17,116 @@ import com.silentmatt.dss.css.CssSimpleSelector;
  * 
  * @author Matthew Crumley
  */
-public class SimpleSelector implements Cloneable {
-    // XXX: There was FunctionTerm function after attributes, but it was never used.
-    private Combinator combinator = Combinator.None;
-    private String elementName;
-    private String id;
-    private String className;
-    private String pseudo;
-    private Attribute attribute;
-    private SimpleSelector child;
+@Immutable
+public final class SimpleSelector implements Cloneable {
+    public static class Builder {
+        private Combinator combinator = Combinator.None;
+        private String elementName;
+        private String id;
+        private String className;
+        private String pseudo;
+        private Attribute attribute;
+        private SimpleSelector.Builder child;
 
+        public Builder setCombinator(Combinator combinator) {
+            this.combinator = combinator;
+            return this;
+        }
+
+        public Builder setElementName(String elementName) {
+            this.elementName = elementName;
+            return this;
+        }
+
+        public Builder setID(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setClassName(String className) {
+            this.className = className;
+            return this;
+        }
+
+        public Builder setPseudo(String pseudo) {
+            this.pseudo = pseudo;
+            return this;
+        }
+
+        public Builder setAttribute(Attribute attribute) {
+            this.attribute = attribute;
+            return this;
+        }
+
+        public Builder setChild(SimpleSelector.Builder child) {
+            this.child = child;
+            return this;
+        }
+
+        public SimpleSelector build() {
+            return new SimpleSelector(combinator, elementName, id, className, pseudo, attribute, child == null ? null : child.build());
+        }
+    }
+
+    // XXX: There was FunctionTerm function after attributes, but it was never used.
+    private final Combinator combinator;
+    private final String elementName;
+    private final String id;
+    private final String className;
+    private final String pseudo;
+    private final Attribute attribute;
+    private final SimpleSelector child;
+
+    public SimpleSelector() {
+        this.combinator = Combinator.None;
+        this.elementName = null;
+        this.id = null;
+        this.className = null;
+        this.pseudo = null;
+        this.attribute = null;
+        this.child = null;
+    }
+
+    public SimpleSelector(Combinator combinator, String elementName, String id, String className, String pseudo, Attribute attribute, SimpleSelector child) {
+        this.combinator = combinator;
+        this.elementName = elementName;
+        this.id = id;
+        this.className = className;
+        this.pseudo = pseudo;
+        this.attribute = attribute;
+        this.child = child;
+    }
+
+    public SimpleSelector withCombinator(Combinator combinator) {
+        return new SimpleSelector(combinator, getElementName(), getID(), getClassName(), getPseudo(), getAttribute(), getChild());
+    }
+
+    public SimpleSelector withPseudo(String psd) {
+        return new SimpleSelector(getCombinator(), getElementName(), getID(), getClassName(), psd, getAttribute(), getChild());
+    }
+
+    public SimpleSelector withElementName(String name) {
+        return new SimpleSelector(getCombinator(), name, getID(), getClassName(), getPseudo(), getAttribute(), getChild());
+    }
+
+    public SimpleSelector withID(String id) {
+        return new SimpleSelector(getCombinator(), getElementName(), id, getClassName(), getPseudo(), getAttribute(), getChild());
+    }
+
+    public SimpleSelector withClassName(String className) {
+        return new SimpleSelector(getCombinator(), getElementName(), getID(), className, getPseudo(), getAttribute(), getChild());
+    }
+
+    public SimpleSelector withAttribute(Attribute attr) {
+        return new SimpleSelector(getCombinator(), getElementName(), getID(), getClassName(), getPseudo(), attr, getChild());
+    }
+
+    public SimpleSelector withChild(SimpleSelector child) {
+        return new SimpleSelector(getCombinator(), getElementName(), getID(), getClassName(), getPseudo(), getAttribute(), child);
+    }
+
+    
+    
     /**
      * Evaluate the SimpleSelector.
      *
@@ -45,44 +145,16 @@ public class SimpleSelector implements Cloneable {
     }
 
     /**
-     * Creates a new copy of this SimpleSelector.
-     *
-     * @return a new SimpleSelector that's equivalent to this one.
-     */
-    @Override
-    public SimpleSelector clone() {
-        SimpleSelector result = new SimpleSelector();
-        result.setCombinator(combinator);
-        result.setElementName(elementName);
-        result.setID(id);
-        result.setClassName(className);
-        result.setPseudo(pseudo);
-        result.setAttribute(attribute);
-        result.setChild(child);
-        return result;
-    }
-
-    /**
      * Gets the combinator that should appear between this simple selector and
      * the previous one.
      *
-     * There is no DescendantOf Cominator, so null is used instead. Eventually,
+     * There is no DescendantOf Combinator, so null is used instead. Eventually,
      * that will change, since it's ugly and unnecessary.
      *
      * @return The {@link Combinator}.
      */
     public Combinator getCombinator() {
         return combinator;
-    }
-
-    /**
-     * Sets the combinator that should appear between this simple selector and
-     * the previous one.
-     *
-     * @param combinator The {@link Combinator}
-     */
-    public void setCombinator(Combinator combinator) {
-        this.combinator = combinator;
     }
 
     /**
@@ -97,30 +169,12 @@ public class SimpleSelector implements Cloneable {
     }
 
     /**
-     * Sets the element name.
-     *
-     * @param elementName The name of the element to match, or the "*" wildcard.
-     */
-    public void setElementName(String elementName) {
-        this.elementName = elementName;
-    }
-
-    /**
      * Gets the ID part of the selector.
      *
      * @return The ID to match, without the leading "#".
      */
     public String getID() {
         return id;
-    }
-
-    /**
-     * Sets the ID part of the selector.
-     * 
-     * @param id The ID to match, without the leading "#".
-     */
-    public void setID(String id) {
-        this.id = id;
     }
 
     /**
@@ -133,15 +187,6 @@ public class SimpleSelector implements Cloneable {
     }
 
     /**
-     * Sets the class name part of the selector.
-     *
-     * @param id The class name to match, without the leading ".".
-     */
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    /**
      * Gets the pseudoselector.
      *
      * @return The pseudoselector, without the leading ":", but may include
@@ -149,15 +194,6 @@ public class SimpleSelector implements Cloneable {
      */
     public String getPseudo() {
         return pseudo;
-    }
-
-    /**
-     * Sets the pseudoselector.
-     *
-     * @param pseudo The pseudoselector, without the leading ":".
-     */
-    public void setPseudo(String pseudo) {
-        this.pseudo = pseudo;
     }
 
     /**
@@ -172,15 +208,6 @@ public class SimpleSelector implements Cloneable {
     }
 
     /**
-     * Sets the attribute condition part of the selector.
-     *
-     * @param Attribute An {@link Attribute} condition.
-     */
-    public void setAttribute(Attribute Attribute) {
-        this.attribute = Attribute;
-    }
-
-    /**
      * Gets a child SimpleSelector.
      *
      * If there is more than one of some part of the simple selector, or the
@@ -191,19 +218,6 @@ public class SimpleSelector implements Cloneable {
      */
     public SimpleSelector getChild() {
         return child;
-    }
-
-    /**
-     * Set the child SimpleSelector.
-     *
-     * If you need a more complex selector than a single object allows, you can
-     * add a child selector, which appends itself directly to the right of its
-     * parent.
-     *
-     * @param Child The remaining part of the selector.
-     */
-    public void setChild(SimpleSelector Child) {
-        this.child = Child;
     }
 
     @Override

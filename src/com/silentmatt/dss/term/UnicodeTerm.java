@@ -1,28 +1,36 @@
 package com.silentmatt.dss.term;
 
+import com.silentmatt.dss.Immutable;
 import java.util.Locale;
 
 /**
- * A unicode string.
+ * A Unicode string.
  *
  * @author Matthew Crumley
  */
-public class UnicodeTerm extends Term {
+@Immutable
+public final class UnicodeTerm extends Term {
     private final String value;
 
     /**
      * Constructs a UnicodeTerm from a String.
+     * 
      * @param value The value of the string.
      */
     public UnicodeTerm(String value) {
-        super();
+        super(null);
         this.value = value;
     }
 
-    public UnicodeTerm clone() {
-        UnicodeTerm result = new UnicodeTerm(value);
-        result.setSeperator(getSeperator());
-        return result;
+    /**
+     * Constructs a UnicodeTerm from a String.
+     * 
+     * @param sep The separator
+     * @param value The value of the string.
+     */
+    public UnicodeTerm(Character sep, String value) {
+        super(sep);
+        this.value = value;
     }
 
     /**
@@ -41,5 +49,10 @@ public class UnicodeTerm extends Term {
     @Override
     public String toString() {
         return "U\\" + value.toUpperCase(Locale.ENGLISH);
+    }
+
+    @Override
+    public UnicodeTerm withSeparator(Character separator) {
+        return new UnicodeTerm(separator, value);
     }
 }

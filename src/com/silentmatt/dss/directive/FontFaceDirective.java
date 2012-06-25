@@ -1,7 +1,8 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssFontFaceDirective;
 import com.silentmatt.dss.css.CssRule;
@@ -12,11 +13,13 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
-public class FontFaceDirective extends DeclarationDirective {
-    public FontFaceDirective(List<Declaration> declarations) {
+@Immutable
+public final class FontFaceDirective extends DeclarationDirective {
+    public FontFaceDirective(DeclarationList declarations) {
         super(declarations);
     }
 
+    @Override
     public String getName() {
         return "@font-face";
     }

@@ -3,21 +3,21 @@ package com.silentmatt.dss.term;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 
 /**
  * A parameter reference.
  *
  * @author Matthew Crumley
  */
-public class ParamTerm extends ReferenceTerm {
+@Immutable
+public final class ParamTerm extends ReferenceTerm {
     public ParamTerm(String name) {
         super(name);
     }
 
-    public ParamTerm clone() {
-        ParamTerm result = new ParamTerm(getName());
-        result.setSeperator(getSeperator());
-        return result;
+    public ParamTerm(Character sep, String name) {
+        super(sep, name);
     }
 
     /**
@@ -47,8 +47,9 @@ public class ParamTerm extends ReferenceTerm {
             }
         }
         else if (value.getTerms().size() > 0) {
-            value = value.clone();
-            value.getTerms().get(0).setSeperator(getSeperator());
+            Expression.Builder valueb = new Expression.Builder(value);
+            valueb.getTerms().set(0, valueb.getTerms().get(0).withSeparator(getSeperator()));
+            value = valueb.build();
         }
 
         return value;
@@ -57,5 +58,10 @@ public class ParamTerm extends ReferenceTerm {
     @Override
     public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
         return withParams ? evaluate(state, container) : toExpression();
+    }
+
+    @Override
+    public ParamTerm withSeparator(Character separator) {
+        return new ParamTerm(separator, getName());
     }
 }

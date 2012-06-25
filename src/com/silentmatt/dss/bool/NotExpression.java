@@ -1,13 +1,15 @@
 package com.silentmatt.dss.bool;
 
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.Immutable;
 
 /**
  * A BooleanExpression that evaluates to the complement of its operand.
  *
  * @author Matthew Crumley
  */
-public class NotExpression implements BooleanExpression {
+@Immutable
+public final class NotExpression implements BooleanExpression {
     private final BooleanExpression expression;
 
     /**
@@ -19,11 +21,13 @@ public class NotExpression implements BooleanExpression {
         this.expression = expression;
     }
 
+    @Override
     public Boolean evaluate(EvaluationState state) {
         Boolean value = expression.evaluate(state);
         return value == null ? null : !value;
     }
 
+    @Override
     public int getPrecidence() {
         return 3;
     }
