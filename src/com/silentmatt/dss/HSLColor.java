@@ -48,6 +48,7 @@ public final class HSLColor extends Color {
      *
      * @return The color in rgba(r%, g%, b%, a) format.
      */
+    @Override
     public RGBFColor toRGBFColor() {
         double h = hue / 360.0;
         double m2;
@@ -88,6 +89,7 @@ public final class HSLColor extends Color {
      *
      * @return A CSS color name, or {@link #toString()}.
      */
+    @Override
     public String toNameString() {
         // TODO: Maybe implement this?
         return toString();
@@ -168,10 +170,12 @@ public final class HSLColor extends Color {
         return lightness;
     }
 
+    @Override
     public double getAlpha() {
         return alpha;
     }
 
+    @Override
     public FunctionTerm toTerm() {
         Expression.Builder expr = new Expression.Builder();
         NumberTerm h = new NumberTerm(hue);

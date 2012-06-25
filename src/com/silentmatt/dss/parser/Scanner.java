@@ -76,7 +76,7 @@ class Buffer {
 		Close();
 	}
 
-	protected void Close() {
+	protected final void Close() {
 		if (file != null) {
 			try {
 				file.close();
@@ -121,7 +121,7 @@ class Buffer {
 		return bufPos + bufStart;
 	}
 
-	public void setPos(int value) {
+	public final void setPos(int value) {
 		if (value >= fileLen && stream != null) {
 			// Wanted position is after buffer and the stream
 			// is not seek-able e.g. network or console,
@@ -252,7 +252,7 @@ public class Scanner {
 	static final int noSym = 76;
 
 
-	public Buffer buffer; // scanner buffer
+	private Buffer buffer; // scanner buffer
 
 	Token t;           // current token
 	int ch;            // current input character
@@ -362,7 +362,7 @@ public class Scanner {
 		Init();
 	}
 	
-	void Init () {
+	final void Init () {
 		pos = -1; line = 1; col = 0;
 		oldEols = 0;
 		NextCh();

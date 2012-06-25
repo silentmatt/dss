@@ -59,7 +59,7 @@ public class Scope<T> implements Map<String, T> {
     public final String toString() {
         StringBuilder sb = new StringBuilder();
         for (Entry<String, T> e : entrySet()) {
-            sb.append(e.getKey() + ": " + e.getValue()).append("\n");
+            sb.append(e.getKey()).append(": ").append(e.getValue()).append("\n");
         }
         return sb.toString();
     }
@@ -94,10 +94,12 @@ public class Scope<T> implements Map<String, T> {
      *
      * @return The number of valid keys in this Scope.
      */
+    @Override
     public final int size() {
         return keySet().size();
     }
 
+    @Override
     public final boolean isEmpty() {
         return table.isEmpty() && (parentScope == null || parentScope.isEmpty());
     }
@@ -115,6 +117,7 @@ public class Scope<T> implements Map<String, T> {
      *
      * @see #declaresKey(java.lang.String)
      */
+    @Override
     public final boolean containsKey(Object key) {
         String sKey = (String) key;
         return table.containsKey(sKey) || (parentScope != null && parentScope.containsKey(sKey));
@@ -133,6 +136,7 @@ public class Scope<T> implements Map<String, T> {
         return table.containsKey(key);
     }
 
+    @Override
     public final boolean containsValue(Object value) {
         if (table.containsValue(value)) {
             return true;
@@ -151,6 +155,7 @@ public class Scope<T> implements Map<String, T> {
         return false;
     }
 
+    @Override
     public final T get(Object key) {
         String sKey = (String) key;
         T value = table.get(sKey);
@@ -197,6 +202,7 @@ public class Scope<T> implements Map<String, T> {
         table.put(key, value);
     }
 
+    @Override
     public T put(String key, T value) {
         if (table.containsKey(key)) {
             return table.put(key, value);
@@ -215,10 +221,12 @@ public class Scope<T> implements Map<String, T> {
      * @param key Ignored key to remove.
      * @return Does not return.
      */
+    @Override
     public final T remove(Object key) {
         throw new UnsupportedOperationException("cannot remove a variable");
     }
 
+    @Override
     public final void putAll(Map<? extends String, ? extends T> map) {
         for (Entry<? extends String, ? extends T> pair : map.entrySet()) {
             put(pair.getKey(), pair.getValue());
@@ -229,10 +237,12 @@ public class Scope<T> implements Map<String, T> {
      * Throws an <code>UnsupportedOperationException</code>.
      * Clearing a Scope is not allowed.
      */
+    @Override
     public final void clear() {
         throw new UnsupportedOperationException("cannot clear a scope");
     }
 
+    @Override
     public final Set<String> keySet() {
         Set<String> keys = table.keySet();
         if (parentScope != null) {
@@ -242,6 +252,7 @@ public class Scope<T> implements Map<String, T> {
         return keys;
     }
 
+    @Override
     public final Collection<T> values() {
         LinkedList<T> result = new LinkedList<T>();
         for (Entry<String, T> entry : entrySet()) {
@@ -250,6 +261,7 @@ public class Scope<T> implements Map<String, T> {
         return result;
     }
 
+    @Override
     public final Set<Entry<String, T>> entrySet() {
         Set<Entry<String, T>> entries = table.entrySet();
 

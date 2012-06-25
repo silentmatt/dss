@@ -390,6 +390,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
      * @return A negative integer, zero, or a positive integer corresponding to
      * less than, equal, or greater than.
      */
+    @Override
     public int compareTo(CalculationUnit other) {
         if (pxLength != other.pxLength) {
             return pxLength - other.pxLength;

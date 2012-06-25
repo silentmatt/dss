@@ -77,15 +77,16 @@ public final class IfDirective extends Rule {
         if (result == null) {
             state.getErrors().SemErr("Invalid condition: " + condition);
         }
-        List<Rule> rules = result ? ifRules : elseRules;
-
-        if (rules != null) {
-            CssRuleList crl = new CssRuleList();
-            List<CssRule> ruleList = Rule.evaluateRules(state, rules);
-            for (CssRule r : ruleList) {
-                crl.addRule(r);
+        else {
+            List<Rule> rules = result ? ifRules : elseRules;
+            if (rules != null) {
+                CssRuleList crl = new CssRuleList();
+                List<CssRule> ruleList = Rule.evaluateRules(state, rules);
+                for (CssRule r : ruleList) {
+                    crl.addRule(r);
+                }
+                return crl;
             }
-            return crl;
         }
         return null;
     }

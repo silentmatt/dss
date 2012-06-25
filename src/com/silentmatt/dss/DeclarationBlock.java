@@ -189,7 +189,7 @@ public class DeclarationBlock {
         StringBuilder txt = new StringBuilder("");
 
         for (Declaration dec : declarations) {
-            txt.append("\n\t" + start);
+            txt.append("\n\t").append(start);
             txt.append(dec.toString());
             txt.append(";");
         }
@@ -242,7 +242,7 @@ public class DeclarationBlock {
 
         txt.append("{");
         txt.append(innerString(nesting + 1));
-        txt.append("\n" + start + "}");
+        txt.append("\n").append(start).append("}");
 
         return txt.toString();
     }
@@ -353,7 +353,7 @@ public class DeclarationBlock {
                 crt = new ClassReferenceTerm(null, inherit.toString());
             }
 
-            ClassDirective clazz = null;
+            ClassDirective clazz;
             // TODO: Move this logic to EvaluationState?
             if (crt instanceof RuleSetClassReferenceTerm) {
                 clazz = lookupRuleSet((RuleSetClassReferenceTerm) crt, state.getRuleSets());

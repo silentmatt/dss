@@ -43,12 +43,12 @@ public abstract class CssDeclarationDirective extends CssRule {
         StringBuilder txt = new StringBuilder("{");
 
         for (CssDeclaration dec : declarations) {
-            txt.append("\n\t" + start);
+            txt.append("\n\t").append(start);
             txt.append(dec.toString());
             txt.append(";");
         }
 
-        txt.append("\n" + start + "}");
+        txt.append("\n").append(start).append("}");
 
         return txt.toString();
     }
@@ -81,6 +81,7 @@ public abstract class CssDeclarationDirective extends CssRule {
         return toString(0);
     }
 
+    @Override
     public String toString(int nesting) {
         String start = CssRule.getIndent(nesting);
         StringBuilder txt = new StringBuilder(start);
@@ -90,6 +91,7 @@ public abstract class CssDeclarationDirective extends CssRule {
         return txt.toString();
     }
 
+    @Override
     public String toString(boolean compact, int nesting) {
         StringBuilder txt = new StringBuilder();
         txt.append(getName());

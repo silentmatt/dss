@@ -15,7 +15,7 @@ import com.silentmatt.dss.Immutable;
  * @author Matthew Crumley
  */
 @Immutable
-public abstract class Term implements Cloneable {
+public abstract class Term {
     /**
      * The separator preceeding this term.
      */

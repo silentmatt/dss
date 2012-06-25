@@ -60,6 +60,7 @@ public final class RGBFColor extends Color {
      *
      * @return A CSS color name, or {@link #toString()}.
      */
+    @Override
     public String toNameString() {
         // TODO: Maybe implement this?
         return toString();
@@ -123,10 +124,12 @@ public final class RGBFColor extends Color {
         return this.blue;
     }
 
+    @Override
     public double getAlpha() {
         return this.alpha;
     }
 
+    @Override
     public FunctionTerm toTerm() {
         Expression.Builder expr = new Expression.Builder();
         NumberTerm r = new NumberTerm(null, red * 100, Unit.Percent);

@@ -39,7 +39,7 @@ public class CssRuleList extends CssRule {
                 sb.append('\n').append(toAppend);
             }
         }
-        return sb.length() > 0 ? sb.substring(1).toString() : "";
+        return sb.length() > 0 ? sb.substring(1) : "";
     }
 
     @Override

@@ -50,10 +50,11 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
         return list.isEmpty();
     }
 
-    public boolean contains(Object arg0) {
+    public boolean contains(Declaration arg0) {
         return list.contains(arg0);
     }
 
+    @Override
     public Iterator<Declaration> iterator() {
         return list.iterator();
     }
@@ -244,31 +245,38 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
     }
 
     private class DeclarationListMapView implements Map<String, Expression> {
+        @Override
         public int size() {
             return DeclarationList.this.size();
         }
 
+        @Override
         public boolean isEmpty() {
             return DeclarationList.this.isEmpty();
         }
 
+        @Override
         public boolean containsKey(Object arg0) {
             return arg0 instanceof String && DeclarationList.this.containsKey((String) arg0);
         }
 
+        @Override
         public boolean containsValue(Object arg0) {
             return arg0 instanceof Expression && DeclarationList.this.containsValue((Expression) arg0);
         }
 
+        @Override
         public Expression get(Object arg0) {
             return arg0 instanceof String ? DeclarationList.this.get((String) arg0) : null;
         }
 
+        @Override
         public Expression put(String arg0, Expression arg1) {
             throw new UnsupportedOperationException();
             //return DeclarationList.this.put(arg0, arg1);
         }
 
+        @Override
         public Expression remove(Object arg0) {
             throw new UnsupportedOperationException();
 //            if (arg0 instanceof String) {
@@ -277,24 +285,29 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
 //            return null;
         }
 
+        @Override
         public void putAll(Map<? extends String, ? extends Expression> arg0) {
             throw new UnsupportedOperationException();
             //DeclarationList.this.putAll(arg0);
         }
 
+        @Override
         public void clear() {
             throw new UnsupportedOperationException();
             //DeclarationList.this.clear();
         }
 
+        @Override
         public Set<String> keySet() {
             return new DeclarationListKeySet();
         }
 
+        @Override
         public Collection<Expression> values() {
             return new DeclarationListValues();
         }
 
+        @Override
         public Set<Entry<String, Expression>> entrySet() {
             return new DeclarationListEntrySet();
         }
@@ -308,31 +321,38 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
                 }
             }
 
+            @Override
             public int size() {
                 return keys.size();
             }
 
+            @Override
             public boolean isEmpty() {
                 return keys.isEmpty();
             }
 
+            @Override
             public boolean contains(Object arg0) {
                 return keys.contains(arg0);
             }
 
+            @Override
             public Iterator<String> iterator() {
                 return new Iterator<String>() {
                     final Iterator<String> it = keys.iterator();
-                    private String current = null;
+                    private String current;
 
+                    @Override
                     public boolean hasNext() {
                         return it.hasNext();
                     }
 
+                    @Override
                     public String next() {
                         return current = it.next();
                     }
 
+                    @Override
                     public void remove() {
                         throw new UnsupportedOperationException();
 //                        keys.remove(current);
@@ -341,18 +361,22 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
                 };
             }
 
+            @Override
             public Object[] toArray() {
                 return keys.toArray();
             }
 
+            @Override
             public <T> T[] toArray(T[] arg0) {
                 return keys.toArray(arg0);
             }
 
+            @Override
             public boolean add(String arg0) {
                 throw new UnsupportedOperationException("Cannot call add to a key set.");
             }
 
+            @Override
             public boolean remove(Object arg0) {
                 throw new UnsupportedOperationException();
 //                if (!(arg0 instanceof String)) {
@@ -363,19 +387,23 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
 //                return keys.remove(key);
             }
 
+            @Override
             public boolean containsAll(Collection<?> arg0) {
                 return keys.containsAll(arg0);
             }
 
+            @Override
             public boolean addAll(Collection<? extends String> arg0) {
                 throw new UnsupportedOperationException("Cannot call addAll on a key set.");
             }
 
+            @Override
             public boolean retainAll(Collection<?> arg0) {
                 //keys.retainAll(arg0);
                 throw new UnsupportedOperationException();
             }
 
+            @Override
             public boolean removeAll(Collection<?> arg0) {
                 throw new UnsupportedOperationException();
 //                boolean result = false;
@@ -385,6 +413,7 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
 //                return result;
             }
 
+            @Override
             public void clear() {
                 throw new UnsupportedOperationException();
 //                keys.clear();
@@ -393,29 +422,36 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
         }
 
         private class DeclarationListEntrySet implements Set<Entry<String, Expression>> {
+            @Override
             public int size() {
                 return DeclarationList.this.size();
             }
 
+            @Override
             public boolean isEmpty() {
                 return DeclarationList.this.isEmpty();
             }
 
+            @Override
             public boolean contains(Object arg0) {
-                return DeclarationList.this.contains(arg0);
+                return arg0 instanceof Declaration && DeclarationList.this.contains((Declaration)arg0);
             }
 
+            @Override
             public Iterator<Entry<String, Expression>> iterator() {
                 return new Iterator<Entry<String, Expression>>() {
                     final Iterator<Declaration> it = DeclarationList.this.iterator();
+                    @Override
                     public boolean hasNext() {
                         return it.hasNext();
                     }
 
+                    @Override
                     public Entry<String, Expression> next() {
                         return it.next();
                     }
 
+                    @Override
                     public void remove() {
                         throw new UnsupportedOperationException();
                         //it.remove();
@@ -423,41 +459,50 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
                 };
             }
 
+            @Override
             public Object[] toArray() {
                 return DeclarationList.this.toArray();
             }
 
+            @Override
             public <T> T[] toArray(T[] arg0) {
                 return DeclarationList.this.toArray(arg0);
             }
 
+            @Override
             public boolean add(Entry<String, Expression> arg0) {
                 throw new UnsupportedOperationException("Cannot call add on an entry set.");
             }
 
+            @Override
             public boolean remove(Object arg0) {
                 throw new UnsupportedOperationException();
                 //return DeclarationList.this.remove(arg0);
             }
 
+            @Override
             public boolean containsAll(Collection<?> arg0) {
                 return DeclarationList.this.containsAll(arg0);
             }
 
+            @Override
             public boolean addAll(Collection<? extends Entry<String, Expression>> arg0) {
                 throw new UnsupportedOperationException("Cannot call addAll on an entry set.");
             }
 
+            @Override
             public boolean retainAll(Collection<?> arg0) {
                 throw new UnsupportedOperationException();
                 //return DeclarationList.this.retainAll(arg0);
             }
 
+            @Override
             public boolean removeAll(Collection<?> arg0) {
                 throw new UnsupportedOperationException();
                 //return DeclarationList.this.removeAll(arg0);
             }
 
+            @Override
             public void clear() {
                 throw new UnsupportedOperationException();
                 //DeclarationList.this.clear();
@@ -465,29 +510,36 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
         }
 
         private class DeclarationListValues implements Collection<Expression> {
+            @Override
             public int size() {
                 return DeclarationList.this.size();
             }
 
+            @Override
             public boolean isEmpty() {
                 return DeclarationList.this.isEmpty();
             }
 
+            @Override
             public boolean contains(Object arg0) {
                 return arg0 instanceof Expression && DeclarationList.this.containsValue((Expression) arg0);
             }
 
+            @Override
             public Iterator<Expression> iterator() {
                 return new Iterator<Expression>() {
                     Iterator<Declaration> it = DeclarationList.this.iterator();
+                    @Override
                     public boolean hasNext() {
                         return it.hasNext();
                     }
 
+                    @Override
                     public Expression next() {
                         return it.next().getExpression();
                     }
 
+                    @Override
                     public void remove() {
                         throw new UnsupportedOperationException();
                         //it.remove();
@@ -495,11 +547,13 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
                 };
             }
 
+            @Override
             public Object[] toArray() {
                 return toArray(new Object[size()]);
             }
 
             @SuppressWarnings("unchecked")
+            @Override
             public <T> T[] toArray(T[] arg0) {
                 if (arg0.length >= size()) {
                     int i = 0;
@@ -525,10 +579,12 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
                 return array;
             }
 
+            @Override
             public boolean add(Expression arg0) {
                 throw new UnsupportedOperationException("Cannot call add on a value set.");
             }
 
+            @Override
             public boolean remove(Object arg0) {
                 throw new UnsupportedOperationException();
 //                boolean result = false;
@@ -545,19 +601,22 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
 //                return result;
             }
 
+            @Override
             public boolean containsAll(Collection<?> arg0) {
                 for (Object o : arg0) {
-                    if (!contains(o)) {
+                    if (!(o instanceof Expression && contains((Expression)o))) {
                         return false;
                     }
                 }
                 return true;
             }
 
+            @Override
             public boolean addAll(Collection<? extends Expression> arg0) {
                 throw new UnsupportedOperationException("Cannot call addAll on a value set.");
             }
 
+            @Override
             public boolean removeAll(Collection<?> arg0) {
                 throw new UnsupportedOperationException();
 //                boolean result = false;
@@ -567,10 +626,12 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
 //                return result;
             }
 
+            @Override
             public boolean retainAll(Collection<?> arg0) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
+            @Override
             public void clear() {
                 throw new UnsupportedOperationException();
                 //DeclarationList.this.clear();

@@ -55,6 +55,7 @@ public class CssGenericDirective extends CssRule {
         return toString(0);
     }
 
+    @Override
     public String toString(int nesting) {
         String start = CssRule.getIndent(nesting);
 
@@ -96,7 +97,7 @@ public class CssGenericDirective extends CssRule {
         first = true;
         for (CssDeclaration dec : declarations) {
             if (first) { first = false; } else { txt.append(";"); }
-            txt.append("\n\t" + start);
+            txt.append("\n\t").append(start);
             txt.append(dec.toString());
         }
 

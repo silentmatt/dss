@@ -304,6 +304,7 @@ public final class FunctionTerm extends Term {
         builtinFunctions.put("fadeout", new FadeOut());
 
         builtinFunctions.put("toHSL", new Function() {
+            @Override
             public Expression call(FunctionTerm function, EvaluationState state) {
                 List<Term> args = function.getExpression().getTerms();
                 if (!(args.size() == 1 && args.get(0).isColor())) {
@@ -313,6 +314,7 @@ public final class FunctionTerm extends Term {
             }
         });
         builtinFunctions.put("toRGB", new Function() {
+            @Override
             public Expression call(FunctionTerm function, EvaluationState state) {
                 List<Term> args = function.getExpression().getTerms();
                 if (!(args.size() == 1 && args.get(0).isColor())) {
@@ -322,6 +324,7 @@ public final class FunctionTerm extends Term {
             }
         });
         builtinFunctions.put("alpha", new Function() {
+            @Override
             public Expression call(FunctionTerm function, EvaluationState state) {
                 List<Term> args = function.getExpression().getTerms();
                 if (!(args.size() == 2 && args.get(0).isColor() && args.get(1) instanceof NumberTerm)) {
@@ -354,6 +357,7 @@ public final class FunctionTerm extends Term {
             return new RGBFColor(rp, gp, bp, ap);
         }
 
+        @Override
         public Expression call(FunctionTerm function, EvaluationState state) {
             List<Term> params = function.getExpression().getTerms();
             if (!(params.size() == 2 || params.size() == 3)) {
@@ -450,6 +454,7 @@ public final class FunctionTerm extends Term {
             return scalar;
         }
 
+        @Override
         public Expression call(FunctionTerm function, EvaluationState state) {
             List<Term> params = function.getExpression().getTerms();
             if (!(params.size() == 1 || params.size() == 2)) {
@@ -466,7 +471,7 @@ public final class FunctionTerm extends Term {
                 return function.toExpression();
             }
 
-            HSLColor c = color.toColor().toHSLColor();
+            //HSLColor c = color.toColor().toHSLColor();
             return calculate(color.toColor(), toScalar((NumberTerm) amount)).toTerm().toExpression();
         }
     }

@@ -86,6 +86,7 @@ public final class RGBIColor extends Color {
      *
      * @return A CSS color name, or {@link #toString()}.
      */
+    @Override
     public String toNameString() {
         if (name != null) {
             return name;
@@ -155,6 +156,7 @@ public final class RGBIColor extends Color {
         return toRGBFColor().toRGBColor();
     }
 
+    @Override
     public double getAlpha() {
         return alpha;
     }
