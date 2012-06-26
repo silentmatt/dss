@@ -28,7 +28,7 @@ div {
     }
 }
 
-@if (ie6 && (firefox || calc(1))) {
+@if (ie6 && (firefox || @calc(1))) {
     asdf {
         foo: bar;
     }

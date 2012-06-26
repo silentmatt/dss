@@ -30,8 +30,8 @@ public class NegationExpression implements CalcExpression {
         return value.negate();
     }
 
-    public NegationExpression withSubstitutedValues(EvaluationState state, DeclarationList container, boolean withParams) {
-        return new NegationExpression(expr.withSubstitutedValues(state, container, withParams));
+    public NegationExpression withSubstitutedValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doNestedCalculations) {
+        return new NegationExpression(expr.withSubstitutedValues(state, container, withParams, doNestedCalculations));
     }
 
     /**

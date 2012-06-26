@@ -111,7 +111,7 @@ strong > strong[foo $= bar] {
 }
 
 empty {
-    width: calc(2 * (1cm + 5mm) / ((3px+4px - -6px)/1px));
+    width: [2 * (1cm + 5mm) / ((3px+4px - -6px)/1px)];
 }
 
 #box { // a 100 pixel box (including padding/border)
@@ -122,8 +122,8 @@ empty {
     }
     border: const(border) solid;
     padding: const(pad);
-    width: calc(const(width) - 2 * const(pad) - 2 * const(border));
-    font-size: calc(1.4 * 1em);
+    width: [const(width) - 2 * const(pad) - 2 * const(border)];
+    font-size: @calc(1.4 * 1em);
 }
 
 @define {
@@ -136,7 +136,9 @@ body.hidden {
 
 body .test {
     name: string(2n+3);
-    left: calc( 1 * ( calc(4rad * const(pi)) ) ); // 1 * -> sin()
+    left: @calc( 1 * ( @calc(4rad * const(pi)) ) ); // 1 * -> sin()
+	right: @calc( 1 * ( [4rad * const(pi)] ) ); // 1 * -> sin()
+	bottom: [ 1 * ( @calc(4rad * const(pi)) ) ]; // 1 * -> sin()
     top: cos(4grad);
     color: rgba(1,2,3,.4)    ! important;
     color: #123;
@@ -146,7 +148,7 @@ body .test {
 @if ie6 {
     @class has-layout {
         zoom: 5;
-        half-zoom: calc(prop(zoom) / 2);
+        half-zoom: [(prop(zoom) / 2)];
         zoom2: prop(zoom);
     }
 }

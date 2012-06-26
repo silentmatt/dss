@@ -5,5 +5,5 @@
 #import-test {
   apply: mixin;
   width: 10px;
-  height: calc(const(a) + 10%);
+  height: @calc(const(a) + 10%);
 }

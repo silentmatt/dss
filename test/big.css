@@ -98,6 +98,8 @@ body.hidden {
 body .test {
 	name: string(2n+3);
 	left: 720deg;
+	right: 720deg;
+	bottom: 720deg;
 	top: cos(4grad);
 	color: rgba(1, 2, 3, 0.4) !important;
 	color: #123;

@@ -1,6 +1,7 @@
 something {
 	width: 297.54149pt;
 	width2: 297.54149pt;
+	width3: calc(2 * (1cm + 5mm) / ((3px + 4px - -(6px)) / 1px) + 291pt);
 	height: 6.283185;
 }
 circle {

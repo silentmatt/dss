@@ -716,8 +716,14 @@ termExpression<out CalcExpression expr> (.  expr = null; Term trm; CalcExpressio
     term<out trm>                       (. expr = new TermExpression(trm); .)
 .
 
-calculation<out CalcExpression expr> =  (.  expr = null; .)
+literalCalculation<out CalcExpression expr> =  (.  expr = null; .)
 (("calc" "(" lengthExpression<out expr> ")")
+|
+(       "[" lengthExpression<out expr> "]"))
+.
+
+calculation<out CalcExpression expr> =  (.  expr = null; .)
+(("@calc" "(" lengthExpression<out expr> ")")
 |
 (       "[" lengthExpression<out expr> "]"))
 .
@@ -749,6 +755,8 @@ term<out Term trm> =                        (.  String val = "";
         HexValue<out val>                   (.  trm = new HexTerm(val); .)
         |
         calculation<out expression>         (.  trm = new CalculationTerm(expression); .)
+        |
+        literalCalculation<out expression>  (.  trm = new CalculationLiteralTerm(expression); .)
         |
         identity<out ident>                 (.  String trmValue = ident; .)
         { ':'                               (.  trmValue += t.val; .)
