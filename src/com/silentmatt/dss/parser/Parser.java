@@ -169,7 +169,7 @@ class Parser {
 			rule = ruleset();
 		} else if (StartOf(3)) {
 			rule = directive();
-		} else SynErr(77);
+		} else SynErr(82);
 		return rule;
 	}
 
@@ -183,12 +183,12 @@ class Parser {
 		
 		sel = selector();
 		rsetb.addSelector(sel); 
-		while (la.kind == 35) {
+		while (la.kind == 36) {
 			Get();
 			sel = selector();
 			rsetb.addSelector(sel); 
 		}
-		Expect(36);
+		Expect(37);
 		while (StartOf(4)) {
 			if (!isNestedSelector()) {
 				decs = multideclaration();
@@ -197,27 +197,27 @@ class Parser {
 				    break;
 				}
 				
-				Expect(42);
-			} else if (la.kind == 40) {
+				Expect(43);
+			} else if (la.kind == 41) {
 				dir = classDirective();
 				rsetb.addRule(dir); 
-			} else if (la.kind == 47) {
+			} else if (la.kind == 48) {
 				dir = defineDirective();
 				rsetb.addRule(dir); 
 			} else {
 				cb = Combinator.Descendant; 
-				if (la.kind == 44) {
+				if (la.kind == 45) {
 					Get();
 				}
 				if (t.pos + t.val.length() == la.pos) {
 				   cb = Combinator.None;
 				}
 				
-				if (la.kind == 43 || la.kind == 45 || la.kind == 46) {
-					if (la.kind == 45) {
+				if (la.kind == 44 || la.kind == 46 || la.kind == 47) {
+					if (la.kind == 46) {
 						Get();
 						cb = Combinator.PrecededImmediatelyBy; 
-					} else if (la.kind == 43) {
+					} else if (la.kind == 44) {
 						Get();
 						cb = Combinator.ChildOf; 
 					} else {
@@ -229,7 +229,7 @@ class Parser {
 				rsetb.addNestedRuleSet(cb, nested); 
 			}
 		}
-		Expect(37);
+		Expect(38);
 		rset = rsetb.build(); 
 		return rset;
 	}
@@ -238,51 +238,51 @@ class Parser {
 		Rule  dir;
 		dir = null; 
 		switch (la.kind) {
-		case 38: {
+		case 39: {
 			dir = ifDirective();
 			break;
 		}
-		case 34: {
+		case 35: {
 			dir = mediaDirective();
 			break;
 		}
-		case 40: {
+		case 41: {
 			dir = classDirective();
 			break;
 		}
-		case 47: {
+		case 48: {
 			dir = defineDirective();
 			break;
 		}
-		case 48: {
+		case 49: {
 			dir = fontFaceDirective();
 			break;
 		}
-		case 50: {
+		case 51: {
 			dir = importDirective();
 			break;
 		}
-		case 51: {
+		case 52: {
 			dir = includeDirective();
 			break;
 		}
-		case 52: {
+		case 53: {
 			dir = charsetDirective();
 			break;
 		}
-		case 49: {
+		case 50: {
 			dir = pageDirective();
 			break;
 		}
-		case 53: {
+		case 54: {
 			dir = namespaceDirective();
 			break;
 		}
-		case 54: {
+		case 55: {
 			dir = genericDirective();
 			break;
 		}
-		default: SynErr(78); break;
+		default: SynErr(83); break;
 		}
 		return dir;
 	}
@@ -355,7 +355,7 @@ class Parser {
 			m = Medium.tv; 
 			break;
 		}
-		default: SynErr(79); break;
+		default: SynErr(84); break;
 		}
 		return m;
 	}
@@ -455,7 +455,11 @@ class Parser {
 			Get();
 			break;
 		}
-		default: SynErr(80); break;
+		case 31: {
+			Get();
+			break;
+		}
+		default: SynErr(85); break;
 		}
 		ident = t.val; 
 		return ident;
@@ -488,7 +492,7 @@ class Parser {
 				expr = mediaExpression();
 				q += " and " + expr; 
 			}
-		} else if (la.kind == 31) {
+		} else if (la.kind == 32) {
 			expr = mediaExpression();
 			q += expr; 
 			while (la.kind == 26) {
@@ -496,22 +500,22 @@ class Parser {
 				expr = mediaExpression();
 				q += " and " + expr; 
 			}
-		} else SynErr(81);
+		} else SynErr(86);
 		query = new MediaQuery(q); 
 		return query;
 	}
 
 	String  mediaExpression() {
 		String  expr;
-		Expect(31);
+		Expect(32);
 		String e = identity();
 		expr = e; 
-		if (la.kind == 32) {
+		if (la.kind == 33) {
 			Get();
 			Expression exp = expr();
 			expr += ":" + exp; 
 		}
-		Expect(33);
+		Expect(34);
 		expr = "(" + expr + ")"; 
 		return expr;
 	}
@@ -525,11 +529,11 @@ class Parser {
 		trm = term();
 		expb.addTerm(trm); 
 		while (StartOf(6)) {
-			if (la.kind == 35 || la.kind == 59 || la.kind == 69) {
-				if (la.kind == 69) {
+			if (la.kind == 36 || la.kind == 60 || la.kind == 70) {
+				if (la.kind == 70) {
 					Get();
 					sep = '/'; 
-				} else if (la.kind == 35) {
+				} else if (la.kind == 36) {
 					Get();
 					sep = ','; 
 				} else {
@@ -552,23 +556,23 @@ class Parser {
 		List<MediaQuery> media = new ArrayList<MediaQuery>();
 		List<Rule> rules = new ArrayList<Rule>();
 		
-		Expect(34);
+		Expect(35);
 		MediaQuery m = mediaQuery();
 		media.add(m); 
-		while (la.kind == 35) {
+		while (la.kind == 36) {
 			Get();
 			m = mediaQuery();
 			media.add(m); 
 		}
-		Expect(36);
+		Expect(37);
 		while (StartOf(7)) {
 			if (StartOf(2)) {
 				RuleSet rset = ruleset();
 				rules.add(rset); 
-			} else if (la.kind == 40) {
+			} else if (la.kind == 41) {
 				ClassDirective cdir = classDirective();
 				rules.add(cdir); 
-			} else if (la.kind == 47) {
+			} else if (la.kind == 48) {
 				DefineDirective ddir = defineDirective();
 				rules.add(ddir); 
 			} else {
@@ -576,7 +580,7 @@ class Parser {
 				rules.add(idir); 
 			}
 		}
-		Expect(37);
+		Expect(38);
 		mdir = new MediaDirective(media, rules); 
 		return mdir;
 	}
@@ -592,26 +596,26 @@ class Parser {
 		Combinator cb;
 		boolean global = false;
 		
-		Expect(40);
+		Expect(41);
 		ident = identity();
-		if (la.kind == 41) {
+		if (la.kind == 42) {
 			Get();
 			if (StartOf(5)) {
 				param = parameter();
 				parameters.add(param); 
-				while (la.kind == 42) {
+				while (la.kind == 43) {
 					Get();
 					param = parameter();
 					parameters.add(param); 
 				}
 			}
-			Expect(43);
+			Expect(44);
 		}
 		if (la.kind == 22) {
 			Get();
 			global = true; 
 		}
-		Expect(36);
+		Expect(37);
 		while (StartOf(8)) {
 			if (!isNestedSelector()) {
 				mdecs = multideclaration();
@@ -620,21 +624,21 @@ class Parser {
 				    break;
 				}
 				
-				Expect(42);
+				Expect(43);
 			} else {
 				cb = Combinator.Descendant; 
-				if (la.kind == 44) {
+				if (la.kind == 45) {
 					Get();
 				}
 				if (t.pos + t.val.length() == la.pos) {
 				   cb = Combinator.None;
 				}
 				
-				if (la.kind == 43 || la.kind == 45 || la.kind == 46) {
-					if (la.kind == 45) {
+				if (la.kind == 44 || la.kind == 46 || la.kind == 47) {
+					if (la.kind == 46) {
 						Get();
 						cb = Combinator.PrecededImmediatelyBy; 
-					} else if (la.kind == 43) {
+					} else if (la.kind == 44) {
 						Get();
 						cb = Combinator.ChildOf; 
 					} else {
@@ -646,7 +650,7 @@ class Parser {
 				nested.add(new NestedRuleSet(cb, nest)); 
 			}
 		}
-		Expect(37);
+		Expect(38);
 		dir = new ClassDirective(ident, new DeclarationList(parameters), global, new DeclarationList(declarations), nested); 
 		return dir;
 	}
@@ -657,12 +661,12 @@ class Parser {
 		boolean global = false;
 		List<Declaration> mdecs;
 		
-		Expect(47);
+		Expect(48);
 		if (la.kind == 22) {
 			Get();
 			global = true; 
 		}
-		Expect(36);
+		Expect(37);
 		while (StartOf(5)) {
 			mdecs = multideclaration();
 			declarations.addAll(mdecs);
@@ -670,9 +674,9 @@ class Parser {
 			    break;
 			}
 			
-			Expect(42);
+			Expect(43);
 		}
-		Expect(37);
+		Expect(38);
 		dir = new DefineDirective(new DeclarationList(declarations), global); 
 		return dir;
 	}
@@ -684,7 +688,7 @@ class Parser {
 		UrlTerm includeUrl = null;
 		List<Declaration> mdecs;
 		
-		Expect(51);
+		Expect(52);
 		if (la.kind == 27) {
 			Get();
 			literal = true; 
@@ -695,10 +699,10 @@ class Parser {
 		} else if (la.kind == 5) {
 			String url = QuotedString();
 			includeUrl = new UrlTerm(url.substring(1, url.length()-1)); 
-		} else SynErr(82);
-		if (la.kind == 42) {
+		} else SynErr(87);
+		if (la.kind == 43) {
 			Get();
-		} else if (la.kind == 36) {
+		} else if (la.kind == 37) {
 			Get();
 			while (StartOf(5)) {
 				mdecs = multideclaration();
@@ -707,10 +711,10 @@ class Parser {
 				    break;
 				}
 				
-				Expect(42);
+				Expect(43);
 			}
-			Expect(37);
-		} else SynErr(83);
+			Expect(38);
+		} else SynErr(88);
 		dir = new IncludeDirective(includeUrl, literal, declarations); 
 		return dir;
 	}
@@ -721,23 +725,23 @@ class Parser {
 		List<Rule> ifrules = new ArrayList<Rule>();
 		List<Rule> elserules = null;
 		
-		Expect(38);
+		Expect(39);
 		expr = booleanExpression();
-		Expect(36);
+		Expect(37);
 		while (StartOf(1)) {
 			Rule rule = rule();
 			ifrules.add(rule); 
 		}
-		Expect(37);
-		if (la.kind == 39) {
+		Expect(38);
+		if (la.kind == 40) {
 			Get();
 			elserules = new ArrayList<Rule>(); 
-			Expect(36);
+			Expect(37);
 			while (StartOf(1)) {
 				Rule rule = rule();
 				elserules.add(rule); 
 			}
-			Expect(37);
+			Expect(38);
 		}
 		idir = new IfDirective(expr, ifrules, elserules); 
 		return idir;
@@ -754,7 +758,7 @@ class Parser {
 		Declaration.Builder decb = new Declaration.Builder(); 
 		String ident = identity();
 		decb.setName(ident); 
-		if (la.kind == 32) {
+		if (la.kind == 33) {
 			Get();
 			Expression exp = expr();
 			decb.setExpression(exp); 
@@ -770,15 +774,15 @@ class Parser {
 		
 		String ident = identity();
 		first.setName(ident); decbs.add(first); 
-		while (la.kind == 35) {
+		while (la.kind == 36) {
 			Get();
 			String ident2 = identity();
 			decbs.add(new Declaration.Builder().setName(ident2).setExpression(new PropertyTerm(first.getName()).toExpression())); 
 		}
-		Expect(32);
+		Expect(33);
 		Expression exp = expr();
 		first.setExpression(exp); 
-		if (la.kind == 68) {
+		if (la.kind == 69) {
 			Get();
 			Expect(21);
 			for (Declaration.Builder decb : decbs) {
@@ -798,8 +802,8 @@ class Parser {
 		List<Declaration> declarations = new ArrayList<Declaration>();
 		List<Declaration> mdecs;
 		
-		Expect(48);
-		Expect(36);
+		Expect(49);
+		Expect(37);
 		while (StartOf(5)) {
 			mdecs = multideclaration();
 			declarations.addAll(mdecs);
@@ -807,9 +811,9 @@ class Parser {
 			    break;
 			}
 			
-			Expect(42);
+			Expect(43);
 		}
-		Expect(37);
+		Expect(38);
 		dir = new FontFaceDirective(new DeclarationList(declarations)); 
 		return dir;
 	}
@@ -820,14 +824,14 @@ class Parser {
 		SimpleSelector ss = null;
 		List<Declaration> mdecs;
 		
-		Expect(49);
-		if (la.kind == 32) {
+		Expect(50);
+		if (la.kind == 33) {
 			String psd = pseudo();
 			ss = new SimpleSelector();
 			ss = ss.withPseudo(psd);
 			
 		}
-		Expect(36);
+		Expect(37);
 		while (StartOf(5)) {
 			mdecs = multideclaration();
 			declarations.addAll(mdecs);
@@ -835,9 +839,9 @@ class Parser {
 			    break;
 			}
 			
-			Expect(42);
+			Expect(43);
 		}
-		Expect(37);
+		Expect(38);
 		dir = new PageDirective(ss, new DeclarationList(declarations)); 
 		return dir;
 	}
@@ -847,8 +851,8 @@ class Parser {
 		StringBuilder sb = new StringBuilder();
 		boolean haveOpenParen = false;
 		
-		Expect(32);
-		if (la.kind == 32) {
+		Expect(33);
+		if (la.kind == 33) {
 			Get();
 			sb.append(":"); 
 		}
@@ -858,12 +862,12 @@ class Parser {
 		} else if (la.kind == 25) {
 			Get();
 			sb.append("not"); 
-		} else SynErr(84);
-		if (la.kind == 31) {
+		} else SynErr(89);
+		if (la.kind == 32) {
 			Get();
 			if (StartOf(9)) {
-				if (la.kind == 45 || la.kind == 66) {
-					if (la.kind == 45) {
+				if (la.kind == 46 || la.kind == 67) {
+					if (la.kind == 46) {
 						Get();
 						sb.append("(").append(t.val);
 						haveOpenParen = true; 
@@ -881,7 +885,7 @@ class Parser {
 					}
 					sb.append(t.val); 
 				}
-				if (la.kind == 19 || la.kind == 67) {
+				if (la.kind == 19 || la.kind == 68) {
 					if (la.kind == 19) {
 						Get();
 					} else {
@@ -892,8 +896,8 @@ class Parser {
 					   haveOpenParen = true;
 					}
 					sb.append(t.val); 
-					if (la.kind == 45 || la.kind == 66) {
-						if (la.kind == 45) {
+					if (la.kind == 46 || la.kind == 67) {
+						if (la.kind == 46) {
 							Get();
 						} else {
 							Get();
@@ -907,8 +911,8 @@ class Parser {
 			} else if (StartOf(2)) {
 				SimpleSelector ss = simpleselector();
 				sb.append("(").append(ss).append(")"); 
-			} else SynErr(85);
-			Expect(33);
+			} else SynErr(90);
+			Expect(34);
 		}
 		pseudo = sb.toString(); 
 		return pseudo;
@@ -919,23 +923,23 @@ class Parser {
 		MediaQuery m = new MediaQuery("all");
 		UrlTerm trm;
 		
-		Expect(50);
+		Expect(51);
 		String url = URI();
 		trm = new UrlTerm(url); 
 		if (StartOf(10)) {
 			m = mediaQuery();
 		}
-		Expect(42);
+		Expect(43);
 		dir = new ImportDirective(trm, m); 
 		return dir;
 	}
 
 	CharsetDirective  charsetDirective() {
 		CharsetDirective  dir;
-		Expect(52);
+		Expect(53);
 		Term trm = term();
 		dir = new CharsetDirective(trm); 
-		Expect(42);
+		Expect(43);
 		return dir;
 	}
 
@@ -955,49 +959,51 @@ class Parser {
 			trm = new UrlTerm(val); 
 		} else if (la.kind == 28) {
 			Get();
-			Expect(31);
+			Expect(32);
 			ident = identity();
-			Expect(33);
+			Expect(34);
 			trm = new ConstTerm(ident); 
 		} else if (la.kind == 29) {
 			Get();
-			Expect(31);
+			Expect(32);
 			ident = identity();
-			Expect(33);
+			Expect(34);
 			trm = new ParamTerm(ident); 
-		} else if (la.kind == 73) {
+		} else if (la.kind == 30) {
 			Get();
-			Expect(31);
+			Expect(32);
 			ident = identity();
-			Expect(33);
+			Expect(34);
 			trm = new PropertyTerm(ident); 
 		} else if (la.kind == 2) {
 			ident = atReference();
 			trm = new AtReferenceTerm(ident); 
-		} else if (la.kind == 30) {
+		} else if (la.kind == 31) {
 			Get();
-			Expect(31);
+			Expect(32);
 			Selector s = selector();
-			Expect(33);
+			Expect(34);
 			trm = new RuleSetClassReferenceTerm(s); 
-		} else if (la.kind == 74) {
+		} else if (la.kind == 79) {
 			Get();
 			ident = identity();
 			trm = new UnicodeTerm("U\\" + ident); 
-		} else if (la.kind == 56) {
+		} else if (la.kind == 57) {
 			val = HexValue();
 			trm = new HexTerm(val); 
-		} else if (la.kind == 23 || la.kind == 58) {
+		} else if (la.kind == 59 || la.kind == 78) {
 			expression = calculation();
 			trm = new CalculationTerm(expression); 
+		} else if (StartOf(11)) {
+			trm = literalCalculation();
 		} else if (StartOf(5)) {
 			ident = identity();
 			String trmValue = ident; 
-			while (la.kind == 32 || la.kind == 57) {
-				if (la.kind == 32) {
+			while (la.kind == 33 || la.kind == 58) {
+				if (la.kind == 33) {
 					Get();
 					trmValue += t.val; 
-					if (la.kind == 32) {
+					if (la.kind == 33) {
 						Get();
 						trmValue += t.val; 
 					}
@@ -1011,18 +1017,18 @@ class Parser {
 				}
 			}
 			trm = new StringTerm(trmValue); 
-			if (la.kind == 31 || la.kind == 41) {
-				if (la.kind == 31) {
+			if (la.kind == 32 || la.kind == 42) {
+				if (la.kind == 32) {
 					Get();
 					exp = expr();
 					trm = new FunctionTerm(trm.toString(), exp); 
-					Expect(33);
+					Expect(34);
 				} else {
 					Get();
 					ClassReferenceTerm.Builder cls = new ClassReferenceTerm.Builder(trm.toString());
 					Declaration dec;
 					
-					if (StartOf(11)) {
+					if (StartOf(12)) {
 						if (isDeclaration()) {
 							dec = declaration();
 							cls.addArgument(dec); 
@@ -1030,24 +1036,24 @@ class Parser {
 							Expression arg = expr();
 							cls.addArgument(new Declaration("", arg)); 
 						}
-						while (la.kind == 42) {
+						while (la.kind == 43) {
 							Get();
 							if (isDeclaration()) {
 								dec = declaration();
 								cls.addArgument(dec); 
-							} else if (StartOf(11)) {
+							} else if (StartOf(12)) {
 								Expression arg = expr();
 								cls.addArgument(new Declaration("", arg)); 
-							} else SynErr(86);
+							} else SynErr(91);
 						}
 					}
-					Expect(43);
+					Expect(44);
 					trm = cls.build(); 
 				}
 			}
-		} else if (StartOf(12)) {
-			if (la.kind == 45 || la.kind == 66) {
-				if (la.kind == 66) {
+		} else if (StartOf(13)) {
+			if (la.kind == 46 || la.kind == 67) {
+				if (la.kind == 67) {
 					Get();
 					val = "-"; 
 				} else {
@@ -1059,16 +1065,16 @@ class Parser {
 				Get();
 			} else if (la.kind == 4) {
 				Get();
-			} else SynErr(87);
+			} else SynErr(92);
 			val += t.val; trm = new NumberTerm(Double.parseDouble(val)); 
 			if (endOfBlock()) {
 				trm = ((NumberTerm) trm).withValue(Double.parseDouble(val)); 
-			} else if (StartOf(13)) {
+			} else if (StartOf(14)) {
 				if (la.val.equalsIgnoreCase("n")) {
 					Expect(19);
 					val += t.val; 
-					if (la.kind == 45 || la.kind == 66) {
-						if (la.kind == 45) {
+					if (la.kind == 46 || la.kind == 67) {
+						if (la.kind == 46) {
 							Get();
 							val += '+'; 
 						} else {
@@ -1079,10 +1085,10 @@ class Parser {
 						val += t.val; 
 					}
 					trm = new StringTerm(val); val = ""; 
-				} else if (la.kind == 75) {
+				} else if (la.kind == 80) {
 					Get();
 					trm = ((NumberTerm) trm).withUnit(Unit.Percent); 
-				} else if (StartOf(14)) {
+				} else if (StartOf(15)) {
 					if (isUnit()) {
 						ident = identity();
 						try {
@@ -1093,7 +1099,7 @@ class Parser {
 						}
 						
 					}
-				} else SynErr(88);
+				} else SynErr(93);
 				if (trm instanceof NumberTerm) {
 				   trm = ((NumberTerm) trm).withValue(Double.parseDouble(val));
 				}
@@ -1101,8 +1107,8 @@ class Parser {
 				    trm = new StringTerm(((StringTerm)trm).getValue() + val);
 				}
 				
-			} else SynErr(89);
-		} else SynErr(90);
+			} else SynErr(94);
+		} else SynErr(95);
 		return trm;
 	}
 
@@ -1111,7 +1117,7 @@ class Parser {
 		String ident = null;
 		String url = null;
 		
-		Expect(53);
+		Expect(54);
 		if (StartOf(5)) {
 			ident = identity();
 		}
@@ -1119,21 +1125,21 @@ class Parser {
 			url = URI();
 		} else if (la.kind == 5) {
 			url = QuotedString();
-		} else SynErr(91);
-		Expect(42);
+		} else SynErr(96);
+		Expect(43);
 		dir = new NamespaceDirective(ident, new UrlTerm(url)); 
 		return dir;
 	}
 
 	GenericDirective  genericDirective() {
 		GenericDirective  dir;
-		Expect(54);
+		Expect(55);
 		String ident = identity();
 		GenericDirective.Builder dirb = new GenericDirective.Builder();
 		dirb.setName("@" + ident);
 		
-		if (StartOf(11)) {
-			if (StartOf(11)) {
+		if (StartOf(12)) {
+			if (StartOf(12)) {
 				Expression exp = expr();
 				dirb.setExpression(exp); 
 			} else {
@@ -1141,7 +1147,7 @@ class Parser {
 				dirb.addMedium(m); 
 			}
 		}
-		if (la.kind == 36) {
+		if (la.kind == 37) {
 			Get();
 			while (StartOf(1)) {
 				if (StartOf(5)) {
@@ -1151,7 +1157,7 @@ class Parser {
 					    break;
 					}
 					
-					Expect(42);
+					Expect(43);
 				} else if (StartOf(2)) {
 					RuleSet rset = ruleset();
 					dirb.addRule(rset); 
@@ -1160,10 +1166,10 @@ class Parser {
 					dirb.addRule(dr); 
 				}
 			}
-			Expect(37);
-		} else if (la.kind == 42) {
+			Expect(38);
+		} else if (la.kind == 43) {
 			Get();
-		} else SynErr(92);
+		} else SynErr(97);
 		dir = dirb.build(); 
 		return dir;
 	}
@@ -1173,10 +1179,10 @@ class Parser {
 		Declaration.Builder decb = new Declaration.Builder(); 
 		String ident = identity();
 		decb.setName(ident); 
-		Expect(32);
+		Expect(33);
 		Expression exp = expr();
 		decb.setExpression(exp); 
-		if (la.kind == 68) {
+		if (la.kind == 69) {
 			Get();
 			Expect(21);
 			decb.setImportant(true); 
@@ -1193,12 +1199,12 @@ class Parser {
 		
 		ss = simpleselector();
 		selb.addSimpleSelector(ss); 
-		while (StartOf(15)) {
-			if (la.kind == 43 || la.kind == 45 || la.kind == 46) {
-				if (la.kind == 45) {
+		while (StartOf(16)) {
+			if (la.kind == 44 || la.kind == 46 || la.kind == 47) {
+				if (la.kind == 46) {
 					Get();
 					cb = Combinator.PrecededImmediatelyBy; 
-				} else if (la.kind == 43) {
+				} else if (la.kind == 44) {
 					Get();
 					cb = Combinator.ChildOf; 
 				} else {
@@ -1225,41 +1231,41 @@ class Parser {
 		if (StartOf(5)) {
 			ident = identity();
 			ssb.setElementName(ident); 
-		} else if (la.kind == 55) {
+		} else if (la.kind == 56) {
 			Get();
 			ssb.setElementName("*"); 
-		} else if (StartOf(16)) {
-			if (la.kind == 56) {
+		} else if (StartOf(17)) {
+			if (la.kind == 57) {
 				Get();
 				ident = identity();
 				ssb.setID(ident); 
-			} else if (la.kind == 57) {
+			} else if (la.kind == 58) {
 				Get();
 				ident = identity();
 				ssb.setClassName(ident); 
-			} else if (la.kind == 58) {
+			} else if (la.kind == 59) {
 				Attribute atb = attrib();
 				ssb.setAttribute(atb); 
 			} else {
 				String psd = pseudo();
 				ssb.setPseudo(psd); 
 			}
-		} else SynErr(93);
-		while (StartOf(16)) {
+		} else SynErr(98);
+		while (StartOf(17)) {
 			if (t.pos + t.val.length() < la.pos) {
 			   break;
 			}
 			SimpleSelector.Builder child = new SimpleSelector.Builder();
 			
-			if (la.kind == 56) {
+			if (la.kind == 57) {
 				Get();
 				ident = identity();
 				child.setID(ident); 
-			} else if (la.kind == 57) {
+			} else if (la.kind == 58) {
 				Get();
 				ident = identity();
 				child.setClassName(ident); 
-			} else if (la.kind == 58) {
+			} else if (la.kind == 59) {
 				Attribute atb = attrib();
 				child.setAttribute(atb); 
 			} else {
@@ -1280,37 +1286,37 @@ class Parser {
 		String quote;
 		String ident;
 		
-		Expect(58);
+		Expect(59);
 		ident = identity();
 		atbb.setOperand(ident); 
-		if (StartOf(17)) {
+		if (StartOf(18)) {
 			switch (la.kind) {
-			case 59: {
+			case 60: {
 				Get();
 				atbb.setOperator(AttributeOperator.Equals); 
 				break;
 			}
-			case 60: {
+			case 61: {
 				Get();
 				atbb.setOperator(AttributeOperator.InList); 
 				break;
 			}
-			case 61: {
+			case 62: {
 				Get();
 				atbb.setOperator(AttributeOperator.Hyphenated); 
 				break;
 			}
-			case 62: {
+			case 63: {
 				Get();
 				atbb.setOperator(AttributeOperator.EndsWith); 
 				break;
 			}
-			case 63: {
+			case 64: {
 				Get();
 				atbb.setOperator(AttributeOperator.BeginsWith); 
 				break;
 			}
-			case 64: {
+			case 65: {
 				Get();
 				atbb.setOperator(AttributeOperator.Contains); 
 				break;
@@ -1329,9 +1335,9 @@ class Parser {
 					Get();
 				}
 				atbb.setValue(t.val); 
-			} else SynErr(94);
+			} else SynErr(99);
 		}
-		Expect(65);
+		Expect(66);
 		atb = atbb.build(); 
 		return atb;
 	}
@@ -1341,7 +1347,7 @@ class Parser {
 		BooleanExpression left, right; BooleanOperation op; 
 		left = andExpression();
 		expr = left; 
-		while (la.kind == 70 || la.kind == 71) {
+		while (la.kind == 71 || la.kind == 72) {
 			op = orop();
 			right = andExpression();
 			expr = new BinaryBooleanExpression(op, expr, right); 
@@ -1352,13 +1358,13 @@ class Parser {
 	BooleanOperation  orop() {
 		BooleanOperation  op;
 		op = null; 
-		if (la.kind == 70) {
+		if (la.kind == 71) {
 			Get();
 			op = BooleanOperation.OR; 
-		} else if (la.kind == 71) {
+		} else if (la.kind == 72) {
 			Get();
 			op = BooleanOperation.XOR; 
-		} else SynErr(95);
+		} else SynErr(100);
 		return op;
 	}
 
@@ -1367,7 +1373,7 @@ class Parser {
 		BooleanExpression left, right;
 		left = notExpression();
 		expr = left; 
-		while (la.kind == 72) {
+		while (la.kind == 73) {
 			Get();
 			right = notExpression();
 			expr = new BinaryBooleanExpression(BooleanOperation.AND, expr, right); 
@@ -1378,29 +1384,29 @@ class Parser {
 	BooleanExpression  notExpression() {
 		BooleanExpression  expr;
 		BooleanExpression exp; expr = null; 
-		if (StartOf(18)) {
+		if (StartOf(19)) {
 			exp = primaryBooleanExpression();
 			expr = exp; 
-		} else if (la.kind == 68) {
+		} else if (la.kind == 69) {
 			Get();
 			exp = notExpression();
 			expr = new NotExpression(exp); 
-		} else SynErr(96);
+		} else SynErr(101);
 		return expr;
 	}
 
 	BooleanExpression  primaryBooleanExpression() {
 		BooleanExpression  expr;
 		expr = null; Term trm; BooleanExpression exp; 
-		if (la.kind == 31) {
+		if (la.kind == 32) {
 			Get();
 			exp = booleanExpression();
-			Expect(33);
+			Expect(34);
 			expr = exp; 
-		} else if (StartOf(11)) {
+		} else if (StartOf(12)) {
 			trm = term();
 			expr = new TermBooleanExpression(trm); 
-		} else SynErr(97);
+		} else SynErr(102);
 		return expr;
 	}
 
@@ -1415,7 +1421,7 @@ class Parser {
 		CalcExpression left, right; Operation op; 
 		left = multiplicativeExpression();
 		expr = left; 
-		while (la.kind == 45 || la.kind == 66) {
+		while (la.kind == 46 || la.kind == 67) {
 			op = addop();
 			right = multiplicativeExpression();
 			expr = new BinaryExpression(op, expr, right); 
@@ -1426,26 +1432,26 @@ class Parser {
 	Operation  addop() {
 		Operation  op;
 		op = null; 
-		if (la.kind == 45) {
+		if (la.kind == 46) {
 			Get();
 			op = Operation.Add; 
-		} else if (la.kind == 66) {
+		} else if (la.kind == 67) {
 			Get();
 			op = Operation.Subtract; 
-		} else SynErr(98);
+		} else SynErr(103);
 		return op;
 	}
 
 	Operation  mulop() {
 		Operation  op;
 		op = null; 
-		if (la.kind == 55) {
+		if (la.kind == 56) {
 			Get();
 			op = Operation.Multiply; 
-		} else if (la.kind == 69) {
+		} else if (la.kind == 70) {
 			Get();
 			op = Operation.Divide; 
-		} else SynErr(99);
+		} else SynErr(104);
 		return op;
 	}
 
@@ -1454,7 +1460,7 @@ class Parser {
 		CalcExpression left, right; Operation op; 
 		left = termExpression();
 		expr = left; 
-		while (la.kind == 55 || la.kind == 69) {
+		while (la.kind == 56 || la.kind == 70) {
 			op = mulop();
 			right = termExpression();
 			expr = new BinaryExpression(op, expr, right); 
@@ -1465,35 +1471,64 @@ class Parser {
 	CalcExpression  termExpression() {
 		CalcExpression  expr;
 		expr = null; Term trm; CalcExpression exp; 
-		if (la.kind == 66) {
+		if (la.kind == 67) {
 			Get();
 			exp = termExpression();
 			expr = new NegationExpression(exp); 
-		} else if (la.kind == 31) {
+		} else if (la.kind == 32) {
 			Get();
 			exp = lengthExpression();
-			Expect(33);
+			Expect(34);
 			expr = exp; 
-		} else if (StartOf(11)) {
+		} else if (StartOf(12)) {
 			trm = term();
 			expr = new TermExpression(trm); 
-		} else SynErr(100);
+		} else SynErr(105);
 		return expr;
+	}
+
+	CalculationLiteralTerm  literalCalculation() {
+		CalculationLiteralTerm  trm;
+		CalcExpression expr = null;
+		String prefix = ""; 
+		if (StartOf(20)) {
+			if (la.kind == 23) {
+				Get();
+			} else if (la.kind == 74) {
+				Get();
+			} else if (la.kind == 75) {
+				Get();
+			} else if (la.kind == 76) {
+				Get();
+			} else {
+				Get();
+			}
+			prefix = t.val.replace("calc", ""); 
+			Expect(32);
+			expr = lengthExpression();
+			Expect(34);
+		} else if (la.kind == 59) {
+			Get();
+			expr = lengthExpression();
+			Expect(66);
+		} else SynErr(106);
+		trm = new CalculationLiteralTerm(prefix, expr); 
+		return trm;
 	}
 
 	CalcExpression  calculation() {
 		CalcExpression  expr;
 		expr = null; 
-		if (la.kind == 23) {
+		if (la.kind == 78) {
 			Get();
-			Expect(31);
+			Expect(32);
 			expr = lengthExpression();
-			Expect(33);
-		} else if (la.kind == 58) {
+			Expect(34);
+		} else if (la.kind == 59) {
 			Get();
 			expr = lengthExpression();
-			Expect(65);
-		} else SynErr(101);
+			Expect(66);
+		} else SynErr(107);
 		return expr;
 	}
 
@@ -1502,7 +1537,7 @@ class Parser {
 		StringBuilder sb = new StringBuilder();
 		boolean found = false;
 		
-		Expect(56);
+		Expect(57);
 		sb.append(t.val); 
 		if (la.kind == 3) {
 			Get();
@@ -1510,7 +1545,7 @@ class Parser {
 		} else if (la.kind == 1) {
 			Get();
 			sb.append(t.val); found = true; 
-		} else SynErr(102);
+		} else SynErr(108);
 		if (!found && partOfHex(sb.toString())) {
 			Expect(1);
 			sb.append(t.val); 
