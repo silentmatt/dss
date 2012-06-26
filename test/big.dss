@@ -194,7 +194,7 @@ body .test {
         + after {
             g: h;
 			more more more {
-				property: @parameter;
+				prop: @parameter;
 			}
         }
     }

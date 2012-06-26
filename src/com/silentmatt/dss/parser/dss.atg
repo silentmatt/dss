@@ -188,6 +188,7 @@ identity<out String ident> =
         | "literal"
         | "const"
         | "param"
+        | "prop"
         | "ruleset"
     )   (. ident = t.val; .)
 .

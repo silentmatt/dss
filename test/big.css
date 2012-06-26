@@ -143,5 +143,5 @@ body .test {
 	g: h;
 }
 .test > nested + after more more more {
-	property: booyah;
+	prop: booyah;
 }
