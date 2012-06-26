@@ -2,7 +2,6 @@ package com.silentmatt.dss;
 
 import com.silentmatt.dss.term.FunctionTerm;
 import com.silentmatt.dss.term.NumberTerm;
-import java.text.DecimalFormat;
 
 /**
  * An RGB Color
@@ -23,8 +22,8 @@ public final class HSLColor extends Color {
      */
     public HSLColor(int hue, double saturation, double lightness) {
         this.hue = ((hue % 360) + 360) % 360;
-        this.saturation = clamp(saturation);
-        this.lightness = clamp(lightness);
+        this.saturation = clampFloat(saturation);
+        this.lightness = clampFloat(lightness);
         this.alpha = 1.0;
     }
 
@@ -38,13 +37,13 @@ public final class HSLColor extends Color {
      */
     public HSLColor(int hue, double saturation, double lightness, double alpha) {
         this.hue = ((hue % 360) + 360) % 360;
-        this.saturation = clamp(saturation);
-        this.lightness = clamp(lightness);
-        this.alpha = clamp(alpha);
+        this.saturation = clampFloat(saturation);
+        this.lightness = clampFloat(lightness);
+        this.alpha = clampFloat(alpha);
     }
 
     /**
-     * Congerts the color to an equivalent RGBFColor.
+     * Converts the color to an equivalent RGBFColor.
      *
      * @return The color in rgba(r%, g%, b%, a) format.
      */
@@ -101,11 +100,13 @@ public final class HSLColor extends Color {
      * @return the color in "hsla(h, s, l, a.aa)" format.
      */
     public String toHSLString() {
-        DecimalFormat df = new DecimalFormat("#.####");
-        if (alpha == 1.0) {
-            return "hsl(" + hue + ", " + df.format(saturation * 100.0) + "%, " + df.format(lightness * 100.0) + "%)";
+        if (areEquivalent(alpha, 1.0)) {
+            return "hsl(" + hue + "," + floatFormat.format(saturation * 100.0) + "%," + floatFormat.format(lightness * 100.0) + "%)";
         }
-        return "hsla(" + hue + ", " + df.format(saturation * 100.0) + "%, " + df.format(lightness * 100.0) + "%, " + df.format(alpha) + ")";
+        else if (areEquivalent(alpha, 0.0)) {
+            return "hsla(" + hue + "," + floatFormat.format(saturation * 100.0) + "%," + floatFormat.format(lightness * 100.0) + "%,0)";
+        }
+        return "hsla(" + hue + "," + floatFormat.format(saturation * 100.0) + "%," + floatFormat.format(lightness * 100.0) + "%," + floatFormat.format(alpha) + ")";
     }
 
     /**
@@ -147,10 +148,6 @@ public final class HSLColor extends Color {
         hash = 67 * hash + (int)(this.lightness * 100.0);
         hash = 67 * hash + (int)(this.alpha * 255.0);
         return hash;
-    }
-
-    private static double clamp(double c) {
-        return Math.min(Math.max(0, c), 1);
     }
 
     @Override
@@ -197,5 +194,10 @@ public final class HSLColor extends Color {
     @Override
     public RGBIColor toRGBColor() {
         return toRGBFColor().toRGBColor();
+    }
+
+    @Override
+    public HSLColor convertToType(Color c) {
+        return c.toHSLColor();
     }
 }

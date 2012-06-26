@@ -64,6 +64,7 @@ public final class Main {
         System.out.println("Watching file: " + dssFile);
 
         opts.setIncludeCallback(new URLCallback() {
+            @Override
             public void call(URL url) {
                 try {
                     if (url.toURI().getScheme().equalsIgnoreCase("file")) {
@@ -325,6 +326,7 @@ public final class Main {
     }
 
     private static class DssFilenameFilter implements FilenameFilter {
+        @Override
         public boolean accept(File directory, String filename) {
             return filename.toLowerCase().endsWith(".dss");
         }
@@ -355,7 +357,7 @@ public final class Main {
         }
     }
 
-    private static int testString(URL url, String dssString, String correct) {
+    private static int testString(URL url, String dssString, String correct, String minified) {
         String normalCSS = compile(url, dssString, false);
         if (normalCSS == null) {
             return 1;
@@ -377,7 +379,7 @@ public final class Main {
         if (!normalCSS.equals(correct)) {
             return 1;
         }
-        if (!decompressed.equals(correct)) {
+        if ((minified == null && !decompressed.equals(correct)) || (minified != null && !compressed.equals(minified))) {
             return 2;
         }
 
@@ -387,9 +389,11 @@ public final class Main {
     private static String testDssFile(URL url) {
         File cssFile;
         File dssFile;
+        File minFile;
         try {
             dssFile = new File(url.toURI());
             cssFile = new File(new File(url.toURI()).getAbsolutePath().replace(".dss", ".css"));
+            minFile = new File(new File(url.toURI()).getAbsolutePath().replace(".dss", ".min.css"));
             if (!cssFile.exists()) {
                 // HACK: This is an ugly way to do this...
                 throw new URISyntaxException("", "");
@@ -398,7 +402,8 @@ public final class Main {
             return "Could not find css file";
         }
 
-        switch (testString(url, readFile(dssFile), readFile(cssFile))) {
+        String min = minFile.exists() ? readFile(minFile) : null;
+        switch (testString(url, readFile(dssFile), readFile(cssFile), min)) {
         case 0:
             return "PASS";
         case 1:

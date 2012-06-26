@@ -24,17 +24,17 @@ public final class RGBIColor extends Color {
      * @param blue the blue channel, from [0, 255].
      */
     public RGBIColor(int red, int green, int blue) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
+        this.red = clampInt(red);
+        this.green = clampInt(green);
+        this.blue = clampInt(blue);
         this.alpha = 1.0;
         this.name = null;
     }
 
     protected RGBIColor(int red, int green, int blue, String name) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
+        this.red = clampInt(red);
+        this.green = clampInt(green);
+        this.blue = clampInt(blue);
         this.alpha = 1.0;
         this.name = name.toLowerCase();
     }
@@ -48,15 +48,15 @@ public final class RGBIColor extends Color {
      * @param alpha The alpha channel, from [0, 255].
      */
     public RGBIColor(int red, int green, int blue, double alpha) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-        this.alpha = alpha;
+        this.red = clampInt(red);
+        this.green = clampInt(green);
+        this.blue = clampInt(blue);
+        this.alpha = clampFloat(alpha);
         this.name = null;
     }
 
     /**
-     * Gets the color in CSS hexidecimal format. The alpha channel is ignored.
+     * Gets the color in CSS hexadecimal format. The alpha channel is ignored.
      *
      * @return The color in "#RRGGBB" format.
      */
@@ -75,10 +75,13 @@ public final class RGBIColor extends Color {
      * @return the color in "rgba(r, g, b, a.aa)" format.
      */
     public String toRGBString() {
-        if (alpha == 1.0) {
-            return "rgb(" + red + ", " + green + ", " + blue + ")";
+        if (areEquivalent(alpha, 1.0)) {
+            return "rgb(" + red + "," + green + "," + blue + ")";
         }
-        return "rgba(" + red + ", " + green + ", " + blue + ", " + alpha + ")";
+        else if (areEquivalent(alpha, 0.0)) {
+            return "rgba(" + red + "," + green + "," + blue + ",0)";
+        }
+        return "rgba(" + red + "," + green + "," + blue + "," + floatFormat.format(alpha) + ")";
     }
 
     /**
@@ -108,7 +111,7 @@ public final class RGBIColor extends Color {
      */
     @Override
     public String toString() {
-        return alpha == 1.0 ? toHexString() : toRGBString();
+        return areEquivalent(alpha, 1.0) ? toHexString() : toRGBString();
     }
 
     /**
@@ -183,5 +186,10 @@ public final class RGBIColor extends Color {
         else {
             return new HexTerm(toHexString());
         }
+    }
+
+    @Override
+    public RGBIColor convertToType(Color c) {
+        return c.toRGBColor();
     }
 }

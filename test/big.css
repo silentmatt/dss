@@ -99,9 +99,9 @@ body .test {
 	name: string(2n+3);
 	left: 720.0000000940125deg;
 	top: cos(4grad);
-	color: rgba(1, 2, 3, 0.4) !important;
+	color: rgba(1,2,3,0.4) !important;
 	color: #123;
-	background-color: rgba(1, 2, 3, 0.4);
+	background-color: rgba(1,2,3,0.4);
 }
 .with_layout > nested span, parent selector > nested span {
 	nested: value;

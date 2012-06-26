@@ -2,7 +2,6 @@ package com.silentmatt.dss;
 
 import com.silentmatt.dss.term.FunctionTerm;
 import com.silentmatt.dss.term.NumberTerm;
-import java.text.DecimalFormat;
 
 /**
  * An RGB Color
@@ -21,9 +20,9 @@ public final class RGBFColor extends Color {
      * @param blue the blue channel, from [0, 1].
      */
     public RGBFColor(double red, double green, double blue) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
+        this.red = clampFloat(red);
+        this.green = clampFloat(green);
+        this.blue = clampFloat(blue);
         this.alpha = 1.0;
     }
 
@@ -36,9 +35,9 @@ public final class RGBFColor extends Color {
      * @param alpha The alpha channel, from [0, 1].
      */
     public RGBFColor(double red, double green, double blue, double alpha) {
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
+        this.red = clampFloat(red);
+        this.green = clampFloat(green);
+        this.blue = clampFloat(blue);
         this.alpha = alpha;
     }
 
@@ -48,11 +47,13 @@ public final class RGBFColor extends Color {
      * @return the color in "rgba(r%, g%, b%, a.aa)" format.
      */
     public String toRGBString() {
-        DecimalFormat df = new DecimalFormat("#.####");
-        if (alpha == 1.0) {
-            return "rgb(" + df.format(red * 100.0) + "%, " + df.format(green * 100.0) + "%, " + df.format(blue * 100.0) + "%)";
+        if (areEquivalent(alpha, 1.0)) {
+            return "rgb(" + floatFormat.format(red * 100.0) + "%," + floatFormat.format(green * 100.0) + "%," + floatFormat.format(blue * 100.0) + "%)";
         }
-        return "rgba(" + df.format(red * 100.0) + "%, " + df.format(green * 100.0) + "%, " + df.format(blue * 100.0) + "%, " + df.format(alpha) + ")";
+        else if (areEquivalent(alpha, 0.0)) {
+            return "rgba(" + floatFormat.format(red * 100.0) + "%," + floatFormat.format(green * 100.0) + "%," + floatFormat.format(blue * 100.0) + "%,0)";
+        }
+        return "rgba(" + floatFormat.format(red * 100.0) + "%," + floatFormat.format(green * 100.0) + "%," + floatFormat.format(blue * 100.0) + "%," + floatFormat.format(alpha) + ")";
     }
 
     /**
@@ -185,5 +186,10 @@ public final class RGBFColor extends Color {
     @Override
     public RGBIColor toRGBColor() {
         return new RGBIColor((int)Math.round(red * 255), (int)Math.round(green * 255), (int)Math.round(blue * 255), alpha);
+    }
+
+    @Override
+    public RGBFColor convertToType(Color c) {
+        return c.toRGBFColor();
     }
 }

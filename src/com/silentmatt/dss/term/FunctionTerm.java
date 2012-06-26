@@ -320,7 +320,7 @@ public final class FunctionTerm extends Term {
                 if (!(args.size() == 1 && args.get(0).isColor())) {
                     return function.toExpression();
                 }
-                return args.get(0).toColor().toRGBFColor().toTerm().toExpression();
+                return args.get(0).toColor().toRGBColor().toTerm().toExpression();
             }
         });
         builtinFunctions.put("alpha", new Function() {
@@ -384,7 +384,11 @@ public final class FunctionTerm extends Term {
                 }
             }
 
-            return call(f, b, a).toTerm().toExpression();
+            Color result = call(f, b, a);
+            if (f.getClass() == b.getClass()) {
+                result = f.convertToType(result);
+            }
+            return result.toTerm().toExpression();
         }
     }
 
@@ -420,7 +424,7 @@ public final class FunctionTerm extends Term {
                 }
             }
 
-            return call(toOverlay, color.toColor(), a).toTerm().toExpression();
+            return color.toColor().convertToType(call(toOverlay, color.toColor(), a)).toTerm().toExpression();
         }
 
     }
@@ -472,7 +476,7 @@ public final class FunctionTerm extends Term {
             }
 
             //HSLColor c = color.toColor().toHSLColor();
-            return calculate(color.toColor(), toScalar((NumberTerm) amount)).toTerm().toExpression();
+            return color.toColor().convertToType(calculate(color.toColor(), toScalar((NumberTerm) amount))).toTerm().toExpression();
         }
     }
 
@@ -523,16 +527,14 @@ public final class FunctionTerm extends Term {
     private static class FadeIn extends ColorScalarFunction {
         @Override
         protected Color calculate(Color c, double scalar) {
-            HSLColor hsl = c.toHSLColor();
-            return new HSLColor(hsl.getHue(), hsl.getSaturation(), hsl.getLightness(), hsl.getAlpha() + scalar);
+            return c.withAlpha(c.getAlpha() + scalar);
         }
     }
 
     private static class FadeOut extends ColorScalarFunction {
         @Override
         protected Color calculate(Color c, double scalar) {
-            HSLColor hsl = c.toHSLColor();
-            return new HSLColor(hsl.getHue(), hsl.getSaturation(), hsl.getLightness(), hsl.getAlpha()- scalar);
+            return c.withAlpha(c.getAlpha()- scalar);
         }
     }
 

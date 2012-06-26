@@ -2,6 +2,7 @@ package com.silentmatt.dss;
 
 import com.silentmatt.dss.term.Term;
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -227,4 +228,20 @@ public abstract class Color {
     public abstract Color withAlpha(double a);
 
     public abstract Term toTerm();
+
+    public abstract Color convertToType(Color c);
+
+    protected static double clampFloat(double c) {
+        return Math.min(Math.max(0.0, c), 1.0);
+    }
+
+    protected static int clampInt(int c) {
+        return Math.min(Math.max(0, c), 255);
+    }
+
+    protected static final DecimalFormat floatFormat = new DecimalFormat("#.####");
+
+    protected static boolean areEquivalent(double a, double b) {
+        return floatFormat.format(a).equals(floatFormat.format(b));
+    }
 }
