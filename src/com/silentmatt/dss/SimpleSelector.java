@@ -18,7 +18,7 @@ import com.silentmatt.dss.css.CssSimpleSelector;
  * @author Matthew Crumley
  */
 @Immutable
-public final class SimpleSelector implements Cloneable {
+public final class SimpleSelector {
     public static class Builder {
         private Combinator combinator = Combinator.None;
         private String elementName;

@@ -1,7 +1,6 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.EvaluationState;
-import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssNamespaceDirective;

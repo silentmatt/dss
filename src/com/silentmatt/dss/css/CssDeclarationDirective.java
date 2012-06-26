@@ -43,12 +43,12 @@ public abstract class CssDeclarationDirective extends CssRule {
         StringBuilder txt = new StringBuilder("{");
 
         for (CssDeclaration dec : declarations) {
-            txt.append("\n\t" + start);
+            txt.append("\n\t").append(start);
             txt.append(dec.toString());
             txt.append(";");
         }
 
-        txt.append("\n" + start + "}");
+        txt.append("\n").append(start).append("}");
 
         return txt.toString();
     }

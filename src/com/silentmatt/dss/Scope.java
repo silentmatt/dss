@@ -59,7 +59,7 @@ public class Scope<T> implements Map<String, T> {
     public final String toString() {
         StringBuilder sb = new StringBuilder();
         for (Entry<String, T> e : entrySet()) {
-            sb.append(e.getKey() + ": " + e.getValue()).append("\n");
+            sb.append(e.getKey()).append(": ").append(e.getValue()).append("\n");
         }
         return sb.toString();
     }

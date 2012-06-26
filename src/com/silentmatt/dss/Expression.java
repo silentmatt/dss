@@ -16,7 +16,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 @Immutable
-public final class Expression implements Cloneable {
+public final class Expression {
     public static class Builder
     {
         private final List<Term> terms = new ArrayList<Term>();

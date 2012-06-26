@@ -86,7 +86,7 @@ public class CssRuleSet extends CssRule {
             String dirString = dir.toString(compact, nesting + 1);
             if (dirString.length() > 0) {
                 if (!compact) {
-                    txt.append("\n\t" + start);
+                    txt.append("\n\t").append(start);
                 }
                 txt.append(dirString);
             }
@@ -95,7 +95,7 @@ public class CssRuleSet extends CssRule {
         int count = 0;
         for (CssDeclaration dec : declarations) {
             if (!compact) {
-                txt.append("\n\t" + start);
+                txt.append("\n\t").append(start);
             }
             txt.append(dec.toString(compact));
             ++count;
@@ -105,7 +105,7 @@ public class CssRuleSet extends CssRule {
         }
 
         if (!compact) {
-            txt.append("\n" + start);
+            txt.append("\n").append(start);
         }
         txt.append("}");
 

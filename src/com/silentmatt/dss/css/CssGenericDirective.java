@@ -96,7 +96,7 @@ public class CssGenericDirective extends CssRule {
         first = true;
         for (CssDeclaration dec : declarations) {
             if (first) { first = false; } else { txt.append(";"); }
-            txt.append("\n\t" + start);
+            txt.append("\n\t").append(start);
             txt.append(dec.toString());
         }
 

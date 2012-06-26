@@ -1,11 +1,11 @@
 package com.silentmatt.dss.parser;
 
-import java.util.*;
 import com.silentmatt.dss.*;
-import com.silentmatt.dss.directive.*;
-import com.silentmatt.dss.term.*;
 import com.silentmatt.dss.bool.*;
 import com.silentmatt.dss.calc.*;
+import com.silentmatt.dss.directive.*;
+import com.silentmatt.dss.term.*;
+import java.util.*;
 
 class Parser {
 	public static final int _EOF = 0;
@@ -179,7 +179,7 @@ class Parser {
 		Selector sel;
 		List<Declaration> decs;
 		Rule dir;
-		Combinator cb = Combinator.Descendant;
+		Combinator cb;
 		
 		sel = selector();
 		rsetb.addSelector(sel); 
@@ -211,9 +211,6 @@ class Parser {
 				}
 				if (t.pos + t.val.length() == la.pos) {
 				   cb = Combinator.None;
-				}
-				else {
-				    cb = Combinator.Descendant;
 				}
 				
 				if (la.kind == 43 || la.kind == 45 || la.kind == 46) {
@@ -632,9 +629,6 @@ class Parser {
 				if (t.pos + t.val.length() == la.pos) {
 				   cb = Combinator.None;
 				}
-				else {
-				    cb = Combinator.Descendant;
-				}
 				
 				if (la.kind == 43 || la.kind == 45 || la.kind == 46) {
 					if (la.kind == 45) {
@@ -685,7 +679,6 @@ class Parser {
 
 	IncludeDirective  includeDirective() {
 		IncludeDirective  dir;
-		dir = null;
 		boolean literal = false;
 		List<Declaration> declarations = new ArrayList<Declaration>();
 		UrlTerm includeUrl = null;

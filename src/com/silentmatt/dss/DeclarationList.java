@@ -51,7 +51,7 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
     }
 
     public boolean contains(Object arg0) {
-        return list.contains(arg0);
+        return arg0 instanceof Declaration && list.contains((Declaration)arg0);
     }
 
     public Iterator<Declaration> iterator() {
@@ -323,14 +323,13 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
             public Iterator<String> iterator() {
                 return new Iterator<String>() {
                     final Iterator<String> it = keys.iterator();
-                    private String current = null;
 
                     public boolean hasNext() {
                         return it.hasNext();
                     }
 
                     public String next() {
-                        return current = it.next();
+                        return it.next();
                     }
 
                     public void remove() {
@@ -547,7 +546,7 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
 
             public boolean containsAll(Collection<?> arg0) {
                 for (Object o : arg0) {
-                    if (!contains(o)) {
+                    if (!(o instanceof Expression && contains((Expression)o))) {
                         return false;
                     }
                 }

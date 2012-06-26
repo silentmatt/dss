@@ -466,7 +466,7 @@ public final class FunctionTerm extends Term {
                 return function.toExpression();
             }
 
-            HSLColor c = color.toColor().toHSLColor();
+            //HSLColor c = color.toColor().toHSLColor();
             return calculate(color.toColor(), toScalar((NumberTerm) amount)).toTerm().toExpression();
         }
     }

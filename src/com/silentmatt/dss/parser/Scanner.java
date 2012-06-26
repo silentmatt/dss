@@ -1,10 +1,10 @@
 package com.silentmatt.dss.parser;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 class Token {
 	int kind;    // token kind
@@ -71,12 +71,13 @@ class Buffer {
 		b.file = null;
 	}
 
+	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
 		Close();
 	}
 
-	protected void Close() {
+	protected final void Close() {
 		if (file != null) {
 			try {
 				file.close();
@@ -121,7 +122,7 @@ class Buffer {
 		return bufPos + bufStart;
 	}
 
-	public void setPos(int value) {
+	public final void setPos(int value) {
 		if (value >= fileLen && stream != null) {
 			// Wanted position is after buffer and the stream
 			// is not seek-able e.g. network or console,
@@ -185,6 +186,7 @@ class Buffer {
 class UTF8Buffer extends Buffer {
 	UTF8Buffer(Buffer b) { super(b); }
 
+	@Override
 	public int Read() {
 		int ch;
 		do {
@@ -362,7 +364,7 @@ public class Scanner {
 		Init();
 	}
 	
-	void Init () {
+	final void Init () {
 		pos = -1; line = 1; col = 0;
 		oldEols = 0;
 		NextCh();

@@ -1,6 +1,5 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Immutable;
