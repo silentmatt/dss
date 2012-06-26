@@ -3,6 +3,7 @@ package com.silentmatt.dss.term;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.calc.CalcExpression;
 import com.silentmatt.dss.calc.CalculationException;
 import com.silentmatt.dss.calc.Value;
@@ -12,6 +13,7 @@ import com.silentmatt.dss.calc.Value;
  *
  * @author Matthew Crumley
  */
+@Immutable
 public class CalculationTerm extends Term {
     /**
      * The expression to evaluate.
@@ -24,14 +26,19 @@ public class CalculationTerm extends Term {
      * @param calculation The expression to evaluate
      */
     public CalculationTerm(CalcExpression calculation) {
-        super();
+        super(null);
         this.calculation = calculation;
     }
 
-    public CalculationTerm clone() {
-        CalculationTerm result = new CalculationTerm(calculation.clone());
-        result.setSeperator(getSeperator());
-        return result;
+    /**
+     * Constructs a CalculationTerm from an expression.
+     *
+     * @param sep The separator
+     * @param calculation The expression to evaluate
+     */
+    public CalculationTerm(Character sep, CalcExpression calculation) {
+        super(sep);
+        this.calculation = calculation;
     }
 
     /**
@@ -65,9 +72,9 @@ public class CalculationTerm extends Term {
     public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
         if (doCalculations) {
             // XXX: had "withParams ? state.getParameters() : null". Do we need a withParams flag?
-            calculation.substituteValues(state, container, withParams);
+            CalcExpression calcExp = calculation.withSubstitutedValues(state, container, withParams);
 
-            Value calc = calculation.calculateValue(state, container);
+            Value calc = calcExp.calculateValue(state, container);
             if (calc != null) {
                 try {
                     return calc.toTerm().toExpression();
@@ -79,5 +86,10 @@ public class CalculationTerm extends Term {
         }
 
         return toExpression();
+    }
+
+    @Override
+    public CalculationTerm withSeparator(Character separator) {
+        return new CalculationTerm(separator, calculation);
     }
 }

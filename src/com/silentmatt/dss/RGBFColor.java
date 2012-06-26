@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
  * An RGB Color
  * @author Matthew Crumley
  */
+@Immutable
 public final class RGBFColor extends Color {
     private final double red, green, blue, alpha;
 
@@ -127,16 +128,16 @@ public final class RGBFColor extends Color {
     }
 
     public FunctionTerm toTerm() {
-        Expression expr = new Expression();
-        NumberTerm r = new NumberTerm(red * 100);   r.setUnit(Unit.Percent);
-        NumberTerm g = new NumberTerm(green * 100); g.setUnit(Unit.Percent); g.setSeperator(',');
-        NumberTerm b = new NumberTerm(blue * 100);  b.setUnit(Unit.Percent); b.setSeperator(',');
-        NumberTerm a = new NumberTerm(alpha);       a.setUnit(Unit.None);    a.setSeperator(',');
-        expr.getTerms().add(r);
-        expr.getTerms().add(g);
-        expr.getTerms().add(b);
-        expr.getTerms().add(a);
-        return new FunctionTerm("rgba", expr);
+        Expression.Builder expr = new Expression.Builder();
+        NumberTerm r = new NumberTerm(null, red * 100, Unit.Percent);
+        NumberTerm g = new NumberTerm(',', green * 100, Unit.Percent);
+        NumberTerm b = new NumberTerm(',', blue * 100, Unit.Percent);
+        NumberTerm a = new NumberTerm(',', alpha, Unit.None);
+        expr.addTerm(r)
+            .addTerm(g)
+            .addTerm(b)
+            .addTerm(a);
+        return new FunctionTerm("rgba", expr.build());
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.Scope;
 import com.silentmatt.dss.css.CssRule;
@@ -13,14 +15,16 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
-public class DefineDirective extends DeclarationDirective {
+@Immutable
+public final class DefineDirective extends DeclarationDirective {
     private final boolean global;
 
-    public DefineDirective(List<Declaration> declarations, boolean global) {
+    public DefineDirective(DeclarationList declarations, boolean global) {
         super(declarations);
         this.global = global;
     }
 
+    @Override
     public String getName() {
         return "@define" + (global ? " global" : "");
     }

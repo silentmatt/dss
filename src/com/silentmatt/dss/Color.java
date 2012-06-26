@@ -11,6 +11,7 @@ import java.util.Map;
  * 
  * @author Matthew Crumley
  */
+@Immutable
 public abstract class Color {
     public static final Color AliceBlue = new RGBIColor(0xF0, 0xF8, 0xFF, "AliceBlue");
     public static final Color AntiqueWhite = new RGBIColor(0xFA, 0xEB, 0xD7, "AntiqueWhite");

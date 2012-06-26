@@ -6,6 +6,7 @@ import com.silentmatt.dss.css.CssRuleSet;
 import com.silentmatt.dss.util.JoinedSelectorList;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,7 +14,62 @@ import java.util.List;
  * 
  * @author Matthew Crumley
  */
+@Immutable
 public class RuleSet extends Rule {
+    public static class Builder {
+        private final List<Selector> selectors = new ArrayList<Selector>();
+        private final List<Rule> rules = new ArrayList<Rule>();
+        private final DeclarationBlock.Builder declarationBlock = new DeclarationBlock.Builder();
+
+        /**
+        * Adds a list of Declarations to the RuleSet.
+        *
+        * @param declarations The {@link List} of {@link Declaration}s to add.
+        */
+        public Builder addDeclarations(List<Declaration> declarations) {
+            declarationBlock.addDeclarations(declarations);
+            return this;
+        }
+
+        /**
+        * Adds a selector to the RuleSet.
+        *
+        * @param sel The {@link Selector} to add.
+        */
+        public Builder addSelector(Selector sel) {
+            selectors.add(sel);
+            return this;
+        }
+
+        /**
+        * Adds a nested RuleSet to this RuleSet.
+        *
+        * @param cb The {@link Combinator} to apply to the nested RuleSet's selectors.
+        * @param nested The {@link RuleSet} to nest inside this one.
+        */
+        public Builder addNestedRuleSet(Combinator cb, RuleSet nested) {
+            declarationBlock.addNestedRuleSet(cb, nested);
+            return this;
+        }
+
+        /**
+        * Adds a nested Rule to the RuleSet.
+        *
+        * The nested rule should be a DSS directive, not another rule set.
+        * Use {@link #addNestedRuleSet(Combinator, RuleSet)} for nesting RuleSets.
+        *
+        * @param directive The DSS rule to add to the RuleSet.
+        */
+        public Builder addRule(Rule directive) {
+            rules.add(directive);
+            return this;
+        }
+        
+        public RuleSet build() {
+            return new RuleSet(selectors, declarationBlock.build(), rules);
+        }
+    }
+
     private final List<Selector> selectors;
     private final List<Rule> rules;
     private final DeclarationBlock declarationBlock;
@@ -27,8 +83,8 @@ public class RuleSet extends Rule {
      */
     public RuleSet(List<Selector> selectors, DeclarationBlock block, List<Rule> rules) {
         this.declarationBlock = block;
-        this.selectors = selectors;
-        this.rules = rules;
+        this.selectors = Collections.unmodifiableList(selectors);
+        this.rules = Collections.unmodifiableList(rules);
     }
 
     /**
@@ -39,13 +95,6 @@ public class RuleSet extends Rule {
      */
     public RuleSet(List<Selector> selectors, DeclarationBlock block) {
         this(selectors, block, new ArrayList<Rule>());
-    }
-
-    /**
-     * Default Constructor.
-     */
-    public RuleSet() {
-        this(new ArrayList<Selector>(), new DeclarationBlock(), new ArrayList<Rule>());
     }
 
     /**
@@ -64,37 +113,6 @@ public class RuleSet extends Rule {
      */
     public List<Selector> getSelectors() {
         return selectors;
-    }
-
-    /**
-     * Adds a list of Declarations to the RuleSet.
-     *
-     * @param declarations The {@link List} of {@link Declaration}s to add.
-     */
-    public void addDeclarations(List<Declaration> declarations) {
-        declarationBlock.addDeclarations(declarations);
-    }
-
-    /**
-     * Adds a nested RuleSet to this RuleSet.
-     *
-     * @param cb The {@link Combinator} to apply to the nested RuleSet's selectors.
-     * @param nested The {@link RuleSet} to nest inside this one.
-     */
-    public void addNestedRuleSet(Combinator cb, RuleSet nested) {
-        declarationBlock.addNestedRuleSet(cb, nested);
-    }
-
-    /**
-     * Adds a nested Rule to the RuleSet.
-     *
-     * The nested rule should be a DSS directive, not another rule set.
-     * Use {@link #addNestedRuleSet(Combinator, RuleSet)} for nesting RuleSets.
-     *
-     * @param directive The DSS rule to add to the RuleSet.
-     */
-    public void addRule(Rule directive) {
-        rules.add(directive);
     }
 
     @Override
@@ -185,6 +203,7 @@ public class RuleSet extends Rule {
         return toString(0);
     }
 
+    @Override
     public String toString(int nesting) {
         String start = Rule.getIndent(nesting);
 
@@ -193,13 +212,13 @@ public class RuleSet extends Rule {
         txt.append(" {");
 
         for (Rule dir : getRules()) {
-            txt.append("\n\t" + start);
+            txt.append("\n\t").append(start);
             txt.append(dir.toString(nesting + 1));
         }
 
         txt.append(declarationBlock.innerString(nesting));
 
-        txt.append("\n" + start + "}");
+        txt.append("\n").append(start).append("}");
 
         return txt.toString();
     }

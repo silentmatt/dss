@@ -2,12 +2,14 @@ package com.silentmatt.dss.calc;
 
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.Immutable;
 
 /**
  * A CalcExpression that negates its operand.
  *
  * @author Matthew Crumley
  */
+@Immutable
 public class NegationExpression implements CalcExpression {
     private final CalcExpression expr;
 
@@ -20,11 +22,6 @@ public class NegationExpression implements CalcExpression {
         this.expr = expr;
     }
 
-    @Override
-    public NegationExpression clone() {
-        return new NegationExpression(expr);
-    }
-
     public Value calculateValue(EvaluationState state, DeclarationList container) {
         Value value = expr.calculateValue(state, container);
         if (value == null) {
@@ -33,8 +30,8 @@ public class NegationExpression implements CalcExpression {
         return value.negate();
     }
 
-    public void substituteValues(EvaluationState state, DeclarationList container, boolean withParams) {
-        expr.substituteValues(state, container, withParams);
+    public NegationExpression withSubstitutedValues(EvaluationState state, DeclarationList container, boolean withParams) {
+        return new NegationExpression(expr.withSubstitutedValues(state, container, withParams));
     }
 
     /**

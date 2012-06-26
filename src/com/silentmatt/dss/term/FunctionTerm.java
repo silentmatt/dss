@@ -6,6 +6,7 @@ import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Function;
 import com.silentmatt.dss.HSLColor;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.RGBFColor;
 import com.silentmatt.dss.RGBIColor;
 import com.silentmatt.dss.Unit;
@@ -20,23 +21,17 @@ import java.util.Map;
  *
  * @author Matthew Crumley
  */
-public class FunctionTerm extends Term {
+@Immutable
+public final class FunctionTerm extends Term {
     /**
      * The function name.
      */
-    private String name;
+    private final String name;
 
     /**
      * The parameters to the function.
      */
-    private Expression expression;
-
-    /**
-     * Default constructor.
-     */
-    public FunctionTerm() {
-        super();
-    }
+    private final Expression expression;
 
     /**
      * Constructs a FunctionTerm with a default name and parameters.
@@ -45,15 +40,22 @@ public class FunctionTerm extends Term {
      * @param expression The parameters
      */
     public FunctionTerm(String name, Expression expression) {
-        super();
+        super(null);
         this.name = name;
         this.expression = expression;
     }
 
-    public FunctionTerm clone() {
-        FunctionTerm result = new FunctionTerm(name, expression.clone());
-        result.setSeperator(getSeperator());
-        return result;
+    /**
+     * Constructs a FunctionTerm with a default name, separator, and parameters.
+     *
+     * @param sep The separator
+     * @param name The function name
+     * @param expression The parameters
+     */
+    public FunctionTerm(Character separator, String name, Expression expression) {
+        super(separator);
+        this.name = name;
+        this.expression = expression;
     }
 
     /**
@@ -66,30 +68,12 @@ public class FunctionTerm extends Term {
     }
 
     /**
-     * Sets the name of the function.
-     *
-     * @param Name The referenced function's name.
-     */
-    public void setName(String Name) {
-        this.name = Name;
-    }
-
-    /**
      * Gets the expression that is passed to the function.
      *
      * @return The function parameter expression.
      */
     public Expression getExpression() {
         return expression;
-    }
-
-    /**
-     * Sets the expression that is passed to the function.
-     *
-     * @param Expression The function parameter expression.
-     */
-    public void setExpression(Expression Expression) {
-        this.expression = Expression;
     }
 
     /**
@@ -289,8 +273,19 @@ public class FunctionTerm extends Term {
         if (result == null) {
             result = new FunctionTerm(getName(), argument).toExpression();
         }
-        result.getTerms().get(0).setSeperator(getSeperator());
-        return result;
+        //result.getTerms().get(0).setSeperator(getSeperator());
+        Expression.Builder resultBuilder = new Expression.Builder();
+        boolean first = true;
+        for (Term t : result.getTerms()) {
+            if (first) {
+                resultBuilder.addTerm(t.withSeparator(getSeperator()));
+                first = false;
+            }
+            else {
+                resultBuilder.addTerm(t);
+            }
+        }
+        return resultBuilder.build();
     }
 
     private static final Map<String, Function> builtinFunctions = new HashMap<String, Function>();
@@ -336,6 +331,11 @@ public class FunctionTerm extends Term {
                 return args.get(0).toColor().withAlpha(alpha).toTerm().toExpression();
             }
         });
+    }
+
+    @Override
+    public FunctionTerm withSeparator(Character separator) {
+        return new FunctionTerm(separator, getName(), getExpression());
     }
 
     private static class ComposeFunction implements Function {

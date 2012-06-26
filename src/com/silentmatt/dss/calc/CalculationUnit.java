@@ -1,5 +1,6 @@
 package com.silentmatt.dss.calc;
 
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Unit;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
  * Represents a CSS unit that can be used in calculations.
  * @author Matthew Crumley
  */
+@Immutable
 public final class CalculationUnit implements Comparable<CalculationUnit> {
     /**
      * a scalar (dimensionless) unit

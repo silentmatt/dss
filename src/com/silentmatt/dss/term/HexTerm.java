@@ -1,15 +1,17 @@
 package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.Color;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.RGBIColor;
 import java.util.Locale;
 
 /**
- * A hexidecimal value, usually a color.
+ * A hexadecimal value, usually a color.
  *
  * @author Matthew Crumley
  */
-public class HexTerm extends Term {
+@Immutable
+public final class HexTerm extends Term {
     /**
      * The hex digits.
      */
@@ -18,22 +20,29 @@ public class HexTerm extends Term {
     /**
      * Constructs a HexTerm from a String.
      *
-     * @param value The hexidecimal digits. The first character should be a '#'
-     * and the remaining characters <em>should</em> be valid hexidecimal digits.
+     * @param value The hexadecimal digits. The first character should be a '#'
+     * and the remaining characters <em>should</em> be valid hexadecimal digits.
      * This isn't enforced currently, but it may be in the future.
      */
     public HexTerm(String value) {
-        super();
+        super(null);
         this.value = value;
     }
 
-    public HexTerm clone() {
-        HexTerm result = new HexTerm(value);
-        result.setSeperator(getSeperator());
-        return result;
-    }
     /**
-     * Gets the hexidecimal digits.
+     * Constructs a HexTerm from a String.
+     *
+     * @param value The hexadecimal digits. The first character should be a '#'
+     * and the remaining characters <em>should</em> be valid hexadecimal digits.
+     * This isn't enforced currently, but it may be in the future.
+     */
+    public HexTerm(Character sep, String value) {
+        super(sep);
+        this.value = value;
+    }
+
+    /**
+     * Gets the hexadecimal digits.
      *
      * @return A String of the form "#digits"
      */
@@ -87,5 +96,10 @@ public class HexTerm extends Term {
         catch (NumberFormatException ex) {
             return null;
         }
+    }
+
+    @Override
+    public HexTerm withSeparator(Character separator) {
+        return new HexTerm(separator, getValue());
     }
 }

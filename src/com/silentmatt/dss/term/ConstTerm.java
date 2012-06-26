@@ -3,21 +3,21 @@ package com.silentmatt.dss.term;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 
 /**
  * A constant reference.
  *
  * @author Matthew Crumley
  */
-public class ConstTerm extends ReferenceTerm {
+@Immutable
+public final class ConstTerm extends ReferenceTerm {
     public ConstTerm(String name) {
         super(name);
     }
 
-    public ConstTerm clone() {
-        ConstTerm result = new ConstTerm(getName());
-        result.setSeperator(getSeperator());
-        return result;
+    public ConstTerm(Character sep, String name) {
+        super(sep, name);
     }
 
     /**
@@ -38,8 +38,9 @@ public class ConstTerm extends ReferenceTerm {
         }
         Expression result = state.getVariables().get(getName());
         if (result != null && result.getTerms().size() > 0) {
-            result = result.clone();
-            result.getTerms().get(0).setSeperator(getSeperator());
+            Expression.Builder resultb = new Expression.Builder(result);
+            resultb.getTerms().set(0, resultb.getTerms().get(0).withSeparator(getSeperator()));
+            result = resultb.build();
         }
         return result;
     }
@@ -47,5 +48,10 @@ public class ConstTerm extends ReferenceTerm {
     @Override
     public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
         return evaluate(state, container);
+    }
+
+    @Override
+    public ConstTerm withSeparator(Character separator) {
+        return new ConstTerm(separator, getName());
     }
 }

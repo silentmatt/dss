@@ -9,6 +9,7 @@ import com.silentmatt.dss.term.Term;
  * An RGB Color
  * @author Matthew Crumley
  */
+@Immutable
 public final class RGBIColor extends Color {
     private final int red, green, blue;
     private final double alpha;
@@ -166,16 +167,16 @@ public final class RGBIColor extends Color {
     @Override
     public Term toTerm() {
         if (alpha != 1.0) {
-            Expression expr = new Expression();
+            Expression.Builder expr = new Expression.Builder();
             NumberTerm r = new NumberTerm(red);
-            NumberTerm g = new NumberTerm(green); g.setSeperator(',');
-            NumberTerm b = new NumberTerm(blue);  b.setSeperator(',');
-            NumberTerm a = new NumberTerm(alpha); a.setSeperator(',');
-            expr.getTerms().add(r);
-            expr.getTerms().add(g);
-            expr.getTerms().add(b);
-            expr.getTerms().add(a);
-            return new FunctionTerm("rgba", expr);
+            NumberTerm g = new NumberTerm(green); g = g.withSeparator(',');
+            NumberTerm b = new NumberTerm(blue);  b = b.withSeparator(',');
+            NumberTerm a = new NumberTerm(alpha); a = a.withSeparator(',');
+            expr.addTerm(r)
+                .addTerm(g)
+                .addTerm(b)
+                .addTerm(a);
+            return new FunctionTerm("rgba", expr.build());
         }
         else {
             return new HexTerm(toHexString());

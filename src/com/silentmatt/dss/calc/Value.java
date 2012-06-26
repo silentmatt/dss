@@ -1,15 +1,17 @@
 package com.silentmatt.dss.calc;
 
-import com.silentmatt.dss.term.Term;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Unit;
 import com.silentmatt.dss.term.NumberTerm;
+import com.silentmatt.dss.term.Term;
 
 /**
  * Represents a dimensioned value.
  *
  * @author Matthew Crumley
  */
-public class Value {
+@Immutable
+public final class Value {
     private final double scalar;
     private final CalculationUnit unit;
 
@@ -145,7 +147,7 @@ public class Value {
         if (cssUnit == null) {
             throw new CalculationException("not a valid CSS unit: " + toString());
         }
-        term.setUnit(cssUnit);
+        term = term.withUnit(cssUnit);
         return term;
     }
 

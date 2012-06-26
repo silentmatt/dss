@@ -1,18 +1,21 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.bool.BooleanExpression;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.css.CssRuleList;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 /**
  *
  * @author Matthew Crumley
  */
-public class IfDirective extends Rule {
+@Immutable
+public final class IfDirective extends Rule {
     private final BooleanExpression condition;
     private final List<Rule> ifRules;
     private final List<Rule> elseRules;
@@ -20,8 +23,8 @@ public class IfDirective extends Rule {
     public IfDirective(BooleanExpression condition, List<Rule> ifRules, List<Rule> elseRules) {
         super();
         this.condition = condition;
-        this.ifRules = ifRules;
-        this.elseRules = elseRules;
+        this.ifRules = Collections.unmodifiableList(ifRules);
+        this.elseRules = elseRules != null ? Collections.unmodifiableList(elseRules) : null;
     }
 
     public BooleanExpression getCondition() {
@@ -41,6 +44,7 @@ public class IfDirective extends Rule {
         return toString(0);
     }
 
+    @Override
     public String toString(int nesting) {
         String start = Rule.getIndent(nesting);
 

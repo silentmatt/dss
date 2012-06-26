@@ -1,12 +1,14 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Rule;
 
 /**
  *
  * @author Matthew Crumley
  */
+@Immutable
 public abstract class ExpressionDirective extends Rule {
     private final Expression expression;
 
@@ -19,6 +21,7 @@ public abstract class ExpressionDirective extends Rule {
         return expression;
     }
 
+    @Override
     public String toString(int nesting) {
         return Rule.getIndent(nesting) + toString();
     }

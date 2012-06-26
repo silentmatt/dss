@@ -3,12 +3,14 @@ package com.silentmatt.dss.term;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 
 /**
  * A constant or parameter reference.
  *
  * @author Matthew Crumley
  */
+@Immutable
 public abstract class ReferenceTerm extends Term {
     /**
      * The name of the reference.
@@ -22,7 +24,19 @@ public abstract class ReferenceTerm extends Term {
      * @param name The constant/parameter/whatever to reference.
      */
     public ReferenceTerm(String name) {
-        super();
+        super(null);
+        this.name = name;
+    }
+
+    /**
+     * Constructor.
+     * Sets the name of the reference.
+     *
+     * @param sep The separator
+     * @param name The constant/parameter/whatever to reference.
+     */
+    public ReferenceTerm(Character sep, String name) {
+        super(sep);
         this.name = name;
     }
 

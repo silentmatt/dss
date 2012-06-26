@@ -3,6 +3,7 @@ package com.silentmatt.dss.calc;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.FunctionTerm;
 import com.silentmatt.dss.term.NumberTerm;
@@ -16,8 +17,9 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
+@Immutable
 public class TermExpression implements CalcExpression {
-    private Term value;
+    private final Term value;
 
     /**
      * Constructs a TermExpression from a DSS Term.
@@ -28,13 +30,8 @@ public class TermExpression implements CalcExpression {
         this.value = value;
     }
 
-    @Override
-    public TermExpression clone() {
-        return new TermExpression(value.clone());
-    }
-
     public Value calculateValue(EvaluationState state, DeclarationList container) {
-        substituteValues(state, container, true);
+        Term value = withSubstitutedValues(state, container, true).value;
         if (value instanceof NumberTerm) {
             return new Value((NumberTerm) value);
         }
@@ -69,20 +66,23 @@ public class TermExpression implements CalcExpression {
         return this.value.toString();
     }
 
-    public void substituteValues(EvaluationState state, DeclarationList container, boolean withParams) {
+    public TermExpression withSubstitutedValues(EvaluationState state, DeclarationList container, boolean withParams) {
         if (value instanceof ReferenceTerm && !(!withParams && value instanceof ParamTerm)) {
             ReferenceTerm function = (ReferenceTerm) value;
             Expression variable = function.evaluate(state, container);
             if (variable == null) {
                 state.getErrors().SemErr("missing value: " + function.toString());
-                return;
+                return this;
             }
             if (variable.getTerms().size() > 1) {
                 state.getErrors().SemErr("not a single value: " + function.toString());
-                return;
+                return this;
             }
 
-            value = variable.getTerms().get(0);
+            return new TermExpression(variable.getTerms().get(0));
+        }
+        else {
+            return this;
         }
     }
 }

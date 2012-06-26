@@ -12,6 +12,7 @@ import java.util.List;
  * 
  * @author Matthew Crumley
  */
+@Immutable
 public abstract class Rule {
     /**
      * Gets the string representation of the Rule.

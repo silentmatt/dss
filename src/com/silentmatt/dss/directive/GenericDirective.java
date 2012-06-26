@@ -5,6 +5,7 @@ import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationBlock;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Medium;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssGenericDirective;
@@ -12,53 +13,75 @@ import com.silentmatt.dss.css.CssMedium;
 import com.silentmatt.dss.css.CssRule;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  *
  * @author Matthew Crumley
  */
-public class GenericDirective extends Rule {
-    private final DeclarationBlock declarations = new DeclarationBlock();
-    private final List<Rule> rules = new ArrayList<Rule>();
-    private final List<Medium> mediums = new ArrayList<Medium>();
-    private String name;
-    private Expression expression;
+@Immutable
+public final class GenericDirective extends Rule {
+    public static class Builder {
+        private final DeclarationBlock.Builder declarations = new DeclarationBlock.Builder();
+        private final List<Rule> rules = new ArrayList<Rule>();
+        private final List<Medium> mediums = new ArrayList<Medium>();
+        private String name;
+        private Expression expression;
+        
+        public void setName(String name) {
+            this.name = name;
+        }
+        
+        public void addMedium(Medium medium) {
+            this.mediums.add(medium);
+        }
 
-    public void addRule(Rule rule) {
-        this.rules.add(rule);
+        public void setExpression(Expression expression) {
+            this.expression = expression;
+        }
+
+        public void addDeclaration(Declaration declaration) {
+            this.declarations.addDeclaration(declaration);
+        }
+
+        public void addRule(Rule rule) {
+            this.rules.add(rule);
+        }
+        
+        public GenericDirective build() {
+            return new GenericDirective(declarations.build(), rules, mediums, name, expression);
+        }
+    }
+
+    private final DeclarationBlock declarations;
+    private final List<Rule> rules;
+    private final List<Medium> mediums;
+    private final String name;
+    private final Expression expression;
+
+    public GenericDirective(DeclarationBlock declarations, List<Rule> rules, List<Medium> mediums, String name, Expression expression) {
+        this.declarations = declarations;
+        this.rules = Collections.unmodifiableList(rules);
+        this.mediums = Collections.unmodifiableList(mediums);
+        this.name = name;
+        this.expression = expression;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public List<Medium> getMediums() {
         return mediums;
-    }
-
-    public void addMedium(Medium medium) {
-        this.mediums.add(medium);
     }
 
     public Expression getExpression() {
         return expression;
     }
 
-    public void setExpression(Expression expression) {
-        this.expression = expression;
-    }
-
     public DeclarationList getDeclarations() {
         return declarations.getDeclarations();
-    }
-
-    public void addDeclaration(Declaration declaration) {
-        this.declarations.addDeclaration(declaration);
     }
 
     @Override
@@ -66,6 +89,7 @@ public class GenericDirective extends Rule {
         return toString(0);
     }
 
+    @Override
     public String toString(int nesting) {
         String start = Rule.getIndent(nesting);
 
@@ -107,7 +131,7 @@ public class GenericDirective extends Rule {
         first = true;
         for (Declaration dec : declarations.getDeclarations()) {
             if (first) { first = false; } else { txt.append(";"); }
-            txt.append("\n\t" + start);
+            txt.append("\n\t").append(start);
             txt.append(dec.toString());
         }
 

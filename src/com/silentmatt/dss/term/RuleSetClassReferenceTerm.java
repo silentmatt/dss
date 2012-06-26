@@ -1,6 +1,6 @@
 package com.silentmatt.dss.term;
 
-import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Selector;
 
 /**
@@ -10,7 +10,8 @@ import com.silentmatt.dss.Selector;
  *
  * @author Matthew Crumley
  */
-public class RuleSetClassReferenceTerm extends ClassReferenceTerm {
+@Immutable
+public final class RuleSetClassReferenceTerm extends ClassReferenceTerm {
     private final Selector selector;
 
     /**
@@ -21,20 +22,21 @@ public class RuleSetClassReferenceTerm extends ClassReferenceTerm {
      * @see #setName(java.lang.String)
      */
     public RuleSetClassReferenceTerm(Selector selector) {
-        super("ruleset(" + selector + ")");
+        super(null, "ruleset(" + selector + ")");
         this.selector = selector;
     }
 
-    @Override
-    public RuleSetClassReferenceTerm clone() {
-        RuleSetClassReferenceTerm result = new RuleSetClassReferenceTerm(selector);
-        result.setSeperator(getSeperator());
-        return result;
-    }
-
-    @Override
-    public void addArgument(Declaration argument) {
-        throw new UnsupportedOperationException("Rule set pseudo-classes do not support arguments.");
+    /**
+     * Constructs a ClassReference from a class name.
+     *
+     * @param sep The separator
+     * @param name The name of the class to reference.
+     *
+     * @see #setName(java.lang.String)
+     */
+    public RuleSetClassReferenceTerm(Character sep, Selector selector) {
+        super(sep, "ruleset(" + selector + ")");
+        this.selector = selector;
     }
 
     /**
@@ -49,5 +51,10 @@ public class RuleSetClassReferenceTerm extends ClassReferenceTerm {
 
     public Selector getSelector() {
         return selector;
+    }
+
+    @Override
+    public RuleSetClassReferenceTerm withSeparator(Character separator) {
+        return new RuleSetClassReferenceTerm(separator, selector);
     }
 }

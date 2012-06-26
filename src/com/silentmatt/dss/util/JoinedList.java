@@ -1,13 +1,16 @@
 package com.silentmatt.dss.util;
 
+import com.silentmatt.dss.Immutable;
 import java.util.AbstractList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  *
  * @author Matthew Crumley
  */
-public class JoinedList<E> extends AbstractList<E> {
+@Immutable
+public final class JoinedList<E> extends AbstractList<E> {
     private final List<E> front;
     private final List<E> back;
 
@@ -20,8 +23,8 @@ public class JoinedList<E> extends AbstractList<E> {
     }
 
     public JoinedList(List<E> front, List<E> back) {
-        this.front = front;
-        this.back = back;
+        this.front = Collections.unmodifiableList(front);
+        this.back = Collections.unmodifiableList(back);
     }
 
     @Override
@@ -34,20 +37,22 @@ public class JoinedList<E> extends AbstractList<E> {
 
     @Override
     public E set(int index, E value) {
-        if (index < front.size()) {
-            return front.set(index, value);
-        }
-        return back.set(index - front.size(), value);
+        throw new UnsupportedOperationException();
+//        if (index < front.size()) {
+//            return front.set(index, value);
+//        }
+//        return back.set(index - front.size(), value);
     }
 
     @Override
     public void add(int index, E value) {
-        if (index < front.size()) {
-            front.add(index, value);
-        }
-        else {
-            back.add(index - front.size(), value);
-        }
+        throw new UnsupportedOperationException();
+//        if (index < front.size()) {
+//            front.add(index, value);
+//        }
+//        else {
+//            back.add(index - front.size(), value);
+//        }
     }
 
     @Override

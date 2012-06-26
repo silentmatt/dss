@@ -4,6 +4,7 @@ import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationBlock;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.NestedRuleSet;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.Scope;
@@ -15,15 +16,16 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
+@Immutable
 public class ClassDirective extends Rule {
     private final String className;
     private final DeclarationList parameters;
     private final DeclarationBlock declarationBlock;
     private final boolean global;
 
-    public ClassDirective(String className, List<Declaration> parameters, boolean global, List<Declaration> declarations, List<NestedRuleSet> nestedRuleSets) {
+    public ClassDirective(String className, DeclarationList parameters, boolean global, DeclarationList declarations, List<NestedRuleSet> nestedRuleSets) {
         this.className = className;
-        this.parameters = new DeclarationList(parameters);
+        this.parameters = parameters;
         this.global = global;
         this.declarationBlock = new DeclarationBlock(declarations, nestedRuleSets);
     }
@@ -38,10 +40,6 @@ public class ClassDirective extends Rule {
 
     public DeclarationList getParameters(DeclarationList arguments) {
         return parameters;
-    }
-
-    public void addParameter(Declaration param) {
-        parameters.add(param);
     }
 
     public DeclarationList getDeclarations(DeclarationList arguments) {
@@ -74,13 +72,9 @@ public class ClassDirective extends Rule {
 
         txt.append(declarationBlock.innerString(nesting + 1));
 
-        txt.append("\n" + start + "}");
+        txt.append("\n").append(start).append("}");
 
         return txt.toString();
-    }
-
-    public void addDeclaration(Declaration declaration) {
-        declarationBlock.addDeclaration(declaration);
     }
 
     public boolean isGlobal() {

@@ -15,18 +15,22 @@ public class NullErrorReporter extends AbstractErrorReporter {
     public NullErrorReporter() {
     }
 
+    @Override
     public int getErrorCount() {
         return errorCount;
     }
 
+    @Override
     public int getWarningCount() {
         return warningCount;
     }
 
+    @Override
     public void addError(Message error) {
         errorCount++;
     }
 
+    @Override
     public void addWarning(Message warning) {
         warningCount++;
     }

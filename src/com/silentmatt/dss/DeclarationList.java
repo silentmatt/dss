@@ -3,6 +3,7 @@ package com.silentmatt.dss;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -20,15 +21,13 @@ import java.util.Set;
  *
  * @author Matthew Crumley
  */
-public class DeclarationList implements List<Declaration> {
-    private final List<Declaration> list = new ArrayList<Declaration>();
+@Immutable
+public final class DeclarationList implements /*List<Declaration>*/ Iterable<Declaration> {
+    private final List<Declaration> list;
     private final Map<String, Expression> mapView = new DeclarationListMapView();
 
-    /**
-     * Constructs an empty DeclarationList.
-     */
-    public DeclarationList() {
-    }
+    @SuppressWarnings("unchecked")
+    public static final DeclarationList EMPTY = new DeclarationList((List<Declaration>) Collections.EMPTY_LIST);
 
     /**
      * Constructs a DeclarationList containing the Declarations from the specified list.
@@ -36,7 +35,11 @@ public class DeclarationList implements List<Declaration> {
      * @param declarations {@link List} of {@link Declaration}s to copy.
      */
     public DeclarationList(List<Declaration> declarations) {
-        list.addAll(declarations);
+        list = Collections.unmodifiableList(declarations);
+    }
+
+    public List<Declaration> toList() {
+        return list;
     }
 
     public int size() {
@@ -63,53 +66,63 @@ public class DeclarationList implements List<Declaration> {
         return list.toArray(arg0);
     }
 
-    public boolean add(Declaration arg0) {
-        return list.add(arg0);
-    }
-
-    public boolean remove(Object arg0) {
-        return list.remove(arg0);
-    }
+//    public boolean add(Declaration arg0) {
+//        throw new UnsupportedOperationException();
+//        //return list.add(arg0);
+//    }
+//
+//    public boolean remove(Object arg0) {
+//        throw new UnsupportedOperationException();
+//        //return list.remove(arg0);
+//    }
 
     public boolean containsAll(Collection<?> arg0) {
         return list.containsAll(arg0);
     }
 
-    public boolean addAll(Collection<? extends Declaration> arg0) {
-        return list.addAll(arg0);
-    }
-
-    public boolean addAll(int arg0, Collection<? extends Declaration> arg1) {
-        return list.addAll(arg0, arg1);
-    }
-
-    public boolean removeAll(Collection<?> arg0) {
-        return list.removeAll(arg0);
-    }
-
-    public boolean retainAll(Collection<?> arg0) {
-        return list.retainAll(arg0);
-    }
-
-    public void clear() {
-        list.clear();
-    }
+//    public boolean addAll(Collection<? extends Declaration> arg0) {
+//        throw new UnsupportedOperationException();
+//        //return list.addAll(arg0);
+//    }
+//
+//    public boolean addAll(int arg0, Collection<? extends Declaration> arg1) {
+//        throw new UnsupportedOperationException();
+//        //return list.addAll(arg0, arg1);
+//    }
+//
+//    public boolean removeAll(Collection<?> arg0) {
+//        throw new UnsupportedOperationException();
+//        //return list.removeAll(arg0);
+//    }
+//
+//    public boolean retainAll(Collection<?> arg0) {
+//        throw new UnsupportedOperationException();
+//        //return list.retainAll(arg0);
+//    }
+//
+//    public void clear() {
+//        throw new UnsupportedOperationException();
+//        //list.clear();
+//    }
 
     public Declaration get(int arg0) {
         return list.get(arg0);
     }
 
-    public Declaration set(int arg0, Declaration arg1) {
-        return list.set(arg0, arg1);
-    }
-
-    public void add(int arg0, Declaration arg1) {
-        list.add(arg0, arg1);
-    }
-
-    public Declaration remove(int arg0) {
-        return list.remove(arg0);
-    }
+//    public Declaration set(int arg0, Declaration arg1) {
+//        throw new UnsupportedOperationException();
+//        //return list.set(arg0, arg1);
+//    }
+//
+//    public void add(int arg0, Declaration arg1) {
+//        throw new UnsupportedOperationException();
+//        //list.add(arg0, arg1);
+//    }
+//
+//    public Declaration remove(int arg0) {
+//        throw new UnsupportedOperationException();
+//        //return list.remove(arg0);
+//    }
 
     public int indexOf(Object arg0) {
         return list.indexOf(arg0);
@@ -128,7 +141,8 @@ public class DeclarationList implements List<Declaration> {
     }
 
     public List<Declaration> subList(int start, int end) {
-        return list.subList(start, end);
+        throw new UnsupportedOperationException();
+        //return list.subList(start, end);
     }
 
     // Map methods
@@ -191,32 +205,35 @@ public class DeclarationList implements List<Declaration> {
         return declaration != null ? declaration.getExpression() : null;
     }
 
-    public Expression put(String name, Expression expression) {
-        Expression result = get(name);
-        list.add(new Declaration(name, expression));
-        return result;
-    }
+//    public Expression put(String name, Expression expression) {
+//        throw new UnsupportedOperationException();
+////        Expression result = get(name);
+////        list.add(new Declaration(name, expression));
+////        return result;
+//    }
 
-    public Expression remove(String key) {
-        Expression result = null;
+//    public Expression remove(String key) {
+//        throw new UnsupportedOperationException();
+////        Expression result = null;
+////
+////        ListIterator<Declaration> it = list.listIterator();
+////        while (it.hasNext()) {
+////            Declaration current = it.next();
+////            if (matches(current, key)) {
+////                result = current.getExpression();
+////                it.remove();
+////            }
+////        }
+////
+////        return result;
+//    }
 
-        ListIterator<Declaration> it = list.listIterator();
-        while (it.hasNext()) {
-            Declaration current = it.next();
-            if (matches(current, key)) {
-                result = current.getExpression();
-                it.remove();
-            }
-        }
-
-        return result;
-    }
-
-    public void putAll(Map<? extends String, ? extends Expression> map) {
-        for (Entry<? extends String, ? extends Expression> entry : map.entrySet()) {
-            this.put(entry.getKey(), entry.getValue());
-        }
-    }
+//    public void putAll(Map<? extends String, ? extends Expression> map) {
+//        throw new UnsupportedOperationException();
+////        for (Entry<? extends String, ? extends Expression> entry : map.entrySet()) {
+////            this.put(entry.getKey(), entry.getValue());
+////        }
+//    }
 
     /**
      * Gets a view of the list that implements the {@link Map} interface}.
@@ -248,22 +265,26 @@ public class DeclarationList implements List<Declaration> {
         }
 
         public Expression put(String arg0, Expression arg1) {
-            return DeclarationList.this.put(arg0, arg1);
+            throw new UnsupportedOperationException();
+            //return DeclarationList.this.put(arg0, arg1);
         }
 
         public Expression remove(Object arg0) {
-            if (arg0 instanceof String) {
-                return DeclarationList.this.remove((String) arg0);
-            }
-            return null;
+            throw new UnsupportedOperationException();
+//            if (arg0 instanceof String) {
+//                return DeclarationList.this.remove((String) arg0);
+//            }
+//            return null;
         }
 
         public void putAll(Map<? extends String, ? extends Expression> arg0) {
-            DeclarationList.this.putAll(arg0);
+            throw new UnsupportedOperationException();
+            //DeclarationList.this.putAll(arg0);
         }
 
         public void clear() {
-            DeclarationList.this.clear();
+            throw new UnsupportedOperationException();
+            //DeclarationList.this.clear();
         }
 
         public Set<String> keySet() {
@@ -313,8 +334,9 @@ public class DeclarationList implements List<Declaration> {
                     }
 
                     public void remove() {
-                        keys.remove(current);
-                        DeclarationList.this.remove(current);
+                        throw new UnsupportedOperationException();
+//                        keys.remove(current);
+//                        DeclarationList.this.remove(current);
                     }
                 };
             }
@@ -332,12 +354,13 @@ public class DeclarationList implements List<Declaration> {
             }
 
             public boolean remove(Object arg0) {
-                if (!(arg0 instanceof String)) {
-                    return false;
-                }
-                String key = (String) arg0;
-                DeclarationList.this.remove(key);
-                return keys.remove(key);
+                throw new UnsupportedOperationException();
+//                if (!(arg0 instanceof String)) {
+//                    return false;
+//                }
+//                String key = (String) arg0;
+//                DeclarationList.this.remove(key);
+//                return keys.remove(key);
             }
 
             public boolean containsAll(Collection<?> arg0) {
@@ -349,21 +372,23 @@ public class DeclarationList implements List<Declaration> {
             }
 
             public boolean retainAll(Collection<?> arg0) {
-                keys.retainAll(arg0);
-                    throw new UnsupportedOperationException("Not supported yet.");
+                //keys.retainAll(arg0);
+                throw new UnsupportedOperationException();
             }
 
             public boolean removeAll(Collection<?> arg0) {
-                boolean result = false;
-                for (Object o : arg0) {
-                    result |= remove(o);
-                }
-                return result;
+                throw new UnsupportedOperationException();
+//                boolean result = false;
+//                for (Object o : arg0) {
+//                    result |= remove(o);
+//                }
+//                return result;
             }
 
             public void clear() {
-                keys.clear();
-                DeclarationList.this.clear();
+                throw new UnsupportedOperationException();
+//                keys.clear();
+//                DeclarationList.this.clear();
             }
         }
 
@@ -392,7 +417,8 @@ public class DeclarationList implements List<Declaration> {
                     }
 
                     public void remove() {
-                        it.remove();
+                        throw new UnsupportedOperationException();
+                        //it.remove();
                     }
                 };
             }
@@ -410,7 +436,8 @@ public class DeclarationList implements List<Declaration> {
             }
 
             public boolean remove(Object arg0) {
-                return DeclarationList.this.remove(arg0);
+                throw new UnsupportedOperationException();
+                //return DeclarationList.this.remove(arg0);
             }
 
             public boolean containsAll(Collection<?> arg0) {
@@ -422,15 +449,18 @@ public class DeclarationList implements List<Declaration> {
             }
 
             public boolean retainAll(Collection<?> arg0) {
-                return DeclarationList.this.retainAll(arg0);
+                throw new UnsupportedOperationException();
+                //return DeclarationList.this.retainAll(arg0);
             }
 
             public boolean removeAll(Collection<?> arg0) {
-                return DeclarationList.this.removeAll(arg0);
+                throw new UnsupportedOperationException();
+                //return DeclarationList.this.removeAll(arg0);
             }
 
             public void clear() {
-                DeclarationList.this.clear();
+                throw new UnsupportedOperationException();
+                //DeclarationList.this.clear();
             }
         }
 
@@ -459,7 +489,8 @@ public class DeclarationList implements List<Declaration> {
                     }
 
                     public void remove() {
-                        it.remove();
+                        throw new UnsupportedOperationException();
+                        //it.remove();
                     }
                 };
             }
@@ -499,18 +530,19 @@ public class DeclarationList implements List<Declaration> {
             }
 
             public boolean remove(Object arg0) {
-                boolean result = false;
-
-                Iterator<Declaration> it = DeclarationList.this.iterator();
-                while (it.hasNext()) {
-                    Declaration declaration = it.next();
-                    if (declaration.getExpression().equals(arg0)) {
-                        result = true;
-                        it.remove();
-                    }
-                }
-
-                return result;
+                throw new UnsupportedOperationException();
+//                boolean result = false;
+//
+//                Iterator<Declaration> it = DeclarationList.this.iterator();
+//                while (it.hasNext()) {
+//                    Declaration declaration = it.next();
+//                    if (declaration.getExpression().equals(arg0)) {
+//                        result = true;
+//                        it.remove();
+//                    }
+//                }
+//
+//                return result;
             }
 
             public boolean containsAll(Collection<?> arg0) {
@@ -527,11 +559,12 @@ public class DeclarationList implements List<Declaration> {
             }
 
             public boolean removeAll(Collection<?> arg0) {
-                boolean result = false;
-                for (Object o : arg0) {
-                    result |= remove(o);
-                }
-                return result;
+                throw new UnsupportedOperationException();
+//                boolean result = false;
+//                for (Object o : arg0) {
+//                    result |= remove(o);
+//                }
+//                return result;
             }
 
             public boolean retainAll(Collection<?> arg0) {
@@ -539,7 +572,8 @@ public class DeclarationList implements List<Declaration> {
             }
 
             public void clear() {
-                DeclarationList.this.clear();
+                throw new UnsupportedOperationException();
+                //DeclarationList.this.clear();
             }
         }
     }

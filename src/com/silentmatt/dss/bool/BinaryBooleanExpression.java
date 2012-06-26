@@ -1,13 +1,15 @@
 package com.silentmatt.dss.bool;
 
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.Immutable;
 
 /**
  * Generic BooleanExpression node for binary operators.
  * 
  * @author Matthew Crumley
  */
-public class BinaryBooleanExpression implements BooleanExpression {
+@Immutable
+public final class BinaryBooleanExpression implements BooleanExpression {
     private final BooleanOperation operation;
     private final BooleanExpression left;
     private final BooleanExpression right;
@@ -15,7 +17,7 @@ public class BinaryBooleanExpression implements BooleanExpression {
     /**
      * Constructs a BinaryBooleanExpression with an operator and the two operands.
      *
-     * @param operation The oparation to perform.
+     * @param operation The operation to perform.
      * @param left The left operand.
      * @param right The right operand.
      */
@@ -25,6 +27,7 @@ public class BinaryBooleanExpression implements BooleanExpression {
         this.right = right;
     }
 
+    @Override
     public Boolean evaluate(EvaluationState state) {
         Boolean leftValue = left.evaluate(state);
         if (leftValue == null) {
@@ -86,6 +89,7 @@ public class BinaryBooleanExpression implements BooleanExpression {
         return sb.toString();
     }
 
+    @Override
     public int getPrecidence() {
         int precidence;
         switch (operation) {

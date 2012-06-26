@@ -263,11 +263,12 @@ ifDirective<out IfDirective idir> = (.
     (.  idir = new IfDirective(expr, ifrules, elserules); .)
 .
 
-parameter<out Declaration dec> =        (. dec = new Declaration(); .)
-    identity<out String ident>          (. dec.setName(ident); .)
+parameter<out Declaration dec> =        (. Declaration.Builder decb = new Declaration.Builder(); .)
+    identity<out String ident>          (. decb.setName(ident); .)
     [
-        ':' expr<out Expression exp>    (. dec.setExpression(exp); .)
+        ':' expr<out Expression exp>    (. decb.setExpression(exp); .)
     ]
+                                        (. dec = decb.build(); .)
 .
 
 classDirective<out ClassDirective dir> =        (.  String ident;
@@ -315,7 +316,7 @@ classDirective<out ClassDirective dir> =        (.  String ident;
             | '~'                               (.  cb = Combinator.PrecededBy; .)
             ] ruleset<out RuleSet nest>         (.  nested.add(new NestedRuleSet(cb, nest)); .)
         } '}'
-                                                (.  dir = new ClassDirective(ident, parameters, global, declarations, nested); .)
+                                                (.  dir = new ClassDirective(ident, new DeclarationList(parameters), global, new DeclarationList(declarations), nested); .)
 .
 
 defineDirective<out DefineDirective dir> =      (.
@@ -332,7 +333,7 @@ defineDirective<out DefineDirective dir> =      (.
                                                     }
                                                 .)
           ';' }
-    '}'                                         (.  dir = new DefineDirective(declarations, global); .)
+    '}'                                         (.  dir = new DefineDirective(new DeclarationList(declarations), global); .)
 .
 
 fontFaceDirective<out FontFaceDirective dir> =  (.  List<Declaration> declarations = new ArrayList<Declaration>();
@@ -345,7 +346,7 @@ fontFaceDirective<out FontFaceDirective dir> =  (.  List<Declaration> declaratio
                                                         break;
                                                     }
                                                 .)
-        ';' } '}'                               (.  dir = new FontFaceDirective(declarations); .)
+        ';' } '}'                               (.  dir = new FontFaceDirective(new DeclarationList(declarations)); .)
 .
 
 pageDirective<out PageDirective dir> =          (.  List<Declaration> declarations = new ArrayList<Declaration>();
@@ -354,7 +355,7 @@ pageDirective<out PageDirective dir> =          (.  List<Declaration> declaratio
                                                 .)
     "@page"
     [ pseudo<out String psd>                    (.  ss = new SimpleSelector();
-                                                    ss.setPseudo(psd);
+                                                    ss = ss.withPseudo(psd);
                                                 .)
     ]
     '{' { multideclaration<out mdecs>           (.  declarations.addAll(mdecs);
@@ -362,7 +363,7 @@ pageDirective<out PageDirective dir> =          (.  List<Declaration> declaratio
                                                         break;
                                                     }
                                                 .)
-          ';' } '}'                             (.  dir = new PageDirective(ss, declarations); .)
+          ';' } '}'                             (.  dir = new PageDirective(ss, new DeclarationList(declarations)); .)
 .
 
 importDirective<out ImportDirective dir> =
@@ -420,34 +421,34 @@ namespaceDirective<out NamespaceDirective dir> =            (.  String ident = n
 .
 
 genericDirective<out GenericDirective dir> =
-    '@' identity<out String ident>                      (.  dir = new GenericDirective();
-                                                            dir.setName("@" + ident);
+    '@' identity<out String ident>                      (.  GenericDirective.Builder dirb = new GenericDirective.Builder();
+                                                            dirb.setName("@" + ident);
                                                         .)
     [
-        expr<out Expression exp>                        (.  dir.setExpression(exp); .)
+        expr<out Expression exp>                        (.  dirb.setExpression(exp); .)
         |
-        medium<out Medium m>                            (.  dir.addMedium(m); .)
+        medium<out Medium m>                            (.  dirb.addMedium(m); .)
     ]
     (
         '{'
             {
                 // XXX: Order between Declarations and Rules is not preserved.
                 // TODO: Support multideclarations in generic directives
-                declaration<out Declaration dec>        (.  dir.addDeclaration(dec);
+                declaration<out Declaration dec>        (.  dirb.addDeclaration(dec);
                                                             if (endOfBlock()) {
                                                                 break;
                                                             }
                                                         .)
                 ';'
                 |
-                ruleset<out RuleSet rset>               (.  dir.addRule(rset); .)
+                ruleset<out RuleSet rset>               (.  dirb.addRule(rset); .)
                 |
-                directive<out Rule dr>                  (.  dir.addRule(dr); .)
+                directive<out Rule dr>                  (.  dirb.addRule(dr); .)
             }
         '}'
         |
         ';'
-    )
+    )                                                   (.  dir = dirb.build(); .)
 .
 
 directive<out Rule dir> (.  dir = null; .) =
@@ -477,29 +478,29 @@ directive<out Rule dir> (.  dir = null; .) =
     genericDirective<out dir>
 .
 
-ruleset<out RuleSet rset> =                  (.  rset = new RuleSet();
+ruleset<out RuleSet rset> =                  (.  RuleSet.Builder rsetb = new RuleSet.Builder();
                                                  Selector sel;
                                                  List<Declaration> decs;
                                                  Rule dir;
                                                  Combinator cb = Combinator.Descendant;
                                              .)
 
-    selector<out sel>                        (.  rset.getSelectors().add(sel); .)
-    { ',' selector<out sel>                  (.  rset.getSelectors().add(sel); .)
+    selector<out sel>                        (.  rsetb.addSelector(sel); .)
+    { ',' selector<out sel>                  (.  rsetb.addSelector(sel); .)
     }
     '{'
         {
             (IF (!isNestedSelector()) multideclaration<out decs>)
-                                             (.  rset.addDeclarations(decs);
+                                             (.  rsetb.addDeclarations(decs);
                                                  if (endOfBlock()) {
                                                      break;
                                                  }
                                              .)
             ';'
             |
-            classDirective<out dir>          (.  rset.addRule(dir); .)
+            classDirective<out dir>          (.  rsetb.addRule(dir); .)
             |
-            defineDirective<out dir>         (.  rset.addRule(dir); .)
+            defineDirective<out dir>         (.  rsetb.addRule(dir); .)
             |
                                              (.  cb = Combinator.Descendant; .)
             [ '&' ]                          (.  if (t.pos + t.val.length() == la.pos) {
@@ -512,42 +513,42 @@ ruleset<out RuleSet rset> =                  (.  rset = new RuleSet();
             [ '+'                            (.  cb = Combinator.PrecededImmediatelyBy; .)
             | '>'                            (.  cb = Combinator.ChildOf; .)
             | '~'                            (.  cb = Combinator.PrecededBy; .)
-            ] ruleset<out RuleSet nested>    (.  rset.addNestedRuleSet(cb, nested); .)
+            ] ruleset<out RuleSet nested>    (.  rsetb.addNestedRuleSet(cb, nested); .)
         }
-    '}'
+    '}'                                      (.  rset = rsetb.build(); .)
 .
 
-selector<out Selector sel> =    (.  sel = new Selector();
+selector<out Selector sel> =    (.  Selector.Builder selb = new Selector.Builder();
                                     SimpleSelector ss;
                                     Combinator cb = Combinator.Descendant;
                                 .)
-    simpleselector<out ss>      (.  sel.getSimpleSelectors().add(ss); .)
+    simpleselector<out ss>      (.  selb.addSimpleSelector(ss); .)
     { [ ('+'                    (.  cb = Combinator.PrecededImmediatelyBy; .)
         | '>'                   (.  cb = Combinator.ChildOf; .)
         | '~'                   (.  cb = Combinator.PrecededBy; .)
         ) ]
-        simpleselector<out ss>  (.  ss.setCombinator(cb);
-                                    sel.getSimpleSelectors().add(ss);
+        simpleselector<out ss>  (.  ss = ss.withCombinator(cb);
+                                    selb.addSimpleSelector(ss);
                                     cb = Combinator.Descendant;
                                 .)
-    }
+    }                           (.  sel = selb.build(); .)
 .
-simpleselector<out SimpleSelector ss> = (. ss = new SimpleSelector();
-                                            SimpleSelector parent = ss;
+simpleselector<out SimpleSelector ss> = (. SimpleSelector.Builder ssb = new SimpleSelector.Builder();
+                                            SimpleSelector.Builder parent = ssb;
                                             String ident;
                                         .)
-    (identity<out ident>                (.  ss.setElementName(ident); .)
-    | '*'                               (.  ss.setElementName("*"); .)
-    | ('#' identity<out ident>          (.  ss.setID(ident); .)
-        | '.' identity<out ident>       (.  ss.setClassName(ident); .)
-        | attrib<out Attribute atb>     (.  ss.setAttribute(atb); .)
-        | pseudo<out String psd>        (.  ss.setPseudo(psd); .)
+    (identity<out ident>                (.  ssb.setElementName(ident); .)
+    | '*'                               (.  ssb.setElementName("*"); .)
+    | ('#' identity<out ident>          (.  ssb.setID(ident); .)
+        | '.' identity<out ident>       (.  ssb.setClassName(ident); .)
+        | attrib<out Attribute atb>     (.  ssb.setAttribute(atb); .)
+        | pseudo<out String psd>        (.  ssb.setPseudo(psd); .)
         )
     )
     {                                   (.  if (t.pos + t.val.length() < la.pos) {
                                                 break;
                                             }
-                                            SimpleSelector child = new SimpleSelector();
+                                            SimpleSelector.Builder child = new SimpleSelector.Builder();
                                         .)
         ('#' identity<out ident>        (.  child.setID(ident); .)
         | '.' identity<out ident>       (.  child.setClassName(ident); .)
@@ -556,27 +557,27 @@ simpleselector<out SimpleSelector ss> = (. ss = new SimpleSelector();
         )                               (.  parent.setChild(child);
                                             parent = child;
                                         .)
-    }
+    }                                   (.  ss = ssb.build(); .)
 .
 
-attrib<out Attribute atb> =         (.  atb = new Attribute();
+attrib<out Attribute atb> =         (.  Attribute.Builder atbb = new Attribute.Builder();
                                         String quote;
                                         String ident;
                                     .)
-    '[' identity<out ident>         (.  atb.setOperand(ident); .)
+    '[' identity<out ident>         (.  atbb.setOperand(ident); .)
     [
-        ( '='                       (.  atb.setOperator(AttributeOperator.Equals); .)
-        | "~="                      (.  atb.setOperator(AttributeOperator.InList); .)
-        | "|="                      (.  atb.setOperator(AttributeOperator.Hyphenated); .)
-        | "$="                      (.  atb.setOperator(AttributeOperator.EndsWith); .)
-        | "^="                      (.  atb.setOperator(AttributeOperator.BeginsWith); .)
-        | "*="                      (.  atb.setOperator(AttributeOperator.Contains); .)
+        ( '='                       (.  atbb.setOperator(AttributeOperator.Equals); .)
+        | "~="                      (.  atbb.setOperator(AttributeOperator.InList); .)
+        | "|="                      (.  atbb.setOperator(AttributeOperator.Hyphenated); .)
+        | "$="                      (.  atbb.setOperator(AttributeOperator.EndsWith); .)
+        | "^="                      (.  atbb.setOperator(AttributeOperator.BeginsWith); .)
+        | "*="                      (.  atbb.setOperator(AttributeOperator.Contains); .)
         )
-        ( identity<out ident>       (.  atb.setValue(ident); .)
-        | QuotedString<out quote>   (.  atb.setValue(quote); .)
-        | (integer | decimal)       (.  atb.setValue(t.val); .)
+        ( identity<out ident>       (.  atbb.setValue(ident); .)
+        | QuotedString<out quote>   (.  atbb.setValue(quote); .)
+        | (integer | decimal)       (.  atbb.setValue(t.val); .)
         )
-    ] ']'
+    ] ']'                           (.  atb = atbb.build(); .)
 .
 
 pseudo<out String pseudo> =         (.  StringBuilder sb = new StringBuilder();
@@ -619,41 +620,45 @@ pseudo<out String pseudo> =         (.  StringBuilder sb = new StringBuilder();
     ]                               (.  pseudo = sb.toString(); .)
 .
 
-declaration<out Declaration dec> =  (. dec = new Declaration(); .)
-    identity<out String ident>      (. dec.setName(ident); .)
-    ':' expr<out Expression exp>    (. dec.setExpression(exp); .)
-    [ '!' "important"               (. dec.setImportant(true); .) ]
+declaration<out Declaration dec> =  (. Declaration.Builder decb = new Declaration.Builder(); .)
+    identity<out String ident>      (. decb.setName(ident); .)
+    ':' expr<out Expression exp>    (. decb.setExpression(exp); .)
+    [ '!' "important"               (. decb.setImportant(true); .) ]
+                                    (. dec = decb.build(); .)
 .
 
-multideclaration<out List<Declaration> decs> =  (.  decs = new ArrayList<Declaration>();
-                                                    Declaration first = new Declaration();
+multideclaration<out List<Declaration> decs> =  (.  ArrayList<Declaration.Builder> decbs = new ArrayList<Declaration.Builder>();
+                                                    Declaration.Builder first = new Declaration.Builder();
                                                 .)
-    (( identity<out String ident>               (.  first.setName(ident); decs.add(first); .)
-       {',' identity<out String ident2>         (.  decs.add(new Declaration(ident2, new PropertyTerm(first.getName()).toExpression())); .)}
+    (( identity<out String ident>               (.  first.setName(ident); decbs.add(first); .)
+       {',' identity<out String ident2>         (.  decbs.add(new Declaration.Builder().setName(ident2).setExpression(new PropertyTerm(first.getName()).toExpression())); .)}
      )
         ':' expr<out Expression exp>            (.  first.setExpression(exp); .)
-        [ '!' "important"                       (.  for (Declaration dec : decs) {
-                                                        dec.setImportant(true);
+        [ '!' "important"                       (.  for (Declaration.Builder decb : decbs) {
+                                                        decb.setImportant(true);
                                                     }
                                                 .) ]
-    )
+    )                                           (.  decs = new ArrayList<Declaration>(decbs.size());
+                                                    for (Declaration.Builder decb : decbs) {
+                                                        decs.add(decb.build());
+                                                    } .)
 .
 
-expr<out Expression exp> =  (.  exp = new Expression();
+expr<out Expression exp> =  (.  Expression.Builder expb = new Expression.Builder();
                                 Character sep = null;
                                 Term trm;
                             .)
-    term<out trm>           (.  exp.getTerms().add(trm); .)
+    term<out trm>           (.  expb.addTerm(trm); .)
     { [ ('/'                (.  sep = '/'; .)
         | ','               (.  sep = ','; .)
         | '='               (.  sep = '='; .)
         ) ]
         term<out trm>       (.
-                                if (sep != null) { trm.setSeperator(sep); }
-                                exp.getTerms().add(trm);
+                                if (sep != null) { trm = trm.withSeparator(sep); }
+                                expb.addTerm(trm);
                                 sep = null;
                             .)
-    }
+    }                       (.  exp = expb.build(); .)
 .
 
 booleanExpression<out BooleanExpression expr> =
@@ -751,33 +756,28 @@ term<out Term trm> =                        (.  String val = "";
         |
         calculation<out expression>         (.  trm = new CalculationTerm(expression); .)
         |
-        identity<out ident>                 (.  trm = new StringTerm(ident); .)
-        { ':'                               (.  ((StringTerm) trm).setValue(trm.toString() + t.val); .)
-            [ ':'                           (.  ((StringTerm) trm).setValue(trm.toString() + t.val); .)
+        identity<out ident>                 (.  String trmValue = ident; .)
+        { ':'                               (.  trmValue += t.val; .)
+            [ ':'                           (.  trmValue += t.val; .)
             ]
-            identity<out ident>             (.  ((StringTerm) trm).setValue(trm.toString() + ident); .)
+            identity<out ident>             (.  trmValue += ident; .)
             |
-            '.'                             (.  ((StringTerm) trm).setValue(trm.toString() + t.val); .)
-            identity<out ident>             (.  ((StringTerm) trm).setValue(trm.toString() + ident); .)
+            '.'                             (.  trmValue += t.val; .)
+            identity<out ident>             (.  trmValue += ident; .)
 /*            |
-            '='                             (.  ((StringTerm) trm).setValue(trm.toString() + t.val); .)
-            (   identity<out ident>         (.  ((StringTerm) trm).setValue(trm.toString() + ident); .)
+            '='                             (.  trmValue += t.val; .)
+            (   identity<out ident>         (.  trmValue += ident; .)
                 |
-                integer                     (.  ((StringTerm) trm).setValue(trm.toString() + t.val); .)
+                integer                     (.  trmValue += t.val; .)
             )
 */
-        }
+        }                                   (.  trm = new StringTerm(trmValue); .)
         [
-            '(' expr<out exp>               (.  FunctionTerm func = new FunctionTerm();
-                                                func.setName(trm.toString());
-                                                func.setExpression(exp);
-                                                trm = func;
-                                            .)
+            '(' expr<out exp>               (.  trm = new FunctionTerm(trm.toString(), exp); .)
             ')'
             |
-            ('<'                            (.  ClassReferenceTerm cls = new ClassReferenceTerm(trm.toString());
+            ('<'                            (.  ClassReferenceTerm.Builder cls = new ClassReferenceTerm.Builder(trm.toString());
                                                 Declaration dec;
-                                                trm = cls;
                                             .)
                 [ ( IF(isDeclaration()) declaration<out dec>
                                             (.  cls.addArgument(dec); .)
@@ -794,7 +794,7 @@ term<out Term trm> =                        (.  String val = "";
                     )
                   }
                 ]
-            '>')
+            '>')                            (.  trm = cls.build(); .)
         ]
         |
         [   '-'                             (.  val = "-"; .)
@@ -803,7 +803,7 @@ term<out Term trm> =                        (.  String val = "";
         ]
         ( integer | decimal )               (.  val += t.val; trm = new NumberTerm(Double.parseDouble(val)); .)
         (
-            IF (endOfBlock())               (.  ((NumberTerm) trm).setValue(Double.parseDouble(val)); .)
+            IF (endOfBlock())               (.  trm = ((NumberTerm) trm).withValue(Double.parseDouble(val)); .)
             |
             (
                 // TODO: This gets lost because val isn't used to construct the NumberTerm
@@ -818,25 +818,24 @@ term<out Term trm> =                        (.  String val = "";
                         integer             (.  val += t.val; .)
                     ]
                 )                           (. trm = new StringTerm(val); val = ""; .)
-                |                           // TODO: Do we knoe trm is a NumberTerm?
-                "%"                         (.  ((NumberTerm) trm).setUnit(Unit.Percent); .)
+                |                           // TODO: Do we know trm is a NumberTerm?
+                "%"                         (.  trm = ((NumberTerm) trm).withUnit(Unit.Percent); .)
                 |
                 [
                     IF(isUnit())
                         identity<out ident> (.  try {
                                                     // TODO: What if trm isn't a NumberTerm?
-                                                    ((NumberTerm) trm).setUnit(Unit.parse(ident));
+                                                    trm = ((NumberTerm) trm).withUnit(Unit.parse(ident));
                                                 } catch (IllegalArgumentException ex) {
                                                     errors.SemErr(t.line, t.col, "Unrecognized unit '" + ident + "'");
                                                 }
                                             .)
                 ]
             )                               (.  if (trm instanceof NumberTerm) {
-                                                    ((NumberTerm) trm).setValue(Double.parseDouble(val));
+                                                    trm = ((NumberTerm) trm).withValue(Double.parseDouble(val));
                                                 }
                                                 else if (trm instanceof StringTerm) {
-                                                    StringTerm strTrm = (StringTerm) trm;
-                                                    strTrm.setValue(strTrm.getValue() + val);
+                                                    trm = new StringTerm(((StringTerm)trm).getValue() + val);
                                                 }
                                             .)
         )

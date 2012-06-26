@@ -5,7 +5,7 @@ import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationBlock;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
-import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.RuleSet;
 import com.silentmatt.dss.css.CssLiteralText;
@@ -25,14 +25,13 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
+@Immutable
 public class IncludeDirective extends ExpressionDirective {
-    private DSSDocument included;
     private final boolean literal;
     private final DeclarationList parameters;
 
     public IncludeDirective(UrlTerm url, boolean literal, List<Declaration> parameters) {
-        super(new Expression());
-        getExpression().getTerms().add(url);
+        super(url.toExpression());
         this.literal = literal;
         this.parameters = new DeclarationList(parameters);
     }
@@ -44,10 +43,6 @@ public class IncludeDirective extends ExpressionDirective {
 
     public URL getURL() throws MalformedURLException {
         return new URL(getURLString());
-    }
-
-    public DSSDocument getIncludedDocument() {
-        return included;
     }
 
     public boolean isRaw() {
@@ -100,7 +95,6 @@ public class IncludeDirective extends ExpressionDirective {
                     try {
                         state.pushParameters();
                         setArguments(state, parameters);
-                        this.included = includedDocument;
                         if (state.getIncludeCallback() != null) {
                             state.getIncludeCallback().call(url);
                         }

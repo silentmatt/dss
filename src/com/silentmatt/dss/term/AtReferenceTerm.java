@@ -3,21 +3,21 @@ package com.silentmatt.dss.term;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 
 /**
  * A parameter reference.
  *
  * @author Matthew Crumley
  */
-public class AtReferenceTerm extends ReferenceTerm {
+@Immutable
+public final class AtReferenceTerm extends ReferenceTerm {
     public AtReferenceTerm(String name) {
         super(name);
     }
 
-    public AtReferenceTerm clone() {
-        AtReferenceTerm result = new AtReferenceTerm(getName());
-        result.setSeperator(getSeperator());
-        return result;
+    public AtReferenceTerm(Character sep, String name) {
+        super(sep, name);
     }
 
     /**
@@ -45,8 +45,9 @@ public class AtReferenceTerm extends ReferenceTerm {
         }
 
         if (value != null && value.getTerms().size() > 0) {
-            value = value.clone();
-            value.getTerms().get(0).setSeperator(getSeperator());
+            Expression.Builder valueb = new Expression.Builder(value);
+            valueb.getTerms().set(0, valueb.getTerms().get(0).withSeparator(getSeperator()));
+            value = valueb.build();
         }
         else {
             value = toExpression();
@@ -58,5 +59,10 @@ public class AtReferenceTerm extends ReferenceTerm {
     @Override
     public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
         return evaluate(state, container);
+    }
+
+    @Override
+    public Term withSeparator(Character separator) {
+        return new AtReferenceTerm(separator, getName());
     }
 }

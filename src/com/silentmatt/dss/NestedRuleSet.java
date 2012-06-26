@@ -5,7 +5,8 @@ package com.silentmatt.dss;
  *
  * @author Matthew Crumley
  */
-public class NestedRuleSet extends RuleSet {
+@Immutable
+public final class NestedRuleSet extends RuleSet {
     private final Combinator combinator;
 
     /**

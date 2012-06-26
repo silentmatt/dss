@@ -5,6 +5,7 @@ import com.silentmatt.dss.css.CssExpression;
 import com.silentmatt.dss.css.CssTerm;
 import com.silentmatt.dss.term.Term;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -14,14 +15,38 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
-public class Expression implements Cloneable {
-    private final List<Term> terms = new ArrayList<Term>();
+@Immutable
+public final class Expression implements Cloneable {
+    public static class Builder
+    {
+        private final List<Term> terms = new ArrayList<Term>();
 
-    /**
-     * Constructs an empty Expression.
-     */
-    public Expression() {
+        public Builder() {
+        }
+        
+        public Builder(Term t) {
+            terms.add(t);
+        }
+        
+        public Builder(Expression expr) {
+            terms.addAll(expr.getTerms());
+        }
+
+        public final Builder addTerm(Term t) {
+            terms.add(t);
+            return this;
+        }
+        
+        public final List<Term> getTerms() {
+            return terms;
+        }
+        
+        public final Expression build() {
+            return new Expression(terms);
+        }
     }
+
+    private final List<Term> terms;
 
     /**
      * Constructs an Expression containing a single Term.
@@ -31,21 +56,16 @@ public class Expression implements Cloneable {
      * @see Term#toExpression()
      */
     public Expression(Term term) {
-        terms.add(term);
+        terms = Collections.singletonList(term);
     }
 
     /**
-     * Creates a deep copy of the Expression.
+     * Constructs an Expression containing a list of Terms.
      *
-     * @return A new Expression that is identical to this one.
+     * @param terms The list of {@link Terms} to create the expression from.
      */
-    @Override
-    public Expression clone() {
-        Expression result = new Expression();
-        for (Term t : terms) {
-            result.terms.add(t.clone());
-        }
-        return result;
+    public Expression(List<Term> terms) {
+        this.terms = Collections.unmodifiableList(terms);
     }
 
     /**
@@ -95,13 +115,13 @@ public class Expression implements Cloneable {
      * @return
      */
     public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
-        Expression newValue = new Expression();
+        Expression.Builder newValue = new Expression.Builder();
 
         for (Term primitiveValue : getTerms()) {
             Expression sub = primitiveValue.substituteValues(state, container, withParams, doCalculations);
             if (sub != null) {
                 for (Term t : sub.getTerms()) {
-                    newValue.getTerms().add(t);
+                    newValue.addTerm(t);
                 }
             }
             else {
@@ -109,7 +129,7 @@ public class Expression implements Cloneable {
             }
         }
 
-        return newValue;
+        return newValue.build();
     }
 
     /**

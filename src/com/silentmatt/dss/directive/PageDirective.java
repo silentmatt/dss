@@ -1,7 +1,9 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.Declaration;
+import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.SimpleSelector;
 import com.silentmatt.dss.css.CssCombinator;
@@ -15,14 +17,16 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
-public class PageDirective extends DeclarationDirective {
+@Immutable
+public final class PageDirective extends DeclarationDirective {
     private final SimpleSelector selector;
 
-    public PageDirective(SimpleSelector pseudo, List<Declaration> declarations) {
+    public PageDirective(SimpleSelector pseudo, DeclarationList declarations) {
         super(declarations);
         this.selector = pseudo;
     }
 
+    @Override
     public String getName() {
         return "@page";
     }

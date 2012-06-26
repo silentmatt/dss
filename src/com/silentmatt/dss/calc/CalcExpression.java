@@ -2,12 +2,14 @@ package com.silentmatt.dss.calc;
 
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.Immutable;
 
 /**
  * An expression from a calc(...) Term.
  *
  * @author Matthew Crumley
  */
+@Immutable
 public interface CalcExpression {
     /**
      * Performs the calculation.
@@ -41,12 +43,5 @@ public interface CalcExpression {
      * @param parameters Scope for param lookups.
      * @throws CalculationException The expression has invalid Terms.
      */
-    void substituteValues(EvaluationState state, DeclarationList container, boolean withParams);
-
-    /**
-     * Makes an exact, deep copy of the CalcExpression.
-     *
-     * @return A deep copy of this expression.
-     */
-    CalcExpression clone();
+    CalcExpression withSubstitutedValues(EvaluationState state, DeclarationList container, boolean withParams);
 }

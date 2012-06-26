@@ -1,7 +1,7 @@
 package com.silentmatt.dss.directive;
 
 import com.silentmatt.dss.EvaluationState;
-import com.silentmatt.dss.Expression;
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssCharsetDirective;
 import com.silentmatt.dss.css.CssRule;
@@ -13,10 +13,10 @@ import java.util.List;
  *
  * @author Matthew Crumley
  */
-public class CharsetDirective extends ExpressionDirective {
+@Immutable
+public final class CharsetDirective extends ExpressionDirective {
     public CharsetDirective(Term charset) {
-        super(new Expression());
-        getExpression().getTerms().add(charset);
+        super(charset.toExpression());
     }
 
     @Override
