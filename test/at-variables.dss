@@ -1,16 +1,16 @@
 @define {
   a: 2;
-  x: calc(@a * @a);
-  y: calc(@x + 1);
-  z: calc(@x * 2 + @y);
+  x: @calc(@a * @a);
+  y: [@x + 1];
+  z: @calc(@x * 2 + @y);
 }
 
 .variables {
-  width: calc(@z * 1cm + 1cm); // 14cm
+  width: @calc(@z * 1cm + 1cm); // 14cm
 }
 
 @define {
-  b: calc(@a * 10);
+  b: @calc(@a * 10);
   c: #888;
   fonts: "Trebuchet MS", Verdana, sans-serif;
   f: @fonts;
@@ -19,7 +19,7 @@
 }
 
 .variables {
-  height: calc((@b + @x) * 1px + 0px); // 24px
+  height: @calc((@b + @x) * 1px + 0px); // 24px
   color: @c;
   font-family: @f;
   quotes: @q;

@@ -3,21 +3,27 @@
 }
 
 @class rad2deg<r> {
-    angle: calc(@r * 180 / @pi);
+    angle: @calc(@r * 180 / @pi);
 }
 
 something {
-    width: calc(2 * (1cm + 5mm) / ((3px+4px - -6px)/1px) + calc(3pt + 4in));
-    width2:   [ 2 * (1cm + 5mm) / ((3px+4px - -6px)/1px) + calc(3pt + 4in) ];
-    height: calc(2 * const(pi));
+    width: @calc(2 * (1cm + 5mm) / ((3px+4px - -6px)/1px) + @calc(3pt + 4in));
+    width2:   [ 2 * (1cm + 5mm) / ((3px+4px - -6px)/1px) + @calc(3pt + 4in) ];
+    width3: calc(2 * (1cm + 5mm) / ((3px+4px - -6px)/1px) + @calc(3pt + 4in));
+    width3: -o-calc(2 * (1cm + 5mm) / ((3px+4px - -6px)/1px) + @calc(3pt + 4in));
+    width3: -ms-calc(2 * (1cm + 5mm) / ((3px+4px - -6px)/1px) + @calc(3pt + 4in));
+    width3: -moz-calc(2 * (1cm + 5mm) / ((3px+4px - -6px)/1px) + @calc(3pt + 4in));
+    width3: -webkit-calc(2 * (1cm + 5mm) / ((3px+4px - -6px)/1px) + @calc(3pt + 4in));
+    height: @calc(2 * const(pi));
 }
 
 circle {
-    apply: rad2deg<calc(2 * const(pi))>;
+    apply: rad2deg<@calc(2 * const(pi))>;
     apply: rad2deg<[3 * const(pi)]>;
 
-    left: calc( 1 * ( calc(4rad * const(pi)) ) );
-    top: calc( 1 * [4rad * const(pi)] );
+    left: @calc( 1 * ( @calc(4rad * const(pi)) ) );
+    top: @calc( 1 * [4rad * const(pi)] );
 
     value: [4 + -@pi];
+    
 }
