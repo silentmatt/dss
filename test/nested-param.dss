@@ -1,0 +1,13 @@
+@class test<w> {
+    .nested {
+        width: param(w);
+    }
+}
+
+selector {
+    apply: test<20px>;
+}
+
+selector2 {
+    apply: test<30px>;
+}

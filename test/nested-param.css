@@ -1,0 +1,6 @@
+selector .nested {
+	width: 20px;
+}
+selector2 .nested {
+	width: 30px;
+}

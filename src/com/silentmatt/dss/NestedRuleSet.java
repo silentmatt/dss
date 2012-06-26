@@ -1,5 +1,8 @@
 package com.silentmatt.dss;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A RuleSet that is nested inside another RuleSet or ClassDirective.
  *
@@ -28,5 +31,27 @@ public final class NestedRuleSet extends RuleSet {
      */
     public Combinator getCombinator() {
         return combinator;
+    }
+
+    public NestedRuleSet substituteValues(EvaluationState state) {
+        List<Declaration> properties = new ArrayList<Declaration>(getDeclarations().toList());
+        DeclarationBlock.Builder result = new DeclarationBlock.Builder();
+        List<Declaration> list = result.getDeclarations();
+        for (int i = 0; i < properties.size(); i++) {
+            Declaration dec = properties.get(i);
+            properties.set(i, dec.substituteValues(state, new DeclarationList(list), true, true));
+        }
+
+        for (int i = 0; i < properties.size(); i++) {
+            Declaration declaration = properties.get(i);
+            list.add(declaration);
+        }
+
+        for (NestedRuleSet rs : getNestedRuleSets()) {
+            result.addNestedRuleSet(rs.substituteValues(state));
+        }
+
+        DeclarationBlock db = result.build();
+        return new NestedRuleSet(getCombinator(), new RuleSet(getSelectors(), db, getRules()));
     }
 }

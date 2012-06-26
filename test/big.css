@@ -142,3 +142,6 @@ body .test {
 .test > nested + after {
 	g: h;
 }
+.test > nested + after more more more {
+	property: booyah;
+}

@@ -187,17 +187,20 @@ body .test {
 	apply: ab;
 }
 
-@class testClass {
+@class testClass<parameter> {
     c: d;
     > nested {
         e: f;
         + after {
             g: h;
+			more more more {
+				property: @parameter;
+			}
         }
     }
 }
 
 .test {
     a: b;
-    apply: testClass;
+    apply: testClass<booyah>;
 }
