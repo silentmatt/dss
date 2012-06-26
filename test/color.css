@@ -1,22 +1,22 @@
 test {
-	color: rgba(0, 128, 0, 0.5);
-	color: hsl(120, 100%, 25.098%);
-	color: rgb(50%, 25.098%, 0%);
-	color: rgb(50%, 0%, 0%);
-	color: rgb(100%, 50%, 50%);
-	color: rgb(10%, 10%, 10%);
-	color: rgb(77.2549%, 50%, 50%);
+	color: rgba(0,128,0,0.5);
+	color: hsl(120,100%,25.098%);
+	color: rgb(50%,25.098%,0%);
+	color: rgb(50%,0%,0%);
+	color: rgb(100%,50%,50%);
+	color: rgb(10%,10%,10%);
+	color: rgb(77.2549%,50%,50%);
 	color: #030405;
-	color: rgba(3, 4, 5, 0.5);
-	color: rgb(3.4%, 4.5%, 5.6%);
-	color: rgba(3.4%, 4.5%, 5.6%, 0.56);
-	color: hsl(3, 4.5%, 5.6%);
-	color: hsla(3, 4.5%, 5.6%, 0.56);
+	color: rgba(3,4,5,0.5);
+	color: rgb(3.4%,4.5%,5.6%);
+	color: rgba(3.4%,4.5%,5.6%,0.56);
+	color: hsl(3,4.5%,5.6%);
+	color: hsla(3,4.5%,5.6%,0.56);
 }
 body {
-	color: #996d33;
+	color: #996D33;
 	color: rgba(153,109,51,0.3);
-	lighten: #ffffff;
+	lighten: #FFFFFF;
 	lighten: #7c8df2;
 	lighten: rgba(222,140,129,0.5);
 	darken: #d6d6d6;

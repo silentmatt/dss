@@ -50,9 +50,9 @@ public final class RGBFColor extends Color {
     public String toRGBString() {
         DecimalFormat df = new DecimalFormat("#.####");
         if (alpha == 1.0) {
-            return "rgb(" + df.format(red * 100.0) + "%, " + df.format(green * 100.0) + "%, " + df.format(blue * 100.0) + "%)";
+            return "rgb(" + df.format(red * 100.0) + "%," + df.format(green * 100.0) + "%," + df.format(blue * 100.0) + "%)";
         }
-        return "rgba(" + df.format(red * 100.0) + "%, " + df.format(green * 100.0) + "%, " + df.format(blue * 100.0) + "%, " + df.format(alpha) + ")";
+        return "rgba(" + df.format(red * 100.0) + "%," + df.format(green * 100.0) + "%," + df.format(blue * 100.0) + "%," + df.format(alpha) + ")";
     }
 
     /**

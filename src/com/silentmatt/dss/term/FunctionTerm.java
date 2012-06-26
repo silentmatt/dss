@@ -318,7 +318,7 @@ public final class FunctionTerm extends Term {
                 if (!(args.size() == 1 && args.get(0).isColor())) {
                     return function.toExpression();
                 }
-                return args.get(0).toColor().toRGBFColor().toTerm().toExpression();
+                return args.get(0).toColor().toRGBColor().toTerm().toExpression();
             }
         });
         builtinFunctions.put("alpha", new Function() {

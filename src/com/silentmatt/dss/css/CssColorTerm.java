@@ -22,8 +22,8 @@ public class CssColorTerm extends CssTerm {
     @Override
     public String toString(boolean compact) {
         if (!compact) {
-            return color.toRGBColor().toString();
-            //return toString();
+            return color.toString();
+            //return color.toRGBColor().toString();
         }
 
         String name = color.toRGBColor().toNameString();

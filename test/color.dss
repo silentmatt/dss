@@ -19,8 +19,8 @@ test {
 
 
 body {
-	color: hsl(34, 50%, 40%);
-	color: hsla(34, 50%, 40%, 0.3);
+	color: toRGB(hsl(34, 50%, 40%));
+	color: toRGB(hsla(34, 50%, 40%, 0.3));
 
 	lighten: lighten(#efefef, 10%);
 	lighten: lighten(rgb(23, 53, 231), 22%);

@@ -101,9 +101,9 @@ public final class HSLColor extends Color {
     public String toHSLString() {
         DecimalFormat df = new DecimalFormat("#.####");
         if (alpha == 1.0) {
-            return "hsl(" + hue + ", " + df.format(saturation * 100.0) + "%, " + df.format(lightness * 100.0) + "%)";
+            return "hsl(" + hue + "," + df.format(saturation * 100.0) + "%," + df.format(lightness * 100.0) + "%)";
         }
-        return "hsla(" + hue + ", " + df.format(saturation * 100.0) + "%, " + df.format(lightness * 100.0) + "%, " + df.format(alpha) + ")";
+        return "hsla(" + hue + "," + df.format(saturation * 100.0) + "%," + df.format(lightness * 100.0) + "%," + df.format(alpha) + ")";
     }
 
     /**
