@@ -25,7 +25,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 @Immutable
-public class DeclarationBlock {
+public final class DeclarationBlock {
     public static class Builder {
         public Builder() {
         }
