@@ -15,7 +15,7 @@ class Parser {
 	public static final int _decimal = 4;
 	public static final int _stringLit = 5;
 	public static final int _url = 6;
-	public static final int maxT = 76;
+	public static final int maxT = 81;
 
 	static final boolean T = true;
 	static final boolean x = false;
@@ -1531,25 +1531,27 @@ class Parser {
 	}
 
 	private static final boolean[][] set = {
-		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,x,T,x, x,x,T,x, T,x,x,x, x,x,x,T, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,T,x, T,x,x,x, x,x,x,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,x,x,x, x,x,x,x, T,x,x,T, T,T,T,T, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,T, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, T,x,T,T, x,x,x,x, x,x,T,x, x,T,x,x, x,T,T,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,x,x,x, x,x,x,x, T,x,x,x, x,x,x,T, x,x,x,T, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,x,x,x, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,x, x,x,x,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, T,x,T,x, x,x,x,x, x,x,T,x, x,x,x,x, x,T,T,x, x,x},
-		{x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, x,T,x,T, T,x,x,x, x,x,T,T, x,T,x,x, x,x,x,x, x,x,x,T, T,x,T,T, x,x,x,x, x,T,T,x, T,T,T,T, T,T,T,T, x,x},
-		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, x,T,x,T, T,x,x,x, x,x,T,T, x,T,x,x, x,x,x,x, x,x,x,T, T,x,T,T, x,x,x,x, x,T,T,x, T,T,T,T, T,T,T,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,x, T,x,x,x, x,x,x,x, x,x,x,T, x,T,T,x, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, T,x,T,x, x,x,x,x, x,x,T,x, x,x,x,x, x,T,T,x, x,x}
+		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,T, x,x,x,T, x,T,x,x, x,x,x,x, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,T, x,T,x,x, x,x,x,x, T,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,T,x,x, T,T,T,T, T,x,x,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,T,x,T, T,x,x,x, x,x,x,T, x,x,T,x, x,x,T,T, T,T,T,T, x,x,x},
+		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,T,x,x, x,x,x,x, T,x,x,x, T,x,x,x, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,x,x, x,x,x},
+		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,T,x,T, x,x,x,x, x,x,x,T, x,x,x,x, x,x,T,T, T,T,T,T, x,x,x},
+		{x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,T,x, T,T,x,x, x,x,x,T, T,x,T,x, x,x,x,x, x,x,x,x, T,T,x,T, T,x,x,x, x,x,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,x,x},
+		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,T,x, T,T,x,x, x,x,x,T, T,x,T,x, x,x,x,x, x,x,x,x, T,T,x,T, T,x,x,x, x,x,T,T, x,T,T,T, T,T,T,T, T,T,T,T, x,x,x},
+		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, T,x,T,T, x,x,x,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
+		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,T,x,T, x,x,x,x, x,x,x,T, x,x,x,x, x,x,T,T, T,T,T,T, x,x,x},
+		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,x,x, x,x,x}
 
 	};
 
@@ -1586,79 +1588,85 @@ class Parser {
 			case 27: s = "\"literal\" expected"; break;
 			case 28: s = "\"const\" expected"; break;
 			case 29: s = "\"param\" expected"; break;
-			case 30: s = "\"ruleset\" expected"; break;
-			case 31: s = "\"(\" expected"; break;
-			case 32: s = "\":\" expected"; break;
-			case 33: s = "\")\" expected"; break;
-			case 34: s = "\"@media\" expected"; break;
-			case 35: s = "\",\" expected"; break;
-			case 36: s = "\"{\" expected"; break;
-			case 37: s = "\"}\" expected"; break;
-			case 38: s = "\"@if\" expected"; break;
-			case 39: s = "\"@else\" expected"; break;
-			case 40: s = "\"@class\" expected"; break;
-			case 41: s = "\"<\" expected"; break;
-			case 42: s = "\";\" expected"; break;
-			case 43: s = "\">\" expected"; break;
-			case 44: s = "\"&\" expected"; break;
-			case 45: s = "\"+\" expected"; break;
-			case 46: s = "\"~\" expected"; break;
-			case 47: s = "\"@define\" expected"; break;
-			case 48: s = "\"@font-face\" expected"; break;
-			case 49: s = "\"@page\" expected"; break;
-			case 50: s = "\"@import\" expected"; break;
-			case 51: s = "\"@include\" expected"; break;
-			case 52: s = "\"@charset\" expected"; break;
-			case 53: s = "\"@namespace\" expected"; break;
-			case 54: s = "\"@\" expected"; break;
-			case 55: s = "\"*\" expected"; break;
-			case 56: s = "\"#\" expected"; break;
-			case 57: s = "\".\" expected"; break;
-			case 58: s = "\"[\" expected"; break;
-			case 59: s = "\"=\" expected"; break;
-			case 60: s = "\"~=\" expected"; break;
-			case 61: s = "\"|=\" expected"; break;
-			case 62: s = "\"$=\" expected"; break;
-			case 63: s = "\"^=\" expected"; break;
-			case 64: s = "\"*=\" expected"; break;
-			case 65: s = "\"]\" expected"; break;
-			case 66: s = "\"-\" expected"; break;
-			case 67: s = "\"-n\" expected"; break;
-			case 68: s = "\"!\" expected"; break;
-			case 69: s = "\"/\" expected"; break;
-			case 70: s = "\"||\" expected"; break;
-			case 71: s = "\"^\" expected"; break;
-			case 72: s = "\"&&\" expected"; break;
-			case 73: s = "\"prop\" expected"; break;
-			case 74: s = "\"U\\\\\" expected"; break;
-			case 75: s = "\"%\" expected"; break;
-			case 76: s = "??? expected"; break;
-			case 77: s = "invalid rule"; break;
-			case 78: s = "invalid directive"; break;
-			case 79: s = "invalid medium"; break;
-			case 80: s = "invalid identity"; break;
-			case 81: s = "invalid mediaQuery"; break;
-			case 82: s = "invalid includeDirective"; break;
-			case 83: s = "invalid includeDirective"; break;
-			case 84: s = "invalid pseudo"; break;
-			case 85: s = "invalid pseudo"; break;
-			case 86: s = "invalid term"; break;
-			case 87: s = "invalid term"; break;
-			case 88: s = "invalid term"; break;
-			case 89: s = "invalid term"; break;
-			case 90: s = "invalid term"; break;
-			case 91: s = "invalid namespaceDirective"; break;
-			case 92: s = "invalid genericDirective"; break;
-			case 93: s = "invalid simpleselector"; break;
-			case 94: s = "invalid attrib"; break;
-			case 95: s = "invalid orop"; break;
-			case 96: s = "invalid notExpression"; break;
-			case 97: s = "invalid primaryBooleanExpression"; break;
-			case 98: s = "invalid addop"; break;
-			case 99: s = "invalid mulop"; break;
-			case 100: s = "invalid termExpression"; break;
-			case 101: s = "invalid calculation"; break;
-			case 102: s = "invalid HexValue"; break;
+			case 30: s = "\"prop\" expected"; break;
+			case 31: s = "\"ruleset\" expected"; break;
+			case 32: s = "\"(\" expected"; break;
+			case 33: s = "\":\" expected"; break;
+			case 34: s = "\")\" expected"; break;
+			case 35: s = "\"@media\" expected"; break;
+			case 36: s = "\",\" expected"; break;
+			case 37: s = "\"{\" expected"; break;
+			case 38: s = "\"}\" expected"; break;
+			case 39: s = "\"@if\" expected"; break;
+			case 40: s = "\"@else\" expected"; break;
+			case 41: s = "\"@class\" expected"; break;
+			case 42: s = "\"<\" expected"; break;
+			case 43: s = "\";\" expected"; break;
+			case 44: s = "\">\" expected"; break;
+			case 45: s = "\"&\" expected"; break;
+			case 46: s = "\"+\" expected"; break;
+			case 47: s = "\"~\" expected"; break;
+			case 48: s = "\"@define\" expected"; break;
+			case 49: s = "\"@font-face\" expected"; break;
+			case 50: s = "\"@page\" expected"; break;
+			case 51: s = "\"@import\" expected"; break;
+			case 52: s = "\"@include\" expected"; break;
+			case 53: s = "\"@charset\" expected"; break;
+			case 54: s = "\"@namespace\" expected"; break;
+			case 55: s = "\"@\" expected"; break;
+			case 56: s = "\"*\" expected"; break;
+			case 57: s = "\"#\" expected"; break;
+			case 58: s = "\".\" expected"; break;
+			case 59: s = "\"[\" expected"; break;
+			case 60: s = "\"=\" expected"; break;
+			case 61: s = "\"~=\" expected"; break;
+			case 62: s = "\"|=\" expected"; break;
+			case 63: s = "\"$=\" expected"; break;
+			case 64: s = "\"^=\" expected"; break;
+			case 65: s = "\"*=\" expected"; break;
+			case 66: s = "\"]\" expected"; break;
+			case 67: s = "\"-\" expected"; break;
+			case 68: s = "\"-n\" expected"; break;
+			case 69: s = "\"!\" expected"; break;
+			case 70: s = "\"/\" expected"; break;
+			case 71: s = "\"||\" expected"; break;
+			case 72: s = "\"^\" expected"; break;
+			case 73: s = "\"&&\" expected"; break;
+			case 74: s = "\"-webkit-calc\" expected"; break;
+			case 75: s = "\"-o-calc\" expected"; break;
+			case 76: s = "\"-ms-calc\" expected"; break;
+			case 77: s = "\"-moz-calc\" expected"; break;
+			case 78: s = "\"@calc\" expected"; break;
+			case 79: s = "\"U\\\\\" expected"; break;
+			case 80: s = "\"%\" expected"; break;
+			case 81: s = "??? expected"; break;
+			case 82: s = "invalid rule"; break;
+			case 83: s = "invalid directive"; break;
+			case 84: s = "invalid medium"; break;
+			case 85: s = "invalid identity"; break;
+			case 86: s = "invalid mediaQuery"; break;
+			case 87: s = "invalid includeDirective"; break;
+			case 88: s = "invalid includeDirective"; break;
+			case 89: s = "invalid pseudo"; break;
+			case 90: s = "invalid pseudo"; break;
+			case 91: s = "invalid term"; break;
+			case 92: s = "invalid term"; break;
+			case 93: s = "invalid term"; break;
+			case 94: s = "invalid term"; break;
+			case 95: s = "invalid term"; break;
+			case 96: s = "invalid namespaceDirective"; break;
+			case 97: s = "invalid genericDirective"; break;
+			case 98: s = "invalid simpleselector"; break;
+			case 99: s = "invalid attrib"; break;
+			case 100: s = "invalid orop"; break;
+			case 101: s = "invalid notExpression"; break;
+			case 102: s = "invalid primaryBooleanExpression"; break;
+			case 103: s = "invalid addop"; break;
+			case 104: s = "invalid mulop"; break;
+			case 105: s = "invalid termExpression"; break;
+			case 106: s = "invalid literalCalculation"; break;
+			case 107: s = "invalid calculation"; break;
+			case 108: s = "invalid HexValue"; break;
 			default: s = "error " + n; break;
 		}
 		return s;

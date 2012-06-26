@@ -4,6 +4,7 @@ import com.silentmatt.dss.term.FunctionTerm;
 import com.silentmatt.dss.term.HexTerm;
 import com.silentmatt.dss.term.NumberTerm;
 import com.silentmatt.dss.term.Term;
+import java.util.Locale;
 
 /**
  * An RGB Color
@@ -36,7 +37,7 @@ public final class RGBIColor extends Color {
         this.green = clampInt(green);
         this.blue = clampInt(blue);
         this.alpha = 1.0;
-        this.name = name.toLowerCase();
+        this.name = name.toLowerCase(Locale.US);
     }
 
     /**

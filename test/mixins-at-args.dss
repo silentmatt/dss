@@ -1,6 +1,6 @@
 @class mixin <a: 1px; b: 50%> {
-  width: calc(@a * 5);
-  height: calc(@b - 1%);
+  width: [@a * 5];
+  height: [@b - 1%];
 }
 
 @class mixiny
@@ -32,7 +32,7 @@
 
 .var-args {
   @define { var: 9; }
-  apply: mixin<@var; calc(@var * 2 * 1%)>;
+  apply: mixin<@var; @calc(@var * 2 * 1%)>;
 }
 
 .multi-mix {
@@ -41,7 +41,7 @@
 }
 
 @class maxa<arg1: 10; arg2: #f00> {
-  padding: calc(@arg1 * 2px);
+  padding: [@arg1 * 2px];
   color: @arg2;
 }
 
@@ -53,7 +53,7 @@ body {
   glob: 5;
 }
 @class global-mixin<a:2> {
-  width: calc(@glob + @a);
+  width: [@glob + @a];
 }
 
 .scope-mix {

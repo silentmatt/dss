@@ -84,7 +84,7 @@ a:hover {
 	}
 }
 empty {
-	width: 6.541489999384615pt;
+	width: 6.54149pt;
 }
 #box {
 	border: 1px solid;
@@ -97,7 +97,9 @@ body.hidden {
 }
 body .test {
 	name: string(2n+3);
-	left: 720.0000000940125deg;
+	left: 720deg;
+	right: 720deg;
+	bottom: 720deg;
 	top: cos(4grad);
 	color: rgba(1,2,3,0.4) !important;
 	color: #123;
@@ -108,7 +110,7 @@ body .test {
 }
 .with_layout > nested span child, .with_layout > nested span another child, parent selector > nested span child, parent selector > nested span another child {
 	another: property;
-	value: 3.141592654;
+	value: 3.141593;
 	width: 100px;
 	margin: 0 auto 0 auto;
 }
@@ -141,4 +143,7 @@ body .test {
 }
 .test > nested + after {
 	g: h;
+}
+.test > nested + after more more more {
+	prop: booyah;
 }

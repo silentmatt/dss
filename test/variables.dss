@@ -1,16 +1,16 @@
 @define {
   a: 2;
-  x: calc(const(a) * const(a));
-  y: calc(const(x) + 1);
-  z: calc(const(x) * 2 + const(y));
+  x: @calc(const(a) * const(a));
+  y: @calc(const(x) + 1);
+  z: @calc(const(x) * 2 + const(y));
 }
 
 .variables {
-  width: calc(const(z) * 1cm + 1cm); // 14cm
+  width: @calc(const(z) * 1cm + 1cm); // 14cm
 }
 
 @define {
-  b: calc(const(a) * 10);
+  b: @calc(const(a) * 10);
   c: #888;
   fonts: "Trebuchet MS", Verdana, sans-serif;
   f: const(fonts);
@@ -19,7 +19,7 @@
 }
 
 .variables {
-  height: calc((const(b) + const(x)) * 1px + 0px); // 24px
+  height: @calc((const(b) + const(x)) * 1px + 0px); // 24px
   color: const(c);
   font-family: const(f);
   quotes: const(q);

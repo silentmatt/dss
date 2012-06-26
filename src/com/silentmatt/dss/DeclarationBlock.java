@@ -306,18 +306,18 @@ public class DeclarationBlock {
                 Declaration dec = properties.get(i);
                 properties.set(i, dec.substituteValues(state, new DeclarationList(list), true, true));
             }
+
+            for (int i = 0; i < properties.size(); i++) {
+                Declaration declaration = properties.get(i);
+                list.add(declaration);
+            }
+
+            for (NestedRuleSet rs : clazz.getNestedRuleSets()) {
+                result.addNestedRuleSet(rs.substituteValues(state));
+            }
         }
         finally {
             state.popParameters();
-        }
-
-        for (int i = 0; i < properties.size(); i++) {
-            Declaration declaration = properties.get(i);
-            list.add(declaration);
-        }
-
-        for (NestedRuleSet rs : clazz.getNestedRuleSets()) {
-            result.addNestedRuleSet(rs);
         }
     }
 

@@ -5,39 +5,44 @@ import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.calc.CalcExpression;
-import com.silentmatt.dss.calc.CalculationException;
-import com.silentmatt.dss.calc.Value;
 
 /**
- * A "@calc(...)" term.
+ * A "calc(...)" term.
  *
  * @author Matthew Crumley
  */
 @Immutable
-public class CalculationTerm extends Term {
+public class CalculationLiteralTerm extends Term {
+    /**
+     * The prefix.
+     */
+    private final String prefix;
+
     /**
      * The expression to evaluate.
      */
     private final CalcExpression calculation;
 
     /**
-     * Constructs a CalculationTerm from an expression.
+     * Constructs a CalculationLiteralTerm from an expression.
      *
      * @param calculation The expression to evaluate
      */
-    public CalculationTerm(CalcExpression calculation) {
+    public CalculationLiteralTerm(String prefix, CalcExpression calculation) {
         super(null);
+        this.prefix = prefix;
         this.calculation = calculation;
     }
 
     /**
-     * Constructs a CalculationTerm from an expression.
+     * Constructs a CalculationLiteralTerm from an expression.
      *
      * @param sep The separator
      * @param calculation The expression to evaluate
      */
-    public CalculationTerm(Character sep, CalcExpression calculation) {
+    public CalculationLiteralTerm(Character sep, String prefix, CalcExpression calculation) {
         super(sep);
+        this.prefix = prefix;
         this.calculation = calculation;
     }
 
@@ -53,11 +58,11 @@ public class CalculationTerm extends Term {
     /**
      * Gets the term as a String.
      *
-     * @return A String of the form "@calc(expression)"
+     * @return A String of the form "calc(expression)"
      */
     @Override
     public String toString() {
-        return "@calc(" + calculation.toString() + ")";
+        return prefix + "calc(" + calculation.toString() + ")";
     }
 
     /**
@@ -70,26 +75,12 @@ public class CalculationTerm extends Term {
      */
     @Override
     public Expression substituteValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doCalculations) {
-        if (doCalculations) {
-            // XXX: had "withParams ? state.getParameters() : null". Do we need a withParams flag?
-            CalcExpression calcExp = calculation.withSubstitutedValues(state, container, withParams, false);
-
-            Value calc = calcExp.calculateValue(state, container);
-            if (calc != null) {
-                try {
-                    return calc.toTerm().toExpression();
-                } catch (CalculationException ex) {
-                    state.getErrors().SemErr(ex.getMessage());
-                    return null;
-                }
-            }
-        }
-
-        return toExpression();
+        CalcExpression calcExp = calculation.withSubstitutedValues(state, container, withParams, true);
+        return new CalculationLiteralTerm(getSeperator(), prefix, calcExp).toExpression();
     }
 
     @Override
-    public CalculationTerm withSeparator(Character separator) {
-        return new CalculationTerm(separator, calculation);
+    public CalculationLiteralTerm withSeparator(Character separator) {
+        return new CalculationLiteralTerm(separator, prefix, calculation);
     }
 }

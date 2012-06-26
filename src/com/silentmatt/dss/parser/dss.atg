@@ -188,6 +188,7 @@ identity<out String ident> =
         | "literal"
         | "const"
         | "param"
+        | "prop"
         | "ruleset"
     )   (. ident = t.val; .)
 .
@@ -715,8 +716,17 @@ termExpression<out CalcExpression expr> (.  expr = null; Term trm; CalcExpressio
     term<out trm>                       (. expr = new TermExpression(trm); .)
 .
 
+literalCalculation<out CalculationLiteralTerm trm> =    (.  CalcExpression expr = null;
+                                                            String prefix = ""; .)
+((("calc" | "-webkit-calc" | "-o-calc" | "-ms-calc" | "-moz-calc")
+                                                        (.  prefix = t.val.replace("calc", ""); .)
+        "(" lengthExpression<out expr> ")")
+|
+(       "[" lengthExpression<out expr> "]"))            (.  trm = new CalculationLiteralTerm(prefix, expr); .)
+.
+
 calculation<out CalcExpression expr> =  (.  expr = null; .)
-(("calc" "(" lengthExpression<out expr> ")")
+(("@calc" "(" lengthExpression<out expr> ")")
 |
 (       "[" lengthExpression<out expr> "]"))
 .
@@ -748,6 +758,8 @@ term<out Term trm> =                        (.  String val = "";
         HexValue<out val>                   (.  trm = new HexTerm(val); .)
         |
         calculation<out expression>         (.  trm = new CalculationTerm(expression); .)
+        |
+        literalCalculation<out trm>
         |
         identity<out ident>                 (.  String trmValue = ident; .)
         { ':'                               (.  trmValue += t.val; .)

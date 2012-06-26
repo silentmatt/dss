@@ -74,11 +74,9 @@ public final class IfDirective extends Rule {
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         Boolean result = condition.evaluate(state);
-        if (result == null) {
-            state.getErrors().SemErr("Invalid condition: " + condition);
-        }
-        else {
+        if (result != null) {
             List<Rule> rules = result ? ifRules : elseRules;
+
             if (rules != null) {
                 CssRuleList crl = new CssRuleList();
                 List<CssRule> ruleList = Rule.evaluateRules(state, rules);
@@ -87,6 +85,9 @@ public final class IfDirective extends Rule {
                 }
                 return crl;
             }
+        }
+        else {
+            state.getErrors().SemErr("Invalid condition: " + condition);
         }
         return null;
     }

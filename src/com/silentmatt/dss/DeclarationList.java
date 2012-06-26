@@ -50,8 +50,8 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
         return list.isEmpty();
     }
 
-    public boolean contains(Declaration arg0) {
-        return list.contains(arg0);
+    public boolean contains(Object arg0) {
+        return arg0 instanceof Declaration && list.contains((Declaration)arg0);
     }
 
     @Override
@@ -340,7 +340,6 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
             public Iterator<String> iterator() {
                 return new Iterator<String>() {
                     final Iterator<String> it = keys.iterator();
-                    private String current;
 
                     @Override
                     public boolean hasNext() {
@@ -349,7 +348,7 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
 
                     @Override
                     public String next() {
-                        return current = it.next();
+                        return it.next();
                     }
 
                     @Override

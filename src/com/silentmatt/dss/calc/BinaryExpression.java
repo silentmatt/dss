@@ -57,8 +57,8 @@ public class BinaryExpression implements CalcExpression {
     }
 
     @Override
-    public CalcExpression withSubstitutedValues(EvaluationState state, DeclarationList container, boolean withParams) {
-        return new BinaryExpression(operation, left.withSubstitutedValues(state, container, withParams), right.withSubstitutedValues(state, container, withParams));
+    public CalcExpression withSubstitutedValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doNestedCalculations) {
+        return new BinaryExpression(operation, left.withSubstitutedValues(state, container, withParams, doNestedCalculations), right.withSubstitutedValues(state, container, withParams, doNestedCalculations));
     }
 
     /**

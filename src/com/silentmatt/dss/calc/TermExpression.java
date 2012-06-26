@@ -31,7 +31,7 @@ public class TermExpression implements CalcExpression {
     }
 
     public Value calculateValue(EvaluationState state, DeclarationList container) {
-        Term value = withSubstitutedValues(state, container, true).value;
+        Term value = withSubstitutedValues(state, container, true, false).value;
         if (value instanceof NumberTerm) {
             return new Value((NumberTerm) value);
         }
@@ -66,7 +66,7 @@ public class TermExpression implements CalcExpression {
         return this.value.toString();
     }
 
-    public TermExpression withSubstitutedValues(EvaluationState state, DeclarationList container, boolean withParams) {
+    public TermExpression withSubstitutedValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doNestedCalculations) {
         if (value instanceof ReferenceTerm && !(!withParams && value instanceof ParamTerm)) {
             ReferenceTerm function = (ReferenceTerm) value;
             Expression variable = function.evaluate(state, container);
@@ -80,6 +80,18 @@ public class TermExpression implements CalcExpression {
             }
 
             return new TermExpression(variable.getTerms().get(0));
+        }
+        else if (doNestedCalculations && value instanceof CalculationTerm) {
+            Value calc = calculateValue(state, container);
+            if (calc != null) {
+                try {
+                    return new TermExpression(calc.toTerm());
+                } catch (CalculationException ex) {
+                    state.getErrors().SemErr(ex.getMessage());
+                    return null;
+                }
+            }
+            return this;
         }
         else {
             return this;
