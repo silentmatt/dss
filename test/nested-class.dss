@@ -11,6 +11,10 @@
 
         prop: [@value + 2px];
         string: @another-value;
+
+        @if (value) {
+            add: this;
+        }
     }
 
     some selector {
