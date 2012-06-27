@@ -197,8 +197,11 @@ class Parser {
 				    break;
 				}
 				
-				Expect(43);
-			} else if (la.kind == 41) {
+				Expect(41);
+			} else if (la.kind == 39) {
+				decs = ifDeclarations();
+				rsetb.addDeclarations(decs); 
+			} else if (la.kind == 42) {
 				dir = classDirective();
 				rsetb.addRule(dir); 
 			} else if (la.kind == 48) {
@@ -246,7 +249,7 @@ class Parser {
 			dir = mediaDirective();
 			break;
 		}
-		case 41: {
+		case 42: {
 			dir = classDirective();
 			break;
 		}
@@ -569,7 +572,7 @@ class Parser {
 			if (StartOf(2)) {
 				RuleSet rset = ruleset();
 				rules.add(rset); 
-			} else if (la.kind == 41) {
+			} else if (la.kind == 42) {
 				ClassDirective cdir = classDirective();
 				rules.add(cdir); 
 			} else if (la.kind == 48) {
@@ -596,14 +599,14 @@ class Parser {
 		Combinator cb;
 		boolean global = false;
 		
-		Expect(41);
+		Expect(42);
 		ident = identity();
-		if (la.kind == 42) {
+		if (la.kind == 43) {
 			Get();
 			if (StartOf(5)) {
 				param = parameter();
 				parameters.add(param); 
-				while (la.kind == 43) {
+				while (la.kind == 41) {
 					Get();
 					param = parameter();
 					parameters.add(param); 
@@ -624,7 +627,10 @@ class Parser {
 				    break;
 				}
 				
-				Expect(43);
+				Expect(41);
+			} else if (la.kind == 39) {
+				mdecs = ifDeclarations();
+				declarations.addAll(mdecs); 
 			} else {
 				cb = Combinator.Descendant; 
 				if (la.kind == 45) {
@@ -674,7 +680,7 @@ class Parser {
 			    break;
 			}
 			
-			Expect(43);
+			Expect(41);
 		}
 		Expect(38);
 		dir = new DefineDirective(new DeclarationList(declarations), global); 
@@ -700,7 +706,7 @@ class Parser {
 			String url = QuotedString();
 			includeUrl = new UrlTerm(url.substring(1, url.length()-1)); 
 		} else SynErr(86);
-		if (la.kind == 43) {
+		if (la.kind == 41) {
 			Get();
 		} else if (la.kind == 37) {
 			Get();
@@ -711,7 +717,7 @@ class Parser {
 				    break;
 				}
 				
-				Expect(43);
+				Expect(41);
 			}
 			Expect(38);
 		} else SynErr(87);
@@ -753,18 +759,28 @@ class Parser {
 		return expr;
 	}
 
-	Declaration  parameter() {
-		Declaration  dec;
-		Declaration.Builder decb = new Declaration.Builder(); 
-		String ident = identity();
-		decb.setName(ident); 
-		if (la.kind == 33) {
-			Get();
-			Expression exp = expr();
-			decb.setExpression(exp); 
+	List<Declaration>  ifDeclarations() {
+		List<Declaration>  mdecs;
+		BooleanExpression expr;
+		mdecs = new ArrayList<Declaration>();
+		List<Declaration> decs;
+		
+		Expect(39);
+		expr = booleanExpression();
+		Expect(37);
+		while (StartOf(5)) {
+			decs = multideclaration();
+			for (Declaration dec : decs) {
+			   mdecs.add(dec.withCondition(expr));
+			}
+			if (endOfBlock()) {
+			    break;
+			}
+			
+			Expect(41);
 		}
-		dec = decb.build(); 
-		return dec;
+		Expect(38);
+		return mdecs;
 	}
 
 	List<Declaration>  multideclaration() {
@@ -797,6 +813,20 @@ class Parser {
 		return decs;
 	}
 
+	Declaration  parameter() {
+		Declaration  dec;
+		Declaration.Builder decb = new Declaration.Builder(); 
+		String ident = identity();
+		decb.setName(ident); 
+		if (la.kind == 33) {
+			Get();
+			Expression exp = expr();
+			decb.setExpression(exp); 
+		}
+		dec = decb.build(); 
+		return dec;
+	}
+
 	FontFaceDirective  fontFaceDirective() {
 		FontFaceDirective  dir;
 		List<Declaration> declarations = new ArrayList<Declaration>();
@@ -811,7 +841,7 @@ class Parser {
 			    break;
 			}
 			
-			Expect(43);
+			Expect(41);
 		}
 		Expect(38);
 		dir = new FontFaceDirective(new DeclarationList(declarations)); 
@@ -839,7 +869,7 @@ class Parser {
 			    break;
 			}
 			
-			Expect(43);
+			Expect(41);
 		}
 		Expect(38);
 		dir = new PageDirective(ss, new DeclarationList(declarations)); 
@@ -929,7 +959,7 @@ class Parser {
 		if (StartOf(10)) {
 			m = mediaQuery();
 		}
-		Expect(43);
+		Expect(41);
 		dir = new ImportDirective(trm, m); 
 		return dir;
 	}
@@ -939,7 +969,7 @@ class Parser {
 		Expect(53);
 		Term trm = term();
 		dir = new CharsetDirective(trm); 
-		Expect(43);
+		Expect(41);
 		return dir;
 	}
 
@@ -1017,7 +1047,7 @@ class Parser {
 				}
 			}
 			trm = new StringTerm(trmValue); 
-			if (la.kind == 32 || la.kind == 42) {
+			if (la.kind == 32 || la.kind == 43) {
 				if (la.kind == 32) {
 					Get();
 					exp = expr();
@@ -1036,7 +1066,7 @@ class Parser {
 							Expression arg = expr();
 							cls.addArgument(new Declaration("", arg)); 
 						}
-						while (la.kind == 43) {
+						while (la.kind == 41) {
 							Get();
 							if (isDeclaration()) {
 								dec = declaration();
@@ -1126,7 +1156,7 @@ class Parser {
 		} else if (la.kind == 5) {
 			url = QuotedString();
 		} else SynErr(95);
-		Expect(43);
+		Expect(41);
 		dir = new NamespaceDirective(ident, new UrlTerm(url)); 
 		return dir;
 	}
@@ -1159,14 +1189,14 @@ class Parser {
 					    break;
 					}
 					
-					Expect(43);
+					Expect(41);
 				} else {
 					Rule dr = directive();
 					dirb.addRule(dr); 
 				}
 			}
 			Expect(38);
-		} else if (la.kind == 43) {
+		} else if (la.kind == 41) {
 			Get();
 		} else SynErr(96);
 		dir = dirb.build(); 
@@ -1566,21 +1596,21 @@ class Parser {
 
 	private static final boolean[][] set = {
 		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,T,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,T, x,x,x,T, x,T,x,x, x,x,x,x, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,T,T,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,T, x,x,x,T, x,x,T,x, x,x,x,x, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,T, x,T,x,x, x,x,x,x, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,T,x,x, T,T,T,T, T,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,T, x,x,T,x, x,x,x,x, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,T, x,x,T,x, T,T,T,T, T,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, T,x,T,T, x,x,x,x, x,x,T,x, x,T,x,x, x,T,T,T, T,T,T,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,T,x,x, x,x,x,x, T,x,x,x, T,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,x,x, T,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,T, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,x,x,x, x,x},
 		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, T,x,T,x, x,x,x,x, x,x,T,x, x,x,x,x, x,T,T,T, T,T,T,x, x,x},
 		{x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,T,x, T,T,x,x, x,x,x,T, T,x,T,x, x,x,x,x, x,x,x,T, T,x,T,T, x,x,x,x, x,T,T,x, T,T,T,T, T,T,T,T, T,T,T,T, x,x},
-		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,T,x, T,T,x,x, x,x,x,T, T,x,T,x, x,x,x,x, x,x,x,T, T,x,T,T, x,x,x,x, x,T,T,x, T,T,T,T, T,T,T,T, T,T,T,x, x,x},
+		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,T,x, T,T,x,x, x,T,x,x, T,x,T,x, x,x,x,x, x,x,x,T, T,x,T,T, x,x,x,x, x,T,T,x, T,T,T,T, T,T,T,T, T,T,T,T, x,x},
+		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,T,x, T,T,x,x, x,T,x,x, T,x,T,x, x,x,x,x, x,x,x,T, T,x,T,T, x,x,x,x, x,T,T,x, T,T,T,T, T,T,T,T, T,T,T,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, T,x,T,T, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
@@ -1633,9 +1663,9 @@ class Parser {
 			case 38: s = "\"}\" expected"; break;
 			case 39: s = "\"@if\" expected"; break;
 			case 40: s = "\"@else\" expected"; break;
-			case 41: s = "\"@class\" expected"; break;
-			case 42: s = "\"<\" expected"; break;
-			case 43: s = "\";\" expected"; break;
+			case 41: s = "\";\" expected"; break;
+			case 42: s = "\"@class\" expected"; break;
+			case 43: s = "\"<\" expected"; break;
 			case 44: s = "\">\" expected"; break;
 			case 45: s = "\"&\" expected"; break;
 			case 46: s = "\"+\" expected"; break;

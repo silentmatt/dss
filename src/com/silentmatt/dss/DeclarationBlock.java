@@ -1,5 +1,6 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.bool.BooleanExpression;
 import com.silentmatt.dss.css.CssDeclaration;
 import com.silentmatt.dss.directive.ClassDirective;
 import com.silentmatt.dss.directive.DeclarationDirective;
@@ -295,7 +296,10 @@ public final class DeclarationBlock {
         // Make a copy of the properties, to substitute parameters into
         ArrayList<Declaration> properties = new ArrayList<Declaration>();
         for (Declaration prop : clazz.getDeclarations(args)) {
-            properties.add(new Declaration(prop.getName(), prop.getExpression(), prop.isImportant()));
+            Boolean cond = prop.getCondition().evaluate(state);
+            if (cond != null && cond) {
+                properties.add(new Declaration(prop.getName(), prop.getExpression(), prop.isImportant(), BooleanExpression.TRUE));
+            }
         }
 
         state.pushParameters();
@@ -402,7 +406,10 @@ public final class DeclarationBlock {
                     addInheritedProperties(result, state, declaration.getExpression());
                 }
                 else {
-                    result.addDeclaration(declaration);
+                    Boolean cond = declaration.getCondition().evaluate(state);
+                    if (cond != null && cond) {
+                        result.addDeclaration(declaration);
+                    }
                 }
             }
 

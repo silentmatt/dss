@@ -341,7 +341,7 @@ public class Scanner {
 		literals.put("@media", new Integer(35));
 		literals.put("@if", new Integer(39));
 		literals.put("@else", new Integer(40));
-		literals.put("@class", new Integer(41));
+		literals.put("@class", new Integer(42));
 		literals.put("@define", new Integer(48));
 		literals.put("@font-face", new Integer(49));
 		literals.put("@page", new Integer(50));
@@ -983,7 +983,7 @@ public class Scanner {
 				case 110:
 					{t.kind = 38; break loop;}
 				case 111:
-					{t.kind = 43; break loop;}
+					{t.kind = 41; break loop;}
 				case 112:
 					{t.kind = 44; break loop;}
 				case 113:
@@ -1026,7 +1026,7 @@ public class Scanner {
 					else {t.kind = 66; break loop;}
 				case 130:
 					if (ch == '!') {AddCh(); state = 100; break;}
-					else {t.kind = 42; break loop;}
+					else {t.kind = 43; break loop;}
 				case 131:
 					if (ch == '&') {AddCh(); state = 127; break;}
 					else {t.kind = 45; break loop;}

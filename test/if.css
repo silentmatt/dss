@@ -7,3 +7,9 @@ fdsa {
 asdf {
 	foo: bar;
 }
+box {
+	position: relative;
+	zoom: 1;
+	width: 100px;
+	height: 100px;
+}

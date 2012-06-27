@@ -264,6 +264,30 @@ ifDirective<out IfDirective idir> = (.
     (.  idir = new IfDirective(expr, ifrules, elserules); .)
 .
 
+ifDeclarations<out List<Declaration> mdecs> =   (.  BooleanExpression expr;
+                                                    mdecs = new ArrayList<Declaration>();
+                                                    List<Declaration> decs;
+                                                .)
+    "@if"
+    booleanExpression<out expr>
+    '{' {
+        multideclaration<out decs>              (.  for (Declaration dec : decs) {
+                                                        mdecs.add(dec.withCondition(expr));
+                                                    }
+                                                    if (endOfBlock()) {
+                                                        break;
+                                                    }
+                                                .)
+                ';'
+    } '}'
+    /*[
+        "@else"                     (.  elserules = new ArrayList<Rule>(); .)
+        '{' {
+            rule<out Rule rule>     (.  elserules.add(rule); .)
+        } '}'
+    ]*/
+.
+
 parameter<out Declaration dec> =        (. Declaration.Builder decb = new Declaration.Builder(); .)
     identity<out String ident>          (. decb.setName(ident); .)
     [
@@ -296,13 +320,16 @@ classDirective<out ClassDirective dir> =        (.  String ident;
         "global"                                (.  global = true; .)
     ]
     '{' {
-            IF (!isNestedSelector()) multideclaration<out mdecs>
-                                                (.  declarations.addAll(mdecs);
+            (IF (!isNestedSelector())
+                multideclaration<out mdecs>     (.  declarations.addAll(mdecs);
                                                     if (endOfBlock()) {
                                                         break;
                                                     }
                                                 .)
                 ';'
+            )
+            |
+            ifDeclarations<out mdecs>           (.  declarations.addAll(mdecs); .)
             |
                                                 (.  cb = Combinator.Descendant; .)
             [ '&' ]                             (.  if (t.pos + t.val.length() == la.pos) {
@@ -487,13 +514,16 @@ ruleset<out RuleSet rset> =                  (.  RuleSet.Builder rsetb = new Rul
     }
     '{'
         {
-            (IF (!isNestedSelector()) multideclaration<out decs>)
-                                             (.  rsetb.addDeclarations(decs);
+            (IF (!isNestedSelector())
+                multideclaration<out decs>  (.  rsetb.addDeclarations(decs);
                                                  if (endOfBlock()) {
                                                      break;
                                                  }
                                              .)
             ';'
+            )
+            |
+            ifDeclarations<out decs>         (.  rsetb.addDeclarations(decs); .)
             |
             classDirective<out dir>          (.  rsetb.addRule(dir); .)
             |
