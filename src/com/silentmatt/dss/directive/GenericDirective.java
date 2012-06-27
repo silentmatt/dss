@@ -96,11 +96,10 @@ public final class GenericDirective extends Rule {
         StringBuilder txt = new StringBuilder();
 
         txt.append(name);
-        txt.append(" ");
 
         if (getExpression() != null) {
-            txt.append(getExpression().toString());
             txt.append(" ");
+            txt.append(getExpression().toString());
         }
 
         boolean first = true;

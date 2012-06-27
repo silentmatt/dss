@@ -1,0 +1,4 @@
+@-webkit-keyframes spinner {
+    from { -webkit-transform: scale(1); }
+    to   { -webkit-transform: scale(2); }
+}

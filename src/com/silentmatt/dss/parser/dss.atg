@@ -418,7 +418,7 @@ namespaceDirective<out NamespaceDirective dir> =            (.  String ident = n
 .
 
 genericDirective<out GenericDirective dir> =
-    '@' identity<out String ident>                      (.  GenericDirective.Builder dirb = new GenericDirective.Builder();
+    atReference<out String ident>                       (.  GenericDirective.Builder dirb = new GenericDirective.Builder();
                                                             dirb.setName("@" + ident);
                                                         .)
     [
@@ -429,6 +429,8 @@ genericDirective<out GenericDirective dir> =
     (
         '{'
             {
+                ruleset<out RuleSet rset>               (.  dirb.addRule(rset); .)
+                |
                 // XXX: Order between Declarations and Rules is not preserved.
                 // TODO: Support multideclarations in generic directives
                 declaration<out Declaration dec>        (.  dirb.addDeclaration(dec);
@@ -437,8 +439,6 @@ genericDirective<out GenericDirective dir> =
                                                             }
                                                         .)
                 ';'
-                |
-                ruleset<out RuleSet rset>               (.  dirb.addRule(rset); .)
                 |
                 directive<out Rule dr>                  (.  dirb.addRule(dr); .)
             }

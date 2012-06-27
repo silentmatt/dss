@@ -62,11 +62,10 @@ public class CssGenericDirective extends CssRule {
         StringBuilder txt = new StringBuilder();
 
         txt.append(name);
-        txt.append(" ");
 
         if (getExpression() != null) {
-            txt.append(getExpression().toString());
             txt.append(" ");
+            txt.append(getExpression().toString());
         }
 
         boolean first = true;
@@ -87,11 +86,11 @@ public class CssGenericDirective extends CssRule {
             return txt.toString();
         }
 
-        txt.append(" {\n").append(start);
+        txt.append(" {").append(start);
 
         for (CssRule dir : rules) {
-            txt.append(dir.toString(nesting + 1));
             txt.append("\n");
+            txt.append(dir.toString(nesting + 1));
         }
 
         first = true;
