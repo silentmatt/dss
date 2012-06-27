@@ -595,9 +595,11 @@ class Parser {
 		List<Declaration> declarations = new ArrayList<Declaration>();
 		List<Declaration> mdecs;
 		List<NestedRuleSet> nested = new ArrayList<NestedRuleSet>();
+		List<Rule> rules = new ArrayList<Rule>();
 		Declaration param;
 		Combinator cb;
 		boolean global = false;
+		Rule rule;
 		
 		Expect(42);
 		ident = identity();
@@ -619,7 +621,7 @@ class Parser {
 			global = true; 
 		}
 		Expect(37);
-		while (StartOf(8)) {
+		while (StartOf(4)) {
 			if (!isNestedSelector()) {
 				mdecs = multideclaration();
 				declarations.addAll(mdecs);
@@ -631,6 +633,12 @@ class Parser {
 			} else if (la.kind == 39) {
 				mdecs = ifDeclarations();
 				declarations.addAll(mdecs); 
+			} else if (la.kind == 42) {
+				rule = classDirective();
+				rules.add(rule); 
+			} else if (la.kind == 48) {
+				rule = defineDirective();
+				rules.add(rule); 
 			} else {
 				cb = Combinator.Descendant; 
 				if (la.kind == 45) {
@@ -657,7 +665,7 @@ class Parser {
 			}
 		}
 		Expect(38);
-		dir = new ClassDirective(ident, new DeclarationList(parameters), global, new DeclarationList(declarations), nested); 
+		dir = new ClassDirective(ident, new DeclarationList(parameters), global, new DeclarationList(declarations), nested, rules); 
 		return dir;
 	}
 
@@ -762,11 +770,13 @@ class Parser {
 	List<Declaration>  ifDeclarations() {
 		List<Declaration>  mdecs;
 		BooleanExpression expr;
+		BooleanExpression elseExpr;
 		mdecs = new ArrayList<Declaration>();
 		List<Declaration> decs;
 		
 		Expect(39);
 		expr = booleanExpression();
+		elseExpr = new NotExpression(expr); 
 		Expect(37);
 		while (StartOf(5)) {
 			decs = multideclaration();
@@ -780,6 +790,22 @@ class Parser {
 			Expect(41);
 		}
 		Expect(38);
+		if (la.kind == 40) {
+			Get();
+			Expect(37);
+			while (StartOf(5)) {
+				decs = multideclaration();
+				for (Declaration dec : decs) {
+				mdecs.add(dec.withCondition(elseExpr));
+				}
+				if (endOfBlock()) {
+				    break;
+				}
+				
+				Expect(41);
+			}
+			Expect(38);
+		}
 		return mdecs;
 	}
 
@@ -895,7 +921,7 @@ class Parser {
 		} else SynErr(88);
 		if (la.kind == 32) {
 			Get();
-			if (StartOf(9)) {
+			if (StartOf(8)) {
 				if (la.kind == 46 || la.kind == 66) {
 					if (la.kind == 46) {
 						Get();
@@ -956,7 +982,7 @@ class Parser {
 		Expect(51);
 		String url = URI();
 		trm = new UrlTerm(url); 
-		if (StartOf(10)) {
+		if (StartOf(9)) {
 			m = mediaQuery();
 		}
 		Expect(41);
@@ -1024,7 +1050,7 @@ class Parser {
 		} else if (la.kind == 58 || la.kind == 77) {
 			expression = calculation();
 			trm = new CalculationTerm(expression); 
-		} else if (StartOf(11)) {
+		} else if (StartOf(10)) {
 			trm = literalCalculation();
 		} else if (StartOf(5)) {
 			ident = identity();
@@ -1058,7 +1084,7 @@ class Parser {
 					ClassReferenceTerm.Builder cls = new ClassReferenceTerm.Builder(trm.toString());
 					Declaration dec;
 					
-					if (StartOf(12)) {
+					if (StartOf(11)) {
 						if (isDeclaration()) {
 							dec = declaration();
 							cls.addArgument(dec); 
@@ -1071,7 +1097,7 @@ class Parser {
 							if (isDeclaration()) {
 								dec = declaration();
 								cls.addArgument(dec); 
-							} else if (StartOf(12)) {
+							} else if (StartOf(11)) {
 								Expression arg = expr();
 								cls.addArgument(new Declaration("", arg)); 
 							} else SynErr(90);
@@ -1081,7 +1107,7 @@ class Parser {
 					trm = cls.build(); 
 				}
 			}
-		} else if (StartOf(13)) {
+		} else if (StartOf(12)) {
 			if (la.kind == 46 || la.kind == 66) {
 				if (la.kind == 66) {
 					Get();
@@ -1099,7 +1125,7 @@ class Parser {
 			val += t.val; trm = new NumberTerm(Double.parseDouble(val)); 
 			if (endOfBlock()) {
 				trm = ((NumberTerm) trm).withValue(Double.parseDouble(val)); 
-			} else if (StartOf(14)) {
+			} else if (StartOf(13)) {
 				if (la.val.equalsIgnoreCase("n")) {
 					Expect(19);
 					val += t.val; 
@@ -1118,7 +1144,7 @@ class Parser {
 				} else if (la.kind == 79) {
 					Get();
 					trm = ((NumberTerm) trm).withUnit(Unit.Percent); 
-				} else if (StartOf(15)) {
+				} else if (StartOf(14)) {
 					if (isUnit()) {
 						ident = identity();
 						try {
@@ -1167,8 +1193,8 @@ class Parser {
 		GenericDirective.Builder dirb = new GenericDirective.Builder();
 		dirb.setName("@" + ident);
 		
-		if (StartOf(12)) {
-			if (StartOf(12)) {
+		if (StartOf(11)) {
+			if (StartOf(11)) {
 				Expression exp = expr();
 				dirb.setExpression(exp); 
 			} else {
@@ -1228,7 +1254,7 @@ class Parser {
 		
 		ss = simpleselector();
 		selb.addSimpleSelector(ss); 
-		while (StartOf(16)) {
+		while (StartOf(15)) {
 			if (la.kind == 44 || la.kind == 46 || la.kind == 47) {
 				if (la.kind == 46) {
 					Get();
@@ -1263,7 +1289,7 @@ class Parser {
 		} else if (la.kind == 55) {
 			Get();
 			ssb.setElementName("*"); 
-		} else if (StartOf(17)) {
+		} else if (StartOf(16)) {
 			if (la.kind == 56) {
 				Get();
 				ident = identity();
@@ -1280,7 +1306,7 @@ class Parser {
 				ssb.setPseudo(psd); 
 			}
 		} else SynErr(97);
-		while (StartOf(17)) {
+		while (StartOf(16)) {
 			if (t.pos + t.val.length() < la.pos) {
 			   break;
 			}
@@ -1318,7 +1344,7 @@ class Parser {
 		Expect(58);
 		ident = identity();
 		atbb.setOperand(ident); 
-		if (StartOf(18)) {
+		if (StartOf(17)) {
 			switch (la.kind) {
 			case 59: {
 				Get();
@@ -1413,7 +1439,7 @@ class Parser {
 	BooleanExpression  notExpression() {
 		BooleanExpression  expr;
 		BooleanExpression exp; expr = null; 
-		if (StartOf(19)) {
+		if (StartOf(18)) {
 			exp = primaryBooleanExpression();
 			expr = exp; 
 		} else if (la.kind == 68) {
@@ -1432,7 +1458,7 @@ class Parser {
 			exp = booleanExpression();
 			Expect(34);
 			expr = exp; 
-		} else if (StartOf(12)) {
+		} else if (StartOf(11)) {
 			trm = term();
 			expr = new TermBooleanExpression(trm); 
 		} else SynErr(101);
@@ -1509,7 +1535,7 @@ class Parser {
 			exp = lengthExpression();
 			Expect(34);
 			expr = exp; 
-		} else if (StartOf(12)) {
+		} else if (StartOf(11)) {
 			trm = term();
 			expr = new TermExpression(trm); 
 		} else SynErr(104);
@@ -1520,7 +1546,7 @@ class Parser {
 		CalculationLiteralTerm  trm;
 		CalcExpression expr = null;
 		String prefix = ""; 
-		if (StartOf(20)) {
+		if (StartOf(19)) {
 			if (la.kind == 23) {
 				Get();
 			} else if (la.kind == 73) {
@@ -1603,7 +1629,6 @@ class Parser {
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, T,x,T,T, x,x,x,x, x,x,T,x, x,T,x,x, x,T,T,T, T,T,T,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,T,x, x,x,x,x, T,x,x,x, T,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,T, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,x,x,x, x,x},

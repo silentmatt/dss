@@ -265,11 +265,12 @@ ifDirective<out IfDirective idir> = (.
 .
 
 ifDeclarations<out List<Declaration> mdecs> =   (.  BooleanExpression expr;
+                                                    BooleanExpression elseExpr;
                                                     mdecs = new ArrayList<Declaration>();
                                                     List<Declaration> decs;
                                                 .)
     "@if"
-    booleanExpression<out expr>
+    booleanExpression<out expr>                 (.  elseExpr = new NotExpression(expr); .)
     '{' {
         multideclaration<out decs>              (.  for (Declaration dec : decs) {
                                                         mdecs.add(dec.withCondition(expr));
@@ -280,12 +281,19 @@ ifDeclarations<out List<Declaration> mdecs> =   (.  BooleanExpression expr;
                                                 .)
                 ';'
     } '}'
-    /*[
-        "@else"                     (.  elserules = new ArrayList<Rule>(); .)
+    [
+        "@else"
         '{' {
-            rule<out Rule rule>     (.  elserules.add(rule); .)
+            multideclaration<out decs>              (.  for (Declaration dec : decs) {
+                                                        mdecs.add(dec.withCondition(elseExpr));
+                                                    }
+                                                    if (endOfBlock()) {
+                                                        break;
+                                                    }
+                                                .)
+                ';'
         } '}'
-    ]*/
+    ]
 .
 
 parameter<out Declaration dec> =        (. Declaration.Builder decb = new Declaration.Builder(); .)
@@ -301,9 +309,11 @@ classDirective<out ClassDirective dir> =        (.  String ident;
                                                     List<Declaration> declarations = new ArrayList<Declaration>();
                                                     List<Declaration> mdecs;
                                                     List<NestedRuleSet> nested = new ArrayList<NestedRuleSet>();
+                                                    List<Rule> rules = new ArrayList<Rule>();
                                                     Declaration param;
                                                     Combinator cb;
                                                     boolean global = false;
+                                                    Rule rule;
                                                 .)
     "@class"
     identity<out ident>
@@ -331,6 +341,10 @@ classDirective<out ClassDirective dir> =        (.  String ident;
             |
             ifDeclarations<out mdecs>           (.  declarations.addAll(mdecs); .)
             |
+            classDirective<out rule>             (.  rules.add(rule); .)
+            |
+            defineDirective<out rule>            (.  rules.add(rule); .)
+            |
                                                 (.  cb = Combinator.Descendant; .)
             [ '&' ]                             (.  if (t.pos + t.val.length() == la.pos) {
                                                         cb = Combinator.None;
@@ -341,7 +355,7 @@ classDirective<out ClassDirective dir> =        (.  String ident;
             | '~'                               (.  cb = Combinator.PrecededBy; .)
             ] ruleset<out RuleSet nest>         (.  nested.add(new NestedRuleSet(cb, nest)); .)
         } '}'
-                                                (.  dir = new ClassDirective(ident, new DeclarationList(parameters), global, new DeclarationList(declarations), nested); .)
+                                                (.  dir = new ClassDirective(ident, new DeclarationList(parameters), global, new DeclarationList(declarations), nested, rules); .)
 .
 
 defineDirective<out DefineDirective dir> =      (.
@@ -520,7 +534,7 @@ ruleset<out RuleSet rset> =                  (.  RuleSet.Builder rsetb = new Rul
                                                      break;
                                                  }
                                              .)
-            ';'
+                ';'
             )
             |
             ifDeclarations<out decs>         (.  rsetb.addDeclarations(decs); .)

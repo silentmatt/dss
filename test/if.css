@@ -10,6 +10,8 @@ asdf {
 box {
 	position: relative;
 	zoom: 1;
+	-webkit-feature: no, thanks;
+	old-browser: yes;
 	width: 100px;
 	height: 100px;
 }

@@ -7,9 +7,14 @@ import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.NestedRuleSet;
 import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.RuleSet;
 import com.silentmatt.dss.Scope;
+import com.silentmatt.dss.Selector;
 import com.silentmatt.dss.css.CssRule;
+import com.silentmatt.dss.util.JoinedSelectorList;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,14 +25,16 @@ import java.util.List;
 public class ClassDirective extends Rule {
     private final String className;
     private final DeclarationList parameters;
+    private final List<Rule> rules;
     private final DeclarationBlock declarationBlock;
     private final boolean global;
 
-    public ClassDirective(String className, DeclarationList parameters, boolean global, DeclarationList declarations, List<NestedRuleSet> nestedRuleSets) {
+    public ClassDirective(String className, DeclarationList parameters, boolean global, DeclarationList declarations, List<NestedRuleSet> nestedRuleSets, List<Rule> rules) {
         this.className = className;
         this.parameters = parameters;
         this.global = global;
         this.declarationBlock = new DeclarationBlock(declarations, nestedRuleSets);
+        this.rules = Collections.unmodifiableList(rules);
     }
 
     public String getName() {
@@ -70,6 +77,11 @@ public class ClassDirective extends Rule {
         }
         txt.append(" {");
 
+        for (Rule dir : getRules()) {
+            txt.append("\n\t").append(start);
+            txt.append(dir.toString(nesting + 1));
+        }
+
         txt.append(declarationBlock.innerString(nesting + 1));
 
         txt.append("\n").append(start).append("}");
@@ -81,10 +93,35 @@ public class ClassDirective extends Rule {
         return global;
     }
 
+    protected List<RuleSet> getRuleSetScope() {
+        List<RuleSet> result = new ArrayList<RuleSet>(getNestedRuleSets().size());
+        for (NestedRuleSet nrs : getNestedRuleSets()) {
+            result.add(nrs);
+        }
+        return result;
+    }
+
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
-        //declarationBlock.getDeclarations().evaluateStyle(state, false);
-        DeclarationBlock newBlock = declarationBlock.evaluateStyle(state, false);
+        DeclarationBlock newBlock = null;
+        List<NestedRuleSet> nested = new ArrayList<NestedRuleSet>();
+
+        state.pushScope(getRuleSetScope());
+        try {
+            for (Rule dir : this.getRules()) {
+                dir.evaluate(state, null);
+            }
+
+            //declarationBlock.getDeclarations().evaluateStyle(state, false);
+            newBlock = declarationBlock.evaluateStyle(state, false);
+            for (NestedRuleSet rs : newBlock.getNestedRuleSets()) {
+                nested.add(new NestedRuleSet(rs.getCombinator(), new RuleSet(rs.getSelectors(), rs.getDeclarationBlock().evaluateStyle(state, false))));
+            }
+        }
+        finally {
+            state.popScope();
+        }
+
         Scope<ClassDirective> scope = state.getClasses();
         if (isGlobal()) {
             while (scope.parent() != null) {
@@ -92,13 +129,28 @@ public class ClassDirective extends Rule {
             }
         }
 
-        // XXX: Do we really need to create a new instance here?
-        scope.declare(className, new ClassDirective(className, parameters, global, newBlock.getDeclarations(), newBlock.getNestedRuleSets()));
+        if (newBlock != null) {
+            // XXX: Do we really need to create a new instance here?
+            scope.declare(className, new ClassDirective(className, parameters, global, newBlock.getDeclarations(), nested, getRules()));
+        }
+        else {
+            throw new RuntimeException("Error evaluating class " + className);
+        }
+
         return null;
     }
 
     public List<NestedRuleSet> getNestedRuleSets() {
         return declarationBlock.getNestedRuleSets();
+    }
+
+    /**
+     * Gets the nested DSS directives.
+     *
+     * @return A {@link List} of {@link Rule}s.
+     */
+    public List<Rule> getRules() {
+        return rules;
     }
 
     @Override

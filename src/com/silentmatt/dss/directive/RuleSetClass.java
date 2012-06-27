@@ -22,7 +22,7 @@ public final class RuleSetClass extends ClassDirective {
     private final List<RuleSet> rulesets;
 
     public RuleSetClass(List<RuleSet> rs) {
-        super("<anonymous class>", DeclarationList.EMPTY, true, new DeclarationList(getDeclarations(rs)), getNestedRuleSets(rs));
+        super("<anonymous class>", DeclarationList.EMPTY, true, new DeclarationList(getDeclarations(rs)), getNestedRuleSets(rs), new ArrayList<Rule>());
         this.rulesets = Collections.unmodifiableList(rs);
     }
 

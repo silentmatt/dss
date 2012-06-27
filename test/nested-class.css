@@ -1,0 +1,6 @@
+element with some selector {
+	prop: 42px;
+	string: "asdf";
+	answer: 42;
+	oops: @another-value;
+}
