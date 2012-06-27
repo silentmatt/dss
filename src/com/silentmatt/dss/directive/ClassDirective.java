@@ -25,7 +25,6 @@ import java.util.List;
 public class ClassDirective extends Rule {
     private final String className;
     private final DeclarationList parameters;
-    private final List<Rule> rules;
     private final DeclarationBlock declarationBlock;
     private final boolean global;
 
@@ -33,8 +32,14 @@ public class ClassDirective extends Rule {
         this.className = className;
         this.parameters = parameters;
         this.global = global;
-        this.declarationBlock = new DeclarationBlock(declarations, nestedRuleSets);
-        this.rules = Collections.unmodifiableList(rules);
+        this.declarationBlock = new DeclarationBlock(declarations, nestedRuleSets, rules);
+    }
+
+    public ClassDirective(String className, DeclarationList parameters, boolean global, DeclarationBlock declarations) {
+        this.className = className;
+        this.parameters = parameters;
+        this.global = global;
+        this.declarationBlock = declarations;
     }
 
     public String getName() {
@@ -93,10 +98,13 @@ public class ClassDirective extends Rule {
         return global;
     }
 
-    protected List<RuleSet> getRuleSetScope() {
+    protected List<RuleSet> getRuleSetScope(EvaluationState state) {
         List<RuleSet> result = new ArrayList<RuleSet>(getNestedRuleSets().size());
         for (NestedRuleSet nrs : getNestedRuleSets()) {
-            result.add(nrs);
+            Boolean cond = nrs.getCondition().evaluate(state);
+            if (cond != null && cond) {
+                result.add(nrs);
+            }
         }
         return result;
     }
@@ -106,7 +114,7 @@ public class ClassDirective extends Rule {
         DeclarationBlock newBlock = null;
         List<NestedRuleSet> nested = new ArrayList<NestedRuleSet>();
 
-        state.pushScope(getRuleSetScope());
+        state.pushScope(getRuleSetScope(state));
         try {
             for (Rule dir : this.getRules()) {
                 dir.evaluate(state, null);
@@ -115,7 +123,10 @@ public class ClassDirective extends Rule {
             //declarationBlock.getDeclarations().evaluateStyle(state, false);
             newBlock = declarationBlock.evaluateStyle(state, false);
             for (NestedRuleSet rs : newBlock.getNestedRuleSets()) {
-                nested.add(new NestedRuleSet(rs.getCombinator(), new RuleSet(rs.getSelectors(), rs.getDeclarationBlock().evaluateStyle(state, false))));
+                //Boolean cond = rs.getCondition().evaluate(state);
+                //if (cond != null && cond) {
+                    nested.add(new NestedRuleSet(rs.getCombinator(), new RuleSet(rs.getSelectors(), rs.getDeclarationBlock().evaluateStyle(state, false)), rs.getCondition()));
+                //}
             }
         }
         finally {
@@ -150,7 +161,7 @@ public class ClassDirective extends Rule {
      * @return A {@link List} of {@link Rule}s.
      */
     public List<Rule> getRules() {
-        return rules;
+        return declarationBlock.getRules();
     }
 
     @Override

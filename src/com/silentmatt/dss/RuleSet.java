@@ -1,5 +1,6 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.bool.BooleanExpression;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.css.CssRuleList;
 import com.silentmatt.dss.css.CssRuleSet;
@@ -18,16 +19,10 @@ import java.util.List;
 public class RuleSet extends Rule {
     public static class Builder {
         private final List<Selector> selectors = new ArrayList<Selector>();
-        private final List<Rule> rules = new ArrayList<Rule>();
-        private final DeclarationBlock.Builder declarationBlock = new DeclarationBlock.Builder();
+        private DeclarationBlock declarationBlock;
 
-        /**
-        * Adds a list of Declarations to the RuleSet.
-        *
-        * @param declarations The {@link List} of {@link Declaration}s to add.
-        */
-        public Builder addDeclarations(List<Declaration> declarations) {
-            declarationBlock.addDeclarations(declarations);
+        public Builder setDeclarationBlock(DeclarationBlock declarations) {
+            declarationBlock = declarations;
             return this;
         }
 
@@ -41,37 +36,15 @@ public class RuleSet extends Rule {
             return this;
         }
 
-        /**
-        * Adds a nested RuleSet to this RuleSet.
-        *
-        * @param cb The {@link Combinator} to apply to the nested RuleSet's selectors.
-        * @param nested The {@link RuleSet} to nest inside this one.
-        */
-        public Builder addNestedRuleSet(Combinator cb, RuleSet nested) {
-            declarationBlock.addNestedRuleSet(cb, nested);
-            return this;
-        }
-
-        /**
-        * Adds a nested Rule to the RuleSet.
-        *
-        * The nested rule should be a DSS directive, not another rule set.
-        * Use {@link #addNestedRuleSet(Combinator, RuleSet)} for nesting RuleSets.
-        *
-        * @param directive The DSS rule to add to the RuleSet.
-        */
-        public Builder addRule(Rule directive) {
-            rules.add(directive);
-            return this;
-        }
-        
         public RuleSet build() {
-            return new RuleSet(selectors, declarationBlock.build(), rules);
+            if (declarationBlock == null) {
+                declarationBlock = new DeclarationBlock.Builder().build();
+            }
+            return new RuleSet(selectors, declarationBlock);
         }
     }
 
     private final List<Selector> selectors;
-    private final List<Rule> rules;
     private final DeclarationBlock declarationBlock;
 
     /**
@@ -81,20 +54,9 @@ public class RuleSet extends Rule {
      * @param block The {@link DeclarationBlock}.
      * @param rules A {@link List} of nested DSS {@link Rule}s.
      */
-    public RuleSet(List<Selector> selectors, DeclarationBlock block, List<Rule> rules) {
+    public RuleSet(List<Selector> selectors, DeclarationBlock block) {
         this.declarationBlock = block;
         this.selectors = Collections.unmodifiableList(selectors);
-        this.rules = Collections.unmodifiableList(rules);
-    }
-
-    /**
-     * Constructs a RuleSet with the specified selector list and declaration block.
-     *
-     * @param selectors The {@link List} of {@link Selector}s.
-     * @param block The {@link DeclarationBlock}.
-     */
-    public RuleSet(List<Selector> selectors, DeclarationBlock block) {
-        this(selectors, block, new ArrayList<Rule>());
     }
 
     /**
@@ -137,10 +99,13 @@ public class RuleSet extends Rule {
             result.addRule(crs);
 
             for (NestedRuleSet rs : resultBlock.getNestedRuleSets()) {
-                List<Selector> joinedSelectors = new JoinedSelectorList(getSelectors(), rs.getCombinator(), rs.getSelectors());
-                RuleSet finalRuleSet = new RuleSet(joinedSelectors, rs.getDeclarationBlock());
-                //result.addRule(new NestedRuleSet(getSelectors(), rs.getCombinator(), rs).evaluate(state, null));
-                result.addRule(finalRuleSet.evaluate(state, container));
+                Boolean cond = rs.getCondition().evaluate(state);
+                if (cond != null && cond) {
+                    List<Selector> joinedSelectors = new JoinedSelectorList(getSelectors(), rs.getCombinator(), rs.getSelectors());
+                    RuleSet finalRuleSet = new RuleSet(joinedSelectors, rs.getDeclarationBlock());
+                    //result.addRule(new NestedRuleSet(getSelectors(), rs.getCombinator(), rs).evaluate(state, null));
+                    result.addRule(finalRuleSet.evaluate(state, container));
+                }
             }
         }
         finally {
@@ -183,7 +148,7 @@ public class RuleSet extends Rule {
      * @return A {@link List} of {@link Rule}s.
      */
     public List<Rule> getRules() {
-        return rules;
+        return declarationBlock.getRules();
     }
 
     /**

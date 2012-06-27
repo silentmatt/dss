@@ -15,3 +15,23 @@ box {
 	width: 100px;
 	height: 100px;
 }
+test {
+	should: be here;
+}
+test case {
+	yup: yay;
+	test: success;
+}
+test-else {
+	should: be here;
+}
+test-else else {
+	no: w00000t;
+	test: success;
+}
+applies-if-class.nested yes {
+	property: value-1;
+}
+applies-else-class.nested no {
+	property: value-2;
+}

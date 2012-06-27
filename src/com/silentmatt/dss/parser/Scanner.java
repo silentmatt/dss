@@ -298,9 +298,9 @@ public class Scanner {
 		start.set(123, 109); 
 		start.set(125, 110); 
 		start.set(59, 111); 
-		start.set(62, 112); 
 		start.set(38, 131); 
-		start.set(43, 113); 
+		start.set(43, 112); 
+		start.set(62, 113); 
 		start.set(126, 132); 
 		start.set(42, 133); 
 		start.set(35, 114); 
@@ -341,7 +341,7 @@ public class Scanner {
 		literals.put("@media", new Integer(35));
 		literals.put("@if", new Integer(39));
 		literals.put("@else", new Integer(40));
-		literals.put("@class", new Integer(42));
+		literals.put("@class", new Integer(46));
 		literals.put("@define", new Integer(48));
 		literals.put("@font-face", new Integer(49));
 		literals.put("@page", new Integer(50));
@@ -985,9 +985,9 @@ public class Scanner {
 				case 111:
 					{t.kind = 41; break loop;}
 				case 112:
-					{t.kind = 44; break loop;}
+					{t.kind = 43; break loop;}
 				case 113:
-					{t.kind = 46; break loop;}
+					{t.kind = 44; break loop;}
 				case 114:
 					{t.kind = 56; break loop;}
 				case 115:
@@ -1026,13 +1026,13 @@ public class Scanner {
 					else {t.kind = 66; break loop;}
 				case 130:
 					if (ch == '!') {AddCh(); state = 100; break;}
-					else {t.kind = 43; break loop;}
+					else {t.kind = 47; break loop;}
 				case 131:
 					if (ch == '&') {AddCh(); state = 127; break;}
-					else {t.kind = 45; break loop;}
+					else {t.kind = 42; break loop;}
 				case 132:
 					if (ch == '=') {AddCh(); state = 117; break;}
-					else {t.kind = 47; break loop;}
+					else {t.kind = 45; break loop;}
 				case 133:
 					if (ch == '=') {AddCh(); state = 122; break;}
 					else {t.kind = 55; break loop;}

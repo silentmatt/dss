@@ -1,0 +1,11 @@
+test {
+    @if true {
+		@define {
+			test: success;
+		}
+		test1: const(test);
+        nested {
+			test2: const(test);
+        }
+    }
+}

@@ -27,6 +27,6 @@ public interface BooleanExpression {
      */
     int getPrecidence();
 
-    public static final BooleanExpression TRUE = new TermBooleanExpression(new StringTerm("true"));
-    public static final BooleanExpression FALSE = new TermBooleanExpression(new StringTerm("false"));
+    public static final BooleanExpression TRUE = new ConstBooleanExpression(true);
+    public static final BooleanExpression FALSE = new ConstBooleanExpression(false);
 }

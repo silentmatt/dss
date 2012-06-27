@@ -264,36 +264,38 @@ ifDirective<out IfDirective idir> = (.
     (.  idir = new IfDirective(expr, ifrules, elserules); .)
 .
 
-ifDeclarations<out List<Declaration> mdecs> =   (.  BooleanExpression expr;
+ifDeclarations<out DeclarationBlock mdecs> =    (.  BooleanExpression expr;
                                                     BooleanExpression elseExpr;
-                                                    mdecs = new ArrayList<Declaration>();
+                                                    List<Declaration> decList = new ArrayList<Declaration>();
                                                     List<Declaration> decs;
+                                                    DeclarationBlock ifBlock;
+                                                    DeclarationBlock elseBlock;
+                                                    List<NestedRuleSet> nestedRuleSets = new ArrayList<NestedRuleSet>();
+                                                    List<Rule> rules = new ArrayList<Rule>();
                                                 .)
+(
     "@if"
     booleanExpression<out expr>                 (.  elseExpr = new NotExpression(expr); .)
-    '{' {
-        multideclaration<out decs>              (.  for (Declaration dec : decs) {
-                                                        mdecs.add(dec.withCondition(expr));
+    declarationBlock<out ifBlock>               (.
+                                                    for (Declaration dec : ifBlock.getDeclarations()) {
+                                                        decList.add(dec.withCondition(expr));
                                                     }
-                                                    if (endOfBlock()) {
-                                                        break;
+                                                    for (NestedRuleSet rule : ifBlock.getNestedRuleSets()) {
+                                                        nestedRuleSets.add(rule.withCondition(expr));
                                                     }
                                                 .)
-                ';'
-    } '}'
     [
         "@else"
-        '{' {
-            multideclaration<out decs>              (.  for (Declaration dec : decs) {
-                                                        mdecs.add(dec.withCondition(elseExpr));
+        declarationBlock<out elseBlock>         (.
+                                                    for (Declaration dec : elseBlock.getDeclarations()) {
+                                                        decList.add(dec.withCondition(elseExpr));
                                                     }
-                                                    if (endOfBlock()) {
-                                                        break;
+                                                    for (NestedRuleSet rule : elseBlock.getNestedRuleSets()) {
+                                                        nestedRuleSets.add(rule.withCondition(elseExpr));
                                                     }
                                                 .)
-                ';'
-        } '}'
     ]
+)                                               (.  mdecs = new DeclarationBlock(new DeclarationList(decList), nestedRuleSets, rules); .)
 .
 
 parameter<out Declaration dec> =        (. Declaration.Builder decb = new Declaration.Builder(); .)
@@ -304,58 +306,63 @@ parameter<out Declaration dec> =        (. Declaration.Builder decb = new Declar
                                         (. dec = decb.build(); .)
 .
 
-classDirective<out ClassDirective dir> =        (.  String ident;
-                                                    List<Declaration> parameters = new ArrayList<Declaration>();
-                                                    List<Declaration> declarations = new ArrayList<Declaration>();
-                                                    List<Declaration> mdecs;
-                                                    List<NestedRuleSet> nested = new ArrayList<NestedRuleSet>();
-                                                    List<Rule> rules = new ArrayList<Rule>();
-                                                    Declaration param;
-                                                    Combinator cb;
-                                                    boolean global = false;
-                                                    Rule rule;
-                                                .)
+declarationBlock<out DeclarationBlock block> =
+                                        (.  DeclarationBlock.Builder builder = new DeclarationBlock.Builder();
+                                            List<Declaration> decs;
+                                            DeclarationBlock ifdecs;
+                                        .)
+    '{' {
+        (IF (!isNestedSelector())
+            multideclaration<out decs>  (.  builder.addDeclarations(decs);
+                                            if (endOfBlock()) {
+                                                break;
+                                            }
+                                        .)
+            ';'
+        )
+        |
+        ifDeclarations<out ifdecs>      (.  builder.addDeclarations(ifdecs.getDeclarations().toList());
+                                            builder.addNestedRuleSets(ifdecs.getNestedRuleSets());
+                                            builder.addRules(ifdecs.getRules());
+                                        .)
+        |
+        classDirective<out Rule dir>    (.  builder.addRule(dir); .)
+        |
+        defineDirective<out Rule dir>   (.  builder.addRule(dir); .)
+        |
+                                        (.  Combinator cb = Combinator.Descendant; .)
+        [ '&' ]                         (.  if (t.pos + t.val.length() == la.pos) {
+                                                cb = Combinator.None;
+                                            }
+                                        .)
+        [ '+'                           (.  cb = Combinator.PrecededImmediatelyBy; .)
+        | '>'                           (.  cb = Combinator.ChildOf; .)
+        | '~'                           (.  cb = Combinator.PrecededBy; .)
+        ] ruleset<out RuleSet nested>   (.  builder.addNestedRuleSet(cb, nested, BooleanExpression.TRUE); .)
+    } '}'                               (.  block = builder.build(); .)
+.
+
+classDirective<out ClassDirective dir> =    (.  String ident;
+                                                List<Declaration> parameters = new ArrayList<Declaration>();
+                                                Declaration param;
+                                                boolean global = false;
+                                            .)
     "@class"
     identity<out ident>
     [
         '<'
-            [   parameter<out param>            (.  parameters.add(param); .)
+            [   parameter<out param>        (.  parameters.add(param); .)
                 {   ';'
-                    parameter<out param>        (.  parameters.add(param); .)
+                    parameter<out param>    (.  parameters.add(param); .)
                 }
             ]
         '>'
     ]
     [
-        "global"                                (.  global = true; .)
+        "global"                            (.  global = true; .)
     ]
-    '{' {
-            (IF (!isNestedSelector())
-                multideclaration<out mdecs>     (.  declarations.addAll(mdecs);
-                                                    if (endOfBlock()) {
-                                                        break;
-                                                    }
-                                                .)
-                ';'
-            )
-            |
-            ifDeclarations<out mdecs>           (.  declarations.addAll(mdecs); .)
-            |
-            classDirective<out rule>             (.  rules.add(rule); .)
-            |
-            defineDirective<out rule>            (.  rules.add(rule); .)
-            |
-                                                (.  cb = Combinator.Descendant; .)
-            [ '&' ]                             (.  if (t.pos + t.val.length() == la.pos) {
-                                                        cb = Combinator.None;
-                                                    }
-                                                .)
-            [ '+'                               (.  cb = Combinator.PrecededImmediatelyBy; .)
-            | '>'                               (.  cb = Combinator.ChildOf; .)
-            | '~'                               (.  cb = Combinator.PrecededBy; .)
-            ] ruleset<out RuleSet nest>         (.  nested.add(new NestedRuleSet(cb, nest)); .)
-        } '}'
-                                                (.  dir = new ClassDirective(ident, new DeclarationList(parameters), global, new DeclarationList(declarations), nested, rules); .)
+    declarationBlock<out DeclarationBlock block>
+                                            (.  dir = new ClassDirective(ident, new DeclarationList(parameters), global, block); .)
 .
 
 defineDirective<out DefineDirective dir> =      (.
@@ -516,44 +523,20 @@ directive<out Rule dir> (.  dir = null; .) =
     genericDirective<out dir>
 .
 
-ruleset<out RuleSet rset> =                  (.  RuleSet.Builder rsetb = new RuleSet.Builder();
-                                                 Selector sel;
-                                                 List<Declaration> decs;
-                                                 Rule dir;
-                                                 Combinator cb;
-                                             .)
+ruleset<out RuleSet rset> =                 (.  RuleSet.Builder rsetb = new RuleSet.Builder();
+                                                Selector sel;
+                                                List<Declaration> decs;
+                                                Rule dir;
+                                                Combinator cb;
+                                            .)
 
-    selector<out sel>                        (.  rsetb.addSelector(sel); .)
-    { ',' selector<out sel>                  (.  rsetb.addSelector(sel); .)
+    selector<out sel>                       (.  rsetb.addSelector(sel); .)
+    { ',' selector<out sel>                 (.  rsetb.addSelector(sel); .)
     }
-    '{'
-        {
-            (IF (!isNestedSelector())
-                multideclaration<out decs>  (.  rsetb.addDeclarations(decs);
-                                                 if (endOfBlock()) {
-                                                     break;
-                                                 }
-                                             .)
-                ';'
-            )
-            |
-            ifDeclarations<out decs>         (.  rsetb.addDeclarations(decs); .)
-            |
-            classDirective<out dir>          (.  rsetb.addRule(dir); .)
-            |
-            defineDirective<out dir>         (.  rsetb.addRule(dir); .)
-            |
-                                             (.  cb = Combinator.Descendant; .)
-            [ '&' ]                          (.  if (t.pos + t.val.length() == la.pos) {
-                                                     cb = Combinator.None;
-                                                 }
-                                             .)
-            [ '+'                            (.  cb = Combinator.PrecededImmediatelyBy; .)
-            | '>'                            (.  cb = Combinator.ChildOf; .)
-            | '~'                            (.  cb = Combinator.PrecededBy; .)
-            ] ruleset<out RuleSet nested>    (.  rsetb.addNestedRuleSet(cb, nested); .)
-        }
-    '}'                                      (.  rset = rsetb.build(); .)
+    declarationBlock<out DeclarationBlock block>
+                                            (.  rsetb.setDeclarationBlock(block);
+                                                rset = rsetb.build();
+                                            .)
 .
 
 selector<out Selector sel> =    (.  Selector.Builder selb = new Selector.Builder();

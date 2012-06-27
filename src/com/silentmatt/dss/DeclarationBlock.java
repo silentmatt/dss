@@ -38,6 +38,7 @@ public final class DeclarationBlock {
 
         private final List<Declaration> declarations = new ArrayList<Declaration>();
         private final List<NestedRuleSet> nestedRuleSets = new ArrayList<NestedRuleSet>();
+        private final List<Rule> rules = new ArrayList<Rule>();
 
         public List<Declaration> getDeclarations() {
             return declarations;
@@ -69,8 +70,8 @@ public final class DeclarationBlock {
         * @param cb The {@link Combinator} to apply to the RuleSet's selectors.
         * @param nested The {@link RuleSet} to nest inside the block.
         */
-        public Builder addNestedRuleSet(Combinator cb, RuleSet nested) {
-            nestedRuleSets.add(new NestedRuleSet(cb, nested));
+        public Builder addNestedRuleSet(Combinator cb, RuleSet nested, BooleanExpression condition) {
+            nestedRuleSets.add(new NestedRuleSet(cb, nested, condition));
             return this;
         }
 
@@ -84,13 +85,34 @@ public final class DeclarationBlock {
             return this;
         }
 
+        /**
+        * Adds a list of NestedRuleSets inside the block.
+        *
+        * @param nested The List of {@link NestedRuleSet}s to nest inside the block.
+        */
+        public Builder addNestedRuleSets(List<NestedRuleSet> nested) {
+            nestedRuleSets.addAll(nested);
+            return this;
+        }
+        
+        public Builder addRule(Rule rule) {
+            this.rules.add(rule);
+            return this;
+        }
+        
+        public Builder addRules(List<Rule> rules) {
+            this.rules.addAll(rules);
+            return this;
+        }
+
         public DeclarationBlock build() {
-            return new DeclarationBlock(new DeclarationList(declarations), nestedRuleSets);
+            return new DeclarationBlock(new DeclarationList(declarations), nestedRuleSets, rules);
         }
     }
 
     private final DeclarationList declarations;
     private final List<NestedRuleSet> nestedRuleSets;
+    private final List<Rule> rules;
 
     /**
      * Constructs a DeclarationBlock, containing a list of {@link Declaration}s.
@@ -104,6 +126,7 @@ public final class DeclarationBlock {
     public DeclarationBlock(DeclarationList declarations) {
         this.declarations = declarations;
         this.nestedRuleSets = (List<NestedRuleSet>)Collections.EMPTY_LIST;
+        this.rules = (List<Rule>)Collections.EMPTY_LIST;
     }
 
     /**
@@ -117,9 +140,10 @@ public final class DeclarationBlock {
      * @param nested The NestedRuleSets to initialize the block with. Like the
      * declarations, nested RuleSets are copied into a new list.
      */
-    public DeclarationBlock(DeclarationList declarations, List<NestedRuleSet> nested) {
+    public DeclarationBlock(DeclarationList declarations, List<NestedRuleSet> nested, List<Rule> rules) {
         this.declarations = declarations;
         this.nestedRuleSets = Collections.unmodifiableList(nested);
+        this.rules = Collections.unmodifiableList(rules);
     }
 
     /**
@@ -210,6 +234,15 @@ public final class DeclarationBlock {
      */
     public List<NestedRuleSet> getNestedRuleSets() {
         return nestedRuleSets;
+    }
+
+    /**
+     * Gets a list of nested rules.
+     *
+     * @return The {@link List} of {@link NestedRuleSet} objects.
+     */
+    public List<Rule> getRules() {
+        return rules;
     }
 
     /**
@@ -317,7 +350,10 @@ public final class DeclarationBlock {
             }
 
             for (NestedRuleSet rs : clazz.getNestedRuleSets()) {
-                result.addNestedRuleSet(rs.substituteValues(state));
+                Boolean cond = rs.getCondition().evaluate(state);
+                if (cond != null && cond) {
+                    result.addNestedRuleSet(rs.substituteValues(state).withCondition(BooleanExpression.TRUE));
+                }
             }
         }
         finally {
@@ -408,7 +444,7 @@ public final class DeclarationBlock {
                 else {
                     Boolean cond = declaration.getCondition().evaluate(state);
                     if (cond != null && cond) {
-                        result.addDeclaration(declaration);
+                        result.addDeclaration(declaration.withCondition(BooleanExpression.TRUE));
                     }
                 }
             }
