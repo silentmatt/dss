@@ -93,7 +93,7 @@ public class DSSDocument {
         }
     }
 
-    private DSSDocument(ImmutableList rules) {
+    private DSSDocument(ImmutableList<Rule> rules) {
         this.rules = rules;
     }
 

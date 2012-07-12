@@ -25,7 +25,7 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
     private final ImmutableList<Declaration> list;
     private final Map<String, Expression> mapView = new DeclarationListMapView();
 
-    @SuppressWarnings("unchecked")
+    //@SuppressWarnings("unchecked")
     public static final DeclarationList EMPTY = new DeclarationList(ImmutableList.copyOf(new Declaration[0]));
 
     /**

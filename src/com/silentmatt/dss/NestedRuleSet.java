@@ -1,6 +1,5 @@
 package com.silentmatt.dss;
 
-import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.bool.BooleanExpression;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,16 +52,10 @@ public final class NestedRuleSet extends RuleSet {
     public NestedRuleSet substituteValues(EvaluationState state) {
         List<Declaration> properties = new ArrayList<Declaration>(getDeclarations().toList());
         DeclarationBlock.Builder result = new DeclarationBlock.Builder();
-        List<Declaration> list = result.getDeclarations();
-        for (int i = 0; i < properties.size(); i++) {
-            Declaration dec = properties.get(i);
-            // FIXME: list -> result.getDeclarations()?
-            properties.set(i, dec.substituteValues(state, new DeclarationList(ImmutableList.copyOf(list)), true, true));
-        }
 
         for (int i = 0; i < properties.size(); i++) {
-            Declaration declaration = properties.get(i);
-            list.add(declaration); // FIXME: list.addDeclaration
+            Declaration dec = properties.get(i);
+            result.addDeclaration(dec.substituteValues(state, DeclarationList.EMPTY, true, true)); // new DeclarationList(ImmutableList.copyOf(result.getDeclarations()))
         }
 
         for (NestedRuleSet rs : getNestedRuleSets()) {

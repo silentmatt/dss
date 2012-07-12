@@ -38,6 +38,15 @@ public final class Expression {
             return this;
         }
         
+        public final Builder setTerm(int index, Term value) {
+            terms.set(index, value);
+            return this;
+        }
+
+        public final Term getTerm(int index) {
+            return terms.get(index);
+        }
+        
         @Deprecated
         public final List<Term> getTerms() {
             return terms;

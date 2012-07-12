@@ -9,7 +9,6 @@ import com.silentmatt.dss.NestedRuleSet;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.RuleSet;
 import com.silentmatt.dss.css.CssRule;
-import com.silentmatt.dss.util.JoinedList;
 import java.util.List;
 
 /**
@@ -18,50 +17,32 @@ import java.util.List;
  */
 @Immutable
 public final class RuleSetClass extends ClassDirective {
-    // FIXME: This is never read
-    private final ImmutableList<RuleSet> rulesets;
-
     public RuleSetClass(ImmutableList<RuleSet> rs) {
         super("<anonymous class>", DeclarationList.EMPTY, true, new DeclarationList(getDeclarations(rs)), getNestedRuleSets(rs), ImmutableList.copyOf(new Rule[0]));
-        this.rulesets = rs;
     }
 
-    // FIXME: Making an immutable list is pointless and inefficient here when it's already provably immutable
     private static ImmutableList<Declaration> getDeclarations(List<RuleSet> rulesets) {
         if (rulesets.isEmpty()) {
             return ImmutableList.of();
         }
 
-        List<Declaration> result = rulesets.get(0).getDeclarations().toList();
-        boolean first = true;
+        ImmutableList.Builder<Declaration> result = ImmutableList.builder();
         for (RuleSet rs : rulesets) {
-            if (first) {
-                first = false;
-            }
-            else {
-                result = new JoinedList<Declaration>(ImmutableList.copyOf(result), rs.getDeclarations().toList());
-            }
+            result.addAll(rs.getDeclarations().toList());
         }
-        return ImmutableList.copyOf(result);
+        return result.build();
     }
 
-    // FIXME: Making an immutable list is pointless and inefficient here when it's already provably immutable
     private static ImmutableList<NestedRuleSet> getNestedRuleSets(List<RuleSet> rulesets) {
         if (rulesets.isEmpty()) {
             return ImmutableList.of();
         }
 
-        List<NestedRuleSet> result = rulesets.get(0).getNestedRuleSets();
-        boolean first = true;
+        ImmutableList.Builder<NestedRuleSet> result = ImmutableList.builder();
         for (RuleSet rs : rulesets) {
-            if (first) {
-                first = false;
-            }
-            else {
-                result = new JoinedList<NestedRuleSet>(ImmutableList.copyOf(result), rs.getNestedRuleSets());
-            }
+            result.addAll(rs.getNestedRuleSets());
         }
-        return ImmutableList.copyOf(result);
+        return result.build();
     }
 
     @Override

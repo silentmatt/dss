@@ -37,7 +37,7 @@ public class ClassReferenceTerm extends Term {
         }
         
         public ClassReferenceTerm build() {
-            return new ClassReferenceTerm(null, name, new DeclarationList(arguments.build())); // FIXME: Missing term separator
+            return new ClassReferenceTerm(null, name, new DeclarationList(arguments.build()));
         }
     }
 

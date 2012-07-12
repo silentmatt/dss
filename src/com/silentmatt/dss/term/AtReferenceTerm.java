@@ -46,7 +46,8 @@ public final class AtReferenceTerm extends ReferenceTerm {
 
         if (value != null && value.getTerms().size() > 0) {
             Expression.Builder valueb = new Expression.Builder(value);
-            valueb.getTerms().set(0, valueb.getTerms().get(0).withSeparator(getSeperator()));
+            //valueb.getTerms().set(0, valueb.getTerms().get(0).withSeparator(getSeperator()));
+            valueb.setTerm(0, valueb.getTerm(0).withSeparator(getSeperator()));
             value = valueb.build();
         }
         else {

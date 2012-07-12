@@ -32,3 +32,8 @@ body {
 .scope-mix {
 	width: 8;
 }
+#multiple.mixins {
+	width: 9;
+	padding: 4px;
+	color: #123;
+}

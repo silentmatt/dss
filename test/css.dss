@@ -81,8 +81,7 @@ h2[title] {
 .misc {
   -moz-border-radius: 2px;
   display: -moz-inline-stack;
-  // FIXME: .1em
-  width: 0.1em;
+  width: .10em;
   background-color: #009998;
   background-image: url(images/image.jpg);
   background: -webkit-gradient(linear, left top, left bottom, from(red), to(blue));

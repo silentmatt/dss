@@ -326,7 +326,6 @@ public final class DeclarationBlock {
     }
 
     private static void addInheritedProperties(DeclarationBlock.Builder result, EvaluationState state, ClassDirective clazz, DeclarationList args) throws IOException {
-        List<Declaration> list = result.getDeclarations();
         // Make a copy of the properties, to substitute parameters into
         ArrayList<Declaration> properties = new ArrayList<Declaration>();
         for (Declaration prop : clazz.getDeclarations(args)) {
@@ -342,12 +341,12 @@ public final class DeclarationBlock {
 
             for (int i = 0; i < properties.size(); i++) {
                 Declaration dec = properties.get(i);
-                properties.set(i, dec.substituteValues(state, new DeclarationList(ImmutableList.copyOf(list)), true, true));
+                properties.set(i, dec.substituteValues(state, DeclarationList.EMPTY, true, true)); // new DeclarationList(ImmutableList.copyOf(result.getDeclarations()))
             }
 
             for (int i = 0; i < properties.size(); i++) {
                 Declaration declaration = properties.get(i);
-                list.add(declaration); // FIXME: result.addDeclaration
+                result.addDeclaration(declaration);
             }
 
             for (NestedRuleSet rs : clazz.getNestedRuleSets()) {
@@ -451,7 +450,7 @@ public final class DeclarationBlock {
             }
 
             for (int i = 0; i < result.getDeclarations().size(); i++) {
-                Declaration dec = result.getDeclarations().get(i).substituteValues(state, new DeclarationList(ImmutableList.copyOf(result.getDeclarations())), false, doCalculations);
+                Declaration dec = result.getDeclarations().get(i).substituteValues(state, DeclarationList.EMPTY, false, doCalculations); // new DeclarationList(ImmutableList.copyOf(result.getDeclarations()))
                 result.getDeclarations().set(i, dec);
             }
         }
