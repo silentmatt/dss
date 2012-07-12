@@ -9,12 +9,9 @@ import com.silentmatt.dss.NestedRuleSet;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.RuleSet;
 import com.silentmatt.dss.Scope;
-import com.silentmatt.dss.Selector;
 import com.silentmatt.dss.css.CssRule;
-import com.silentmatt.dss.util.JoinedSelectorList;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

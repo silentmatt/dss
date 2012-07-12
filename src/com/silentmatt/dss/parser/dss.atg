@@ -283,6 +283,14 @@ ifDeclarations<out DeclarationBlock mdecs> =    (.  BooleanExpression expr;
                                                     for (NestedRuleSet rule : ifBlock.getNestedRuleSets()) {
                                                         nestedRuleSets.add(rule.withCondition(expr));
                                                     }
+                                                    for (Rule rule : ifBlock.getRules()) {
+                                                        if (rule instanceof DefineDirective) {
+                                                            rules.add(((DefineDirective)rule).withCondition(expr));
+                                                        }
+                                                        else {
+                                                            Expect(38);
+                                                        }
+                                                    }
                                                 .)
     [
         "@else"
@@ -292,6 +300,14 @@ ifDeclarations<out DeclarationBlock mdecs> =    (.  BooleanExpression expr;
                                                     }
                                                     for (NestedRuleSet rule : elseBlock.getNestedRuleSets()) {
                                                         nestedRuleSets.add(rule.withCondition(elseExpr));
+                                                    }
+                                                    for (Rule rule : elseBlock.getRules()) {
+                                                        if (rule instanceof DefineDirective) {
+                                                            rules.add(((DefineDirective)rule).withCondition(elseExpr));
+                                                        }
+                                                        else {
+                                                            Expect(38);
+                                                        }
                                                     }
                                                 .)
     ]
@@ -379,7 +395,7 @@ defineDirective<out DefineDirective dir> =      (.
                                                     }
                                                 .)
           ';' }
-    '}'                                         (.  dir = new DefineDirective(new DeclarationList(declarations), global); .)
+    '}'                                         (.  dir = new DefineDirective(new DeclarationList(declarations), global, BooleanExpression.TRUE); .)
 .
 
 fontFaceDirective<out FontFaceDirective dir> =  (.  List<Declaration> declarations = new ArrayList<Declaration>();

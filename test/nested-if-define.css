@@ -1,0 +1,12 @@
+test {
+	test1: success;
+}
+test nested {
+	test2: success;
+}
+test2 {
+	test1: success;
+}
+test2 nested {
+	test2: success;
+}

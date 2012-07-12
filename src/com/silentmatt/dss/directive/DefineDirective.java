@@ -7,6 +7,7 @@ import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.Scope;
+import com.silentmatt.dss.bool.BooleanExpression;
 import com.silentmatt.dss.css.CssRule;
 import java.io.IOException;
 import java.util.List;
@@ -18,10 +19,17 @@ import java.util.List;
 @Immutable
 public final class DefineDirective extends DeclarationDirective {
     private final boolean global;
+    private final BooleanExpression condition;
 
-    public DefineDirective(DeclarationList declarations, boolean global) {
+    public DefineDirective(DeclarationList declarations, boolean global, BooleanExpression condition) {
         super(declarations);
         this.global = global;
+        this.condition = condition;
+    }
+
+    public DefineDirective withCondition(BooleanExpression condition) {
+        // TODO: This results in a new, duplicated DeclarationBlock
+        return new DefineDirective(getDeclarationBlock().getDeclarations(), global, condition);
     }
 
     @Override
@@ -35,6 +43,11 @@ public final class DefineDirective extends DeclarationDirective {
 
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
+        Boolean cond = condition.evaluate(state);
+        if (cond == null || !cond) {
+            return null;
+        }
+
         Scope<Expression> scope = state.getVariables();
         if (isGlobal()) {
             while (scope.parent() != null) {

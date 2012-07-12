@@ -599,7 +599,7 @@ class Parser {
 			Expect(41);
 		}
 		Expect(38);
-		dir = new DefineDirective(new DeclarationList(declarations), global); 
+		dir = new DefineDirective(new DeclarationList(declarations), global, BooleanExpression.TRUE); 
 		return dir;
 	}
 
@@ -696,6 +696,14 @@ class Parser {
 		for (NestedRuleSet rule : ifBlock.getNestedRuleSets()) {
 		    nestedRuleSets.add(rule.withCondition(expr));
 		}
+		for (Rule rule : ifBlock.getRules()) {
+		    if (rule instanceof DefineDirective) {
+		        rules.add(((DefineDirective)rule).withCondition(expr));
+		    }
+		    else {
+		        Expect(38);
+		    }
+		}
 		
 		if (la.kind == 40) {
 			Get();
@@ -705,6 +713,14 @@ class Parser {
 			}
 			for (NestedRuleSet rule : elseBlock.getNestedRuleSets()) {
 			    nestedRuleSets.add(rule.withCondition(elseExpr));
+			}
+			for (Rule rule : elseBlock.getRules()) {
+			    if (rule instanceof DefineDirective) {
+			        rules.add(((DefineDirective)rule).withCondition(elseExpr));
+			    }
+			    else {
+			        Expect(38);
+			    }
 			}
 			
 		}

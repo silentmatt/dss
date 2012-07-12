@@ -13,7 +13,6 @@ public abstract class ExpressionDirective extends Rule {
     private final Expression expression;
 
     public ExpressionDirective(Expression expression) {
-        super();
         this.expression = expression;
     }
 
