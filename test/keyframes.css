@@ -1,0 +1,29 @@
+@-webkit-keyframes animation-name {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+@-moz-keyframes animation-name {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+@-ms-keyframes animation-name {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+#box {
+	-webkit-animation: animation-name 5s infinite;
+	-moz-animation: animation-name 5s infinite;
+	-ms-animation: animation-name 5s infinite;
+}

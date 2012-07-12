@@ -304,16 +304,16 @@ public class Scanner {
 		start.set(126, 132); 
 		start.set(42, 133); 
 		start.set(35, 114); 
-		start.set(91, 115); 
-		start.set(61, 116); 
+		start.set(37, 115); 
+		start.set(91, 116); 
+		start.set(61, 117); 
 		start.set(124, 134); 
-		start.set(36, 119); 
+		start.set(36, 120); 
 		start.set(94, 135); 
-		start.set(93, 123); 
-		start.set(33, 124); 
-		start.set(47, 125); 
+		start.set(93, 124); 
+		start.set(33, 125); 
+		start.set(47, 126); 
 		start.set(85, 136); 
-		start.set(37, 128); 
 		start.set(Buffer.EOF, -1);
 		literals.put("all", new Integer(9));
 		literals.put("aural", new Integer(10));
@@ -350,12 +350,12 @@ public class Scanner {
 		literals.put("@charset", new Integer(53));
 		literals.put("@namespace", new Integer(54));
 		literals.put(".", new Integer(57));
-		literals.put("-n", new Integer(67));
-		literals.put("-webkit-calc", new Integer(73));
-		literals.put("-o-calc", new Integer(74));
-		literals.put("-ms-calc", new Integer(75));
-		literals.put("-moz-calc", new Integer(76));
-		literals.put("@calc", new Integer(77));
+		literals.put("-n", new Integer(68));
+		literals.put("-webkit-calc", new Integer(74));
+		literals.put("-o-calc", new Integer(75));
+		literals.put("-ms-calc", new Integer(76));
+		literals.put("-moz-calc", new Integer(77));
+		literals.put("@calc", new Integer(78));
 
 	}
 	
@@ -999,10 +999,10 @@ public class Scanner {
 				case 118:
 					{t.kind = 61; break loop;}
 				case 119:
-					if (ch == '=') {AddCh(); state = 120; break;}
-					else {t.kind = noSym; break loop;}
-				case 120:
 					{t.kind = 62; break loop;}
+				case 120:
+					if (ch == '=') {AddCh(); state = 121; break;}
+					else {t.kind = noSym; break loop;}
 				case 121:
 					{t.kind = 63; break loop;}
 				case 122:
@@ -1010,39 +1010,39 @@ public class Scanner {
 				case 123:
 					{t.kind = 65; break loop;}
 				case 124:
-					{t.kind = 68; break loop;}
+					{t.kind = 66; break loop;}
 				case 125:
 					{t.kind = 69; break loop;}
 				case 126:
 					{t.kind = 70; break loop;}
 				case 127:
-					{t.kind = 72; break loop;}
+					{t.kind = 71; break loop;}
 				case 128:
-					{t.kind = 79; break loop;}
+					{t.kind = 73; break loop;}
 				case 129:
 					if (ch >= 'A' && ch <= 'Z' || ch == '_' || ch >= 'a' && ch <= 'z' || ch >= 128 && ch <= 55295 || ch >= 57344 && ch <= 65533) {AddCh(); state = 1; break;}
 					else if (ch == 92) {AddCh(); state = 40; break;}
 					else if (ch == '-') {AddCh(); state = 103; break;}
-					else {t.kind = 66; break loop;}
+					else {t.kind = 67; break loop;}
 				case 130:
 					if (ch == '!') {AddCh(); state = 100; break;}
 					else {t.kind = 47; break loop;}
 				case 131:
-					if (ch == '&') {AddCh(); state = 127; break;}
+					if (ch == '&') {AddCh(); state = 128; break;}
 					else {t.kind = 42; break loop;}
 				case 132:
-					if (ch == '=') {AddCh(); state = 117; break;}
+					if (ch == '=') {AddCh(); state = 118; break;}
 					else {t.kind = 45; break loop;}
 				case 133:
-					if (ch == '=') {AddCh(); state = 122; break;}
+					if (ch == '=') {AddCh(); state = 123; break;}
 					else {t.kind = 55; break loop;}
 				case 134:
-					if (ch == '=') {AddCh(); state = 118; break;}
-					else if (ch == '|') {AddCh(); state = 126; break;}
+					if (ch == '=') {AddCh(); state = 119; break;}
+					else if (ch == '|') {AddCh(); state = 127; break;}
 					else {t.kind = noSym; break loop;}
 				case 135:
-					if (ch == '=') {AddCh(); state = 121; break;}
-					else {t.kind = 71; break loop;}
+					if (ch == '=') {AddCh(); state = 122; break;}
+					else {t.kind = 72; break loop;}
 				case 136:
 					if (ch == '-' || ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'Z' || ch == '_' || ch >= 'a' && ch <= 'z' || ch >= 128 && ch <= 55295 || ch >= 57344 && ch <= 65533) {AddCh(); state = 1; break;}
 					else if (ch == 92) {AddCh(); state = 137; break;}
@@ -1050,7 +1050,7 @@ public class Scanner {
 				case 137:
 					if (ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'F' || ch >= 'a' && ch <= 'f') {AddCh(); state = 61; break;}
 					else if (ch >= ' ' && ch <= '/' || ch >= ':' && ch <= '@' || ch >= 'G' && ch <= '`' || ch >= 'g' && ch <= '~' || ch >= 128 && ch <= 55295 || ch >= 57344 && ch <= 65533) {AddCh(); state = 1; break;}
-					else {t.kind = 78; break loop;}
+					else {t.kind = 79; break loop;}
 
 			}
 		}

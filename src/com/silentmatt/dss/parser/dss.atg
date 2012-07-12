@@ -574,6 +574,7 @@ simpleselector<out SimpleSelector ss> = (. SimpleSelector.Builder ssb = new Simp
                                             SimpleSelector.Builder parent = ssb;
                                             String ident;
                                         .)
+    ((
     (identity<out ident>                (.  ssb.setElementName(ident); .)
     | '*'                               (.  ssb.setElementName("*"); .)
     | ('#' identity<out ident>          (.  ssb.setID(ident); .)
@@ -594,7 +595,13 @@ simpleselector<out SimpleSelector ss> = (. SimpleSelector.Builder ssb = new Simp
         )                               (.  parent.setChild(child);
                                             parent = child;
                                         .)
-    }                                   (.  ss = ssb.build(); .)
+    }
+    )
+    |
+    (
+        ( integer | decimal )           (.  ssb.setElementName(t.val + "%"); .)
+        "%"
+    ))                                  (.  ss = ssb.build(); .)
 .
 
 attrib<out Attribute atb> =         (.  Attribute.Builder atbb = new Attribute.Builder();
