@@ -1,0 +1,21 @@
+@define {
+	start: 0;
+	end: 1;
+}
+
+@-webkit-keyframes animation-name {
+	0%   { opacity: @start; }
+	100% { opacity: @end; }
+}
+@-moz-keyframes animation-name {
+	0%   { opacity: @start; }
+	100% { opacity: @end; }
+}
+@-ms-keyframes animation-name {
+	0%   { opacity: @start; }
+	100% { opacity: @end; }
+}
+
+#box {
+	-webkit-animation, -moz-animation, -ms-animation: animation-name 5s infinite;
+}
