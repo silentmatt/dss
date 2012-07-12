@@ -1,11 +1,11 @@
 package com.silentmatt.dss;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.parser.DSSParser;
 import com.silentmatt.dss.parser.Scanner;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,7 +14,20 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class DSSDocument {
-    private final List<Rule> rules = new ArrayList<Rule>();
+    public static class Builder {
+        ImmutableList.Builder<Rule> rules = ImmutableList.builder();
+
+        public Builder addRule(Rule rule) {
+            rules.add(rule);
+            return this;
+        }
+
+        public DSSDocument build() {
+            return new DSSDocument(rules.build());
+        }
+    }
+
+    private final ImmutableList<Rule> rules;
 
     /**
      * Parses a DSS document from a URL string.
@@ -80,13 +93,8 @@ public class DSSDocument {
         }
     }
 
-    /**
-     * Adds a rule to the end of the document.
-     * 
-     * @param rule The rule to add.
-     */
-    public void addRule(Rule rule) {
-        this.rules.add(rule);
+    private DSSDocument(ImmutableList rules) {
+        this.rules = rules;
     }
 
     /**
@@ -94,7 +102,7 @@ public class DSSDocument {
      *
      * @return {@link List} of {@link Rule} objects.
      */
-    public List<Rule> getRules() {
+    public ImmutableList<Rule> getRules() {
         return rules;
     }
 

@@ -1,10 +1,9 @@
 package com.silentmatt.dss;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.css.CssSelector;
 import com.silentmatt.dss.css.CssSimpleSelector;
 import com.silentmatt.dss.util.JoinedList;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,10 +18,10 @@ import java.util.List;
 @Immutable
 public final class Selector {
     public static class Builder {
-        private final List<SimpleSelector> simpleSelectors;
+        private final ImmutableList.Builder<SimpleSelector> simpleSelectors;
 
         public Builder() {
-            simpleSelectors = new ArrayList<SimpleSelector>();
+            simpleSelectors = ImmutableList.builder();
         }
         
         public Builder addSimpleSelector(SimpleSelector ss) {
@@ -31,11 +30,11 @@ public final class Selector {
         }
         
         public Selector build() {
-            return new Selector(simpleSelectors);
+            return new Selector(simpleSelectors.build());
         }
     }
 
-    private final List<SimpleSelector> simpleSelectors;
+    private final ImmutableList<SimpleSelector> simpleSelectors;
     private final Combinator combinator;
     private final Selector parents;
     private final Selector children;
@@ -76,8 +75,8 @@ public final class Selector {
      *
      * @param simpleSelectors The list of SimpleSelectors.
      */
-    public Selector(List<SimpleSelector> simpleSelectors) {
-        this.simpleSelectors = Collections.unmodifiableList(simpleSelectors);
+    public Selector(ImmutableList<SimpleSelector> simpleSelectors) {
+        this.simpleSelectors = simpleSelectors;
         parents = children = null;
         combinator = Combinator.Descendant;
     }
@@ -92,7 +91,8 @@ public final class Selector {
     public Selector(Selector parent, Combinator cb, Selector child) {
         parents = parent;
         children = child;
-        simpleSelectors = new JoinedList<SimpleSelector>(parent.getSimpleSelectors(), child.getSimpleSelectors());
+        // TODO: Wasteful?
+        simpleSelectors = ImmutableList.copyOf(new JoinedList<SimpleSelector>(parent.getSimpleSelectors(), child.getSimpleSelectors()));
         combinator = cb;
     }
 
@@ -101,12 +101,12 @@ public final class Selector {
      *
      * @return A {@link List} of {@link SimpleSelector}s.
      */
-    public List<SimpleSelector> getSimpleSelectors() {
+    public ImmutableList<SimpleSelector> getSimpleSelectors() {
         return simpleSelectors;
     }
 
-    private List<SimpleSelector> getActualSimpleSelectors() {
-        List<SimpleSelector> result = new ArrayList<SimpleSelector>();
+    private ImmutableList<SimpleSelector> getActualSimpleSelectors() {
+        ImmutableList.Builder<SimpleSelector> result = ImmutableList.builder();
 
         if (parents != null) {
             for (SimpleSelector ss : parents.getActualSimpleSelectors()) {
@@ -130,7 +130,8 @@ public final class Selector {
             }
         }
 
-        return Collections.unmodifiableList(result);
+        // TODO: Wastefull?
+        return result.build();
     }
 
     @Override

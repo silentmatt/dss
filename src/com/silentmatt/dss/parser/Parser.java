@@ -1,5 +1,6 @@
 package com.silentmatt.dss.parser;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.*;
 import com.silentmatt.dss.bool.*;
 import com.silentmatt.dss.calc.*;
@@ -141,7 +142,7 @@ class Parser {
 	}
 	
 	void CSS3() {
-		CSSDoc = new DSSDocument(); 
+		DSSDocument.Builder CSSDocBuilder = new DSSDocument.Builder(); 
 		while (la.kind == 7 || la.kind == 8) {
 			if (la.kind == 7) {
 				Get();
@@ -151,7 +152,7 @@ class Parser {
 		}
 		while (StartOf(1)) {
 			Rule rule = rule();
-			CSSDoc.addRule(rule); 
+			CSSDocBuilder.addRule(rule); 
 			while (la.kind == 7 || la.kind == 8) {
 				if (la.kind == 7) {
 					Get();
@@ -160,6 +161,7 @@ class Parser {
 				}
 			}
 		}
+		CSSDoc = CSSDocBuilder.build(); 
 	}
 
 	Rule  rule() {
@@ -514,8 +516,8 @@ class Parser {
 
 	MediaDirective  mediaDirective() {
 		MediaDirective  mdir;
-		List<MediaQuery> media = new ArrayList<MediaQuery>();
-		List<Rule> rules = new ArrayList<Rule>();
+		ImmutableList.Builder<MediaQuery> media = ImmutableList.builder();
+		ImmutableList.Builder<Rule> rules = ImmutableList.builder();
 		
 		Expect(35);
 		MediaQuery m = mediaQuery();
@@ -542,14 +544,14 @@ class Parser {
 			}
 		}
 		Expect(38);
-		mdir = new MediaDirective(media, rules); 
+		mdir = new MediaDirective(media.build(), rules.build()); 
 		return mdir;
 	}
 
 	ClassDirective  classDirective() {
 		ClassDirective  dir;
 		String ident;
-		List<Declaration> parameters = new ArrayList<Declaration>();
+		ImmutableList.Builder<Declaration> parameters = ImmutableList.builder();
 		Declaration param;
 		boolean global = false;
 		
@@ -573,13 +575,13 @@ class Parser {
 			global = true; 
 		}
 		DeclarationBlock block = declarationBlock();
-		dir = new ClassDirective(ident, new DeclarationList(parameters), global, block); 
+		dir = new ClassDirective(ident, new DeclarationList(parameters.build()), global, block); 
 		return dir;
 	}
 
 	DefineDirective  defineDirective() {
 		DefineDirective  dir;
-		List<Declaration> declarations = new ArrayList<Declaration>();
+		ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
 		boolean global = false;
 		List<Declaration> mdecs;
 		
@@ -599,14 +601,14 @@ class Parser {
 			Expect(41);
 		}
 		Expect(38);
-		dir = new DefineDirective(new DeclarationList(declarations), global, BooleanExpression.TRUE); 
+		dir = new DefineDirective(new DeclarationList(declarations.build()), global, BooleanExpression.TRUE); 
 		return dir;
 	}
 
 	IncludeDirective  includeDirective() {
 		IncludeDirective  dir;
 		boolean literal = false;
-		List<Declaration> declarations = new ArrayList<Declaration>();
+		ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
 		UrlTerm includeUrl = null;
 		List<Declaration> mdecs;
 		
@@ -637,15 +639,15 @@ class Parser {
 			}
 			Expect(38);
 		} else SynErr(87);
-		dir = new IncludeDirective(includeUrl, literal, declarations); 
+		dir = new IncludeDirective(includeUrl, literal, declarations.build()); 
 		return dir;
 	}
 
 	IfDirective  ifDirective() {
 		IfDirective  idir;
 		BooleanExpression expr;
-		List<Rule> ifrules = new ArrayList<Rule>();
-		List<Rule> elserules = null;
+		ImmutableList.Builder<Rule> ifrules = ImmutableList.builder();
+		ImmutableList.Builder<Rule> elserules = null;
 		
 		Expect(39);
 		expr = booleanExpression();
@@ -657,7 +659,7 @@ class Parser {
 		Expect(38);
 		if (la.kind == 40) {
 			Get();
-			elserules = new ArrayList<Rule>(); 
+			elserules = ImmutableList.builder(); 
 			Expect(37);
 			while (StartOf(1)) {
 				Rule rule = rule();
@@ -665,7 +667,7 @@ class Parser {
 			}
 			Expect(38);
 		}
-		idir = new IfDirective(expr, ifrules, elserules); 
+		idir = new IfDirective(expr, ifrules.build(), elserules != null ? elserules.build() : null); 
 		return idir;
 	}
 
@@ -679,12 +681,11 @@ class Parser {
 		DeclarationBlock  mdecs;
 		BooleanExpression expr;
 		BooleanExpression elseExpr;
-		List<Declaration> decList = new ArrayList<Declaration>();
-		List<Declaration> decs;
+		ImmutableList.Builder<Declaration> decList = ImmutableList.builder();
 		DeclarationBlock ifBlock;
 		DeclarationBlock elseBlock;
-		List<NestedRuleSet> nestedRuleSets = new ArrayList<NestedRuleSet>();
-		List<Rule> rules = new ArrayList<Rule>();
+		ImmutableList.Builder<NestedRuleSet> nestedRuleSets = ImmutableList.builder();
+		ImmutableList.Builder<Rule> rules = ImmutableList.builder();
 		
 		Expect(39);
 		expr = booleanExpression();
@@ -724,7 +725,7 @@ class Parser {
 			}
 			
 		}
-		mdecs = new DeclarationBlock(new DeclarationList(decList), nestedRuleSets, rules); 
+		mdecs = new DeclarationBlock(new DeclarationList(decList.build()), nestedRuleSets.build(), rules.build()); 
 		return mdecs;
 	}
 
@@ -832,7 +833,7 @@ class Parser {
 
 	FontFaceDirective  fontFaceDirective() {
 		FontFaceDirective  dir;
-		List<Declaration> declarations = new ArrayList<Declaration>();
+		ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
 		List<Declaration> mdecs;
 		
 		Expect(49);
@@ -847,13 +848,13 @@ class Parser {
 			Expect(41);
 		}
 		Expect(38);
-		dir = new FontFaceDirective(new DeclarationList(declarations)); 
+		dir = new FontFaceDirective(new DeclarationList(declarations.build())); 
 		return dir;
 	}
 
 	PageDirective  pageDirective() {
 		PageDirective  dir;
-		List<Declaration> declarations = new ArrayList<Declaration>();
+		ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
 		SimpleSelector ss = null;
 		List<Declaration> mdecs;
 		
@@ -875,7 +876,7 @@ class Parser {
 			Expect(41);
 		}
 		Expect(38);
-		dir = new PageDirective(ss, new DeclarationList(declarations)); 
+		dir = new PageDirective(ss, new DeclarationList(declarations.build())); 
 		return dir;
 	}
 

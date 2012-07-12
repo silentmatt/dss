@@ -1,5 +1,6 @@
 package com.silentmatt.dss.directive;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.EvaluationState;
@@ -9,8 +10,6 @@ import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.RuleSet;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.util.JoinedList;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,16 +18,18 @@ import java.util.List;
  */
 @Immutable
 public final class RuleSetClass extends ClassDirective {
-    private final List<RuleSet> rulesets;
+    // FIXME: This is never read
+    private final ImmutableList<RuleSet> rulesets;
 
-    public RuleSetClass(List<RuleSet> rs) {
-        super("<anonymous class>", DeclarationList.EMPTY, true, new DeclarationList(getDeclarations(rs)), getNestedRuleSets(rs), new ArrayList<Rule>());
-        this.rulesets = Collections.unmodifiableList(rs);
+    public RuleSetClass(ImmutableList<RuleSet> rs) {
+        super("<anonymous class>", DeclarationList.EMPTY, true, new DeclarationList(getDeclarations(rs)), getNestedRuleSets(rs), ImmutableList.copyOf(new Rule[0]));
+        this.rulesets = rs;
     }
 
-    private static List<Declaration> getDeclarations(List<RuleSet> rulesets) {
+    // FIXME: Making an immutable list is pointless and inefficient here when it's already provably immutable
+    private static ImmutableList<Declaration> getDeclarations(List<RuleSet> rulesets) {
         if (rulesets.isEmpty()) {
-            return DeclarationList.EMPTY.toList();
+            return ImmutableList.of();
         }
 
         List<Declaration> result = rulesets.get(0).getDeclarations().toList();
@@ -38,15 +39,16 @@ public final class RuleSetClass extends ClassDirective {
                 first = false;
             }
             else {
-                result = new JoinedList<Declaration>(result, rs.getDeclarations().toList());
+                result = new JoinedList<Declaration>(ImmutableList.copyOf(result), rs.getDeclarations().toList());
             }
         }
-        return result;
+        return ImmutableList.copyOf(result);
     }
 
-    private static List<NestedRuleSet> getNestedRuleSets(List<RuleSet> rulesets) {
+    // FIXME: Making an immutable list is pointless and inefficient here when it's already provably immutable
+    private static ImmutableList<NestedRuleSet> getNestedRuleSets(List<RuleSet> rulesets) {
         if (rulesets.isEmpty()) {
-            return new ArrayList<NestedRuleSet>(0);
+            return ImmutableList.of();
         }
 
         List<NestedRuleSet> result = rulesets.get(0).getNestedRuleSets();
@@ -56,10 +58,10 @@ public final class RuleSetClass extends ClassDirective {
                 first = false;
             }
             else {
-                result = new JoinedList<NestedRuleSet>(result, rs.getNestedRuleSets());
+                result = new JoinedList<NestedRuleSet>(ImmutableList.copyOf(result), rs.getNestedRuleSets());
             }
         }
-        return result;
+        return ImmutableList.copyOf(result);
     }
 
     @Override

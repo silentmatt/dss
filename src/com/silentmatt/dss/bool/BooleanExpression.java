@@ -2,7 +2,6 @@ package com.silentmatt.dss.bool;
 
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Immutable;
-import com.silentmatt.dss.term.StringTerm;
 
 /**
  * Represents a boolean expression.

@@ -1,9 +1,8 @@
 package com.silentmatt.dss;
 
+import com.google.common.collect.ImmutableList;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,22 +22,22 @@ import java.util.Set;
  */
 @Immutable
 public final class DeclarationList implements /*List<Declaration>*/ Iterable<Declaration> {
-    private final List<Declaration> list;
+    private final ImmutableList<Declaration> list;
     private final Map<String, Expression> mapView = new DeclarationListMapView();
 
     @SuppressWarnings("unchecked")
-    public static final DeclarationList EMPTY = new DeclarationList((List<Declaration>) Collections.EMPTY_LIST);
+    public static final DeclarationList EMPTY = new DeclarationList(ImmutableList.copyOf(new Declaration[0]));
 
     /**
      * Constructs a DeclarationList containing the Declarations from the specified list.
      *
      * @param declarations {@link List} of {@link Declaration}s to copy.
      */
-    public DeclarationList(List<Declaration> declarations) {
-        list = Collections.unmodifiableList(declarations);
+    public DeclarationList(ImmutableList<Declaration> declarations) {
+        list = declarations;
     }
 
-    public List<Declaration> toList() {
+    public ImmutableList<Declaration> toList() {
         return list;
     }
 
@@ -141,10 +140,10 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
         return list.listIterator(start);
     }
 
-    public List<Declaration> subList(int start, int end) {
-        throw new UnsupportedOperationException();
-        //return list.subList(start, end);
-    }
+//    public List<Declaration> subList(int start, int end) {
+//        throw new UnsupportedOperationException();
+//        //return list.subList(start, end);
+//    }
 
     // Map methods
     public boolean containsKey(String key) {
@@ -169,8 +168,9 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
         return declaration.getName().equalsIgnoreCase(name);
     }
 
-    public List<Declaration> getAllDeclarations(String name) {
-        ArrayList<Declaration> all = new ArrayList<Declaration>();
+    @Deprecated
+    public ImmutableList<Declaration> getAllDeclarations(String name) {
+        ImmutableList.Builder<Declaration> all = ImmutableList.builder();
 
         for (Declaration declaration : list) {
             if (matches(declaration, name)) {
@@ -178,7 +178,7 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
             }
         }
 
-        return all;
+        return all.build();
     }
 
     public Declaration getDeclaration(String name) {

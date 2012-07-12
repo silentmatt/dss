@@ -1,5 +1,6 @@
 package com.silentmatt.dss.directive;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationBlock;
 import com.silentmatt.dss.DeclarationList;
@@ -25,7 +26,7 @@ public class ClassDirective extends Rule {
     private final DeclarationBlock declarationBlock;
     private final boolean global;
 
-    public ClassDirective(String className, DeclarationList parameters, boolean global, DeclarationList declarations, List<NestedRuleSet> nestedRuleSets, List<Rule> rules) {
+    public ClassDirective(String className, DeclarationList parameters, boolean global, DeclarationList declarations, ImmutableList<NestedRuleSet> nestedRuleSets, ImmutableList<Rule> rules) {
         this.className = className;
         this.parameters = parameters;
         this.global = global;
@@ -109,7 +110,7 @@ public class ClassDirective extends Rule {
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         DeclarationBlock newBlock = null;
-        List<NestedRuleSet> nested = new ArrayList<NestedRuleSet>();
+        ImmutableList.Builder<NestedRuleSet> nested = ImmutableList.builder();
 
         state.pushScope(getRuleSetScope(state));
         try {
@@ -139,7 +140,7 @@ public class ClassDirective extends Rule {
 
         if (newBlock != null) {
             // XXX: Do we really need to create a new instance here?
-            scope.declare(className, new ClassDirective(className, parameters, global, newBlock.getDeclarations(), nested, getRules()));
+            scope.declare(className, new ClassDirective(className, parameters, global, newBlock.getDeclarations(), nested.build(), getRules()));
         }
         else {
             throw new RuntimeException("Error evaluating class " + className);
@@ -157,7 +158,7 @@ public class ClassDirective extends Rule {
      *
      * @return A {@link List} of {@link Rule}s.
      */
-    public List<Rule> getRules() {
+    public ImmutableList<Rule> getRules() {
         return declarationBlock.getRules();
     }
 

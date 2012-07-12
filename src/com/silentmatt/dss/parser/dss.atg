@@ -1,3 +1,4 @@
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.*;
 import com.silentmatt.dss.bool.*;
 import com.silentmatt.dss.calc.*;
@@ -131,12 +132,13 @@ PRODUCTIONS
  *--------------------------- Declarations -------------------------------*
  *------------------------------------------------------------------------*/
 
-CSS3 =                      (. CSSDoc = new DSSDocument(); .)
+CSS3 = (                    (. DSSDocument.Builder CSSDocBuilder = new DSSDocument.Builder(); .)
     {"<!--" | "-->"}
     {
-        rule<out Rule rule> (. CSSDoc.addRule(rule); .)
+        rule<out Rule rule> (. CSSDocBuilder.addRule(rule); .)
         {"<!--" | "-->"}
     }
+)                           (. CSSDoc = CSSDocBuilder.build(); .)
 .
 
 rule<out Rule rule> (. rule = null; .) =
@@ -226,8 +228,8 @@ mediaExpression<out String expr> =
 .
 
 mediaDirective<out MediaDirective mdir> =               (.
-                                                            List<MediaQuery> media = new ArrayList<MediaQuery>();
-                                                            List<Rule> rules = new ArrayList<Rule>();
+                                                            ImmutableList.Builder<MediaQuery> media = ImmutableList.builder();
+                                                            ImmutableList.Builder<Rule> rules = ImmutableList.builder();
                                                         .)
     "@media"
     mediaQuery<out MediaQuery m>                        (.  media.add(m); .)
@@ -242,13 +244,13 @@ mediaDirective<out MediaDirective mdir> =               (.
             |
             includeDirective<out IncludeDirective idir> (.  rules.add(idir); .)
         }
-    '}'                                                 (.  mdir = new MediaDirective(media, rules); .)
+    '}'                                                 (.  mdir = new MediaDirective(media.build(), rules.build()); .)
 .
 
 ifDirective<out IfDirective idir> = (.
                                         BooleanExpression expr;
-                                        List<Rule> ifrules = new ArrayList<Rule>();
-                                        List<Rule> elserules = null;
+                                        ImmutableList.Builder<Rule> ifrules = ImmutableList.builder();
+                                        ImmutableList.Builder<Rule> elserules = null;
                                     .)
     "@if"
     booleanExpression<out expr>
@@ -256,22 +258,21 @@ ifDirective<out IfDirective idir> = (.
         rule<out Rule rule>         (.  ifrules.add(rule); .)
     } '}'
     [
-        "@else"                     (.  elserules = new ArrayList<Rule>(); .)
+        "@else"                     (.  elserules = ImmutableList.builder(); .)
         '{' {
             rule<out Rule rule>     (.  elserules.add(rule); .)
         } '}'
     ]
-    (.  idir = new IfDirective(expr, ifrules, elserules); .)
+    (.  idir = new IfDirective(expr, ifrules.build(), elserules != null ? elserules.build() : null); .)
 .
 
 ifDeclarations<out DeclarationBlock mdecs> =    (.  BooleanExpression expr;
                                                     BooleanExpression elseExpr;
-                                                    List<Declaration> decList = new ArrayList<Declaration>();
-                                                    List<Declaration> decs;
+                                                    ImmutableList.Builder<Declaration> decList = ImmutableList.builder();
                                                     DeclarationBlock ifBlock;
                                                     DeclarationBlock elseBlock;
-                                                    List<NestedRuleSet> nestedRuleSets = new ArrayList<NestedRuleSet>();
-                                                    List<Rule> rules = new ArrayList<Rule>();
+                                                    ImmutableList.Builder<NestedRuleSet> nestedRuleSets = ImmutableList.builder();
+                                                    ImmutableList.Builder<Rule> rules = ImmutableList.builder();
                                                 .)
 (
     "@if"
@@ -311,7 +312,7 @@ ifDeclarations<out DeclarationBlock mdecs> =    (.  BooleanExpression expr;
                                                     }
                                                 .)
     ]
-)                                               (.  mdecs = new DeclarationBlock(new DeclarationList(decList), nestedRuleSets, rules); .)
+)                                               (.  mdecs = new DeclarationBlock(new DeclarationList(decList.build()), nestedRuleSets.build(), rules.build()); .)
 .
 
 parameter<out Declaration dec> =        (. Declaration.Builder decb = new Declaration.Builder(); .)
@@ -359,7 +360,7 @@ declarationBlock<out DeclarationBlock block> =
 .
 
 classDirective<out ClassDirective dir> =    (.  String ident;
-                                                List<Declaration> parameters = new ArrayList<Declaration>();
+                                                ImmutableList.Builder<Declaration> parameters = ImmutableList.builder();
                                                 Declaration param;
                                                 boolean global = false;
                                             .)
@@ -378,11 +379,11 @@ classDirective<out ClassDirective dir> =    (.  String ident;
         "global"                            (.  global = true; .)
     ]
     declarationBlock<out DeclarationBlock block>
-                                            (.  dir = new ClassDirective(ident, new DeclarationList(parameters), global, block); .)
+                                            (.  dir = new ClassDirective(ident, new DeclarationList(parameters.build()), global, block); .)
 .
 
 defineDirective<out DefineDirective dir> =      (.
-                                                    List<Declaration> declarations = new ArrayList<Declaration>();
+                                                    ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
                                                     boolean global = false;
                                                     List<Declaration> mdecs;
                                                 .)
@@ -395,10 +396,10 @@ defineDirective<out DefineDirective dir> =      (.
                                                     }
                                                 .)
           ';' }
-    '}'                                         (.  dir = new DefineDirective(new DeclarationList(declarations), global, BooleanExpression.TRUE); .)
+    '}'                                         (.  dir = new DefineDirective(new DeclarationList(declarations.build()), global, BooleanExpression.TRUE); .)
 .
 
-fontFaceDirective<out FontFaceDirective dir> =  (.  List<Declaration> declarations = new ArrayList<Declaration>();
+fontFaceDirective<out FontFaceDirective dir> =  (.  ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
                                                     List<Declaration> mdecs;
                                                 .)
     "@font-face"
@@ -408,10 +409,10 @@ fontFaceDirective<out FontFaceDirective dir> =  (.  List<Declaration> declaratio
                                                         break;
                                                     }
                                                 .)
-        ';' } '}'                               (.  dir = new FontFaceDirective(new DeclarationList(declarations)); .)
+        ';' } '}'                               (.  dir = new FontFaceDirective(new DeclarationList(declarations.build())); .)
 .
 
-pageDirective<out PageDirective dir> =          (.  List<Declaration> declarations = new ArrayList<Declaration>();
+pageDirective<out PageDirective dir> =          (.  ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
                                                     SimpleSelector ss = null;
                                                     List<Declaration> mdecs;
                                                 .)
@@ -425,7 +426,7 @@ pageDirective<out PageDirective dir> =          (.  List<Declaration> declaratio
                                                         break;
                                                     }
                                                 .)
-          ';' } '}'                             (.  dir = new PageDirective(ss, new DeclarationList(declarations)); .)
+          ';' } '}'                             (.  dir = new PageDirective(ss, new DeclarationList(declarations.build())); .)
 .
 
 importDirective<out ImportDirective dir> =
@@ -440,7 +441,7 @@ importDirective<out ImportDirective dir> =
 
 includeDirective<out IncludeDirective dir> =
                                             (.  boolean literal = false;
-                                                List<Declaration> declarations = new ArrayList<Declaration>();
+                                                ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
                                                 UrlTerm includeUrl = null;
                                                 List<Declaration> mdecs;
                                             .)
@@ -464,7 +465,7 @@ includeDirective<out IncludeDirective dir> =
                                             .)
             ';' }
         '}'
-    )                                       (.  dir = new IncludeDirective(includeUrl, literal, declarations); .)
+    )                                       (.  dir = new IncludeDirective(includeUrl, literal, declarations.build()); .)
 .
 
 charsetDirective<out CharsetDirective dir> =

@@ -1,9 +1,9 @@
 package com.silentmatt.dss.term;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.Immutable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,7 +17,7 @@ import java.util.List;
 public class ClassReferenceTerm extends Term {
     public static class Builder {
         private final String name;
-        private final ArrayList<Declaration> arguments = new ArrayList<Declaration>();
+        private final ImmutableList.Builder<Declaration> arguments = ImmutableList.builder();
 
         public Builder(String name) {
             this.name = name;
@@ -37,7 +37,7 @@ public class ClassReferenceTerm extends Term {
         }
         
         public ClassReferenceTerm build() {
-            return new ClassReferenceTerm(null, name, new DeclarationList(arguments)); // FIXME: Missing term separator
+            return new ClassReferenceTerm(null, name, new DeclarationList(arguments.build())); // FIXME: Missing term separator
         }
     }
 

@@ -1,13 +1,11 @@
 package com.silentmatt.dss;
 
-import com.silentmatt.dss.bool.BooleanExpression;
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.css.CssRuleList;
 import com.silentmatt.dss.css.CssRuleSet;
 import com.silentmatt.dss.util.JoinedSelectorList;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,7 +16,7 @@ import java.util.List;
 @Immutable
 public class RuleSet extends Rule {
     public static class Builder {
-        private final List<Selector> selectors = new ArrayList<Selector>();
+        private final ImmutableList.Builder<Selector> selectors = ImmutableList.builder();
         private DeclarationBlock declarationBlock;
 
         public Builder setDeclarationBlock(DeclarationBlock declarations) {
@@ -40,11 +38,11 @@ public class RuleSet extends Rule {
             if (declarationBlock == null) {
                 declarationBlock = new DeclarationBlock.Builder().build();
             }
-            return new RuleSet(selectors, declarationBlock);
+            return new RuleSet(selectors.build(), declarationBlock);
         }
     }
 
-    private final List<Selector> selectors;
+    private final ImmutableList<Selector> selectors;
     private final DeclarationBlock declarationBlock;
 
     /**
@@ -54,9 +52,9 @@ public class RuleSet extends Rule {
      * @param block The {@link DeclarationBlock}.
      * @param rules A {@link List} of nested DSS {@link Rule}s.
      */
-    public RuleSet(List<Selector> selectors, DeclarationBlock block) {
+    public RuleSet(ImmutableList<Selector> selectors, DeclarationBlock block) {
         this.declarationBlock = block;
-        this.selectors = Collections.unmodifiableList(selectors);
+        this.selectors = selectors;
     }
 
     /**
@@ -73,7 +71,7 @@ public class RuleSet extends Rule {
      *
      * @return A {@link List} of {@link Selector}s.
      */
-    public List<Selector> getSelectors() {
+    public ImmutableList<Selector> getSelectors() {
         return selectors;
     }
 
@@ -102,7 +100,8 @@ public class RuleSet extends Rule {
                 Boolean cond = rs.getCondition().evaluate(state);
                 if (cond != null && cond) {
                     List<Selector> joinedSelectors = new JoinedSelectorList(getSelectors(), rs.getCombinator(), rs.getSelectors());
-                    RuleSet finalRuleSet = new RuleSet(joinedSelectors, rs.getDeclarationBlock());
+                    // TODO: Making a copy of joinedSelectors is wasteful
+                    RuleSet finalRuleSet = new RuleSet(ImmutableList.copyOf(joinedSelectors), rs.getDeclarationBlock());
                     //result.addRule(new NestedRuleSet(getSelectors(), rs.getCombinator(), rs).evaluate(state, null));
                     result.addRule(finalRuleSet.evaluate(state, container));
                 }
@@ -138,7 +137,7 @@ public class RuleSet extends Rule {
      * 
      * @return A {@link List} of {@link NestedRuleSet}s.
      */
-    public List<NestedRuleSet> getNestedRuleSets() {
+    public ImmutableList<NestedRuleSet> getNestedRuleSets() {
         return declarationBlock.getNestedRuleSets();
     }
 
