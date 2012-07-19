@@ -284,13 +284,14 @@ public class Scanner {
 		for (int i = 57344; i <= 65533; ++i) start.set(i, 1);
 		for (int i = 48; i <= 57; ++i) start.set(i, 39);
 		start.set(92, 40); 
-		start.set(45, 129); 
+		start.set(42, 129); 
 		start.set(64, 2); 
 		start.set(46, 5); 
 		start.set(34, 6); 
 		start.set(39, 13); 
 		start.set(117, 41); 
 		start.set(60, 130); 
+		start.set(45, 131); 
 		start.set(40, 105); 
 		start.set(58, 106); 
 		start.set(41, 107); 
@@ -299,10 +300,9 @@ public class Scanner {
 		start.set(125, 110); 
 		start.set(59, 111); 
 		start.set(62, 112); 
-		start.set(38, 131); 
+		start.set(38, 132); 
 		start.set(43, 113); 
-		start.set(126, 132); 
-		start.set(42, 133); 
+		start.set(126, 133); 
 		start.set(35, 114); 
 		start.set(91, 115); 
 		start.set(61, 116); 
@@ -1022,20 +1022,22 @@ public class Scanner {
 				case 129:
 					if (ch >= 'A' && ch <= 'Z' || ch == '_' || ch >= 'a' && ch <= 'z' || ch >= 128 && ch <= 55295 || ch >= 57344 && ch <= 65533) {AddCh(); state = 1; break;}
 					else if (ch == 92) {AddCh(); state = 40; break;}
-					else if (ch == '-') {AddCh(); state = 103; break;}
-					else {t.kind = 66; break loop;}
+					else if (ch == '=') {AddCh(); state = 122; break;}
+					else {t.kind = 55; break loop;}
 				case 130:
 					if (ch == '!') {AddCh(); state = 100; break;}
 					else {t.kind = 42; break loop;}
 				case 131:
+					if (ch >= 'A' && ch <= 'Z' || ch == '_' || ch >= 'a' && ch <= 'z' || ch >= 128 && ch <= 55295 || ch >= 57344 && ch <= 65533) {AddCh(); state = 1; break;}
+					else if (ch == 92) {AddCh(); state = 40; break;}
+					else if (ch == '-') {AddCh(); state = 103; break;}
+					else {t.kind = 66; break loop;}
+				case 132:
 					if (ch == '&') {AddCh(); state = 127; break;}
 					else {t.kind = 45; break loop;}
-				case 132:
+				case 133:
 					if (ch == '=') {AddCh(); state = 117; break;}
 					else {t.kind = 47; break loop;}
-				case 133:
-					if (ch == '=') {AddCh(); state = 122; break;}
-					else {t.kind = 55; break loop;}
 				case 134:
 					if (ch == '=') {AddCh(); state = 118; break;}
 					else if (ch == '|') {AddCh(); state = 126; break;}

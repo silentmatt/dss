@@ -75,7 +75,7 @@ CHARACTERS
 
 TOKENS
 
-    ident = ['-'] (letter | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars))) { letter | digit | '-' | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars)) }.
+    ident = ['-' | '*'] (letter | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars))) { letter | digit | '-' | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars)) }.
     atref = '@' ['-'] (letter | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars))) { letter | digit | '-' | nonascii | (('\\' hexDigit [ hexDigit hexDigit hexDigit hexDigit hexDigit ] [ wc ]) | ('\\' escape_chars)) }.
     integer = digit {digit}.
     decimal = {digit} '.' {digit}.

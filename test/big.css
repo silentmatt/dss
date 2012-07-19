@@ -104,6 +104,7 @@ body .test {
 	color: rgba(1,2,3,0.4) !important;
 	color: #123;
 	background-color: rgba(1,2,3,0.4);
+	*display: block;
 }
 .with_layout > nested span, parent selector > nested span {
 	nested: value;

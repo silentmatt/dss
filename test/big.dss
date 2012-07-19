@@ -143,6 +143,7 @@ body .test {
     color: rgba(1,2,3,.4)    ! important;
     color: #123;
     background-color: prop(color);
+    *display: block; // IE
 }
 
 @if ie6 {
