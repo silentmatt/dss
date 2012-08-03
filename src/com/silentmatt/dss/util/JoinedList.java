@@ -1,9 +1,8 @@
 package com.silentmatt.dss.util;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.Immutable;
 import java.util.AbstractList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  *
@@ -11,20 +10,22 @@ import java.util.List;
  */
 @Immutable
 public final class JoinedList<E> extends AbstractList<E> {
-    private final List<E> front;
-    private final List<E> back;
+    private final ImmutableList<E> front;
+    private final ImmutableList<E> back;
 
-    public List<E> getFront() {
+    @Deprecated
+    public ImmutableList<E> getFront() {
         return front;
     }
 
-    public List<E> getBack() {
+    @Deprecated
+    public ImmutableList<E> getBack() {
         return back;
     }
 
-    public JoinedList(List<E> front, List<E> back) {
-        this.front = Collections.unmodifiableList(front);
-        this.back = Collections.unmodifiableList(back);
+    public JoinedList(ImmutableList<E> front, ImmutableList<E> back) {
+        this.front = front;
+        this.back = back;
     }
 
     @Override

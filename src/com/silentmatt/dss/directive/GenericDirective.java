@@ -1,5 +1,6 @@
 package com.silentmatt.dss.directive;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationBlock;
 import com.silentmatt.dss.DeclarationList;
@@ -12,8 +13,6 @@ import com.silentmatt.dss.css.CssGenericDirective;
 import com.silentmatt.dss.css.CssMedium;
 import com.silentmatt.dss.css.CssRule;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,8 +23,8 @@ import java.util.List;
 public final class GenericDirective extends Rule {
     public static class Builder {
         private final DeclarationBlock.Builder declarations = new DeclarationBlock.Builder();
-        private final List<Rule> rules = new ArrayList<Rule>();
-        private final List<Medium> mediums = new ArrayList<Medium>();
+        private final ImmutableList.Builder<Rule> rules = ImmutableList.builder();
+        private final ImmutableList.Builder<Medium> mediums = ImmutableList.builder();
         private String name;
         private Expression expression;
         
@@ -50,20 +49,20 @@ public final class GenericDirective extends Rule {
         }
         
         public GenericDirective build() {
-            return new GenericDirective(declarations.build(), rules, mediums, name, expression);
+            return new GenericDirective(declarations.build(), rules.build(), mediums.build(), name, expression);
         }
     }
 
     private final DeclarationBlock declarations;
-    private final List<Rule> rules;
-    private final List<Medium> mediums;
+    private final ImmutableList<Rule> rules;
+    private final ImmutableList<Medium> mediums;
     private final String name;
     private final Expression expression;
 
-    public GenericDirective(DeclarationBlock declarations, List<Rule> rules, List<Medium> mediums, String name, Expression expression) {
+    public GenericDirective(DeclarationBlock declarations, ImmutableList<Rule> rules, ImmutableList<Medium> mediums, String name, Expression expression) {
         this.declarations = declarations;
-        this.rules = Collections.unmodifiableList(rules);
-        this.mediums = Collections.unmodifiableList(mediums);
+        this.rules = rules;
+        this.mediums = mediums;
         this.name = name;
         this.expression = expression;
     }

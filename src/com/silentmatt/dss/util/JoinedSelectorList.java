@@ -1,10 +1,10 @@
 package com.silentmatt.dss.util;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.Combinator;
 import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Selector;
 import java.util.AbstractList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,8 +13,8 @@ import java.util.List;
  */
 @Immutable
 public final class JoinedSelectorList extends AbstractList<Selector> {
-    private final List<Selector> parents;
-    private final List<Selector> children;
+    private final ImmutableList<Selector> parents;
+    private final ImmutableList<Selector> children;
     private final Combinator combinator;
 
     public List<Selector> getParents() {
@@ -25,9 +25,9 @@ public final class JoinedSelectorList extends AbstractList<Selector> {
         return children;
     }
 
-    public JoinedSelectorList(List<Selector> parents, Combinator cb, List<Selector> children) {
-        this.parents = Collections.unmodifiableList(parents);
-        this.children = Collections.unmodifiableList(children);
+    public JoinedSelectorList(ImmutableList<Selector> parents, Combinator cb, ImmutableList<Selector> children) {
+        this.parents = parents;
+        this.children = children;
         this.combinator = cb;
     }
 

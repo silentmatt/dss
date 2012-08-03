@@ -1,5 +1,7 @@
 package com.silentmatt.dss;
 
+import com.google.common.collect.ImmutableList;
+import com.silentmatt.dss.bool.BooleanExpression;
 import com.silentmatt.dss.css.CssDeclaration;
 import com.silentmatt.dss.directive.ClassDirective;
 import com.silentmatt.dss.directive.DeclarationDirective;
@@ -11,7 +13,6 @@ import com.silentmatt.dss.term.Term;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,8 +37,10 @@ public final class DeclarationBlock {
         }
 
         private final List<Declaration> declarations = new ArrayList<Declaration>();
-        private final List<NestedRuleSet> nestedRuleSets = new ArrayList<NestedRuleSet>();
+        private final ImmutableList.Builder<NestedRuleSet> nestedRuleSets = new ImmutableList.Builder<NestedRuleSet>();
+        private final ImmutableList.Builder<Rule> rules = new ImmutableList.Builder<Rule>();
 
+        @Deprecated
         public List<Declaration> getDeclarations() {
             return declarations;
         }
@@ -68,8 +71,8 @@ public final class DeclarationBlock {
         * @param cb The {@link Combinator} to apply to the RuleSet's selectors.
         * @param nested The {@link RuleSet} to nest inside the block.
         */
-        public Builder addNestedRuleSet(Combinator cb, RuleSet nested) {
-            nestedRuleSets.add(new NestedRuleSet(cb, nested));
+        public Builder addNestedRuleSet(Combinator cb, RuleSet nested, BooleanExpression condition) {
+            nestedRuleSets.add(new NestedRuleSet(cb, nested, condition));
             return this;
         }
 
@@ -83,13 +86,34 @@ public final class DeclarationBlock {
             return this;
         }
 
+        /**
+        * Adds a list of NestedRuleSets inside the block.
+        *
+        * @param nested The List of {@link NestedRuleSet}s to nest inside the block.
+        */
+        public Builder addNestedRuleSets(List<NestedRuleSet> nested) {
+            nestedRuleSets.addAll(nested);
+            return this;
+        }
+        
+        public Builder addRule(Rule rule) {
+            this.rules.add(rule);
+            return this;
+        }
+        
+        public Builder addRules(List<Rule> rules) {
+            this.rules.addAll(rules);
+            return this;
+        }
+
         public DeclarationBlock build() {
-            return new DeclarationBlock(new DeclarationList(declarations), nestedRuleSets);
+            return new DeclarationBlock(new DeclarationList(ImmutableList.copyOf(declarations)), nestedRuleSets.build(), rules.build());
         }
     }
 
     private final DeclarationList declarations;
-    private final List<NestedRuleSet> nestedRuleSets;
+    private final ImmutableList<NestedRuleSet> nestedRuleSets;
+    private final ImmutableList<Rule> rules;
 
     /**
      * Constructs a DeclarationBlock, containing a list of {@link Declaration}s.
@@ -102,7 +126,8 @@ public final class DeclarationBlock {
     @SuppressWarnings("unchecked")
     public DeclarationBlock(DeclarationList declarations) {
         this.declarations = declarations;
-        this.nestedRuleSets = (List<NestedRuleSet>)Collections.EMPTY_LIST;
+        this.nestedRuleSets = ImmutableList.of();
+        this.rules = ImmutableList.of();
     }
 
     /**
@@ -116,9 +141,10 @@ public final class DeclarationBlock {
      * @param nested The NestedRuleSets to initialize the block with. Like the
      * declarations, nested RuleSets are copied into a new list.
      */
-    public DeclarationBlock(DeclarationList declarations, List<NestedRuleSet> nested) {
+    public DeclarationBlock(DeclarationList declarations, ImmutableList<NestedRuleSet> nested, ImmutableList<Rule> rules) {
         this.declarations = declarations;
-        this.nestedRuleSets = Collections.unmodifiableList(nested);
+        this.nestedRuleSets = nested;
+        this.rules = rules;
     }
 
     /**
@@ -207,8 +233,17 @@ public final class DeclarationBlock {
      *
      * @return The {@link List} of {@link NestedRuleSet} objects.
      */
-    public List<NestedRuleSet> getNestedRuleSets() {
+    public ImmutableList<NestedRuleSet> getNestedRuleSets() {
         return nestedRuleSets;
+    }
+
+    /**
+     * Gets a list of nested rules.
+     *
+     * @return The {@link List} of {@link NestedRuleSet} objects.
+     */
+    public ImmutableList<Rule> getRules() {
+        return rules;
     }
 
     /**
@@ -291,11 +326,13 @@ public final class DeclarationBlock {
     }
 
     private static void addInheritedProperties(DeclarationBlock.Builder result, EvaluationState state, ClassDirective clazz, DeclarationList args) throws IOException {
-        List<Declaration> list = result.getDeclarations();
         // Make a copy of the properties, to substitute parameters into
         ArrayList<Declaration> properties = new ArrayList<Declaration>();
         for (Declaration prop : clazz.getDeclarations(args)) {
-            properties.add(new Declaration(prop.getName(), prop.getExpression(), prop.isImportant()));
+            Boolean cond = prop.getCondition().evaluate(state);
+            if (cond != null && cond) {
+                properties.add(new Declaration(prop.getName(), prop.getExpression(), prop.isImportant(), BooleanExpression.TRUE));
+            }
         }
 
         state.pushParameters();
@@ -304,16 +341,19 @@ public final class DeclarationBlock {
 
             for (int i = 0; i < properties.size(); i++) {
                 Declaration dec = properties.get(i);
-                properties.set(i, dec.substituteValues(state, new DeclarationList(list), true, true));
+                properties.set(i, dec.substituteValues(state, DeclarationList.EMPTY, true, true)); // new DeclarationList(ImmutableList.copyOf(result.getDeclarations()))
             }
 
             for (int i = 0; i < properties.size(); i++) {
                 Declaration declaration = properties.get(i);
-                list.add(declaration);
+                result.addDeclaration(declaration);
             }
 
             for (NestedRuleSet rs : clazz.getNestedRuleSets()) {
-                result.addNestedRuleSet(rs.substituteValues(state));
+                Boolean cond = rs.getCondition().evaluate(state);
+                if (cond != null && cond) {
+                    result.addNestedRuleSet(rs.substituteValues(state).withCondition(BooleanExpression.TRUE));
+                }
             }
         }
         finally {
@@ -325,7 +365,7 @@ public final class DeclarationBlock {
         String needle = crt.getSelector().toString();
         boolean found = false;
 
-        List<RuleSet> allRuleSets = new ArrayList<RuleSet>();
+        ImmutableList.Builder<RuleSet> allRuleSets = ImmutableList.builder();
 
         for (List<RuleSet> rsList : ruleSets) {
             for (RuleSet rs : rsList) {
@@ -338,7 +378,7 @@ public final class DeclarationBlock {
             }
         }
 
-        return found ? new RuleSetClass(allRuleSets) : null;
+        return found ? new RuleSetClass(allRuleSets.build()) : null;
     }
 
     private static void addInheritedProperties(DeclarationBlock.Builder result, EvaluationState state, Expression inherits) throws MalformedURLException, IOException {
@@ -402,12 +442,15 @@ public final class DeclarationBlock {
                     addInheritedProperties(result, state, declaration.getExpression());
                 }
                 else {
-                    result.addDeclaration(declaration);
+                    Boolean cond = declaration.getCondition().evaluate(state);
+                    if (cond != null && cond) {
+                        result.addDeclaration(declaration.withCondition(BooleanExpression.TRUE));
+                    }
                 }
             }
 
             for (int i = 0; i < result.getDeclarations().size(); i++) {
-                Declaration dec = result.getDeclarations().get(i).substituteValues(state, new DeclarationList(result.getDeclarations()), false, doCalculations);
+                Declaration dec = result.getDeclarations().get(i).substituteValues(state, DeclarationList.EMPTY, false, doCalculations); // new DeclarationList(ImmutableList.copyOf(result.getDeclarations()))
                 result.getDeclarations().set(i, dec);
             }
         }

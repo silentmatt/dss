@@ -1,5 +1,6 @@
 package com.silentmatt.dss.directive;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.DSSDocument;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationBlock;
@@ -30,7 +31,7 @@ public class IncludeDirective extends ExpressionDirective {
     private final boolean literal;
     private final DeclarationList parameters;
 
-    public IncludeDirective(UrlTerm url, boolean literal, List<Declaration> parameters) {
+    public IncludeDirective(UrlTerm url, boolean literal, ImmutableList<Declaration> parameters) {
         super(url.toExpression());
         this.literal = literal;
         this.parameters = new DeclarationList(parameters);

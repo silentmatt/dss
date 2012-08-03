@@ -48,7 +48,7 @@ public final class ParamTerm extends ReferenceTerm {
         }
         else if (value.getTerms().size() > 0) {
             Expression.Builder valueb = new Expression.Builder(value);
-            valueb.getTerms().set(0, valueb.getTerms().get(0).withSeparator(getSeperator()));
+            valueb.setTerm(0, valueb.getTerm(0).withSeparator(getSeperator()));
             value = valueb.build();
         }
 

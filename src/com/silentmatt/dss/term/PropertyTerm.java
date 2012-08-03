@@ -39,7 +39,7 @@ public final class PropertyTerm extends ReferenceTerm {
         Expression ret = container.get(getName());
         if (ret != null && ret.getTerms().size() > 0) {
             Expression.Builder retb = new Expression.Builder(ret);
-            retb.getTerms().set(0, retb.getTerms().get(0).withSeparator(getSeperator()));
+            retb.setTerm(0, retb.getTerm(0).withSeparator(getSeperator()));
             ret = retb.build();
         }
         return ret != null ? ret : toExpression();

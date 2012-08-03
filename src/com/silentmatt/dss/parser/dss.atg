@@ -1,3 +1,4 @@
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.*;
 import com.silentmatt.dss.bool.*;
 import com.silentmatt.dss.calc.*;
@@ -131,12 +132,13 @@ PRODUCTIONS
  *--------------------------- Declarations -------------------------------*
  *------------------------------------------------------------------------*/
 
-CSS3 =                      (. CSSDoc = new DSSDocument(); .)
+CSS3 = (                    (. DSSDocument.Builder CSSDocBuilder = new DSSDocument.Builder(); .)
     {"<!--" | "-->"}
     {
-        rule<out Rule rule> (. CSSDoc.addRule(rule); .)
+        rule<out Rule rule> (. CSSDocBuilder.addRule(rule); .)
         {"<!--" | "-->"}
     }
+)                           (. CSSDoc = CSSDocBuilder.build(); .)
 .
 
 rule<out Rule rule> (. rule = null; .) =
@@ -226,8 +228,8 @@ mediaExpression<out String expr> =
 .
 
 mediaDirective<out MediaDirective mdir> =               (.
-                                                            List<MediaQuery> media = new ArrayList<MediaQuery>();
-                                                            List<Rule> rules = new ArrayList<Rule>();
+                                                            ImmutableList.Builder<MediaQuery> media = ImmutableList.builder();
+                                                            ImmutableList.Builder<Rule> rules = ImmutableList.builder();
                                                         .)
     "@media"
     mediaQuery<out MediaQuery m>                        (.  media.add(m); .)
@@ -242,13 +244,13 @@ mediaDirective<out MediaDirective mdir> =               (.
             |
             includeDirective<out IncludeDirective idir> (.  rules.add(idir); .)
         }
-    '}'                                                 (.  mdir = new MediaDirective(media, rules); .)
+    '}'                                                 (.  mdir = new MediaDirective(media.build(), rules.build()); .)
 .
 
 ifDirective<out IfDirective idir> = (.
                                         BooleanExpression expr;
-                                        List<Rule> ifrules = new ArrayList<Rule>();
-                                        List<Rule> elserules = null;
+                                        ImmutableList.Builder<Rule> ifrules = ImmutableList.builder();
+                                        ImmutableList.Builder<Rule> elserules = null;
                                     .)
     "@if"
     booleanExpression<out expr>
@@ -256,12 +258,61 @@ ifDirective<out IfDirective idir> = (.
         rule<out Rule rule>         (.  ifrules.add(rule); .)
     } '}'
     [
-        "@else"                     (.  elserules = new ArrayList<Rule>(); .)
+        "@else"                     (.  elserules = ImmutableList.builder(); .)
         '{' {
             rule<out Rule rule>     (.  elserules.add(rule); .)
         } '}'
     ]
-    (.  idir = new IfDirective(expr, ifrules, elserules); .)
+    (.  idir = new IfDirective(expr, ifrules.build(), elserules != null ? elserules.build() : null); .)
+.
+
+ifDeclarations<out DeclarationBlock mdecs> =    (.  BooleanExpression expr;
+                                                    BooleanExpression elseExpr;
+                                                    ImmutableList.Builder<Declaration> decList = ImmutableList.builder();
+                                                    DeclarationBlock ifBlock;
+                                                    DeclarationBlock elseBlock;
+                                                    ImmutableList.Builder<NestedRuleSet> nestedRuleSets = ImmutableList.builder();
+                                                    ImmutableList.Builder<Rule> rules = ImmutableList.builder();
+                                                .)
+(
+    "@if"
+    booleanExpression<out expr>                 (.  elseExpr = new NotExpression(expr); .)
+    declarationBlock<out ifBlock>               (.
+                                                    for (Declaration dec : ifBlock.getDeclarations()) {
+                                                        decList.add(dec.withCondition(expr));
+                                                    }
+                                                    for (NestedRuleSet rule : ifBlock.getNestedRuleSets()) {
+                                                        nestedRuleSets.add(rule.withCondition(expr));
+                                                    }
+                                                    for (Rule rule : ifBlock.getRules()) {
+                                                        if (rule instanceof DefineDirective) {
+                                                            rules.add(((DefineDirective)rule).withCondition(expr));
+                                                        }
+                                                        else {
+                                                            Expect(38);
+                                                        }
+                                                    }
+                                                .)
+    [
+        "@else"
+        declarationBlock<out elseBlock>         (.
+                                                    for (Declaration dec : elseBlock.getDeclarations()) {
+                                                        decList.add(dec.withCondition(elseExpr));
+                                                    }
+                                                    for (NestedRuleSet rule : elseBlock.getNestedRuleSets()) {
+                                                        nestedRuleSets.add(rule.withCondition(elseExpr));
+                                                    }
+                                                    for (Rule rule : elseBlock.getRules()) {
+                                                        if (rule instanceof DefineDirective) {
+                                                            rules.add(((DefineDirective)rule).withCondition(elseExpr));
+                                                        }
+                                                        else {
+                                                            Expect(38);
+                                                        }
+                                                    }
+                                                .)
+    ]
+)                                               (.  mdecs = new DeclarationBlock(new DeclarationList(decList.build()), nestedRuleSets.build(), rules.build()); .)
 .
 
 parameter<out Declaration dec> =        (. Declaration.Builder decb = new Declaration.Builder(); .)
@@ -272,53 +323,67 @@ parameter<out Declaration dec> =        (. Declaration.Builder decb = new Declar
                                         (. dec = decb.build(); .)
 .
 
-classDirective<out ClassDirective dir> =        (.  String ident;
-                                                    List<Declaration> parameters = new ArrayList<Declaration>();
-                                                    List<Declaration> declarations = new ArrayList<Declaration>();
-                                                    List<Declaration> mdecs;
-                                                    List<NestedRuleSet> nested = new ArrayList<NestedRuleSet>();
-                                                    Declaration param;
-                                                    Combinator cb;
-                                                    boolean global = false;
-                                                .)
+declarationBlock<out DeclarationBlock block> =
+                                        (.  DeclarationBlock.Builder builder = new DeclarationBlock.Builder();
+                                            List<Declaration> decs;
+                                            DeclarationBlock ifdecs;
+                                        .)
+    '{' {
+        (IF (!isNestedSelector())
+            multideclaration<out decs>  (.  builder.addDeclarations(decs);
+                                            if (endOfBlock()) {
+                                                break;
+                                            }
+                                        .)
+            ';'
+        )
+        |
+        ifDeclarations<out ifdecs>      (.  builder.addDeclarations(ifdecs.getDeclarations().toList());
+                                            builder.addNestedRuleSets(ifdecs.getNestedRuleSets());
+                                            builder.addRules(ifdecs.getRules());
+                                        .)
+        |
+        classDirective<out Rule dir>    (.  builder.addRule(dir); .)
+        |
+        defineDirective<out Rule dir>   (.  builder.addRule(dir); .)
+        |
+                                        (.  Combinator cb = Combinator.Descendant; .)
+        [ '&' ]                         (.  if (t.pos + t.val.length() == la.pos) {
+                                                cb = Combinator.None;
+                                            }
+                                        .)
+        [ '+'                           (.  cb = Combinator.PrecededImmediatelyBy; .)
+        | '>'                           (.  cb = Combinator.ChildOf; .)
+        | '~'                           (.  cb = Combinator.PrecededBy; .)
+        ] ruleset<out RuleSet nested>   (.  builder.addNestedRuleSet(cb, nested, BooleanExpression.TRUE); .)
+    } '}'                               (.  block = builder.build(); .)
+.
+
+classDirective<out ClassDirective dir> =    (.  String ident;
+                                                ImmutableList.Builder<Declaration> parameters = ImmutableList.builder();
+                                                Declaration param;
+                                                boolean global = false;
+                                            .)
     "@class"
     identity<out ident>
     [
         '<'
-            [   parameter<out param>            (.  parameters.add(param); .)
+            [   parameter<out param>        (.  parameters.add(param); .)
                 {   ';'
-                    parameter<out param>        (.  parameters.add(param); .)
+                    parameter<out param>    (.  parameters.add(param); .)
                 }
             ]
         '>'
     ]
     [
-        "global"                                (.  global = true; .)
+        "global"                            (.  global = true; .)
     ]
-    '{' {
-            IF (!isNestedSelector()) multideclaration<out mdecs>
-                                                (.  declarations.addAll(mdecs);
-                                                    if (endOfBlock()) {
-                                                        break;
-                                                    }
-                                                .)
-                ';'
-            |
-                                                (.  cb = Combinator.Descendant; .)
-            [ '&' ]                             (.  if (t.pos + t.val.length() == la.pos) {
-                                                        cb = Combinator.None;
-                                                    }
-                                                .)
-            [ '+'                               (.  cb = Combinator.PrecededImmediatelyBy; .)
-            | '>'                               (.  cb = Combinator.ChildOf; .)
-            | '~'                               (.  cb = Combinator.PrecededBy; .)
-            ] ruleset<out RuleSet nest>         (.  nested.add(new NestedRuleSet(cb, nest)); .)
-        } '}'
-                                                (.  dir = new ClassDirective(ident, new DeclarationList(parameters), global, new DeclarationList(declarations), nested); .)
+    declarationBlock<out DeclarationBlock block>
+                                            (.  dir = new ClassDirective(ident, new DeclarationList(parameters.build()), global, block); .)
 .
 
 defineDirective<out DefineDirective dir> =      (.
-                                                    List<Declaration> declarations = new ArrayList<Declaration>();
+                                                    ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
                                                     boolean global = false;
                                                     List<Declaration> mdecs;
                                                 .)
@@ -331,10 +396,10 @@ defineDirective<out DefineDirective dir> =      (.
                                                     }
                                                 .)
           ';' }
-    '}'                                         (.  dir = new DefineDirective(new DeclarationList(declarations), global); .)
+    '}'                                         (.  dir = new DefineDirective(new DeclarationList(declarations.build()), global, BooleanExpression.TRUE); .)
 .
 
-fontFaceDirective<out FontFaceDirective dir> =  (.  List<Declaration> declarations = new ArrayList<Declaration>();
+fontFaceDirective<out FontFaceDirective dir> =  (.  ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
                                                     List<Declaration> mdecs;
                                                 .)
     "@font-face"
@@ -344,10 +409,10 @@ fontFaceDirective<out FontFaceDirective dir> =  (.  List<Declaration> declaratio
                                                         break;
                                                     }
                                                 .)
-        ';' } '}'                               (.  dir = new FontFaceDirective(new DeclarationList(declarations)); .)
+        ';' } '}'                               (.  dir = new FontFaceDirective(new DeclarationList(declarations.build())); .)
 .
 
-pageDirective<out PageDirective dir> =          (.  List<Declaration> declarations = new ArrayList<Declaration>();
+pageDirective<out PageDirective dir> =          (.  ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
                                                     SimpleSelector ss = null;
                                                     List<Declaration> mdecs;
                                                 .)
@@ -361,7 +426,7 @@ pageDirective<out PageDirective dir> =          (.  List<Declaration> declaratio
                                                         break;
                                                     }
                                                 .)
-          ';' } '}'                             (.  dir = new PageDirective(ss, new DeclarationList(declarations)); .)
+          ';' } '}'                             (.  dir = new PageDirective(ss, new DeclarationList(declarations.build())); .)
 .
 
 importDirective<out ImportDirective dir> =
@@ -376,7 +441,7 @@ importDirective<out ImportDirective dir> =
 
 includeDirective<out IncludeDirective dir> =
                                             (.  boolean literal = false;
-                                                List<Declaration> declarations = new ArrayList<Declaration>();
+                                                ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
                                                 UrlTerm includeUrl = null;
                                                 List<Declaration> mdecs;
                                             .)
@@ -400,7 +465,7 @@ includeDirective<out IncludeDirective dir> =
                                             .)
             ';' }
         '}'
-    )                                       (.  dir = new IncludeDirective(includeUrl, literal, declarations); .)
+    )                                       (.  dir = new IncludeDirective(includeUrl, literal, declarations.build()); .)
 .
 
 charsetDirective<out CharsetDirective dir> =
@@ -475,41 +540,20 @@ directive<out Rule dir> (.  dir = null; .) =
     genericDirective<out dir>
 .
 
-ruleset<out RuleSet rset> =                  (.  RuleSet.Builder rsetb = new RuleSet.Builder();
-                                                 Selector sel;
-                                                 List<Declaration> decs;
-                                                 Rule dir;
-                                                 Combinator cb;
-                                             .)
+ruleset<out RuleSet rset> =                 (.  RuleSet.Builder rsetb = new RuleSet.Builder();
+                                                Selector sel;
+                                                List<Declaration> decs;
+                                                Rule dir;
+                                                Combinator cb;
+                                            .)
 
-    selector<out sel>                        (.  rsetb.addSelector(sel); .)
-    { ',' selector<out sel>                  (.  rsetb.addSelector(sel); .)
+    selector<out sel>                       (.  rsetb.addSelector(sel); .)
+    { ',' selector<out sel>                 (.  rsetb.addSelector(sel); .)
     }
-    '{'
-        {
-            (IF (!isNestedSelector()) multideclaration<out decs>)
-                                             (.  rsetb.addDeclarations(decs);
-                                                 if (endOfBlock()) {
-                                                     break;
-                                                 }
-                                             .)
-            ';'
-            |
-            classDirective<out dir>          (.  rsetb.addRule(dir); .)
-            |
-            defineDirective<out dir>         (.  rsetb.addRule(dir); .)
-            |
-                                             (.  cb = Combinator.Descendant; .)
-            [ '&' ]                          (.  if (t.pos + t.val.length() == la.pos) {
-                                                     cb = Combinator.None;
-                                                 }
-                                             .)
-            [ '+'                            (.  cb = Combinator.PrecededImmediatelyBy; .)
-            | '>'                            (.  cb = Combinator.ChildOf; .)
-            | '~'                            (.  cb = Combinator.PrecededBy; .)
-            ] ruleset<out RuleSet nested>    (.  rsetb.addNestedRuleSet(cb, nested); .)
-        }
-    '}'                                      (.  rset = rsetb.build(); .)
+    declarationBlock<out DeclarationBlock block>
+                                            (.  rsetb.setDeclarationBlock(block);
+                                                rset = rsetb.build();
+                                            .)
 .
 
 selector<out Selector sel> =    (.  Selector.Builder selb = new Selector.Builder();
@@ -531,6 +575,7 @@ simpleselector<out SimpleSelector ss> = (. SimpleSelector.Builder ssb = new Simp
                                             SimpleSelector.Builder parent = ssb;
                                             String ident;
                                         .)
+    ((
     (identity<out ident>                (.  ssb.setElementName(ident); .)
     | '*'                               (.  ssb.setElementName("*"); .)
     | ('#' identity<out ident>          (.  ssb.setID(ident); .)
@@ -551,7 +596,13 @@ simpleselector<out SimpleSelector ss> = (. SimpleSelector.Builder ssb = new Simp
         )                               (.  parent.setChild(child);
                                             parent = child;
                                         .)
-    }                                   (.  ss = ssb.build(); .)
+    }
+    )
+    |
+    (
+        ( integer | decimal )           (.  ssb.setElementName(t.val + "%"); .)
+        "%"
+    ))                                  (.  ss = ssb.build(); .)
 .
 
 attrib<out Attribute atb> =         (.  Attribute.Builder atbb = new Attribute.Builder();

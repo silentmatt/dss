@@ -5,6 +5,9 @@
 @if ie6 {
     @class has-layout {
         zoom: 1;
+        @if !ie6 {
+            w: tf;
+        }
     }
 }
 @else {
@@ -38,4 +41,87 @@ div {
     this {
         should-not: be here;
     }
+}
+
+box {
+    position: relative;
+    @if ie6 {
+        zoom: 1;
+    }
+
+    @if !ie6 {
+        -webkit-feature: yes, please;
+    }
+    @else {
+        -webkit-feature: no, thanks;
+        old-browser: yes;
+    }
+    width, height: 100px;
+}
+
+test {
+    @if true {
+        @define {
+            test: success;
+        }
+        should: be here;
+        case {
+            yup: yay;
+            test: const(test);
+        }
+    }
+    @else {
+        @define {
+            test: failure;
+        }
+        should-not: be here;
+        failure {
+            no: booo;
+            test: const(test);
+        }
+    }
+}
+
+test-else {
+    @if false {
+        @define {
+            test: failure;
+        }
+        should-not: be here;
+        if {
+            yup: nooooooo;
+            test: const(test);
+        }
+    }
+    @else {
+        @define {
+            test: success;
+        }
+        should: be here;
+        else {
+            no: w00000t;
+            test: const(test);
+        }
+    }
+}
+
+@class if-class<param> {
+    @if @param {
+        &.nested yes {
+            property: value-1;
+        }
+    }
+    @else {
+        &.nested no {
+            property: value-2;
+        }
+    }
+}
+
+applies-if-class {
+    apply: if-class<true>;
+}
+
+applies-else-class {
+    apply: if-class<false>;
 }

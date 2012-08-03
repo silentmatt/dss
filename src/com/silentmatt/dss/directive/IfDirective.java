@@ -1,5 +1,6 @@
 package com.silentmatt.dss.directive;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.Rule;
@@ -7,7 +8,6 @@ import com.silentmatt.dss.bool.BooleanExpression;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.css.CssRuleList;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,25 +17,25 @@ import java.util.List;
 @Immutable
 public final class IfDirective extends Rule {
     private final BooleanExpression condition;
-    private final List<Rule> ifRules;
-    private final List<Rule> elseRules;
+    private final ImmutableList<Rule> ifRules;
+    private final ImmutableList<Rule> elseRules;
 
-    public IfDirective(BooleanExpression condition, List<Rule> ifRules, List<Rule> elseRules) {
+    public IfDirective(BooleanExpression condition, ImmutableList<Rule> ifRules, ImmutableList<Rule> elseRules) {
         super();
         this.condition = condition;
-        this.ifRules = Collections.unmodifiableList(ifRules);
-        this.elseRules = elseRules != null ? Collections.unmodifiableList(elseRules) : null;
+        this.ifRules = ifRules;
+        this.elseRules = elseRules != null ? elseRules : null;
     }
 
     public BooleanExpression getCondition() {
         return condition;
     }
 
-    public List<Rule> getIfRules() {
+    public ImmutableList<Rule> getIfRules() {
         return ifRules;
     }
 
-    public List<Rule> getElseRules() {
+    public ImmutableList<Rule> getElseRules() {
         return elseRules;
     }
 

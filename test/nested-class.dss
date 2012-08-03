@@ -1,0 +1,29 @@
+@class outer {
+    @define {
+        value: 42;
+    }
+    @class inner {
+
+        @define {
+            value: 40px;
+            another-value: "asdf";
+        }
+
+        prop: [@value + 2px];
+        string: @another-value;
+
+        @if (value) {
+            add: this;
+        }
+    }
+
+    some selector {
+        apply: inner;
+        answer: @value;
+        oops: @another-value;
+    }
+}
+
+element with {
+    apply: outer;
+}

@@ -1,5 +1,6 @@
 package com.silentmatt.dss;
 
+import com.silentmatt.dss.bool.BooleanExpression;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Immutable
 public final class NestedRuleSet extends RuleSet {
     private final Combinator combinator;
+    private final BooleanExpression condition;
 
     /**
      * Constructs a NestedRuleSet from a RuleSet and a Combinator.
@@ -19,9 +21,10 @@ public final class NestedRuleSet extends RuleSet {
      *                   selectors.
      * @param rs The {@link RuleSet} that is being nested inside another one.
      */
-    public NestedRuleSet(Combinator combinator, RuleSet rs) {
-        super(rs.getSelectors(), rs.getDeclarationBlock(), rs.getRules());
+    public NestedRuleSet(Combinator combinator, RuleSet rs, BooleanExpression condition) {
+        super(rs.getSelectors(), rs.getDeclarationBlock());
         this.combinator = combinator;
+        this.condition = condition;
     }
 
     /**
@@ -33,25 +36,36 @@ public final class NestedRuleSet extends RuleSet {
         return combinator;
     }
 
+    /**
+     * Gets the condition.
+     *
+     * @return The condition.
+     */
+    public BooleanExpression getCondition() {
+        return condition;
+    }
+    
+    public NestedRuleSet withCondition(BooleanExpression condition) {
+        return new NestedRuleSet(getCombinator(), new RuleSet(getSelectors(), getDeclarationBlock()), condition);
+    }
+
     public NestedRuleSet substituteValues(EvaluationState state) {
         List<Declaration> properties = new ArrayList<Declaration>(getDeclarations().toList());
         DeclarationBlock.Builder result = new DeclarationBlock.Builder();
-        List<Declaration> list = result.getDeclarations();
-        for (int i = 0; i < properties.size(); i++) {
-            Declaration dec = properties.get(i);
-            properties.set(i, dec.substituteValues(state, new DeclarationList(list), true, true));
-        }
 
         for (int i = 0; i < properties.size(); i++) {
-            Declaration declaration = properties.get(i);
-            list.add(declaration);
+            Declaration dec = properties.get(i);
+            result.addDeclaration(dec.substituteValues(state, DeclarationList.EMPTY, true, true)); // new DeclarationList(ImmutableList.copyOf(result.getDeclarations()))
         }
 
         for (NestedRuleSet rs : getNestedRuleSets()) {
-            result.addNestedRuleSet(rs.substituteValues(state));
+            Boolean cond = rs.getCondition().evaluate(state);
+            if (cond != null && cond) {
+                result.addNestedRuleSet(rs.substituteValues(state).withCondition(BooleanExpression.TRUE));
+            }
         }
 
         DeclarationBlock db = result.build();
-        return new NestedRuleSet(getCombinator(), new RuleSet(getSelectors(), db, getRules()));
+        return new NestedRuleSet(getCombinator(), new RuleSet(getSelectors(), db), getCondition());
     }
 }

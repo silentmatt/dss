@@ -39,7 +39,7 @@ public final class ConstTerm extends ReferenceTerm {
         Expression result = state.getVariables().get(getName());
         if (result != null && result.getTerms().size() > 0) {
             Expression.Builder resultb = new Expression.Builder(result);
-            resultb.getTerms().set(0, resultb.getTerms().get(0).withSeparator(getSeperator()));
+            resultb.setTerm(0, resultb.getTerm(0).withSeparator(getSeperator()));
             result = resultb.build();
         }
         return result;

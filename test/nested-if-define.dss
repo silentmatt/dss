@@ -1,0 +1,31 @@
+test {
+    @if true {
+		@define {
+			test: success;
+		}
+		test1: const(test);
+        nested {
+			test2: const(test);
+        }
+    }
+}
+test2 {
+    @if false {
+		@define {
+			test: failure;
+		}
+		test1: const(test);
+        nested {
+			test2: const(test);
+        }
+    }
+	@else {
+		@define {
+			test: success;
+		}
+		test1: const(test);
+        nested {
+			test2: const(test);
+        }
+	}
+}

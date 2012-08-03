@@ -1,11 +1,11 @@
 package com.silentmatt.dss;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.css.CssColorTerm;
 import com.silentmatt.dss.css.CssExpression;
 import com.silentmatt.dss.css.CssTerm;
 import com.silentmatt.dss.term.Term;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,6 +19,7 @@ import java.util.List;
 public final class Expression {
     public static class Builder
     {
+        // TODO: Make this an ImmutableList.Builder?
         private final List<Term> terms = new ArrayList<Term>();
 
         public Builder() {
@@ -37,16 +38,26 @@ public final class Expression {
             return this;
         }
         
+        public final Builder setTerm(int index, Term value) {
+            terms.set(index, value);
+            return this;
+        }
+
+        public final Term getTerm(int index) {
+            return terms.get(index);
+        }
+        
+        @Deprecated
         public final List<Term> getTerms() {
             return terms;
         }
         
         public final Expression build() {
-            return new Expression(terms);
+            return new Expression(ImmutableList.copyOf(terms));
         }
     }
 
-    private final List<Term> terms;
+    private final ImmutableList<Term> terms;
 
     /**
      * Constructs an Expression containing a single Term.
@@ -56,7 +67,7 @@ public final class Expression {
      * @see Term#toExpression()
      */
     public Expression(Term term) {
-        terms = Collections.singletonList(term);
+        terms = ImmutableList.of(term);
     }
 
     /**
@@ -64,8 +75,8 @@ public final class Expression {
      *
      * @param terms The list of {@link Terms} to create the expression from.
      */
-    public Expression(List<Term> terms) {
-        this.terms = Collections.unmodifiableList(terms);
+    public Expression(ImmutableList<Term> terms) {
+        this.terms = terms;
     }
 
     /**
@@ -73,7 +84,7 @@ public final class Expression {
      *
      * @return The Terms contained in the expression
      */
-    public List<Term> getTerms() {
+    public ImmutableList<Term> getTerms() {
         return terms;
     }
 

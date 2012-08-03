@@ -1,5 +1,6 @@
 package com.silentmatt.dss.parser;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.*;
 import com.silentmatt.dss.bool.*;
 import com.silentmatt.dss.calc.*;
@@ -141,7 +142,7 @@ class Parser {
 	}
 	
 	void CSS3() {
-		CSSDoc = new DSSDocument(); 
+		DSSDocument.Builder CSSDocBuilder = new DSSDocument.Builder(); 
 		while (la.kind == 7 || la.kind == 8) {
 			if (la.kind == 7) {
 				Get();
@@ -151,7 +152,7 @@ class Parser {
 		}
 		while (StartOf(1)) {
 			Rule rule = rule();
-			CSSDoc.addRule(rule); 
+			CSSDocBuilder.addRule(rule); 
 			while (la.kind == 7 || la.kind == 8) {
 				if (la.kind == 7) {
 					Get();
@@ -160,6 +161,7 @@ class Parser {
 				}
 			}
 		}
+		CSSDoc = CSSDocBuilder.build(); 
 	}
 
 	Rule  rule() {
@@ -188,49 +190,10 @@ class Parser {
 			sel = selector();
 			rsetb.addSelector(sel); 
 		}
-		Expect(37);
-		while (StartOf(4)) {
-			if (!isNestedSelector()) {
-				decs = multideclaration();
-				rsetb.addDeclarations(decs);
-				if (endOfBlock()) {
-				    break;
-				}
-				
-				Expect(43);
-			} else if (la.kind == 41) {
-				dir = classDirective();
-				rsetb.addRule(dir); 
-			} else if (la.kind == 48) {
-				dir = defineDirective();
-				rsetb.addRule(dir); 
-			} else {
-				cb = Combinator.Descendant; 
-				if (la.kind == 45) {
-					Get();
-				}
-				if (t.pos + t.val.length() == la.pos) {
-				   cb = Combinator.None;
-				}
-				
-				if (la.kind == 44 || la.kind == 46 || la.kind == 47) {
-					if (la.kind == 46) {
-						Get();
-						cb = Combinator.PrecededImmediatelyBy; 
-					} else if (la.kind == 44) {
-						Get();
-						cb = Combinator.ChildOf; 
-					} else {
-						Get();
-						cb = Combinator.PrecededBy; 
-					}
-				}
-				RuleSet nested = ruleset();
-				rsetb.addNestedRuleSet(cb, nested); 
-			}
-		}
-		Expect(38);
-		rset = rsetb.build(); 
+		DeclarationBlock block = declarationBlock();
+		rsetb.setDeclarationBlock(block);
+		rset = rsetb.build();
+		
 		return rset;
 	}
 
@@ -246,7 +209,7 @@ class Parser {
 			dir = mediaDirective();
 			break;
 		}
-		case 41: {
+		case 46: {
 			dir = classDirective();
 			break;
 		}
@@ -475,7 +438,7 @@ class Parser {
 	MediaQuery  mediaQuery() {
 		MediaQuery  query;
 		String expr, q = ""; 
-		if (StartOf(5)) {
+		if (StartOf(4)) {
 			if (la.kind == 24 || la.kind == 25) {
 				if (la.kind == 24) {
 					Get();
@@ -528,9 +491,9 @@ class Parser {
 		
 		trm = term();
 		expb.addTerm(trm); 
-		while (StartOf(6)) {
-			if (la.kind == 36 || la.kind == 59 || la.kind == 69) {
-				if (la.kind == 69) {
+		while (StartOf(5)) {
+			if (la.kind == 36 || la.kind == 60 || la.kind == 70) {
+				if (la.kind == 70) {
 					Get();
 					sep = '/'; 
 				} else if (la.kind == 36) {
@@ -553,8 +516,8 @@ class Parser {
 
 	MediaDirective  mediaDirective() {
 		MediaDirective  mdir;
-		List<MediaQuery> media = new ArrayList<MediaQuery>();
-		List<Rule> rules = new ArrayList<Rule>();
+		ImmutableList.Builder<MediaQuery> media = ImmutableList.builder();
+		ImmutableList.Builder<Rule> rules = ImmutableList.builder();
 		
 		Expect(35);
 		MediaQuery m = mediaQuery();
@@ -565,11 +528,11 @@ class Parser {
 			media.add(m); 
 		}
 		Expect(37);
-		while (StartOf(7)) {
+		while (StartOf(6)) {
 			if (StartOf(2)) {
 				RuleSet rset = ruleset();
 				rules.add(rset); 
-			} else if (la.kind == 41) {
+			} else if (la.kind == 46) {
 				ClassDirective cdir = classDirective();
 				rules.add(cdir); 
 			} else if (la.kind == 48) {
@@ -581,29 +544,25 @@ class Parser {
 			}
 		}
 		Expect(38);
-		mdir = new MediaDirective(media, rules); 
+		mdir = new MediaDirective(media.build(), rules.build()); 
 		return mdir;
 	}
 
 	ClassDirective  classDirective() {
 		ClassDirective  dir;
 		String ident;
-		List<Declaration> parameters = new ArrayList<Declaration>();
-		List<Declaration> declarations = new ArrayList<Declaration>();
-		List<Declaration> mdecs;
-		List<NestedRuleSet> nested = new ArrayList<NestedRuleSet>();
+		ImmutableList.Builder<Declaration> parameters = ImmutableList.builder();
 		Declaration param;
-		Combinator cb;
 		boolean global = false;
 		
-		Expect(41);
+		Expect(46);
 		ident = identity();
-		if (la.kind == 42) {
+		if (la.kind == 47) {
 			Get();
-			if (StartOf(5)) {
+			if (StartOf(4)) {
 				param = parameter();
 				parameters.add(param); 
-				while (la.kind == 43) {
+				while (la.kind == 41) {
 					Get();
 					param = parameter();
 					parameters.add(param); 
@@ -615,49 +574,14 @@ class Parser {
 			Get();
 			global = true; 
 		}
-		Expect(37);
-		while (StartOf(8)) {
-			if (!isNestedSelector()) {
-				mdecs = multideclaration();
-				declarations.addAll(mdecs);
-				if (endOfBlock()) {
-				    break;
-				}
-				
-				Expect(43);
-			} else {
-				cb = Combinator.Descendant; 
-				if (la.kind == 45) {
-					Get();
-				}
-				if (t.pos + t.val.length() == la.pos) {
-				   cb = Combinator.None;
-				}
-				
-				if (la.kind == 44 || la.kind == 46 || la.kind == 47) {
-					if (la.kind == 46) {
-						Get();
-						cb = Combinator.PrecededImmediatelyBy; 
-					} else if (la.kind == 44) {
-						Get();
-						cb = Combinator.ChildOf; 
-					} else {
-						Get();
-						cb = Combinator.PrecededBy; 
-					}
-				}
-				RuleSet nest = ruleset();
-				nested.add(new NestedRuleSet(cb, nest)); 
-			}
-		}
-		Expect(38);
-		dir = new ClassDirective(ident, new DeclarationList(parameters), global, new DeclarationList(declarations), nested); 
+		DeclarationBlock block = declarationBlock();
+		dir = new ClassDirective(ident, new DeclarationList(parameters.build()), global, block); 
 		return dir;
 	}
 
 	DefineDirective  defineDirective() {
 		DefineDirective  dir;
-		List<Declaration> declarations = new ArrayList<Declaration>();
+		ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
 		boolean global = false;
 		List<Declaration> mdecs;
 		
@@ -667,24 +591,24 @@ class Parser {
 			global = true; 
 		}
 		Expect(37);
-		while (StartOf(5)) {
+		while (StartOf(4)) {
 			mdecs = multideclaration();
 			declarations.addAll(mdecs);
 			if (endOfBlock()) {
 			    break;
 			}
 			
-			Expect(43);
+			Expect(41);
 		}
 		Expect(38);
-		dir = new DefineDirective(new DeclarationList(declarations), global); 
+		dir = new DefineDirective(new DeclarationList(declarations.build()), global, BooleanExpression.TRUE); 
 		return dir;
 	}
 
 	IncludeDirective  includeDirective() {
 		IncludeDirective  dir;
 		boolean literal = false;
-		List<Declaration> declarations = new ArrayList<Declaration>();
+		ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
 		UrlTerm includeUrl = null;
 		List<Declaration> mdecs;
 		
@@ -700,30 +624,30 @@ class Parser {
 			String url = QuotedString();
 			includeUrl = new UrlTerm(url.substring(1, url.length()-1)); 
 		} else SynErr(86);
-		if (la.kind == 43) {
+		if (la.kind == 41) {
 			Get();
 		} else if (la.kind == 37) {
 			Get();
-			while (StartOf(5)) {
+			while (StartOf(4)) {
 				mdecs = multideclaration();
 				declarations.addAll(mdecs);
 				if (endOfBlock()) {
 				    break;
 				}
 				
-				Expect(43);
+				Expect(41);
 			}
 			Expect(38);
 		} else SynErr(87);
-		dir = new IncludeDirective(includeUrl, literal, declarations); 
+		dir = new IncludeDirective(includeUrl, literal, declarations.build()); 
 		return dir;
 	}
 
 	IfDirective  ifDirective() {
 		IfDirective  idir;
 		BooleanExpression expr;
-		List<Rule> ifrules = new ArrayList<Rule>();
-		List<Rule> elserules = null;
+		ImmutableList.Builder<Rule> ifrules = ImmutableList.builder();
+		ImmutableList.Builder<Rule> elserules = null;
 		
 		Expect(39);
 		expr = booleanExpression();
@@ -735,7 +659,7 @@ class Parser {
 		Expect(38);
 		if (la.kind == 40) {
 			Get();
-			elserules = new ArrayList<Rule>(); 
+			elserules = ImmutableList.builder(); 
 			Expect(37);
 			while (StartOf(1)) {
 				Rule rule = rule();
@@ -743,7 +667,7 @@ class Parser {
 			}
 			Expect(38);
 		}
-		idir = new IfDirective(expr, ifrules, elserules); 
+		idir = new IfDirective(expr, ifrules.build(), elserules != null ? elserules.build() : null); 
 		return idir;
 	}
 
@@ -751,6 +675,116 @@ class Parser {
 		BooleanExpression  expr;
 		expr = orExpression();
 		return expr;
+	}
+
+	DeclarationBlock  ifDeclarations() {
+		DeclarationBlock  mdecs;
+		BooleanExpression expr;
+		BooleanExpression elseExpr;
+		ImmutableList.Builder<Declaration> decList = ImmutableList.builder();
+		DeclarationBlock ifBlock;
+		DeclarationBlock elseBlock;
+		ImmutableList.Builder<NestedRuleSet> nestedRuleSets = ImmutableList.builder();
+		ImmutableList.Builder<Rule> rules = ImmutableList.builder();
+		
+		Expect(39);
+		expr = booleanExpression();
+		elseExpr = new NotExpression(expr); 
+		ifBlock = declarationBlock();
+		for (Declaration dec : ifBlock.getDeclarations()) {
+		   decList.add(dec.withCondition(expr));
+		}
+		for (NestedRuleSet rule : ifBlock.getNestedRuleSets()) {
+		    nestedRuleSets.add(rule.withCondition(expr));
+		}
+		for (Rule rule : ifBlock.getRules()) {
+		    if (rule instanceof DefineDirective) {
+		        rules.add(((DefineDirective)rule).withCondition(expr));
+		    }
+		    else {
+		        Expect(38);
+		    }
+		}
+		
+		if (la.kind == 40) {
+			Get();
+			elseBlock = declarationBlock();
+			for (Declaration dec : elseBlock.getDeclarations()) {
+			   decList.add(dec.withCondition(elseExpr));
+			}
+			for (NestedRuleSet rule : elseBlock.getNestedRuleSets()) {
+			    nestedRuleSets.add(rule.withCondition(elseExpr));
+			}
+			for (Rule rule : elseBlock.getRules()) {
+			    if (rule instanceof DefineDirective) {
+			        rules.add(((DefineDirective)rule).withCondition(elseExpr));
+			    }
+			    else {
+			        Expect(38);
+			    }
+			}
+			
+		}
+		mdecs = new DeclarationBlock(new DeclarationList(decList.build()), nestedRuleSets.build(), rules.build()); 
+		return mdecs;
+	}
+
+	DeclarationBlock  declarationBlock() {
+		DeclarationBlock  block;
+		DeclarationBlock.Builder builder = new DeclarationBlock.Builder();
+		List<Declaration> decs;
+		DeclarationBlock ifdecs;
+		
+		Expect(37);
+		while (StartOf(7)) {
+			if (!isNestedSelector()) {
+				decs = multideclaration();
+				builder.addDeclarations(decs);
+				if (endOfBlock()) {
+				    break;
+				}
+				
+				Expect(41);
+			} else if (la.kind == 39) {
+				ifdecs = ifDeclarations();
+				builder.addDeclarations(ifdecs.getDeclarations().toList());
+				builder.addNestedRuleSets(ifdecs.getNestedRuleSets());
+				builder.addRules(ifdecs.getRules());
+				
+			} else if (la.kind == 46) {
+				Rule dir = classDirective();
+				builder.addRule(dir); 
+			} else if (la.kind == 48) {
+				Rule dir = defineDirective();
+				builder.addRule(dir); 
+			} else {
+				Combinator cb = Combinator.Descendant; 
+				if (la.kind == 42) {
+					Get();
+				}
+				if (t.pos + t.val.length() == la.pos) {
+				   cb = Combinator.None;
+				}
+				
+				if (la.kind == 43 || la.kind == 44 || la.kind == 45) {
+					if (la.kind == 43) {
+						Get();
+						cb = Combinator.PrecededImmediatelyBy; 
+					} else if (la.kind == 44) {
+						Get();
+						cb = Combinator.ChildOf; 
+					} else {
+						Get();
+						cb = Combinator.PrecededBy; 
+					}
+				}
+				RuleSet nested = ruleset();
+				builder.addNestedRuleSet(cb, nested, BooleanExpression.TRUE); 
+			}
+		}
+		Expect(38);
+		block = builder.build(); 
+		return block;
 	}
 
 	Declaration  parameter() {
@@ -782,7 +816,7 @@ class Parser {
 		Expect(33);
 		Expression exp = expr();
 		first.setExpression(exp); 
-		if (la.kind == 68) {
+		if (la.kind == 69) {
 			Get();
 			Expect(21);
 			for (Declaration.Builder decb : decbs) {
@@ -799,28 +833,28 @@ class Parser {
 
 	FontFaceDirective  fontFaceDirective() {
 		FontFaceDirective  dir;
-		List<Declaration> declarations = new ArrayList<Declaration>();
+		ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
 		List<Declaration> mdecs;
 		
 		Expect(49);
 		Expect(37);
-		while (StartOf(5)) {
+		while (StartOf(4)) {
 			mdecs = multideclaration();
 			declarations.addAll(mdecs);
 			if (endOfBlock()) {
 			    break;
 			}
 			
-			Expect(43);
+			Expect(41);
 		}
 		Expect(38);
-		dir = new FontFaceDirective(new DeclarationList(declarations)); 
+		dir = new FontFaceDirective(new DeclarationList(declarations.build())); 
 		return dir;
 	}
 
 	PageDirective  pageDirective() {
 		PageDirective  dir;
-		List<Declaration> declarations = new ArrayList<Declaration>();
+		ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
 		SimpleSelector ss = null;
 		List<Declaration> mdecs;
 		
@@ -832,17 +866,17 @@ class Parser {
 			
 		}
 		Expect(37);
-		while (StartOf(5)) {
+		while (StartOf(4)) {
 			mdecs = multideclaration();
 			declarations.addAll(mdecs);
 			if (endOfBlock()) {
 			    break;
 			}
 			
-			Expect(43);
+			Expect(41);
 		}
 		Expect(38);
-		dir = new PageDirective(ss, new DeclarationList(declarations)); 
+		dir = new PageDirective(ss, new DeclarationList(declarations.build())); 
 		return dir;
 	}
 
@@ -856,7 +890,7 @@ class Parser {
 			Get();
 			sb.append(":"); 
 		}
-		if (StartOf(5)) {
+		if (StartOf(4)) {
 			String ident = identity();
 			sb.append(ident); 
 		} else if (la.kind == 25) {
@@ -865,9 +899,9 @@ class Parser {
 		} else SynErr(88);
 		if (la.kind == 32) {
 			Get();
-			if (StartOf(9)) {
-				if (la.kind == 46 || la.kind == 66) {
-					if (la.kind == 46) {
+			if (StartOf(8)) {
+				if (la.kind == 43 || la.kind == 67) {
+					if (la.kind == 43) {
 						Get();
 						sb.append("(").append(t.val);
 						haveOpenParen = true; 
@@ -885,7 +919,7 @@ class Parser {
 					}
 					sb.append(t.val); 
 				}
-				if (la.kind == 19 || la.kind == 67) {
+				if (la.kind == 19 || la.kind == 68) {
 					if (la.kind == 19) {
 						Get();
 					} else {
@@ -896,8 +930,8 @@ class Parser {
 					   haveOpenParen = true;
 					}
 					sb.append(t.val); 
-					if (la.kind == 46 || la.kind == 66) {
-						if (la.kind == 46) {
+					if (la.kind == 43 || la.kind == 67) {
+						if (la.kind == 43) {
 							Get();
 						} else {
 							Get();
@@ -926,10 +960,10 @@ class Parser {
 		Expect(51);
 		String url = URI();
 		trm = new UrlTerm(url); 
-		if (StartOf(10)) {
+		if (StartOf(9)) {
 			m = mediaQuery();
 		}
-		Expect(43);
+		Expect(41);
 		dir = new ImportDirective(trm, m); 
 		return dir;
 	}
@@ -939,7 +973,7 @@ class Parser {
 		Expect(53);
 		Term trm = term();
 		dir = new CharsetDirective(trm); 
-		Expect(43);
+		Expect(41);
 		return dir;
 	}
 
@@ -984,19 +1018,19 @@ class Parser {
 			Selector s = selector();
 			Expect(34);
 			trm = new RuleSetClassReferenceTerm(s); 
-		} else if (la.kind == 78) {
+		} else if (la.kind == 79) {
 			Get();
 			ident = identity();
 			trm = new UnicodeTerm("U\\" + ident); 
 		} else if (la.kind == 56) {
 			val = HexValue();
 			trm = new HexTerm(val); 
-		} else if (la.kind == 58 || la.kind == 77) {
+		} else if (la.kind == 59 || la.kind == 78) {
 			expression = calculation();
 			trm = new CalculationTerm(expression); 
-		} else if (StartOf(11)) {
+		} else if (StartOf(10)) {
 			trm = literalCalculation();
-		} else if (StartOf(5)) {
+		} else if (StartOf(4)) {
 			ident = identity();
 			String trmValue = ident; 
 			while (la.kind == 33 || la.kind == 57) {
@@ -1017,7 +1051,7 @@ class Parser {
 				}
 			}
 			trm = new StringTerm(trmValue); 
-			if (la.kind == 32 || la.kind == 42) {
+			if (la.kind == 32 || la.kind == 47) {
 				if (la.kind == 32) {
 					Get();
 					exp = expr();
@@ -1028,7 +1062,7 @@ class Parser {
 					ClassReferenceTerm.Builder cls = new ClassReferenceTerm.Builder(trm.toString());
 					Declaration dec;
 					
-					if (StartOf(12)) {
+					if (StartOf(11)) {
 						if (isDeclaration()) {
 							dec = declaration();
 							cls.addArgument(dec); 
@@ -1036,12 +1070,12 @@ class Parser {
 							Expression arg = expr();
 							cls.addArgument(new Declaration("", arg)); 
 						}
-						while (la.kind == 43) {
+						while (la.kind == 41) {
 							Get();
 							if (isDeclaration()) {
 								dec = declaration();
 								cls.addArgument(dec); 
-							} else if (StartOf(12)) {
+							} else if (StartOf(11)) {
 								Expression arg = expr();
 								cls.addArgument(new Declaration("", arg)); 
 							} else SynErr(90);
@@ -1051,9 +1085,9 @@ class Parser {
 					trm = cls.build(); 
 				}
 			}
-		} else if (StartOf(13)) {
-			if (la.kind == 46 || la.kind == 66) {
-				if (la.kind == 66) {
+		} else if (StartOf(12)) {
+			if (la.kind == 43 || la.kind == 67) {
+				if (la.kind == 67) {
 					Get();
 					val = "-"; 
 				} else {
@@ -1069,12 +1103,12 @@ class Parser {
 			val += t.val; trm = new NumberTerm(Double.parseDouble(val)); 
 			if (endOfBlock()) {
 				trm = ((NumberTerm) trm).withValue(Double.parseDouble(val)); 
-			} else if (StartOf(14)) {
+			} else if (StartOf(13)) {
 				if (la.val.equalsIgnoreCase("n")) {
 					Expect(19);
 					val += t.val; 
-					if (la.kind == 46 || la.kind == 66) {
-						if (la.kind == 46) {
+					if (la.kind == 43 || la.kind == 67) {
+						if (la.kind == 43) {
 							Get();
 							val += '+'; 
 						} else {
@@ -1085,10 +1119,10 @@ class Parser {
 						val += t.val; 
 					}
 					trm = new StringTerm(val); val = ""; 
-				} else if (la.kind == 79) {
+				} else if (la.kind == 58) {
 					Get();
 					trm = ((NumberTerm) trm).withUnit(Unit.Percent); 
-				} else if (StartOf(15)) {
+				} else if (StartOf(14)) {
 					if (isUnit()) {
 						ident = identity();
 						try {
@@ -1118,7 +1152,7 @@ class Parser {
 		String url = null;
 		
 		Expect(54);
-		if (StartOf(5)) {
+		if (StartOf(4)) {
 			ident = identity();
 		}
 		if (la.kind == 6) {
@@ -1126,7 +1160,7 @@ class Parser {
 		} else if (la.kind == 5) {
 			url = QuotedString();
 		} else SynErr(95);
-		Expect(43);
+		Expect(41);
 		dir = new NamespaceDirective(ident, new UrlTerm(url)); 
 		return dir;
 	}
@@ -1137,8 +1171,8 @@ class Parser {
 		GenericDirective.Builder dirb = new GenericDirective.Builder();
 		dirb.setName("@" + ident);
 		
-		if (StartOf(12)) {
-			if (StartOf(12)) {
+		if (StartOf(11)) {
+			if (StartOf(11)) {
 				Expression exp = expr();
 				dirb.setExpression(exp); 
 			} else {
@@ -1152,21 +1186,21 @@ class Parser {
 				if (StartOf(2)) {
 					RuleSet rset = ruleset();
 					dirb.addRule(rset); 
-				} else if (StartOf(5)) {
+				} else if (StartOf(4)) {
 					Declaration dec = declaration();
 					dirb.addDeclaration(dec);
 					if (endOfBlock()) {
 					    break;
 					}
 					
-					Expect(43);
+					Expect(41);
 				} else {
 					Rule dr = directive();
 					dirb.addRule(dr); 
 				}
 			}
 			Expect(38);
-		} else if (la.kind == 43) {
+		} else if (la.kind == 41) {
 			Get();
 		} else SynErr(96);
 		dir = dirb.build(); 
@@ -1181,7 +1215,7 @@ class Parser {
 		Expect(33);
 		Expression exp = expr();
 		decb.setExpression(exp); 
-		if (la.kind == 68) {
+		if (la.kind == 69) {
 			Get();
 			Expect(21);
 			decb.setImportant(true); 
@@ -1198,9 +1232,9 @@ class Parser {
 		
 		ss = simpleselector();
 		selb.addSimpleSelector(ss); 
-		while (StartOf(16)) {
-			if (la.kind == 44 || la.kind == 46 || la.kind == 47) {
-				if (la.kind == 46) {
+		while (StartOf(15)) {
+			if (la.kind == 43 || la.kind == 44 || la.kind == 45) {
+				if (la.kind == 43) {
 					Get();
 					cb = Combinator.PrecededImmediatelyBy; 
 				} else if (la.kind == 44) {
@@ -1227,54 +1261,64 @@ class Parser {
 		SimpleSelector.Builder parent = ssb;
 		String ident;
 		
-		if (StartOf(5)) {
-			ident = identity();
-			ssb.setElementName(ident); 
-		} else if (la.kind == 55) {
-			Get();
-			ssb.setElementName("*"); 
-		} else if (StartOf(17)) {
-			if (la.kind == 56) {
-				Get();
+		if (StartOf(16)) {
+			if (StartOf(4)) {
 				ident = identity();
-				ssb.setID(ident); 
-			} else if (la.kind == 57) {
+				ssb.setElementName(ident); 
+			} else if (la.kind == 55) {
 				Get();
-				ident = identity();
-				ssb.setClassName(ident); 
-			} else if (la.kind == 58) {
-				Attribute atb = attrib();
-				ssb.setAttribute(atb); 
+				ssb.setElementName("*"); 
 			} else {
-				String psd = pseudo();
-				ssb.setPseudo(psd); 
+				if (la.kind == 56) {
+					Get();
+					ident = identity();
+					ssb.setID(ident); 
+				} else if (la.kind == 57) {
+					Get();
+					ident = identity();
+					ssb.setClassName(ident); 
+				} else if (la.kind == 59) {
+					Attribute atb = attrib();
+					ssb.setAttribute(atb); 
+				} else if (la.kind == 33) {
+					String psd = pseudo();
+					ssb.setPseudo(psd); 
+				} else SynErr(97);
 			}
-		} else SynErr(97);
-		while (StartOf(17)) {
-			if (t.pos + t.val.length() < la.pos) {
-			   break;
+			while (StartOf(17)) {
+				if (t.pos + t.val.length() < la.pos) {
+				   break;
+				}
+				SimpleSelector.Builder child = new SimpleSelector.Builder();
+				
+				if (la.kind == 56) {
+					Get();
+					ident = identity();
+					child.setID(ident); 
+				} else if (la.kind == 57) {
+					Get();
+					ident = identity();
+					child.setClassName(ident); 
+				} else if (la.kind == 59) {
+					Attribute atb = attrib();
+					child.setAttribute(atb); 
+				} else {
+					String psd = pseudo();
+					child.setPseudo(psd); 
+				}
+				parent.setChild(child);
+				parent = child;
+				
 			}
-			SimpleSelector.Builder child = new SimpleSelector.Builder();
-			
-			if (la.kind == 56) {
+		} else if (la.kind == 3 || la.kind == 4) {
+			if (la.kind == 3) {
 				Get();
-				ident = identity();
-				child.setID(ident); 
-			} else if (la.kind == 57) {
-				Get();
-				ident = identity();
-				child.setClassName(ident); 
-			} else if (la.kind == 58) {
-				Attribute atb = attrib();
-				child.setAttribute(atb); 
 			} else {
-				String psd = pseudo();
-				child.setPseudo(psd); 
+				Get();
 			}
-			parent.setChild(child);
-			parent = child;
-			
-		}
+			ssb.setElementName(t.val + "%"); 
+			Expect(58);
+		} else SynErr(98);
 		ss = ssb.build(); 
 		return ss;
 	}
@@ -1285,43 +1329,43 @@ class Parser {
 		String quote;
 		String ident;
 		
-		Expect(58);
+		Expect(59);
 		ident = identity();
 		atbb.setOperand(ident); 
 		if (StartOf(18)) {
 			switch (la.kind) {
-			case 59: {
+			case 60: {
 				Get();
 				atbb.setOperator(AttributeOperator.Equals); 
 				break;
 			}
-			case 60: {
+			case 61: {
 				Get();
 				atbb.setOperator(AttributeOperator.InList); 
 				break;
 			}
-			case 61: {
+			case 62: {
 				Get();
 				atbb.setOperator(AttributeOperator.Hyphenated); 
 				break;
 			}
-			case 62: {
+			case 63: {
 				Get();
 				atbb.setOperator(AttributeOperator.EndsWith); 
 				break;
 			}
-			case 63: {
+			case 64: {
 				Get();
 				atbb.setOperator(AttributeOperator.BeginsWith); 
 				break;
 			}
-			case 64: {
+			case 65: {
 				Get();
 				atbb.setOperator(AttributeOperator.Contains); 
 				break;
 			}
 			}
-			if (StartOf(5)) {
+			if (StartOf(4)) {
 				ident = identity();
 				atbb.setValue(ident); 
 			} else if (la.kind == 5) {
@@ -1334,9 +1378,9 @@ class Parser {
 					Get();
 				}
 				atbb.setValue(t.val); 
-			} else SynErr(98);
+			} else SynErr(99);
 		}
-		Expect(65);
+		Expect(66);
 		atb = atbb.build(); 
 		return atb;
 	}
@@ -1346,7 +1390,7 @@ class Parser {
 		BooleanExpression left, right; BooleanOperation op; 
 		left = andExpression();
 		expr = left; 
-		while (la.kind == 70 || la.kind == 71) {
+		while (la.kind == 71 || la.kind == 72) {
 			op = orop();
 			right = andExpression();
 			expr = new BinaryBooleanExpression(op, expr, right); 
@@ -1357,13 +1401,13 @@ class Parser {
 	BooleanOperation  orop() {
 		BooleanOperation  op;
 		op = null; 
-		if (la.kind == 70) {
+		if (la.kind == 71) {
 			Get();
 			op = BooleanOperation.OR; 
-		} else if (la.kind == 71) {
+		} else if (la.kind == 72) {
 			Get();
 			op = BooleanOperation.XOR; 
-		} else SynErr(99);
+		} else SynErr(100);
 		return op;
 	}
 
@@ -1372,7 +1416,7 @@ class Parser {
 		BooleanExpression left, right;
 		left = notExpression();
 		expr = left; 
-		while (la.kind == 72) {
+		while (la.kind == 73) {
 			Get();
 			right = notExpression();
 			expr = new BinaryBooleanExpression(BooleanOperation.AND, expr, right); 
@@ -1386,11 +1430,11 @@ class Parser {
 		if (StartOf(19)) {
 			exp = primaryBooleanExpression();
 			expr = exp; 
-		} else if (la.kind == 68) {
+		} else if (la.kind == 69) {
 			Get();
 			exp = notExpression();
 			expr = new NotExpression(exp); 
-		} else SynErr(100);
+		} else SynErr(101);
 		return expr;
 	}
 
@@ -1402,10 +1446,10 @@ class Parser {
 			exp = booleanExpression();
 			Expect(34);
 			expr = exp; 
-		} else if (StartOf(12)) {
+		} else if (StartOf(11)) {
 			trm = term();
 			expr = new TermBooleanExpression(trm); 
-		} else SynErr(101);
+		} else SynErr(102);
 		return expr;
 	}
 
@@ -1420,7 +1464,7 @@ class Parser {
 		CalcExpression left, right; Operation op; 
 		left = multiplicativeExpression();
 		expr = left; 
-		while (la.kind == 46 || la.kind == 66) {
+		while (la.kind == 43 || la.kind == 67) {
 			op = addop();
 			right = multiplicativeExpression();
 			expr = new BinaryExpression(op, expr, right); 
@@ -1431,13 +1475,13 @@ class Parser {
 	Operation  addop() {
 		Operation  op;
 		op = null; 
-		if (la.kind == 46) {
+		if (la.kind == 43) {
 			Get();
 			op = Operation.Add; 
-		} else if (la.kind == 66) {
+		} else if (la.kind == 67) {
 			Get();
 			op = Operation.Subtract; 
-		} else SynErr(102);
+		} else SynErr(103);
 		return op;
 	}
 
@@ -1447,10 +1491,10 @@ class Parser {
 		if (la.kind == 55) {
 			Get();
 			op = Operation.Multiply; 
-		} else if (la.kind == 69) {
+		} else if (la.kind == 70) {
 			Get();
 			op = Operation.Divide; 
-		} else SynErr(103);
+		} else SynErr(104);
 		return op;
 	}
 
@@ -1459,7 +1503,7 @@ class Parser {
 		CalcExpression left, right; Operation op; 
 		left = termExpression();
 		expr = left; 
-		while (la.kind == 55 || la.kind == 69) {
+		while (la.kind == 55 || la.kind == 70) {
 			op = mulop();
 			right = termExpression();
 			expr = new BinaryExpression(op, expr, right); 
@@ -1470,7 +1514,7 @@ class Parser {
 	CalcExpression  termExpression() {
 		CalcExpression  expr;
 		expr = null; Term trm; CalcExpression exp; 
-		if (la.kind == 66) {
+		if (la.kind == 67) {
 			Get();
 			exp = termExpression();
 			expr = new NegationExpression(exp); 
@@ -1479,10 +1523,10 @@ class Parser {
 			exp = lengthExpression();
 			Expect(34);
 			expr = exp; 
-		} else if (StartOf(12)) {
+		} else if (StartOf(11)) {
 			trm = term();
 			expr = new TermExpression(trm); 
-		} else SynErr(104);
+		} else SynErr(105);
 		return expr;
 	}
 
@@ -1493,11 +1537,11 @@ class Parser {
 		if (StartOf(20)) {
 			if (la.kind == 23) {
 				Get();
-			} else if (la.kind == 73) {
-				Get();
 			} else if (la.kind == 74) {
 				Get();
 			} else if (la.kind == 75) {
+				Get();
+			} else if (la.kind == 76) {
 				Get();
 			} else {
 				Get();
@@ -1506,11 +1550,11 @@ class Parser {
 			Expect(32);
 			expr = lengthExpression();
 			Expect(34);
-		} else if (la.kind == 58) {
+		} else if (la.kind == 59) {
 			Get();
 			expr = lengthExpression();
-			Expect(65);
-		} else SynErr(105);
+			Expect(66);
+		} else SynErr(106);
 		trm = new CalculationLiteralTerm(prefix, expr); 
 		return trm;
 	}
@@ -1518,16 +1562,16 @@ class Parser {
 	CalcExpression  calculation() {
 		CalcExpression  expr;
 		expr = null; 
-		if (la.kind == 77) {
+		if (la.kind == 78) {
 			Get();
 			Expect(32);
 			expr = lengthExpression();
 			Expect(34);
-		} else if (la.kind == 58) {
+		} else if (la.kind == 59) {
 			Get();
 			expr = lengthExpression();
-			Expect(65);
-		} else SynErr(106);
+			Expect(66);
+		} else SynErr(107);
 		return expr;
 	}
 
@@ -1544,7 +1588,7 @@ class Parser {
 		} else if (la.kind == 1) {
 			Get();
 			sb.append(t.val); found = true; 
-		} else SynErr(107);
+		} else SynErr(108);
 		if (!found && partOfHex(sb.toString())) {
 			Expect(1);
 			sb.append(t.val); 
@@ -1566,26 +1610,26 @@ class Parser {
 
 	private static final boolean[][] set = {
 		{T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,T,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,T, x,x,x,T, x,T,x,x, x,x,x,x, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,T, x,T,x,x, x,x,x,x, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,T,x,x, T,T,T,T, T,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,T,T,T, T,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,T, x,x,x,T, x,x,x,x, x,x,T,x, T,T,T,T, T,T,T,T, T,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,T,x,T, T,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,T, x,x,x,x, x,x,T,x, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, T,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, T,x,T,T, x,x,x,x, x,x,T,x, x,T,x,x, x,T,T,T, T,T,T,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,T,x,x, x,x,x,x, T,x,x,x, T,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, T,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,T, T,x,x,x, x,x,x,T, x,x,T,x, x,x,T,T, T,T,T,T, x,x},
+		{x,T,x,T, T,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,T,x, T,x,x,x, T,x,x,T, T,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,T,x,T, T,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,T, x,x,T,T, T,T,T,x, T,x,x,x, x,x,x,T, T,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,x,x,x, x,x},
-		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, T,x,T,x, x,x,x,x, x,x,T,x, x,x,x,x, x,T,T,T, T,T,T,x, x,x},
-		{x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,T,x, T,T,x,x, x,x,x,T, T,x,T,x, x,x,x,x, x,x,x,T, T,x,T,T, x,x,x,x, x,T,T,x, T,T,T,T, T,T,T,T, T,T,T,T, x,x},
-		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,T,x, T,T,x,x, x,x,x,T, T,x,T,x, x,x,x,x, x,x,x,T, T,x,T,T, x,x,x,x, x,T,T,x, T,T,T,T, T,T,T,T, T,T,T,x, x,x},
-		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, T,x,T,T, x,x,x,x, x,x,x,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
-		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, T,x,T,x, x,x,x,x, x,x,T,x, x,x,x,x, x,T,T,T, T,T,T,x, x,x},
-		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, T,x,x,x, x,x}
+		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,x,x, x,x},
+		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,T, x,x,x,x, x,x,x,T, x,x,x,x, x,x,T,T, T,T,T,T, x,x},
+		{x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,T,x, T,T,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,x,x,T, T,x,T,T, T,x,x,x, x,x,T,T, x,T,T,T, T,T,T,T, T,T,T,T, x,x},
+		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,T,x, T,T,x,x, x,T,x,T, T,x,x,x, x,x,x,x, x,x,x,T, T,x,x,T, T,x,x,x, x,x,T,T, x,T,T,T, T,T,T,T, T,T,T,T, x,x},
+		{x,T,x,T, T,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,T, T,T,x,x, x,x,x,x, x,x,x,T, T,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,T, x,x,x,x, x,x,x,T, x,x,x,x, x,x,T,T, T,T,T,T, x,x},
+		{x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,T, T,T,x,x, x,x}
 
 	};
 
@@ -1633,13 +1677,13 @@ class Parser {
 			case 38: s = "\"}\" expected"; break;
 			case 39: s = "\"@if\" expected"; break;
 			case 40: s = "\"@else\" expected"; break;
-			case 41: s = "\"@class\" expected"; break;
-			case 42: s = "\"<\" expected"; break;
-			case 43: s = "\";\" expected"; break;
+			case 41: s = "\";\" expected"; break;
+			case 42: s = "\"&\" expected"; break;
+			case 43: s = "\"+\" expected"; break;
 			case 44: s = "\">\" expected"; break;
-			case 45: s = "\"&\" expected"; break;
-			case 46: s = "\"+\" expected"; break;
-			case 47: s = "\"~\" expected"; break;
+			case 45: s = "\"~\" expected"; break;
+			case 46: s = "\"@class\" expected"; break;
+			case 47: s = "\"<\" expected"; break;
 			case 48: s = "\"@define\" expected"; break;
 			case 49: s = "\"@font-face\" expected"; break;
 			case 50: s = "\"@page\" expected"; break;
@@ -1650,28 +1694,28 @@ class Parser {
 			case 55: s = "\"*\" expected"; break;
 			case 56: s = "\"#\" expected"; break;
 			case 57: s = "\".\" expected"; break;
-			case 58: s = "\"[\" expected"; break;
-			case 59: s = "\"=\" expected"; break;
-			case 60: s = "\"~=\" expected"; break;
-			case 61: s = "\"|=\" expected"; break;
-			case 62: s = "\"$=\" expected"; break;
-			case 63: s = "\"^=\" expected"; break;
-			case 64: s = "\"*=\" expected"; break;
-			case 65: s = "\"]\" expected"; break;
-			case 66: s = "\"-\" expected"; break;
-			case 67: s = "\"-n\" expected"; break;
-			case 68: s = "\"!\" expected"; break;
-			case 69: s = "\"/\" expected"; break;
-			case 70: s = "\"||\" expected"; break;
-			case 71: s = "\"^\" expected"; break;
-			case 72: s = "\"&&\" expected"; break;
-			case 73: s = "\"-webkit-calc\" expected"; break;
-			case 74: s = "\"-o-calc\" expected"; break;
-			case 75: s = "\"-ms-calc\" expected"; break;
-			case 76: s = "\"-moz-calc\" expected"; break;
-			case 77: s = "\"@calc\" expected"; break;
-			case 78: s = "\"U\\\\\" expected"; break;
-			case 79: s = "\"%\" expected"; break;
+			case 58: s = "\"%\" expected"; break;
+			case 59: s = "\"[\" expected"; break;
+			case 60: s = "\"=\" expected"; break;
+			case 61: s = "\"~=\" expected"; break;
+			case 62: s = "\"|=\" expected"; break;
+			case 63: s = "\"$=\" expected"; break;
+			case 64: s = "\"^=\" expected"; break;
+			case 65: s = "\"*=\" expected"; break;
+			case 66: s = "\"]\" expected"; break;
+			case 67: s = "\"-\" expected"; break;
+			case 68: s = "\"-n\" expected"; break;
+			case 69: s = "\"!\" expected"; break;
+			case 70: s = "\"/\" expected"; break;
+			case 71: s = "\"||\" expected"; break;
+			case 72: s = "\"^\" expected"; break;
+			case 73: s = "\"&&\" expected"; break;
+			case 74: s = "\"-webkit-calc\" expected"; break;
+			case 75: s = "\"-o-calc\" expected"; break;
+			case 76: s = "\"-ms-calc\" expected"; break;
+			case 77: s = "\"-moz-calc\" expected"; break;
+			case 78: s = "\"@calc\" expected"; break;
+			case 79: s = "\"U\\\\\" expected"; break;
 			case 80: s = "??? expected"; break;
 			case 81: s = "invalid rule"; break;
 			case 82: s = "invalid directive"; break;
@@ -1690,16 +1734,17 @@ class Parser {
 			case 95: s = "invalid namespaceDirective"; break;
 			case 96: s = "invalid genericDirective"; break;
 			case 97: s = "invalid simpleselector"; break;
-			case 98: s = "invalid attrib"; break;
-			case 99: s = "invalid orop"; break;
-			case 100: s = "invalid notExpression"; break;
-			case 101: s = "invalid primaryBooleanExpression"; break;
-			case 102: s = "invalid addop"; break;
-			case 103: s = "invalid mulop"; break;
-			case 104: s = "invalid termExpression"; break;
-			case 105: s = "invalid literalCalculation"; break;
-			case 106: s = "invalid calculation"; break;
-			case 107: s = "invalid HexValue"; break;
+			case 98: s = "invalid simpleselector"; break;
+			case 99: s = "invalid attrib"; break;
+			case 100: s = "invalid orop"; break;
+			case 101: s = "invalid notExpression"; break;
+			case 102: s = "invalid primaryBooleanExpression"; break;
+			case 103: s = "invalid addop"; break;
+			case 104: s = "invalid mulop"; break;
+			case 105: s = "invalid termExpression"; break;
+			case 106: s = "invalid literalCalculation"; break;
+			case 107: s = "invalid calculation"; break;
+			case 108: s = "invalid HexValue"; break;
 			default: s = "error " + n; break;
 		}
 		return s;

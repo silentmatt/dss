@@ -1,5 +1,6 @@
 package com.silentmatt.dss.directive;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.Declaration;
 import com.silentmatt.dss.DeclarationBlock;
 import com.silentmatt.dss.DeclarationList;
@@ -7,9 +8,11 @@ import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.NestedRuleSet;
 import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.RuleSet;
 import com.silentmatt.dss.Scope;
 import com.silentmatt.dss.css.CssRule;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,11 +26,18 @@ public class ClassDirective extends Rule {
     private final DeclarationBlock declarationBlock;
     private final boolean global;
 
-    public ClassDirective(String className, DeclarationList parameters, boolean global, DeclarationList declarations, List<NestedRuleSet> nestedRuleSets) {
+    public ClassDirective(String className, DeclarationList parameters, boolean global, DeclarationList declarations, ImmutableList<NestedRuleSet> nestedRuleSets, ImmutableList<Rule> rules) {
         this.className = className;
         this.parameters = parameters;
         this.global = global;
-        this.declarationBlock = new DeclarationBlock(declarations, nestedRuleSets);
+        this.declarationBlock = new DeclarationBlock(declarations, nestedRuleSets, rules);
+    }
+
+    public ClassDirective(String className, DeclarationList parameters, boolean global, DeclarationBlock declarations) {
+        this.className = className;
+        this.parameters = parameters;
+        this.global = global;
+        this.declarationBlock = declarations;
     }
 
     public String getName() {
@@ -70,6 +80,11 @@ public class ClassDirective extends Rule {
         }
         txt.append(" {");
 
+        for (Rule dir : getRules()) {
+            txt.append("\n\t").append(start);
+            txt.append(dir.toString(nesting + 1));
+        }
+
         txt.append(declarationBlock.innerString(nesting + 1));
 
         txt.append("\n").append(start).append("}");
@@ -81,10 +96,41 @@ public class ClassDirective extends Rule {
         return global;
     }
 
+    protected List<RuleSet> getRuleSetScope(EvaluationState state) {
+        List<RuleSet> result = new ArrayList<RuleSet>(getNestedRuleSets().size());
+        for (NestedRuleSet nrs : getNestedRuleSets()) {
+            Boolean cond = nrs.getCondition().evaluate(state);
+            if (cond != null && cond) {
+                result.add(nrs);
+            }
+        }
+        return result;
+    }
+
     @Override
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
-        //declarationBlock.getDeclarations().evaluateStyle(state, false);
-        DeclarationBlock newBlock = declarationBlock.evaluateStyle(state, false);
+        DeclarationBlock newBlock = null;
+        ImmutableList.Builder<NestedRuleSet> nested = ImmutableList.builder();
+
+        state.pushScope(getRuleSetScope(state));
+        try {
+            for (Rule dir : this.getRules()) {
+                dir.evaluate(state, null);
+            }
+
+            //declarationBlock.getDeclarations().evaluateStyle(state, false);
+            newBlock = declarationBlock.evaluateStyle(state, false);
+            for (NestedRuleSet rs : newBlock.getNestedRuleSets()) {
+                //Boolean cond = rs.getCondition().evaluate(state);
+                //if (cond != null && cond) {
+                    nested.add(new NestedRuleSet(rs.getCombinator(), new RuleSet(rs.getSelectors(), rs.getDeclarationBlock().evaluateStyle(state, false)), rs.getCondition()));
+                //}
+            }
+        }
+        finally {
+            state.popScope();
+        }
+
         Scope<ClassDirective> scope = state.getClasses();
         if (isGlobal()) {
             while (scope.parent() != null) {
@@ -92,13 +138,28 @@ public class ClassDirective extends Rule {
             }
         }
 
-        // XXX: Do we really need to create a new instance here?
-        scope.declare(className, new ClassDirective(className, parameters, global, newBlock.getDeclarations(), newBlock.getNestedRuleSets()));
+        if (newBlock != null) {
+            // XXX: Do we really need to create a new instance here?
+            scope.declare(className, new ClassDirective(className, parameters, global, newBlock.getDeclarations(), nested.build(), getRules()));
+        }
+        else {
+            throw new RuntimeException("Error evaluating class " + className);
+        }
+
         return null;
     }
 
     public List<NestedRuleSet> getNestedRuleSets() {
         return declarationBlock.getNestedRuleSets();
+    }
+
+    /**
+     * Gets the nested DSS directives.
+     *
+     * @return A {@link List} of {@link Rule}s.
+     */
+    public ImmutableList<Rule> getRules() {
+        return declarationBlock.getRules();
     }
 
     @Override

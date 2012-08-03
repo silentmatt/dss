@@ -1,0 +1,44 @@
+test {
+    @if true {
+        @define {
+            test: success;
+        }
+        should: be here;
+        case {
+            yup: yay;
+            test: const(test);
+        }
+    }
+    @else {
+        @define {
+            test: failure;
+        }
+        should-not: be here;
+        failure {
+            no: booo;
+            test: const(test);
+        }
+    }
+}
+test2 {
+    @if false {
+        @define {
+            test: fail;
+        }
+        should-not: be here;
+        failure {
+            no: booo;
+            test: const(test);
+        }
+    }
+    @else {
+        @define {
+            test: success;
+        }
+        should: be here;
+        case {
+            yup: yay;
+            test: const(test);
+        }
+    }
+}

@@ -1,5 +1,6 @@
 package com.silentmatt.dss.directive;
 
+import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.MediaQuery;
@@ -9,7 +10,6 @@ import com.silentmatt.dss.css.CssMediaQuery;
 import com.silentmatt.dss.css.CssRule;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,13 +18,13 @@ import java.util.List;
  */
 @Immutable
 public final class MediaDirective extends Rule {
-    private final List<MediaQuery> mediums;
-    private final List<Rule> rules;
+    private final ImmutableList<MediaQuery> mediums;
+    private final ImmutableList<Rule> rules;
 
-    public MediaDirective(List<MediaQuery> mediums, List<Rule> rules) {
+    public MediaDirective(ImmutableList<MediaQuery> mediums, ImmutableList<Rule> rules) {
         super();
-        this.mediums = Collections.unmodifiableList(mediums);
-        this.rules = Collections.unmodifiableList(rules);
+        this.mediums = mediums;
+        this.rules = rules;
     }
 
     public List<MediaQuery> getMediums() {

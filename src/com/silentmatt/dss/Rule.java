@@ -58,7 +58,7 @@ public abstract class Rule {
      * @param container The {@link List} of Rules that contains this one.
      *
      * @return The resulting {@link CssRule}. If the rule does not have any CSS
-     * output (e.g. @define rules), evalute should return null.
+     * output (e.g. @define rules), evaluate should return null.
      *
      * @throws MalformedURLException
      * @throws IOException
