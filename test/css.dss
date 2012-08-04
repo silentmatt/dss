@@ -31,9 +31,9 @@ div#id {
   color: grey;
 }
 
-@font-face {
+@Font-Face {
   font-family: 'Garamond Pro';
-  src: url("/fonts/garamond-pro.ttf");
+  src: URL("/fonts/garamond-pro.ttf");
 }
 
 a:hover, a:link {
@@ -83,14 +83,14 @@ h2[title] {
   display: -moz-inline-stack;
   width: .10em;
   background-color: #009998;
-  background-image: url(images/image.jpg);
+  background-image: Url(images/image.jpg);
   background: -webkit-gradient(linear, left top, left bottom, from(red), to(blue));
   //margin: 2em;
 }
 
 #important {
   color: red !important;
-  width: 100%!important;
+  width: 100%!ImportAnt;
   height: 20px ! important;
 }
 

@@ -57,7 +57,7 @@
 }
 
 html {
-    @define global {
+    @DEFINE global {
         answer: 42;
     }
 
@@ -79,8 +79,8 @@ strong > strong[foo $= bar] {
 
 @include url(include/inc.dss);
 
-@media print {
-    @class error {
+@Media print {
+    @Class error {
         extend: error;
 
         color: blue;
@@ -190,7 +190,7 @@ body .test {
 	apply: ab;
 }
 
-@class testClass<parameter> {
+@CLASS testClass<parameter> {
     c: d;
     > nested {
         e: f;

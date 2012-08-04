@@ -43,9 +43,11 @@ class Parser {
             }
             return true;
         }
+        /* TODO: Make this faster */
         boolean isUnit() {
             if (la.kind != 1) { return false; }
-            List<String> units = Arrays.asList(new String[] { "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz", "dpi", "dpcm" });            return units.contains(la.val);
+            List<String> units = Arrays.asList(new String[] { "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz", "dpi", "dpcm" });
+            return units.contains(la.val);
         }
         boolean isDeclaration() {
             return la.kind == _ident && scanner.Peek().val.equals(":");
@@ -1718,7 +1720,7 @@ class Parser {
 			case 76: s = "\"-ms-calc\" expected"; break;
 			case 77: s = "\"-moz-calc\" expected"; break;
 			case 78: s = "\"@calc\" expected"; break;
-			case 79: s = "\"U\\\\\" expected"; break;
+			case 79: s = "\"u\\\\\" expected"; break;
 			case 80: s = "??? expected"; break;
 			case 81: s = "invalid rule"; break;
 			case 82: s = "invalid directive"; break;
