@@ -5,6 +5,9 @@
 		property: asdf;
 		display: block;
 	}
+	@page {
+		margin: 1in;
+	}
 }
 @media screen and (color) {
 	p {

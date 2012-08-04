@@ -17,6 +17,10 @@
         apply: foo2<asdf>;
         display: block; // evil laugh
     }
+
+    @page {
+        margin: 1in;
+    }
 }
 
 @media screen    and    (color) {

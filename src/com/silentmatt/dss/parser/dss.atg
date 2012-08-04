@@ -235,7 +235,7 @@ mediaDirective<out MediaDirective mdir> =               (.
     mediaQuery<out MediaQuery m>                        (.  media.add(m); .)
     { ',' mediaQuery<out m>                             (.  media.add(m); .) }
     '{'
-        {
+        {                                               /* TODO: Combine these */
             ruleset<out RuleSet rset>                   (.  rules.add(rset); .)
             |
             classDirective<out ClassDirective cdir>     (.  rules.add(cdir); .)
@@ -243,6 +243,8 @@ mediaDirective<out MediaDirective mdir> =               (.
             defineDirective<out DefineDirective ddir>   (.  rules.add(ddir); .)
             |
             includeDirective<out IncludeDirective idir> (.  rules.add(idir); .)
+            |
+            pageDirective<out PageDirective pdir>       (.  rules.add(pdir); .)
         }
     '}'                                                 (.  mdir = new MediaDirective(media.build(), rules.build()); .)
 .

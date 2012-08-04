@@ -538,9 +538,12 @@ class Parser {
 			} else if (la.kind == 48) {
 				DefineDirective ddir = defineDirective();
 				rules.add(ddir); 
-			} else {
+			} else if (la.kind == 52) {
 				IncludeDirective idir = includeDirective();
 				rules.add(idir); 
+			} else {
+				PageDirective pdir = pageDirective();
+				rules.add(pdir); 
 			}
 		}
 		Expect(38);
@@ -640,6 +643,34 @@ class Parser {
 			Expect(38);
 		} else SynErr(87);
 		dir = new IncludeDirective(includeUrl, literal, declarations.build()); 
+		return dir;
+	}
+
+	PageDirective  pageDirective() {
+		PageDirective  dir;
+		ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
+		SimpleSelector ss = null;
+		List<Declaration> mdecs;
+		
+		Expect(50);
+		if (la.kind == 33) {
+			String psd = pseudo();
+			ss = new SimpleSelector();
+			ss = ss.withPseudo(psd);
+			
+		}
+		Expect(37);
+		while (StartOf(4)) {
+			mdecs = multideclaration();
+			declarations.addAll(mdecs);
+			if (endOfBlock()) {
+			    break;
+			}
+			
+			Expect(41);
+		}
+		Expect(38);
+		dir = new PageDirective(ss, new DeclarationList(declarations.build())); 
 		return dir;
 	}
 
@@ -849,34 +880,6 @@ class Parser {
 		}
 		Expect(38);
 		dir = new FontFaceDirective(new DeclarationList(declarations.build())); 
-		return dir;
-	}
-
-	PageDirective  pageDirective() {
-		PageDirective  dir;
-		ImmutableList.Builder<Declaration> declarations = ImmutableList.builder();
-		SimpleSelector ss = null;
-		List<Declaration> mdecs;
-		
-		Expect(50);
-		if (la.kind == 33) {
-			String psd = pseudo();
-			ss = new SimpleSelector();
-			ss = ss.withPseudo(psd);
-			
-		}
-		Expect(37);
-		while (StartOf(4)) {
-			mdecs = multideclaration();
-			declarations.addAll(mdecs);
-			if (endOfBlock()) {
-			    break;
-			}
-			
-			Expect(41);
-		}
-		Expect(38);
-		dir = new PageDirective(ss, new DeclarationList(declarations.build())); 
 		return dir;
 	}
 
@@ -1615,7 +1618,7 @@ class Parser {
 		{x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,T, x,x,x,x, x,x,T,x, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,T,T, T,T,T,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,x,x,x, T,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x,T, T,x,x,x, x,x,x,T, x,x,T,x, x,x,T,T, T,T,T,T, x,x},
-		{x,T,x,T, T,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,T,x, T,x,x,x, T,x,x,T, T,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
+		{x,T,x,T, T,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,x, x,x,x,x, x,x,T,x, T,x,T,x, T,x,x,T, T,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,T, T,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, x,T,x,x, x,x,x,T, x,x,T,T, T,T,T,x, T,x,x,x, x,x,x,T, T,T,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x},
 		{x,T,x,x, x,x,x,x, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x},
