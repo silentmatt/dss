@@ -36,7 +36,9 @@ public final class PageDirective extends DeclarationDirective {
 
     @Override
     public String toString(int nesting) {
-        StringBuilder txt = new StringBuilder("@page");
+        String start = Rule.getIndent(nesting);
+
+        StringBuilder txt = new StringBuilder(start).append("@page");
         if (selector != null) {
             txt.append(" ");
             txt.append(selector.toString());
@@ -51,7 +53,9 @@ public final class PageDirective extends DeclarationDirective {
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         CssSimpleSelector pseudo = new CssSimpleSelector();
         pseudo.setCombinator(CssCombinator.None);
-        pseudo.setPseudo(selector.toString().replaceFirst(":", ""));
+        if (selector != null) {
+            pseudo.setPseudo(selector.toString().replaceFirst(":", ""));
+        }
         return new CssPageDirective(pseudo, getDeclarationBlock().evaluateStyle(state, true).getCssDeclarations(state));
     }
 }

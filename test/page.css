@@ -1,3 +1,6 @@
 @page :first {
 	foo: bar;
 }
+@page {
+	margin: 0.5in;
+}
