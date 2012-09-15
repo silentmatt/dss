@@ -39,7 +39,7 @@ public final class Main {
                 if (out == null) {
                     System.out.print(cssString);
                 } else {
-                    PrintStream pout = new PrintStream(out);
+                    PrintStream pout = new PrintStream(out, "UTF-8");
                     pout.print(cssString);
                     pout.close();
                 }
