@@ -66,4 +66,6 @@ body {
 	zero: #56124B;
 	zero: #000;
 	zero: #FFF;
+	darken: darken(oops, 10%);
+	darken: darken(#F00, aaaah);
 }

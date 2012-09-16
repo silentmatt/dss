@@ -471,7 +471,12 @@ public final class FunctionTerm extends Term {
                 amount = params.get(1);
             }
 
-            if (!(color.isColor() && (amount == null || amount instanceof NumberTerm))) {
+            if (!color.isColor()) {
+                state.getErrors().Warning("Not a color: " + color);
+                return function.toExpression();
+            }
+            if (!(amount == null || amount instanceof NumberTerm)) {
+                state.getErrors().Warning("Invalid value for " + function.getName() + ": " + amount);
                 return function.toExpression();
             }
 

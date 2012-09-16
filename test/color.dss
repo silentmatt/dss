@@ -97,4 +97,7 @@ body {
 	zero: spin(#123456, 100);
 	zero: spin(#000000, 100);
 	zero: spin(#ffffff, 100);
+
+	darken: darken(oops, 10%);
+	darken: darken(red, aaaah);
 }
