@@ -1,0 +1,4 @@
+.calc-prop {
+    height: 0.8em;
+    line-height: [prop(height) - 0.1em];
+}

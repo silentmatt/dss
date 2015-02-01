@@ -450,7 +450,7 @@ public final class DeclarationBlock {
             }
 
             for (int i = 0; i < result.getDeclarations().size(); i++) {
-                Declaration dec = result.getDeclarations().get(i).substituteValues(state, DeclarationList.EMPTY, false, doCalculations); // new DeclarationList(ImmutableList.copyOf(result.getDeclarations()))
+                Declaration dec = result.getDeclarations().get(i).substituteValues(state, getDeclarations(), false, doCalculations); // new DeclarationList(ImmutableList.copyOf(result.getDeclarations()))
                 result.getDeclarations().set(i, dec);
             }
         }
