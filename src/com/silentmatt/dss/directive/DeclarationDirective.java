@@ -1,11 +1,11 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.Declaration;
-import com.silentmatt.dss.DeclarationBlock;
-import com.silentmatt.dss.DeclarationList;
-import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Immutable;
-import com.silentmatt.dss.Rule;
+import com.silentmatt.dss.declaration.Declaration;
+import com.silentmatt.dss.declaration.DeclarationList;
+import com.silentmatt.dss.declaration.Expression;
+import com.silentmatt.dss.rule.DeclarationBlock;
+import com.silentmatt.dss.rule.Rule;
 
 /**
  *

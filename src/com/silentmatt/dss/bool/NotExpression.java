@@ -1,7 +1,7 @@
 package com.silentmatt.dss.bool;
 
-import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Immutable;
+import com.silentmatt.dss.evaluator.EvaluationState;
 
 /**
  * A BooleanExpression that evaluates to the complement of its operand.

@@ -1,14 +1,8 @@
 package com.silentmatt.dss.parser;
 
 import com.silentmatt.dss.DSSDocument;
-import com.silentmatt.dss.Declaration;
-import com.silentmatt.dss.ErrorReporter;
-import com.silentmatt.dss.ExceptionErrorReporter;
-import com.silentmatt.dss.Expression;
-import com.silentmatt.dss.NullErrorReporter;
-import com.silentmatt.dss.Rule;
-import com.silentmatt.dss.RuleSet;
-import com.silentmatt.dss.Selector;
+import com.silentmatt.dss.declaration.Declaration;
+import com.silentmatt.dss.declaration.Expression;
 import com.silentmatt.dss.directive.CharsetDirective;
 import com.silentmatt.dss.directive.ClassDirective;
 import com.silentmatt.dss.directive.DefineDirective;
@@ -19,6 +13,12 @@ import com.silentmatt.dss.directive.IncludeDirective;
 import com.silentmatt.dss.directive.MediaDirective;
 import com.silentmatt.dss.directive.NamespaceDirective;
 import com.silentmatt.dss.directive.PageDirective;
+import com.silentmatt.dss.error.ErrorReporter;
+import com.silentmatt.dss.error.ExceptionErrorReporter;
+import com.silentmatt.dss.error.NullErrorReporter;
+import com.silentmatt.dss.rule.Rule;
+import com.silentmatt.dss.rule.RuleSet;
+import com.silentmatt.dss.selector.Selector;
 import com.silentmatt.dss.term.Term;
 import java.io.ByteArrayInputStream;
 

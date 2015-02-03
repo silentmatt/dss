@@ -1,14 +1,14 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.DeclarationList;
-import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Immutable;
-import com.silentmatt.dss.Rule;
-import com.silentmatt.dss.SimpleSelector;
 import com.silentmatt.dss.css.CssCombinator;
 import com.silentmatt.dss.css.CssPageDirective;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.css.CssSimpleSelector;
+import com.silentmatt.dss.declaration.DeclarationList;
+import com.silentmatt.dss.evaluator.EvaluationState;
+import com.silentmatt.dss.rule.Rule;
+import com.silentmatt.dss.selector.SimpleSelector;
 import java.io.IOException;
 import java.util.List;
 

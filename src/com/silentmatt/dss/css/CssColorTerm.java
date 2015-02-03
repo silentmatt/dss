@@ -1,6 +1,6 @@
 package com.silentmatt.dss.css;
 
-import com.silentmatt.dss.Color;
+import com.silentmatt.dss.color.Color;
 
 /**
  *

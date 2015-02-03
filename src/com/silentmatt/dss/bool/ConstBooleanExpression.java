@@ -1,6 +1,7 @@
 package com.silentmatt.dss.bool;
 
-import com.silentmatt.dss.EvaluationState;
+import com.silentmatt.dss.evaluator.EvaluationState;
+
 
 /**
  *

@@ -8,8 +8,14 @@ import com.martiansoftware.jsap.ParseException;
 import com.martiansoftware.jsap.Switch;
 import com.martiansoftware.jsap.UnflaggedOption;
 import com.martiansoftware.jsap.stringparsers.FileStringParser;
-import com.silentmatt.dss.DSSEvaluator.Options;
 import com.silentmatt.dss.css.CssDocument;
+import com.silentmatt.dss.declaration.Declaration;
+import com.silentmatt.dss.error.ErrorReporter;
+import com.silentmatt.dss.error.ExceptionErrorReporter;
+import com.silentmatt.dss.error.NullErrorReporter;
+import com.silentmatt.dss.error.PrintStreamErrorReporter;
+import com.silentmatt.dss.evaluator.DSSEvaluator;
+import com.silentmatt.dss.evaluator.URLCallback;
 import com.silentmatt.dss.parser.DSSParser;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -25,7 +31,7 @@ import java.util.Date;
 
 public final class Main {
 
-    private static void processFile(URL url, ErrorReporter errors, Options opts, JSAPResult config, File out) {
+    private static void processFile(URL url, ErrorReporter errors, DSSEvaluator.Options opts, JSAPResult config, File out) {
         try {
             DSSDocument css = DSSDocument.parse(url, errors);
             if (css != null) {
@@ -51,7 +57,7 @@ public final class Main {
         }
     }
 
-    private static void watchFile(URL url, ErrorReporter errors, Options opts, JSAPResult config, File out) {
+    private static void watchFile(URL url, ErrorReporter errors, DSSEvaluator.Options opts, JSAPResult config, File out) {
         File dssFile;
         try {
             dssFile = new File(url.toURI());

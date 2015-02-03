@@ -1,6 +1,6 @@
 package com.silentmatt.dss.css;
 
-import com.silentmatt.dss.Combinator;
+import com.silentmatt.dss.selector.Combinator;
 
 /**
  * Specifies the type relationship between {@link SimpleSelector}s (child, sibling, etc.).

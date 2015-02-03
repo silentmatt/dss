@@ -1,12 +1,12 @@
 package com.silentmatt.dss.term;
 
-import com.silentmatt.dss.DeclarationList;
-import com.silentmatt.dss.EvaluationState;
-import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.calc.CalcExpression;
 import com.silentmatt.dss.calc.CalculationException;
 import com.silentmatt.dss.calc.Value;
+import com.silentmatt.dss.declaration.DeclarationList;
+import com.silentmatt.dss.declaration.Expression;
+import com.silentmatt.dss.evaluator.EvaluationState;
 
 /**
  * A "@calc(...)" term.

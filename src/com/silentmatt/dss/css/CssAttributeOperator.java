@@ -1,6 +1,6 @@
 package com.silentmatt.dss.css;
 
-import com.silentmatt.dss.AttributeOperator;
+import com.silentmatt.dss.selector.AttributeOperator;
 
 /**
  * Specifies the type of comparison for an {@link Attribute} selector.

@@ -1,7 +1,7 @@
 package com.silentmatt.dss.term;
 
-import com.silentmatt.dss.Color;
 import com.silentmatt.dss.Immutable;
+import com.silentmatt.dss.color.Color;
 
 /**
  * A string or keyword term.

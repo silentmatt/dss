@@ -1,7 +1,7 @@
 package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.Immutable;
-import com.silentmatt.dss.Selector;
+import com.silentmatt.dss.selector.Selector;
 
 /**
  * A term that references a ruleset pseudo-class.

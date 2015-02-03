@@ -1,7 +1,6 @@
 package com.silentmatt.dss.calc;
 
 import com.silentmatt.dss.Immutable;
-import com.silentmatt.dss.Unit;
 import com.silentmatt.dss.term.NumberTerm;
 import com.silentmatt.dss.term.Term;
 
@@ -143,7 +142,7 @@ public final class Value {
      */
     public NumberTerm toTerm() throws CalculationException {
         NumberTerm term = new NumberTerm(scalar);
-        com.silentmatt.dss.Unit cssUnit = CalculationUnit.toCssUnit(unit);
+        Unit cssUnit = CalculationUnit.toCssUnit(unit);
         if (cssUnit == null) {
             throw new CalculationException("not a valid CSS unit: " + toString());
         }

@@ -1,11 +1,11 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.DeclarationList;
-import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Immutable;
-import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssFontFaceDirective;
 import com.silentmatt.dss.css.CssRule;
+import com.silentmatt.dss.declaration.DeclarationList;
+import com.silentmatt.dss.evaluator.EvaluationState;
+import com.silentmatt.dss.rule.Rule;
 import java.io.IOException;
 import java.util.List;
 

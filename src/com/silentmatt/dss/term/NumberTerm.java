@@ -1,7 +1,7 @@
 package com.silentmatt.dss.term;
 
 import com.silentmatt.dss.Immutable;
-import com.silentmatt.dss.Unit;
+import com.silentmatt.dss.calc.Unit;
 import java.text.DecimalFormat;
 
 /**

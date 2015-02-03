@@ -1,11 +1,11 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Immutable;
-import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssCharsetDirective;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.css.CssTerm;
+import com.silentmatt.dss.evaluator.EvaluationState;
+import com.silentmatt.dss.rule.Rule;
 import com.silentmatt.dss.term.Term;
 import java.util.List;
 

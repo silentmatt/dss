@@ -1,9 +1,9 @@
 package com.silentmatt.dss.util;
 
 import com.google.common.collect.ImmutableList;
-import com.silentmatt.dss.Combinator;
 import com.silentmatt.dss.Immutable;
-import com.silentmatt.dss.Selector;
+import com.silentmatt.dss.selector.Combinator;
+import com.silentmatt.dss.selector.Selector;
 import java.util.AbstractList;
 import java.util.List;
 

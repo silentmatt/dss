@@ -1,9 +1,9 @@
 package com.silentmatt.dss.bool;
 
-import com.silentmatt.dss.EvaluationState;
-import com.silentmatt.dss.Expression;
 import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.calc.Value;
+import com.silentmatt.dss.declaration.Expression;
+import com.silentmatt.dss.evaluator.EvaluationState;
 import com.silentmatt.dss.term.CalculationTerm;
 import com.silentmatt.dss.term.ClassReferenceTerm;
 import com.silentmatt.dss.term.FunctionTerm;

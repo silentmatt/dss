@@ -1,15 +1,15 @@
 package com.silentmatt.dss.term;
 
-import com.silentmatt.dss.Color;
-import com.silentmatt.dss.DeclarationList;
-import com.silentmatt.dss.EvaluationState;
-import com.silentmatt.dss.Expression;
-import com.silentmatt.dss.Function;
-import com.silentmatt.dss.HSLColor;
 import com.silentmatt.dss.Immutable;
-import com.silentmatt.dss.RGBFColor;
-import com.silentmatt.dss.RGBIColor;
-import com.silentmatt.dss.Unit;
+import com.silentmatt.dss.calc.Unit;
+import com.silentmatt.dss.color.Color;
+import com.silentmatt.dss.color.HSLColor;
+import com.silentmatt.dss.color.RGBFColor;
+import com.silentmatt.dss.color.RGBIColor;
+import com.silentmatt.dss.declaration.DeclarationList;
+import com.silentmatt.dss.declaration.Expression;
+import com.silentmatt.dss.evaluator.EvaluationState;
+import com.silentmatt.dss.evaluator.Function;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

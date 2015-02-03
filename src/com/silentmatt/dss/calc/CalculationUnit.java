@@ -1,7 +1,6 @@
 package com.silentmatt.dss.calc;
 
 import com.silentmatt.dss.Immutable;
-import com.silentmatt.dss.Unit;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;

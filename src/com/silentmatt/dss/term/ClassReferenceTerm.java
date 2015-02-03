@@ -1,9 +1,9 @@
 package com.silentmatt.dss.term;
 
 import com.google.common.collect.ImmutableList;
-import com.silentmatt.dss.Declaration;
-import com.silentmatt.dss.DeclarationList;
 import com.silentmatt.dss.Immutable;
+import com.silentmatt.dss.declaration.Declaration;
+import com.silentmatt.dss.declaration.DeclarationList;
 import java.util.List;
 
 /**

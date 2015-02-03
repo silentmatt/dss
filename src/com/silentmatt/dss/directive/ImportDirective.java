@@ -1,13 +1,13 @@
 package com.silentmatt.dss.directive;
 
-import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Immutable;
-import com.silentmatt.dss.MediaQuery;
-import com.silentmatt.dss.Rule;
 import com.silentmatt.dss.css.CssImportDirective;
 import com.silentmatt.dss.css.CssMediaQuery;
 import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.css.CssTerm;
+import com.silentmatt.dss.evaluator.EvaluationState;
+import com.silentmatt.dss.media.MediaQuery;
+import com.silentmatt.dss.rule.Rule;
 import com.silentmatt.dss.term.UrlTerm;
 import java.net.MalformedURLException;
 import java.net.URL;

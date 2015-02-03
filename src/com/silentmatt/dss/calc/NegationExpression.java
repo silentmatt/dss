@@ -1,8 +1,8 @@
 package com.silentmatt.dss.calc;
 
-import com.silentmatt.dss.DeclarationList;
-import com.silentmatt.dss.EvaluationState;
 import com.silentmatt.dss.Immutable;
+import com.silentmatt.dss.declaration.DeclarationList;
+import com.silentmatt.dss.evaluator.EvaluationState;
 
 /**
  * A CalcExpression that negates its operand.

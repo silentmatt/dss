@@ -1,8 +1,10 @@
 package com.silentmatt.dss;
 
 import com.google.common.collect.ImmutableList;
+import com.silentmatt.dss.error.ErrorReporter;
 import com.silentmatt.dss.parser.DSSParser;
 import com.silentmatt.dss.parser.Scanner;
+import com.silentmatt.dss.rule.Rule;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;

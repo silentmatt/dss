@@ -1,8 +1,8 @@
 package com.silentmatt.dss.term;
 
-import com.silentmatt.dss.Color;
 import com.silentmatt.dss.Immutable;
-import com.silentmatt.dss.RGBIColor;
+import com.silentmatt.dss.color.Color;
+import com.silentmatt.dss.color.RGBIColor;
 import java.util.Locale;
 
 /**
