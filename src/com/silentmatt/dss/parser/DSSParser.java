@@ -1,5 +1,6 @@
 package com.silentmatt.dss.parser;
 
+import com.google.common.base.Charsets;
 import com.silentmatt.dss.DSSDocument;
 import com.silentmatt.dss.declaration.Declaration;
 import com.silentmatt.dss.declaration.Expression;
@@ -54,7 +55,7 @@ public class DSSParser {
     }
 
     private static Parser getParser(String text, ErrorReporter errors) {
-        Parser parser = new Parser(new Scanner(new ByteArrayInputStream(text.getBytes())));
+        Parser parser = new Parser(new Scanner(new ByteArrayInputStream(text.getBytes(Charsets.UTF_8))));
         parser.errors = errors != null ? errors : new ExceptionErrorReporter(new NullErrorReporter());
         parser.la = new Token();
 		parser.la.val = "";

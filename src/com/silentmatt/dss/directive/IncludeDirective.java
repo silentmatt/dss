@@ -120,7 +120,7 @@ public class IncludeDirective extends ExpressionDirective {
 
     private CssRule evaluateLiteral(EvaluationState state, URL url) throws IOException {
         CssRule result = new CssLiteralText(convertStreamToString(state.getResourceLocator().openResource(url)));
-        if (result != null && state.getIncludeCallback() != null) {
+        if (state.getIncludeCallback() != null) {
             state.getIncludeCallback().call(url);
         }
         return result;

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A Map from Strings to <code>T</code>s, that can inherit from other <code>Scope</scope>s.
+ * A Map from Strings to <code>T</code>s, that can inherit from other <code>Scope</code>s.
  *
  * @author Matthew Crumley
  * @param <T> The type of objects being stored.
@@ -27,8 +27,8 @@ public class Scope<T> {
      * Constructs a Scope with a given parent scope and a collection of keys to declare.
      *
      * @param scope The parent Scope.
-     * @param variables A Collection<String> of keys to declare. The keys are
-     *                  declared with an initial value of <code>null</code>.
+     * @param variables A Collection of keys to declare. The keys are declared
+     *                  with an initial value of <code>null</code>.
      */
     public Scope(Scope<T> scope, Collection<String> variables) {
         this(scope);
@@ -83,7 +83,7 @@ public class Scope<T> {
     /**
      * Returns a new scope with <code>this</code> as its parent.
      *
-     * <code>scope.inherit()</code> is equivalent to <code>new Scope<T>(scope)</code>,
+     * <code>scope.inherit()</code> is equivalent to <code>new Scope&lt;T&gt;(scope)</code>,
      * where <code>T</code> is the entry type of <code>scope</code>.
      * @return A new scope with <code>this</code> as its parent.
      */
@@ -148,6 +148,7 @@ public class Scope<T> {
         table.put(key, value);
     }
 
+    @Deprecated
     private Set<Map.Entry<String, T>> entrySet() {
         Set<Map.Entry<String, T>> entries = table.entrySet();
 

@@ -100,8 +100,7 @@ public class OptionsParser {
 
             jsap.registerParameter(urlOpt);
         } catch (JSAPException j) {
-            System.err.println("Unexpected Error: Illegal JSAP parameter.");
-            System.exit(2);
+            throw new IllegalStateException("Unexpected Error: Illegal JSAP parameter.", j);
         }
     }
 

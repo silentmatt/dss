@@ -56,7 +56,6 @@ public class RuleSet extends Rule {
      *
      * @param selectors The {@link List} of {@link Selector}s.
      * @param block The {@link DeclarationBlock}.
-     * @param rules A {@link List} of nested DSS {@link Rule}s.
      */
     public RuleSet(ImmutableList<Selector> selectors, DeclarationBlock block) {
         this.declarationBlock = block;

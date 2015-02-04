@@ -58,8 +58,7 @@ public final class NestedRuleSet extends RuleSet {
         List<Declaration> properties = new ArrayList<>(getDeclarations().toList());
         DeclarationBlock.Builder result = new DeclarationBlock.Builder();
 
-        for (int i = 0; i < properties.size(); i++) {
-            Declaration dec = properties.get(i);
+        for (Declaration dec : properties) {
             result.addDeclaration(dec.substituteValues(state, DeclarationList.EMPTY, true, true)); // new DeclarationList(ImmutableList.copyOf(result.getDeclarations()))
         }
 

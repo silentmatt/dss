@@ -12,7 +12,7 @@ public class CalculationException extends Exception {
      * Constructor with an original cause.
      *
      * @param string A description of the error.
-     * @cause The Exception that caused this Exception.
+     * @param cause The Exception that caused this Exception.
      */
     public CalculationException(String string, Throwable cause) {
         super(string, cause);

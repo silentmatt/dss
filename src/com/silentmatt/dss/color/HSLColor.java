@@ -19,9 +19,9 @@ public final class HSLColor extends Color {
      * Constructs a Color from red, green, and blue channels.
      * The alpha channel is defaulted to 255 (fully opaque).
      *
-     * @param red The red channel, from [0, 1].
-     * @param green The green channel, from [0, 1].
-     * @param blue the blue channel, from [0, 1].
+     * @param hue The color's hue in degrees.
+     * @param saturation The color's saturation, from [0, 1].
+     * @param lightness The color's lightness, from [0, 1].
      */
     public HSLColor(int hue, double saturation, double lightness) {
         this.hue = ((hue % 360) + 360) % 360;
@@ -33,9 +33,9 @@ public final class HSLColor extends Color {
     /**
      * Constructs a Color from red, green, blue, and alpha channels.
      *
-     * @param red The red channel, from [0, 1].
-     * @param green The green channel, from [0, 1].
-     * @param blue The blue channel, from [0, 1].
+     * @param hue The color's hue in degrees.
+     * @param saturation The color's saturation, from [0, 1].
+     * @param lightness The color's lightness, from [0, 1].
      * @param alpha The alpha channel, from [0, 1].
      */
     public HSLColor(int hue, double saturation, double lightness, double alpha) {

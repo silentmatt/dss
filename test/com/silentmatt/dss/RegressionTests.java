@@ -1,5 +1,6 @@
 package com.silentmatt.dss;
 
+import com.google.common.base.Charsets;
 import com.silentmatt.dss.error.ErrorReporter;
 import com.silentmatt.dss.error.ExceptionErrorReporter;
 import com.silentmatt.dss.error.NullErrorReporter;
@@ -59,7 +60,7 @@ public class RegressionTests {
     private String compile(URL url, String dssString, boolean compact) {
         try {
             ErrorReporter errors = new ExceptionErrorReporter(new NullErrorReporter());
-            DSSDocument dss = DSSDocument.parse(new ByteArrayInputStream(dssString.getBytes()), errors);
+            DSSDocument dss = DSSDocument.parse(new ByteArrayInputStream(dssString.getBytes(Charsets.UTF_8)), errors);
             DSSEvaluator.Options opts = new DSSEvaluator.Options(url);
             opts.setErrors(errors);
             opts.setResourceLocator(new DefaultResourcesLocator());
@@ -95,7 +96,7 @@ public class RegressionTests {
             RandomAccessFile raf = new RandomAccessFile(cssFile, "r");
             byte[] contents = new byte[(int)raf.length()];
             raf.readFully(contents);
-            return new String(contents);
+            return new String(contents, Charsets.UTF_8);
         }
         catch (IOException ex) {
             return null;

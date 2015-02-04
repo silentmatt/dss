@@ -56,14 +56,6 @@ public final class DeclarationList implements Iterable<Declaration> {
         return list.iterator();
     }
 
-    public Object[] toArray() {
-        return list.toArray();
-    }
-
-    public <T> T[] toArray(T[] arg0) {
-        return list.toArray(arg0);
-    }
-
     public boolean containsAll(Collection<?> arg0) {
         return list.containsAll(arg0);
     }
@@ -349,12 +341,13 @@ public final class DeclarationList implements Iterable<Declaration> {
 
             @Override
             public Object[] toArray() {
-                return DeclarationList.this.toArray();
+                return DeclarationList.this.list.toArray();
             }
 
             @Override
+            @SuppressWarnings("SuspiciousToArrayCall")
             public <T> T[] toArray(T[] arg0) {
-                return DeclarationList.this.toArray(arg0);
+                return DeclarationList.this.list.toArray(arg0);
             }
 
             @Override

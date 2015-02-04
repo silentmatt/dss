@@ -81,8 +81,7 @@ public abstract class Rule {
     public static List<CssRule> evaluateRules(EvaluationState state, List<Rule> rules) throws MalformedURLException, IOException {
         List<CssRule> result = new ArrayList<>();
 
-        for (int i = 0; i < rules.size(); i++) {
-            Rule rule = rules.get(i);
+        for (Rule rule : rules) {
             CssRule r = rule.evaluate(state, rules);
             if (r != null) {
                 result.add(r);

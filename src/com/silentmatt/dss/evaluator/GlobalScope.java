@@ -27,8 +27,8 @@ public class GlobalScope<T> extends Scope<T> {
      * Constructs a Scope with a given parent scope and a collection of keys to declare.
      *
      * @param scope The parent Scope.
-     * @param variables A Collection<String> of keys to declare. The keys are
-     *                  declared with an initial value of <code>null</code>.
+     * @param variables A Collection of keys to declare. The keys are declared
+     *                  with an initial value of <code>null</code>.
      */
     public GlobalScope(Scope<T> scope, Collection<String> variables) {
         super(scope, variables);

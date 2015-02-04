@@ -79,6 +79,7 @@ public final class DeclarationBlock {
         *
         * @param cb The {@link Combinator} to apply to the RuleSet's selectors.
         * @param nested The {@link RuleSet} to nest inside the block.
+        * @param condition A condition to control whether the {@link RuleSet} is output or not.
         */
         public Builder addNestedRuleSet(Combinator cb, RuleSet nested, BooleanExpression condition) {
             nestedRuleSets.add(new NestedRuleSet(cb, nested, condition));
@@ -355,8 +356,7 @@ public final class DeclarationBlock {
                 properties.set(i, dec.substituteValues(state, DeclarationList.EMPTY, true, true)); // new DeclarationList(ImmutableList.copyOf(result.getDeclarations()))
             }
 
-            for (int i = 0; i < properties.size(); i++) {
-                Declaration declaration = properties.get(i);
+            for (Declaration declaration : properties) {
                 result.addDeclaration(declaration);
             }
 

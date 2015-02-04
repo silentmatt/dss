@@ -85,7 +85,7 @@ public class DSSEvaluator {
         /**
          * Sets the ResourceLocator used to find include files.
          *
-         * @param callback The resource locator.
+         * @param resourceLocator The resource locator.
          */
         public void setResourceLocator(ResourceLocator resourceLocator) {
             this.resourceLocator = resourceLocator;

@@ -23,7 +23,7 @@ public class CssAttribute {
     /**
      * Sets the operand (attribute name).
      *
-     * @param Operand The attribute name to be compared.
+     * @param operand The attribute name to be compared.
      */
     public void setOperand(String operand) {
         this.operand = operand;

@@ -29,7 +29,7 @@ public final class Value {
      * Constructs a Value from a CSS {@link NumberTerm}.
      *
      * @param term The CSS Term to convert.
-     * @throws IllegalArgumentException <code>term</term> is not a number.
+     * @throws IllegalArgumentException <code>term</code> is not a number.
      */
     public Value(NumberTerm term) {
         CalculationUnit thisUnit = CalculationUnit.fromCssUnit(term.getUnit());

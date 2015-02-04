@@ -17,18 +17,16 @@ public interface CalcExpression {
      * substitute 'const()' terms, and the <code>parameters</code> parameter will
      * be used for 'param()' terms.
      *
-     * @param variables Scope for const lookups.
-     * @param parameters Scope for param lookups.
+     * @param state The current evaluation state.
+     * @param container The {@link DeclarationList} this expression is contained in.
      * @return The result of the calculation.
-     * @throws CalculationException The expression attempts invalid unit operations,
-     * has invalid Terms, or a const/param lookup fails.
      */
     Value calculateValue(EvaluationState state, DeclarationList container);
 
     /**
-     * Gets the relative precidence of the expression.
+     * Gets the relative precedence of the expression.
      *
-     * @return A positive integer, with higher numbers representing higher precidence.
+     * @return A positive integer, with higher numbers representing higher precedence.
      * -1 if the expression is invalid (i.e. a {@link BinaryExpression} has an null {@link Operation}).
      */
     int getPrecidence();
@@ -39,9 +37,12 @@ public interface CalcExpression {
      *
      * @todo make this return a new calculation, instead of modifying this one
      *
-     * @param variables Scope for const lookups.
-     * @param parameters Scope for param lookups.
-     * @throws CalculationException The expression has invalid Terms.
+     * @param state The current evaluation state.
+     * @param container The {@link DeclarationList} this expression is contained in.
+     * @param withParams Whether param() terms should be substituted.
+     * @param doNestedCalculations Whether nested calculations should be evaluated.
+     *
+     * @return A new CalcExpression with const/param terms inlined.
      */
     CalcExpression withSubstitutedValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doNestedCalculations);
 }

@@ -169,6 +169,7 @@ public final class FunctionTerm extends Term {
             if (((NumberTerm) channels.get(2)).getUnit() != Unit.Percent) {
                 return false;
             }
+            // FIXME: This is redundant. Make sure this logic is correct.
             if (channels.size() == 4 && ((NumberTerm) channels.get(3)).getUnit() != Unit.None) {
                 return false;
             }
@@ -197,6 +198,7 @@ public final class FunctionTerm extends Term {
             if (((NumberTerm) channels.get(2)).getUnit() != Unit.Percent) {
                 return false;
             }
+            // FIXME: This is redundant. Make sure this logic is correct.
             if (channels.size() == 4 && ((NumberTerm) channels.get(3)).getUnit() != Unit.None) {
                 return false;
             }
