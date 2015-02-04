@@ -288,6 +288,10 @@ public final class Main {
 
         if (url != null) {
             if (config.getBoolean("watch")) {
+                if (out == null) {
+                    System.err.println("--watch requires an output file");
+                    System.exit(1);
+                }
                 watchFile(url, errors, opts, config, out);
             }
             else {
