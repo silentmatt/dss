@@ -13,7 +13,7 @@ public interface Configuration {
 
     File getOutputFile();
 
-    URL getUrl();
+    URL getURL();
 
     boolean isSuccess();
 

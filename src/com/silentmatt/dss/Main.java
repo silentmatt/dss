@@ -30,10 +30,10 @@ public final class Main {
         }
 
         if (config.isTest()) {
-            System.exit(new TestRunner().runTests(config.getUrl(), config.colorTestOutput()));
+            System.exit(new TestRunner().runTests(config.getURL(), config.colorTestOutput()));
         }
 
-        URL url = config.getUrl();
+        URL url = config.getURL();
         File out = config.getOutputFile();
 
         if (out != null) {

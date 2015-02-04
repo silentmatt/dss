@@ -29,7 +29,7 @@ public class JSAPConfiguration implements Configuration {
     }
 
     @Override
-    public URL getUrl() {
+    public URL getURL() {
         return config.getURL("url");
     }
 
