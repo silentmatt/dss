@@ -36,8 +36,8 @@ public final class EvaluationState {
         this.baseURL = new LinkedList<>();
         this.baseURL.push(opts.getBaseURL());
         this.errors = opts.getErrors();
-        this.classes = new Scope<>(opts.getClasses());
-        this.variables = new Scope<>(opts.getVariables());
+        this.classes = new GlobalScope<>(opts.getClasses());
+        this.variables = new GlobalScope<>(opts.getVariables());
         this.functions.putAll(opts.getFunctions());
         this.includeCallback = opts.getIncludeCallback();
         this.resourceLocator = opts.getResourceLocator();
