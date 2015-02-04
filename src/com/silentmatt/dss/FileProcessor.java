@@ -138,8 +138,10 @@ public class FileProcessor {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
-                System.exit(0);
+                break;
             }
         }
+
+        return errors;
     }
 }
