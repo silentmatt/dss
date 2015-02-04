@@ -26,7 +26,7 @@ public class Scope<T> implements Map<String, T> {
      */
     public Scope(Scope<T> parent) {
         this.parentScope = parent;
-        this.table = new HashMap<String, T>();
+        this.table = new HashMap<>();
     }
 
     /**
@@ -81,7 +81,7 @@ public class Scope<T> implements Map<String, T> {
      * @return A new scope with <code>this</code> as its parent.
      */
     public final Scope<T> inherit() {
-        return new Scope<T>(this);
+        return new Scope<>(this);
     }
 
     protected final Scope<T> parentScope;
@@ -246,7 +246,7 @@ public class Scope<T> implements Map<String, T> {
     public final Set<String> keySet() {
         Set<String> keys = table.keySet();
         if (parentScope != null) {
-            keys = new HashSet<String>(keys);
+            keys = new HashSet<>(keys);
             keys.addAll(parentScope.keySet());
         }
         return keys;
@@ -254,7 +254,7 @@ public class Scope<T> implements Map<String, T> {
 
     @Override
     public final Collection<T> values() {
-        LinkedList<T> result = new LinkedList<T>();
+        LinkedList<T> result = new LinkedList<>();
         for (Entry<String, T> entry : entrySet()) {
             result.add(entry.getValue());
         }
@@ -266,7 +266,7 @@ public class Scope<T> implements Map<String, T> {
         Set<Entry<String, T>> entries = table.entrySet();
 
         if (parentScope != null) {
-            entries = new java.util.HashSet<Entry<String, T>>(entries);
+            entries = new java.util.HashSet<>(entries);
             for (Entry<String, T> entry : parentScope.entrySet()) {
                 if (!table.containsKey(entry.getKey())) {
                     entries.add(entry);

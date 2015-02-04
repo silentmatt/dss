@@ -11,7 +11,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class CssExpression {
-    private final List<CssTerm> terms = new ArrayList<CssTerm>();
+    private final List<CssTerm> terms = new ArrayList<>();
 
     public CssExpression() {
     }

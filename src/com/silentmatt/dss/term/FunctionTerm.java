@@ -288,7 +288,7 @@ public final class FunctionTerm extends Term {
         return resultBuilder.build();
     }
 
-    private static final Map<String, Function> builtinFunctions = new HashMap<String, Function>();
+    private static final Map<String, Function> builtinFunctions = new HashMap<>();
     static {
         Function hueshift = new HueShift();
         builtinFunctions.put("compose", new ComposeFunction());

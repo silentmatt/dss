@@ -12,7 +12,7 @@ public abstract class CssDeclarationDirective extends CssRule {
 
     public CssDeclarationDirective(List<CssDeclaration> declarations) {
         super();
-        this.declarations = new ArrayList<CssDeclaration>(declarations);
+        this.declarations = new ArrayList<>(declarations);
     }
 
     public List<CssDeclaration> getDeclarations() {

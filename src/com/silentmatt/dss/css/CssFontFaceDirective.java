@@ -11,6 +11,7 @@ public class CssFontFaceDirective extends CssDeclarationDirective {
         super(declarations);
     }
 
+    @Override
     public String getName() {
         return "@font-face";
     }

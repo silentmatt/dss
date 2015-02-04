@@ -157,14 +157,13 @@ public abstract class Color {
     public static final Color YellowGreen = new RGBIColor(0x9A, 0xCD, 0x32, "YellowGreen");
 
     // TODO: Make private. toNameString will need to be changed.
-    protected static final Map<String, Color> namedColors = new HashMap<String, Color>();
+    protected static final Map<String, Color> namedColors = new HashMap<>();
     static {
         for (Field field : Color.class.getFields()) {
             if (Color.class.isAssignableFrom(field.getType())) {
                 try {
                     namedColors.put(field.getName().toLowerCase(Locale.ENGLISH), (Color) field.get(null));
-                } catch (IllegalArgumentException ex) {
-                } catch (IllegalAccessException ex) {
+                } catch (IllegalArgumentException | IllegalAccessException ex) {
                 }
             }
         }

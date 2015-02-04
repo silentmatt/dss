@@ -26,9 +26,9 @@ public class DSSEvaluator {
     public static class Options {
         private URL baseURL;
         private ErrorReporter errors = new PrintStreamErrorReporter();
-        private Scope<ClassDirective> classes = new Scope<ClassDirective>(null);
-        private Scope<Expression> variables = new Scope<Expression>(null);
-        private Map<String, Function> functions = new HashMap<String, Function>();
+        private Scope<ClassDirective> classes = new Scope<>(null);
+        private Scope<Expression> variables = new Scope<>(null);
+        private Map<String, Function> functions = new HashMap<>();
         private URLCallback includeCallback = null;
         private ResourceLocator resourceLocator = null;
 

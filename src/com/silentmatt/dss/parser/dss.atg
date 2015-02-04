@@ -683,7 +683,7 @@ declaration<out Declaration dec> =  (. Declaration.Builder decb = new Declaratio
                                     (. dec = decb.build(); .)
 .
 
-multideclaration<out List<Declaration> decs> =  (.  ArrayList<Declaration.Builder> decbs = new ArrayList<Declaration.Builder>();
+multideclaration<out List<Declaration> decs> =  (.  ArrayList<Declaration.Builder> decbs = new ArrayList<>();
                                                     Declaration.Builder first = new Declaration.Builder();
                                                 .)
     (( identity<out String ident>               (.  first.setName(ident); decbs.add(first); .)
@@ -694,7 +694,7 @@ multideclaration<out List<Declaration> decs> =  (.  ArrayList<Declaration.Builde
                                                         decb.setImportant(true);
                                                     }
                                                 .) ]
-    )                                           (.  decs = new ArrayList<Declaration>(decbs.size());
+    )                                           (.  decs = new ArrayList<>(decbs.size());
                                                     for (Declaration.Builder decb : decbs) {
                                                         decs.add(decb.build());
                                                     } .)

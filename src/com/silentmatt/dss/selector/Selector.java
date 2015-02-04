@@ -93,7 +93,7 @@ public final class Selector {
         parents = parent;
         children = child;
         // TODO: Wasteful?
-        simpleSelectors = ImmutableList.copyOf(new JoinedList<SimpleSelector>(parent.getSimpleSelectors(), child.getSimpleSelectors()));
+        simpleSelectors = ImmutableList.copyOf(new JoinedList<>(parent.getSimpleSelectors(), child.getSimpleSelectors()));
         combinator = cb;
     }
 

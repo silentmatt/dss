@@ -24,9 +24,9 @@ public class FileWatcher {
      * @param files The {@link File} to be watched.
      */
     public FileWatcher(List<File> files) {
-        this.files = new ArrayList<File>(files);
-        this.lastModifiedList = new ArrayList<Long>(files.size());
-        this.primaryFiles = new HashSet<File>(files);
+        this.files = new ArrayList<>(files);
+        this.lastModifiedList = new ArrayList<>(files.size());
+        this.primaryFiles = new HashSet<>(files);
 
         for (File f : files) {
             lastModifiedList.add(f.lastModified());
@@ -77,7 +77,7 @@ public class FileWatcher {
      * @return The a copy of the set of primary files to watch.
      */
     public Set<File> getPrimaryFiles() {
-        return new HashSet<File>(primaryFiles);
+        return new HashSet<>(primaryFiles);
     }
 
     /**

@@ -314,7 +314,7 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
         }
 
         private class DeclarationListKeySet implements Set<String> {
-            private final Set<String> keys = new LinkedHashSet<String>();
+            private final Set<String> keys = new LinkedHashSet<>();
 
             public DeclarationListKeySet() {
                 for (Declaration declaration : DeclarationList.this.list) {

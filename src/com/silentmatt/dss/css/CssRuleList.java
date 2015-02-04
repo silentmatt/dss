@@ -8,7 +8,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class CssRuleList extends CssRule {
-    private final List<CssRule> rules = new ArrayList<CssRule>();
+    private final List<CssRule> rules = new ArrayList<>();
 
     public CssRuleList() {
     }

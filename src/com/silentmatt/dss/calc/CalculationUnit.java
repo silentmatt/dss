@@ -142,9 +142,9 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
     private static final Map<CalculationUnit, CalculationUnit> canonicalUnit;
 
     static {
-        cssToUnitMap = new EnumMap<Unit, CalculationUnit>(Unit.class);
-        unitToCssMap = new HashMap<CalculationUnit, Unit>();
-        canonicalUnit = new HashMap<CalculationUnit, CalculationUnit>();
+        cssToUnitMap = new EnumMap<>(Unit.class);
+        unitToCssMap = new HashMap<>();
+        canonicalUnit = new HashMap<>();
 
         cssToUnitMap.put(Unit.None, CalculationUnit.None);
 

@@ -10,8 +10,8 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class ListErrorReporter extends AbstractErrorReporter {
-    private final List<Message> errors = new LinkedList<Message>();
-    private final List<Message> warnings = new LinkedList<Message>();
+    private final List<Message> errors = new LinkedList<>();
+    private final List<Message> warnings = new LinkedList<>();
 
     @Override
     public int getErrorCount() {

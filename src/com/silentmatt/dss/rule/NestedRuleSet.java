@@ -55,7 +55,7 @@ public final class NestedRuleSet extends RuleSet {
     }
 
     public NestedRuleSet substituteValues(EvaluationState state) {
-        List<Declaration> properties = new ArrayList<Declaration>(getDeclarations().toList());
+        List<Declaration> properties = new ArrayList<>(getDeclarations().toList());
         DeclarationBlock.Builder result = new DeclarationBlock.Builder();
 
         for (int i = 0; i < properties.size(); i++) {

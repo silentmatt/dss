@@ -11,7 +11,7 @@ public class CssSelector {
     private final List<CssSimpleSelector> simpleSelectors;
 
     public CssSelector() {
-        simpleSelectors = new ArrayList<CssSimpleSelector>();
+        simpleSelectors = new ArrayList<>();
     }
 
     public List<CssSimpleSelector> getSimpleSelectors() {

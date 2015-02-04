@@ -49,6 +49,7 @@ public class GlobalScope<T> extends Scope<T> {
      *
      * @return The parent Scope, or <code>null</code> if this is a top-level Scope.
      */
+    @Override
     public Scope<T> parent() {
         return null;
     }
@@ -62,10 +63,12 @@ public class GlobalScope<T> extends Scope<T> {
      *
      * @see #containsKey(java.lang.Object)
      */
+    @Override
     public boolean declaresKey(String key) {
         return containsKey(key);
     }
 
+    @Override
     public T put(String key, T value) {
         if (table.containsKey(key)) {
             return table.put(key, value);

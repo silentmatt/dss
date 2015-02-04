@@ -14,6 +14,7 @@ public class CssPageDirective extends CssDeclarationDirective {
         this.selector = pseudo;
     }
 
+    @Override
     public String getName() {
         return "@page";
     }

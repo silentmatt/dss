@@ -22,6 +22,7 @@ public class NegationExpression implements CalcExpression {
         this.expr = expr;
     }
 
+    @Override
     public Value calculateValue(EvaluationState state, DeclarationList container) {
         Value value = expr.calculateValue(state, container);
         if (value == null) {
@@ -30,6 +31,7 @@ public class NegationExpression implements CalcExpression {
         return value.negate();
     }
 
+    @Override
     public NegationExpression withSubstitutedValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doNestedCalculations) {
         return new NegationExpression(expr.withSubstitutedValues(state, container, withParams, doNestedCalculations));
     }
@@ -46,6 +48,7 @@ public class NegationExpression implements CalcExpression {
         return "-(" + expr + ")";
     }
 
+    @Override
     public int getPrecidence() {
         return 3;
     }

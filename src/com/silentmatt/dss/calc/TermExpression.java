@@ -30,6 +30,7 @@ public class TermExpression implements CalcExpression {
         this.value = value;
     }
 
+    @Override
     public Value calculateValue(EvaluationState state, DeclarationList container) {
         Term value = withSubstitutedValues(state, container, true, false).value;
         if (value instanceof NumberTerm) {
@@ -52,6 +53,7 @@ public class TermExpression implements CalcExpression {
         return null;
     }
 
+    @Override
     public int getPrecidence() {
         return 4;
     }
@@ -66,6 +68,7 @@ public class TermExpression implements CalcExpression {
         return this.value.toString();
     }
 
+    @Override
     public TermExpression withSubstitutedValues(EvaluationState state, DeclarationList container, boolean withParams, boolean doNestedCalculations) {
         if (value instanceof ReferenceTerm && !(!withParams && value instanceof ParamTerm)) {
             ReferenceTerm function = (ReferenceTerm) value;

@@ -70,7 +70,7 @@ public final class MediaDirective extends Rule {
     public CssRule evaluate(EvaluationState state, List<Rule> container) throws IOException {
         state.pushScope(Rule.getRuleSets(getRules()));
         try {
-            List<CssMediaQuery> media = new ArrayList<CssMediaQuery>();
+            List<CssMediaQuery> media = new ArrayList<>();
             for (MediaQuery m : mediums) {
                 media.add(new CssMediaQuery(m.toString()));
             }

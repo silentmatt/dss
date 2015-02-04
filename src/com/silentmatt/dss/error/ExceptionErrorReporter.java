@@ -14,19 +14,23 @@ public class ExceptionErrorReporter extends AbstractErrorReporter {
         this.warningReporter = warningReporter;
     }
 
+    @Override
     public int getErrorCount() {
         return errorCount;
     }
 
+    @Override
     public void addError(Message msg) {
         errorCount++;
         throw new RuntimeException(msg.toString());
     }
 
+    @Override
     public void addWarning(Message msg) {
         warningReporter.addWarning(msg);
     }
 
+    @Override
     public int getWarningCount() {
         return warningReporter.getWarningCount();
     }

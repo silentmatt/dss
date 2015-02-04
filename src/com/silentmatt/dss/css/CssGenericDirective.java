@@ -8,9 +8,9 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class CssGenericDirective extends CssRule {
-    private final List<CssDeclaration> declarations = new ArrayList<CssDeclaration>();
-    private final List<CssRule> rules = new ArrayList<CssRule>();
-    private final List<CssMedium> mediums = new ArrayList<CssMedium>();
+    private final List<CssDeclaration> declarations = new ArrayList<>();
+    private final List<CssRule> rules = new ArrayList<>();
+    private final List<CssMedium> mediums = new ArrayList<>();
     private String name;
     private CssExpression expression;
 

@@ -22,7 +22,7 @@ public final class Expression {
     public static class Builder
     {
         // TODO: Make this an ImmutableList.Builder?
-        private final List<Term> terms = new ArrayList<Term>();
+        private final List<Term> terms = new ArrayList<>();
 
         public Builder() {
         }

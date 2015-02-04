@@ -43,9 +43,9 @@ public final class DeclarationBlock {
             nestedRuleSets.addAll(rulesets);
         }
 
-        private final List<Declaration> declarations = new ArrayList<Declaration>();
-        private final ImmutableList.Builder<NestedRuleSet> nestedRuleSets = new ImmutableList.Builder<NestedRuleSet>();
-        private final ImmutableList.Builder<Rule> rules = new ImmutableList.Builder<Rule>();
+        private final List<Declaration> declarations = new ArrayList<>();
+        private final ImmutableList.Builder<NestedRuleSet> nestedRuleSets = new ImmutableList.Builder<>();
+        private final ImmutableList.Builder<Rule> rules = new ImmutableList.Builder<>();
 
         @Deprecated
         public List<Declaration> getDeclarations() {
@@ -171,7 +171,7 @@ public final class DeclarationBlock {
      * @return A {@link List} of {@link CssDeclaration}s.
      */
     public List<CssDeclaration> getCssDeclarations(EvaluationState state) {
-        List<CssDeclaration> result = new ArrayList<CssDeclaration>();
+        List<CssDeclaration> result = new ArrayList<>();
         for (Declaration d : declarations) {
             result.add(new CssDeclaration(d.getName(), d.getExpression().evaluate(state, declarations), d.isImportant()));
         }
@@ -334,7 +334,7 @@ public final class DeclarationBlock {
 
     private static void addInheritedProperties(DeclarationBlock.Builder result, EvaluationState state, ClassDirective clazz, DeclarationList args) throws IOException {
         // Make a copy of the properties, to substitute parameters into
-        ArrayList<Declaration> properties = new ArrayList<Declaration>();
+        ArrayList<Declaration> properties = new ArrayList<>();
         for (Declaration prop : clazz.getDeclarations(args)) {
             Boolean cond = prop.getCondition().evaluate(state);
             if (cond != null && cond) {
@@ -429,12 +429,12 @@ public final class DeclarationBlock {
      * @throws IOException
      */
     public DeclarationBlock evaluateStyle(EvaluationState state, boolean doCalculations) throws IOException {
-        DeclarationBlock.Builder result = new DeclarationBlock.Builder(new ArrayList<Declaration>(), new ArrayList<NestedRuleSet>(nestedRuleSets));
+        DeclarationBlock.Builder result = new DeclarationBlock.Builder(new ArrayList<Declaration>(), new ArrayList<>(nestedRuleSets));
         return evaluateStyle(result, state, doCalculations);
     }
 
     protected List<RuleSet> getRuleSetScope() {
-        List<RuleSet> result = new ArrayList<RuleSet>(nestedRuleSets.size());
+        List<RuleSet> result = new ArrayList<>(nestedRuleSets.size());
         for (NestedRuleSet nrs : nestedRuleSets) {
             result.add(nrs);
         }

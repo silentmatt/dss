@@ -8,9 +8,9 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class CssRuleSet extends CssRule {
-    private final List<CssRule> rules = new ArrayList<CssRule>();
-    private final List<CssDeclaration> declarations = new ArrayList<CssDeclaration>();
-    private final List<CssSelector> selectors = new ArrayList<CssSelector>();
+    private final List<CssRule> rules = new ArrayList<>();
+    private final List<CssDeclaration> declarations = new ArrayList<>();
+    private final List<CssSelector> selectors = new ArrayList<>();
 
     public List<CssDeclaration> getDeclarations() {
         return declarations;

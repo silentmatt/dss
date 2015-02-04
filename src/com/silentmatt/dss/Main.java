@@ -15,8 +15,8 @@ import com.silentmatt.dss.error.ExceptionErrorReporter;
 import com.silentmatt.dss.error.NullErrorReporter;
 import com.silentmatt.dss.error.PrintStreamErrorReporter;
 import com.silentmatt.dss.evaluator.DSSEvaluator;
-import com.silentmatt.dss.evaluator.URLCallback;
 import com.silentmatt.dss.evaluator.DefaultResourcesLocator;
+import com.silentmatt.dss.evaluator.URLCallback;
 import com.silentmatt.dss.parser.DSSParser;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -46,9 +46,9 @@ public final class Main {
                 if (out == null) {
                     System.out.print(cssString);
                 } else {
-                    PrintStream pout = new PrintStream(out, "UTF-8");
-                    pout.print(cssString);
-                    pout.close();
+                    try (PrintStream pout = new PrintStream(out, "UTF-8")) {
+                        pout.print(cssString);
+                    }
                 }
             }
         } catch (MalformedURLException ex) {
@@ -270,10 +270,7 @@ public final class Main {
                     System.err.println("Input and output are the same file.");
                     System.exit(1);
                 }
-            } catch (MalformedURLException ex) {
-                System.err.println("Invalid file: " + out.getPath());
-                System.exit(1);
-            } catch (URISyntaxException ex) {
+            } catch (MalformedURLException | URISyntaxException ex) {
                 System.err.println("Invalid file: " + out.getPath());
                 System.exit(1);
             }

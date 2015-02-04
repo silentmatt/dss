@@ -16,10 +16,12 @@ public abstract class CssExpressionDirective extends CssRule {
         return expression;
     }
 
+    @Override
     public String toString(int nesting) {
         return CssRule.getIndent(nesting) + toString();
     }
 
+    @Override
     public String toString(boolean compact, int nesting) {
         return toString();
     }

@@ -841,7 +841,7 @@ class Parser {
 
 	List<Declaration>  multideclaration() {
 		List<Declaration>  decs;
-		ArrayList<Declaration.Builder> decbs = new ArrayList<Declaration.Builder>();
+		ArrayList<Declaration.Builder> decbs = new ArrayList<>();
 		Declaration.Builder first = new Declaration.Builder();
 		
 		String ident = identity();
@@ -862,7 +862,7 @@ class Parser {
 			}
 			
 		}
-		decs = new ArrayList<Declaration>(decbs.size());
+		decs = new ArrayList<>(decbs.size());
 		for (Declaration.Builder decb : decbs) {
 		    decs.add(decb.build());
 		} 

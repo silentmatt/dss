@@ -8,7 +8,7 @@ import java.util.List;
  * @author Matthew Crumley
  */
 public class CssDocument {
-    private final List<CssRule> rules = new ArrayList<CssRule>();
+    private final List<CssRule> rules = new ArrayList<>();
 
     public void addRule(CssRule rule) {
         this.rules.add(rule);

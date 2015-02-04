@@ -31,19 +31,23 @@ public class PrintStreamErrorReporter extends AbstractErrorReporter {
         errorStream = out;
     }
 
+    @Override
     public int getErrorCount() {
         return errorCount;
     }
 
+    @Override
     public int getWarningCount() {
         return warningCount;
     }
 
+    @Override
     public void addError(Message error) {
         errorStream.println(error);
         errorCount++;
     }
 
+    @Override
     public void addWarning(Message warning) {
         errorStream.println(warning);
         warningCount++;

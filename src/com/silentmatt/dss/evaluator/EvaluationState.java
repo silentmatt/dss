@@ -22,8 +22,8 @@ public final class EvaluationState {
     private Scope<ClassDirective> classes;
     private Scope<Expression> variables;
     private Scope<Expression> parameters = null;
-    private final Map<String, Function> functions = new HashMap<String, Function>();
-    private final LinkedList<List<RuleSet>> ruleSetScope = new LinkedList<List<RuleSet>>();
+    private final Map<String, Function> functions = new HashMap<>();
+    private final LinkedList<List<RuleSet>> ruleSetScope = new LinkedList<>();
     private final URLCallback includeCallback;
     private final ResourceLocator resourceLocator;
 
@@ -33,11 +33,11 @@ public final class EvaluationState {
      * @param opts A {@link DSSEvaluator.Options} object, used to initialize the state.
      */
     public EvaluationState(DSSEvaluator.Options opts) {
-        this.baseURL = new LinkedList<URL>();
+        this.baseURL = new LinkedList<>();
         this.baseURL.push(opts.getBaseURL());
         this.errors = opts.getErrors();
-        this.classes = new Scope<ClassDirective>(opts.getClasses());
-        this.variables = new Scope<Expression>(opts.getVariables());
+        this.classes = new Scope<>(opts.getClasses());
+        this.variables = new Scope<>(opts.getVariables());
         this.functions.putAll(opts.getFunctions());
         this.includeCallback = opts.getIncludeCallback();
         this.resourceLocator = opts.getResourceLocator();
@@ -159,8 +159,8 @@ public final class EvaluationState {
      * evaluated. It is added to the end of the RuleSet scope.
      */
     public void pushScope(List<RuleSet> currentRuleSetScope) {
-        classes = new Scope<ClassDirective>(classes);
-        variables = new Scope<Expression>(variables);
+        classes = new Scope<>(classes);
+        variables = new Scope<>(variables);
         ruleSetScope.addLast(currentRuleSetScope);
     }
 
@@ -177,7 +177,7 @@ public final class EvaluationState {
      * Creates a new level in the parameter scope chain.
      */
     public void pushParameters() {
-        parameters = new Scope<Expression>(parameters);
+        parameters = new Scope<>(parameters);
     }
 
     /**

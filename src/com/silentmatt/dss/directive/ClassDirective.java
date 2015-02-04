@@ -97,7 +97,7 @@ public class ClassDirective extends Rule {
     }
 
     protected List<RuleSet> getRuleSetScope(EvaluationState state) {
-        List<RuleSet> result = new ArrayList<RuleSet>(getNestedRuleSets().size());
+        List<RuleSet> result = new ArrayList<>(getNestedRuleSets().size());
         for (NestedRuleSet nrs : getNestedRuleSets()) {
             Boolean cond = nrs.getCondition().evaluate(state);
             if (cond != null && cond) {
