@@ -43,10 +43,6 @@ public class CssRuleSet extends CssRule {
         return null;
     }
 
-//    public CssExpression getValue(String name) {
-//        return declarations.get(name);
-//    }
-
     @Override
     public String toString() {
         return toString(0);

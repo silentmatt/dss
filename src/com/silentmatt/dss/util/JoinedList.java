@@ -13,16 +13,6 @@ public final class JoinedList<E> extends AbstractList<E> {
     private final ImmutableList<E> front;
     private final ImmutableList<E> back;
 
-    @Deprecated
-    public ImmutableList<E> getFront() {
-        return front;
-    }
-
-    @Deprecated
-    public ImmutableList<E> getBack() {
-        return back;
-    }
-
     public JoinedList(ImmutableList<E> front, ImmutableList<E> back) {
         this.front = front;
         this.back = back;
@@ -39,21 +29,11 @@ public final class JoinedList<E> extends AbstractList<E> {
     @Override
     public E set(int index, E value) {
         throw new UnsupportedOperationException();
-//        if (index < front.size()) {
-//            return front.set(index, value);
-//        }
-//        return back.set(index - front.size(), value);
     }
 
     @Override
     public void add(int index, E value) {
         throw new UnsupportedOperationException();
-//        if (index < front.size()) {
-//            front.add(index, value);
-//        }
-//        else {
-//            back.add(index - front.size(), value);
-//        }
     }
 
     @Override

@@ -51,7 +51,7 @@ public class CssDeclaration /*implements Map.Entry<String, CssExpression>*/ {
     /**
      * Gets the property name.
      *
-     * @return The name (left side of the ':'.
+     * @return The name (left side of the ':').
      */
     public String getName() {
         return name;
@@ -124,18 +124,4 @@ public class CssDeclaration /*implements Map.Entry<String, CssExpression>*/ {
         }
         return txt.toString();
     }
-
-//    public String getKey() {
-//        return getName();
-//    }
-//
-//    public CssExpression getValue() {
-//        return getExpression();
-//    }
-//
-//    public CssExpression setValue(CssExpression arg0) {
-//        CssExpression old = getExpression();
-//        setExpression(arg0);
-//        return old;
-//    }
 }

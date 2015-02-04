@@ -49,11 +49,6 @@ public final class Expression {
             return terms.get(index);
         }
         
-        @Deprecated
-        public final List<Term> getTerms() {
-            return terms;
-        }
-        
         public final Expression build() {
             return new Expression(ImmutableList.copyOf(terms));
         }

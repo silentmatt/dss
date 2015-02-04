@@ -15,18 +15,15 @@ import java.util.Set;
 /**
  * A list of {@link Declaration}s that also acts like a {@link Map}.
  *
- * All of the methods from {@link Map} that are compatible with the {@link List}
- * interface can be used on a DeclarationList. If you need an actual Map, call
- * {@link #asMap()} to get a Map-view of the list.
+ * If you need an actual List or Map, call {@link #asMap()} to get a Map view.
  *
  * @author Matthew Crumley
  */
 @Immutable
-public final class DeclarationList implements /*List<Declaration>*/ Iterable<Declaration> {
+public final class DeclarationList implements Iterable<Declaration> {
     private final ImmutableList<Declaration> list;
     private final Map<String, Expression> mapView = new DeclarationListMapView();
 
-    //@SuppressWarnings("unchecked")
     public static final DeclarationList EMPTY = new DeclarationList(ImmutableList.copyOf(new Declaration[0]));
 
     /**
@@ -67,63 +64,13 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
         return list.toArray(arg0);
     }
 
-//    public boolean add(Declaration arg0) {
-//        throw new UnsupportedOperationException();
-//        //return list.add(arg0);
-//    }
-//
-//    public boolean remove(Object arg0) {
-//        throw new UnsupportedOperationException();
-//        //return list.remove(arg0);
-//    }
-
     public boolean containsAll(Collection<?> arg0) {
         return list.containsAll(arg0);
     }
 
-//    public boolean addAll(Collection<? extends Declaration> arg0) {
-//        throw new UnsupportedOperationException();
-//        //return list.addAll(arg0);
-//    }
-//
-//    public boolean addAll(int arg0, Collection<? extends Declaration> arg1) {
-//        throw new UnsupportedOperationException();
-//        //return list.addAll(arg0, arg1);
-//    }
-//
-//    public boolean removeAll(Collection<?> arg0) {
-//        throw new UnsupportedOperationException();
-//        //return list.removeAll(arg0);
-//    }
-//
-//    public boolean retainAll(Collection<?> arg0) {
-//        throw new UnsupportedOperationException();
-//        //return list.retainAll(arg0);
-//    }
-//
-//    public void clear() {
-//        throw new UnsupportedOperationException();
-//        //list.clear();
-//    }
-
     public Declaration get(int arg0) {
         return list.get(arg0);
     }
-
-//    public Declaration set(int arg0, Declaration arg1) {
-//        throw new UnsupportedOperationException();
-//        //return list.set(arg0, arg1);
-//    }
-//
-//    public void add(int arg0, Declaration arg1) {
-//        throw new UnsupportedOperationException();
-//        //list.add(arg0, arg1);
-//    }
-//
-//    public Declaration remove(int arg0) {
-//        throw new UnsupportedOperationException();
-//        //return list.remove(arg0);
-//    }
 
     public int indexOf(Object arg0) {
         return list.indexOf(arg0);
@@ -140,11 +87,6 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
     public ListIterator<Declaration> listIterator(int start) {
         return list.listIterator(start);
     }
-
-//    public List<Declaration> subList(int start, int end) {
-//        throw new UnsupportedOperationException();
-//        //return list.subList(start, end);
-//    }
 
     // Map methods
     public boolean containsKey(String key) {
@@ -207,36 +149,6 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
         return declaration != null ? declaration.getExpression() : null;
     }
 
-//    public Expression put(String name, Expression expression) {
-//        throw new UnsupportedOperationException();
-////        Expression result = get(name);
-////        list.add(new Declaration(name, expression));
-////        return result;
-//    }
-
-//    public Expression remove(String key) {
-//        throw new UnsupportedOperationException();
-////        Expression result = null;
-////
-////        ListIterator<Declaration> it = list.listIterator();
-////        while (it.hasNext()) {
-////            Declaration current = it.next();
-////            if (matches(current, key)) {
-////                result = current.getExpression();
-////                it.remove();
-////            }
-////        }
-////
-////        return result;
-//    }
-
-//    public void putAll(Map<? extends String, ? extends Expression> map) {
-//        throw new UnsupportedOperationException();
-////        for (Entry<? extends String, ? extends Expression> entry : map.entrySet()) {
-////            this.put(entry.getKey(), entry.getValue());
-////        }
-//    }
-
     /**
      * Gets a view of the list that implements the {@link Map} interface}.
      * @return
@@ -274,28 +186,21 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
         @Override
         public Expression put(String arg0, Expression arg1) {
             throw new UnsupportedOperationException();
-            //return DeclarationList.this.put(arg0, arg1);
         }
 
         @Override
         public Expression remove(Object arg0) {
             throw new UnsupportedOperationException();
-//            if (arg0 instanceof String) {
-//                return DeclarationList.this.remove((String) arg0);
-//            }
-//            return null;
         }
 
         @Override
         public void putAll(Map<? extends String, ? extends Expression> arg0) {
             throw new UnsupportedOperationException();
-            //DeclarationList.this.putAll(arg0);
         }
 
         @Override
         public void clear() {
             throw new UnsupportedOperationException();
-            //DeclarationList.this.clear();
         }
 
         @Override
@@ -355,8 +260,6 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
                     @Override
                     public void remove() {
                         throw new UnsupportedOperationException();
-//                        keys.remove(current);
-//                        DeclarationList.this.remove(current);
                     }
                 };
             }
@@ -379,12 +282,6 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
             @Override
             public boolean remove(Object arg0) {
                 throw new UnsupportedOperationException();
-//                if (!(arg0 instanceof String)) {
-//                    return false;
-//                }
-//                String key = (String) arg0;
-//                DeclarationList.this.remove(key);
-//                return keys.remove(key);
             }
 
             @Override
@@ -399,25 +296,17 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
 
             @Override
             public boolean retainAll(Collection<?> arg0) {
-                //keys.retainAll(arg0);
                 throw new UnsupportedOperationException();
             }
 
             @Override
             public boolean removeAll(Collection<?> arg0) {
                 throw new UnsupportedOperationException();
-//                boolean result = false;
-//                for (Object o : arg0) {
-//                    result |= remove(o);
-//                }
-//                return result;
             }
 
             @Override
             public void clear() {
                 throw new UnsupportedOperationException();
-//                keys.clear();
-//                DeclarationList.this.clear();
             }
         }
 
@@ -454,7 +343,6 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
                     @Override
                     public void remove() {
                         throw new UnsupportedOperationException();
-                        //it.remove();
                     }
                 };
             }
@@ -477,7 +365,6 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
             @Override
             public boolean remove(Object arg0) {
                 throw new UnsupportedOperationException();
-                //return DeclarationList.this.remove(arg0);
             }
 
             @Override
@@ -493,19 +380,16 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
             @Override
             public boolean retainAll(Collection<?> arg0) {
                 throw new UnsupportedOperationException();
-                //return DeclarationList.this.retainAll(arg0);
             }
 
             @Override
             public boolean removeAll(Collection<?> arg0) {
                 throw new UnsupportedOperationException();
-                //return DeclarationList.this.removeAll(arg0);
             }
 
             @Override
             public void clear() {
                 throw new UnsupportedOperationException();
-                //DeclarationList.this.clear();
             }
         }
 
@@ -542,7 +426,6 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
                     @Override
                     public void remove() {
                         throw new UnsupportedOperationException();
-                        //it.remove();
                     }
                 };
             }
@@ -587,18 +470,6 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
             @Override
             public boolean remove(Object arg0) {
                 throw new UnsupportedOperationException();
-//                boolean result = false;
-//
-//                Iterator<Declaration> it = DeclarationList.this.iterator();
-//                while (it.hasNext()) {
-//                    Declaration declaration = it.next();
-//                    if (declaration.getExpression().equals(arg0)) {
-//                        result = true;
-//                        it.remove();
-//                    }
-//                }
-//
-//                return result;
             }
 
             @Override
@@ -619,11 +490,6 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
             @Override
             public boolean removeAll(Collection<?> arg0) {
                 throw new UnsupportedOperationException();
-//                boolean result = false;
-//                for (Object o : arg0) {
-//                    result |= remove(o);
-//                }
-//                return result;
             }
 
             @Override
@@ -634,7 +500,6 @@ public final class DeclarationList implements /*List<Declaration>*/ Iterable<Dec
             @Override
             public void clear() {
                 throw new UnsupportedOperationException();
-                //DeclarationList.this.clear();
             }
         }
     }

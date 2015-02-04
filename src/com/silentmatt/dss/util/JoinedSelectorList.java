@@ -51,7 +51,6 @@ public final class JoinedSelectorList extends AbstractList<Selector> {
     @Override
     public boolean add(Selector value) {
         throw new UnsupportedOperationException();
-        //return children.add(value);
     }
 
     @Override

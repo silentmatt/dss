@@ -33,10 +33,7 @@ public class CssPageDirective extends CssDeclarationDirective {
         String start = CssRule.getIndent(nesting);
         StringBuilder txt = new StringBuilder(start).append("@page");
         if (selector != null && selector.getPseudo() != null) {
-            //if (!compact) {
-                txt.append(' ');
-            //}
-            txt.append(selector.toString(compact));
+            txt.append(' ').append(selector.toString(compact));
         }
 
         if (!compact) {
