@@ -30,6 +30,7 @@ public class DSSEvaluator {
         private Scope<Expression> variables = new Scope<Expression>(null);
         private Map<String, Function> functions = new HashMap<String, Function>();
         private URLCallback includeCallback = null;
+        private ResourceLocator resourceLocator = null;
 
         /**
          * Constructs an Options object for a given URL.
@@ -38,6 +39,7 @@ public class DSSEvaluator {
          */
         public Options(URL url) {
             baseURL = url;
+            resourceLocator = new DefaultResourcesLocator();
         }
 
         /**
@@ -78,6 +80,24 @@ public class DSSEvaluator {
          */
         public void setBaseURL(URL baseURL) {
             this.baseURL = baseURL;
+        }
+
+        /**
+         * Sets the ResourceLocator used to find include files.
+         *
+         * @param callback The resource locator.
+         */
+        public void setResourceLocator(ResourceLocator resourceLocator) {
+            this.resourceLocator = resourceLocator;
+        }
+
+        /**
+         * Gets the ResourceLocator that will be used to find include files.
+         *
+         * @return The resource locator.
+         */
+        public ResourceLocator getResourceLocator() {
+            return this.resourceLocator;
         }
 
         /**

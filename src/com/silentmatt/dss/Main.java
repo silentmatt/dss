@@ -16,6 +16,7 @@ import com.silentmatt.dss.error.NullErrorReporter;
 import com.silentmatt.dss.error.PrintStreamErrorReporter;
 import com.silentmatt.dss.evaluator.DSSEvaluator;
 import com.silentmatt.dss.evaluator.URLCallback;
+import com.silentmatt.dss.evaluator.DefaultResourcesLocator;
 import com.silentmatt.dss.parser.DSSParser;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -33,7 +34,7 @@ public final class Main {
 
     private static void processFile(URL url, ErrorReporter errors, DSSEvaluator.Options opts, JSAPResult config, File out) {
         try {
-            DSSDocument css = DSSDocument.parse(url, errors);
+            DSSDocument css = DSSDocument.parse(new DefaultResourcesLocator(), url, errors);
             if (css != null) {
                 CssDocument outputDocument = new DSSEvaluator(opts).evaluate(css);
                 String cssString;

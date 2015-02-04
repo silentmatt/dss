@@ -87,7 +87,7 @@ public class IncludeDirective extends ExpressionDirective {
             return evaluateLiteral(state, url);
         }
 
-        DSSDocument includedDocument = DSSDocument.parse(url.toString(), state.getErrors());
+        DSSDocument includedDocument = DSSDocument.parse(state.getResourceLocator().openResource(url), state.getErrors());
         if (includedDocument != null) {
             state.pushBaseURL(url, Rule.getRuleSets(includedDocument.getRules()));
             try {
@@ -117,7 +117,7 @@ public class IncludeDirective extends ExpressionDirective {
     }
 
     private CssRule evaluateLiteral(EvaluationState state, URL url) throws IOException {
-        CssRule result = new CssLiteralText(convertStreamToString(url.openStream()));
+        CssRule result = new CssLiteralText(convertStreamToString(state.getResourceLocator().openResource(url)));
         if (result != null && state.getIncludeCallback() != null) {
             state.getIncludeCallback().call(url);
         }

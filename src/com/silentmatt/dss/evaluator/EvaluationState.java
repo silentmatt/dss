@@ -25,6 +25,7 @@ public final class EvaluationState {
     private final Map<String, Function> functions = new HashMap<String, Function>();
     private final LinkedList<List<RuleSet>> ruleSetScope = new LinkedList<List<RuleSet>>();
     private final URLCallback includeCallback;
+    private final ResourceLocator resourceLocator;
 
     /**
      * Constructs an EvalationState with specified options.
@@ -33,12 +34,13 @@ public final class EvaluationState {
      */
     public EvaluationState(DSSEvaluator.Options opts) {
         this.baseURL = new LinkedList<URL>();
-        baseURL.push(opts.getBaseURL());
+        this.baseURL.push(opts.getBaseURL());
         this.errors = opts.getErrors();
         this.classes = new Scope<ClassDirective>(opts.getClasses());
         this.variables = new Scope<Expression>(opts.getVariables());
         this.functions.putAll(opts.getFunctions());
         this.includeCallback = opts.getIncludeCallback();
+        this.resourceLocator = opts.getResourceLocator();
     }
 
     /**
@@ -48,6 +50,15 @@ public final class EvaluationState {
      */
     public URLCallback getIncludeCallback() {
         return this.includeCallback;
+    }
+
+    /**
+     * Gets the resource locator.
+     * 
+     * @return The {@link ResourceLocator} to handle includes.
+     */
+    public ResourceLocator getResourceLocator() {
+        return this.resourceLocator;
     }
 
     /**

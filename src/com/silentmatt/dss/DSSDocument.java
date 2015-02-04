@@ -2,6 +2,7 @@ package com.silentmatt.dss;
 
 import com.google.common.collect.ImmutableList;
 import com.silentmatt.dss.error.ErrorReporter;
+import com.silentmatt.dss.evaluator.ResourceLocator;
 import com.silentmatt.dss.parser.DSSParser;
 import com.silentmatt.dss.parser.Scanner;
 import com.silentmatt.dss.rule.Rule;
@@ -34,6 +35,7 @@ public class DSSDocument {
     /**
      * Parses a DSS document from a URL string.
      *
+     * @param resourceLocator The {@link ResourceLocator} used to open the URL.
      * @param url The URL of the document to parse.
      * @param errors Where to report errors.
      *
@@ -41,13 +43,14 @@ public class DSSDocument {
      *
      * @throws IOException if the URL is invalid or there is an error reading the document.
      */
-    public static DSSDocument parse(String url, ErrorReporter errors) throws IOException {
-        return parse(new URL(url), errors);
+    public static DSSDocument parse(ResourceLocator resourceLocator, String url, ErrorReporter errors) throws IOException {
+        return parse(resourceLocator, new URL(url), errors);
     }
 
     /**
      * Parses a DSS document from a URL.
      *
+     * @param resourceLocator The {@link ResourceLocator} used to open the URL.
      * @param url The URL of the document to parse.
      * @param errors Where to report errors.
      *
@@ -55,8 +58,8 @@ public class DSSDocument {
      *
      * @throws IOException if there is an error reading the document.
      */
-    public static DSSDocument parse(URL url, ErrorReporter errors) throws IOException {
-        return parse(url.openStream(), errors);
+    public static DSSDocument parse(ResourceLocator resourceLocator, URL url, ErrorReporter errors) throws IOException {
+        return parse(resourceLocator.openResource(url), errors);
     }
 
     /**
