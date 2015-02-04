@@ -72,6 +72,19 @@ public class Scope<T> {
     }
 
     /**
+     * Gets the global Scope.
+     *
+     * @return The global Scope, or <code>this</code> if this is a top-level Scope.
+     */
+    public Scope<T> getGlobalScope() {
+        Scope<T> scope = this;
+        while (scope.parent() != null) {
+            scope = scope.parent();
+        }
+        return scope;
+    }
+
+    /**
      * Returns a new scope with <code>this</code> as its parent.
      *
      * <code>scope.inherit()</code> is equivalent to <code>new Scope<T>(scope)</code>,

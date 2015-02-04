@@ -1,6 +1,7 @@
 package com.silentmatt.dss.evaluator;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * A Map from Strings to <code>T</code>s, that can inherit from other <code>Scope</scope>s.
@@ -35,6 +36,16 @@ public class GlobalScope<T> extends Scope<T> {
     }
 
     /**
+     * Creates a Scope with an initial set of entries.
+     *
+     * @param parent The parent Scope.
+     * @param initial A Map<String, T> of entries to pre-declare.
+     */
+    public GlobalScope(Scope<T> parent, Map<String, T> initial) {
+        super(parent, initial);
+    }
+
+    /**
      * Gets the parent Scope.
      *
      * @return The parent Scope, or <code>null</code> if this is a top-level Scope.
@@ -42,6 +53,16 @@ public class GlobalScope<T> extends Scope<T> {
     @Override
     public Scope<T> parent() {
         return null;
+    }
+
+    /**
+     * Gets the global Scope.
+     *
+     * @return <code>this</code>.
+     */
+    @Override
+    public GlobalScope<T> getGlobalScope() {
+        return this;
     }
 
     /**

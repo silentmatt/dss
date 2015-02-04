@@ -133,9 +133,7 @@ public class ClassDirective extends Rule {
 
         Scope<ClassDirective> scope = state.getClasses();
         if (isGlobal()) {
-            while (scope.parent() != null) {
-                scope = scope.parent();
-            }
+            scope = scope.getGlobalScope();
         }
 
         if (newBlock != null) {

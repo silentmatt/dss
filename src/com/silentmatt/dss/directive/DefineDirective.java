@@ -50,9 +50,7 @@ public final class DefineDirective extends DeclarationDirective {
 
         Scope<Expression> scope = state.getVariables();
         if (isGlobal()) {
-            while (scope.parent() != null) {
-                scope = scope.parent();
-            }
+            scope = scope.getGlobalScope();
         }
 
         for (Declaration declaration : getDeclarationBlock().getDeclarations()) {
