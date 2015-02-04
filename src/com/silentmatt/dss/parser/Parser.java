@@ -51,7 +51,7 @@ class Parser {
         /* TODO: Make this faster */
         boolean isUnit() {
             if (la.kind != 1) { return false; }
-            List<String> units = Arrays.asList(new String[] { "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz", "dpi", "dpcm" });
+            List<String> units = Arrays.asList(new String[] { "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz", "dpi", "dpcm", "fr" });
             return units.contains(la.val);
         }
         boolean isDeclaration() {

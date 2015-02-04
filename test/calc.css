@@ -7,6 +7,7 @@ something {
 	width3: -moz-calc(2 * (1cm + 5mm) / ((3px + 4px - -(6px)) / 1px) + 291pt);
 	width3: -webkit-calc(2 * (1cm + 5mm) / ((3px + 4px - -(6px)) / 1px) + 291pt);
 	height: 6.283185;
+	width4: 2fr;
 }
 circle {
 	angle: 360;

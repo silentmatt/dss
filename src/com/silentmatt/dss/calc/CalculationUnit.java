@@ -14,113 +14,117 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
     /**
      * a scalar (dimensionless) unit
      */
-    public static final CalculationUnit None = new CalculationUnit(1, 0,0,0,0,0,0,0,0,0,0,0,0, Unit.None);
+    public static final CalculationUnit None = new CalculationUnit(1, 0,0,0,0,0,0,0,0,0,0,0,0,0, Unit.None);
 
     /**
      * pixels
      */
-    public static final CalculationUnit PX = new CalculationUnit( 1, 1,0,0,0,0,0,0,0,0,0,0,0, Unit.PX);
+    public static final CalculationUnit PX = new CalculationUnit( 1, 1,0,0,0,0,0,0,0,0,0,0,0,0, Unit.PX);
 
     /**
      * percentage
      */
-    public static final CalculationUnit Percent = new CalculationUnit( 1, 0,1,0,0,0,0,0,0,0,0,0,0, Unit.Percent);
+    public static final CalculationUnit Percent = new CalculationUnit( 1, 0,1,0,0,0,0,0,0,0,0,0,0,0, Unit.Percent);
 
     /**
      * inches
      */
-    public static final CalculationUnit IN = new CalculationUnit(            72, 0,0,1,0,0,0,0,0,0,0,0,0, Unit.IN);
+    public static final CalculationUnit IN = new CalculationUnit(            72, 0,0,1,0,0,0,0,0,0,0,0,0,0, Unit.IN);
     /**
      * millimeters
      */
-    public static final CalculationUnit MM = new CalculationUnit(.0393700787*72, 0,0,1,0,0,0,0,0,0,0,0,0, Unit.MM);
+    public static final CalculationUnit MM = new CalculationUnit(.0393700787*72, 0,0,1,0,0,0,0,0,0,0,0,0,0, Unit.MM);
     /**
      * centimeters
      */
-    public static final CalculationUnit CM = new CalculationUnit(0.393700787*72, 0,0,1,0,0,0,0,0,0,0,0,0, Unit.CM);
+    public static final CalculationUnit CM = new CalculationUnit(0.393700787*72, 0,0,1,0,0,0,0,0,0,0,0,0,0, Unit.CM);
     /**
      * points (1/72 of an inch)
      */
-    public static final CalculationUnit PT = new CalculationUnit(             1, 0,0,1,0,0,0,0,0,0,0,0,0, Unit.PT);
+    public static final CalculationUnit PT = new CalculationUnit(             1, 0,0,1,0,0,0,0,0,0,0,0,0,0, Unit.PT);
     /**
      * picas
      */
-    public static final CalculationUnit PC = new CalculationUnit(            12, 0,0,1,0,0,0,0,0,0,0,0,0, Unit.PC);
+    public static final CalculationUnit PC = new CalculationUnit(            12, 0,0,1,0,0,0,0,0,0,0,0,0,0, Unit.PC);
 
     /**
      * degrees
      */
-    public static final CalculationUnit DEG  = new CalculationUnit(          1, 0,0,0,1,0,0,0,0,0,0,0,0, Unit.DEG);
+    public static final CalculationUnit DEG  = new CalculationUnit(          1, 0,0,0,1,0,0,0,0,0,0,0,0,0, Unit.DEG);
     /**
      * grads/grades/gradians
      */
-    public static final CalculationUnit GRAD = new CalculationUnit(   9.0/10.0, 0,0,0,1,0,0,0,0,0,0,0,0, Unit.GRAD);
+    public static final CalculationUnit GRAD = new CalculationUnit(   9.0/10.0, 0,0,0,1,0,0,0,0,0,0,0,0,0, Unit.GRAD);
     /**
      * radians
      */
-    public static final CalculationUnit RAD  = new CalculationUnit(180/Math.PI, 0,0,0,1,0,0,0,0,0,0,0,0, Unit.RAD);
+    public static final CalculationUnit RAD  = new CalculationUnit(180/Math.PI, 0,0,0,1,0,0,0,0,0,0,0,0,0, Unit.RAD);
     /**
      * turns/revolutions
      */
-    public static final CalculationUnit TURN = new CalculationUnit(        360, 0,0,0,1,0,0,0,0,0,0,0,0, Unit.TURN);
+    public static final CalculationUnit TURN = new CalculationUnit(        360, 0,0,0,1,0,0,0,0,0,0,0,0,0, Unit.TURN);
 
     /**
      * milliseconds
      */
-    public static final CalculationUnit MS = new CalculationUnit(   1, 0,0,0,0,1,0,0,0,0,0,0,0, Unit.MS);
+    public static final CalculationUnit MS = new CalculationUnit(   1, 0,0,0,0,1,0,0,0,0,0,0,0,0, Unit.MS);
     /**
      * seconds
      */
-    public static final CalculationUnit S  = new CalculationUnit(1000, 0,0,0,0,1,0,0,0,0,0,0,0, Unit.S);
+    public static final CalculationUnit S  = new CalculationUnit(1000, 0,0,0,0,1,0,0,0,0,0,0,0,0, Unit.S);
 
     /**
      * Hertz (1/s)
      */
-    public static final CalculationUnit Hz  = new CalculationUnit(   1, 0,0,0,0,-1,0,0,0,0,0,0,0, Unit.Hz);
+    public static final CalculationUnit Hz  = new CalculationUnit(   1, 0,0,0,0,-1,0,0,0,0,0,0,0,0, Unit.Hz);
     /**
      * kilohertz
      */
-    public static final CalculationUnit kHz = new CalculationUnit(1000, 0,0,0,0,-1,0,0,0,0,0,0,0, Unit.kHz);
+    public static final CalculationUnit kHz = new CalculationUnit(1000, 0,0,0,0,-1,0,0,0,0,0,0,0,0, Unit.kHz);
 
     /**
      * em
      */
-    public static final CalculationUnit EM = new CalculationUnit(  1, 0,0,0,0,0,1,0,0,0,0,0,0, Unit.EM);
+    public static final CalculationUnit EM = new CalculationUnit(  1, 0,0,0,0,0,1,0,0,0,0,0,0,0, Unit.EM);
     /**
      * ex (1/2 em)
      */
-    public static final CalculationUnit EX = new CalculationUnit(0.5, 0,0,0,0,0,1,0,0,0,0,0,0, Unit.EX);
+    public static final CalculationUnit EX = new CalculationUnit(0.5, 0,0,0,0,0,1,0,0,0,0,0,0,0, Unit.EX);
 
     /**
      * layout-grid size
      */
-    public static final CalculationUnit GD  = new CalculationUnit(1, 0,0,0,0,0,0,1,0,0,0,0,0, Unit.GD);
+    public static final CalculationUnit GD  = new CalculationUnit(1, 0,0,0,0,0,0,1,0,0,0,0,0,0, Unit.GD);
 
     /**
      * root element font size (rem)
      */
-    public static final CalculationUnit REM = new CalculationUnit(1, 0,0,0,0,0,0,0,1,0,0,0,0, Unit.REM);
+    public static final CalculationUnit REM = new CalculationUnit(1, 0,0,0,0,0,0,0,1,0,0,0,0,0, Unit.REM);
 
     /**
      * viewport width
      */
-    public static final CalculationUnit VW  = new CalculationUnit(1, 0,0,0,0,0,0,0,0,1,0,0,0, Unit.VW);
+    public static final CalculationUnit VW  = new CalculationUnit(1, 0,0,0,0,0,0,0,0,1,0,0,0,0, Unit.VW);
 
     /**
      * viewport height
      */
-    public static final CalculationUnit VH  = new CalculationUnit(1, 0,0,0,0,0,0,0,0,0,1,0,0, Unit.VH);
+    public static final CalculationUnit VH  = new CalculationUnit(1, 0,0,0,0,0,0,0,0,0,1,0,0,0, Unit.VH);
 
     /**
      * Minumum of viewport height or width
      */
-    public static final CalculationUnit VM  = new CalculationUnit(1, 0,0,0,0,0,0,0,0,0,0,1,0, Unit.VM);
+    public static final CalculationUnit VM  = new CalculationUnit(1, 0,0,0,0,0,0,0,0,0,0,1,0,0, Unit.VM);
 
     /**
      * Width of the "0" character
      */
-    public static final CalculationUnit CH  = new CalculationUnit(1, 0,0,0,0,0,0,0,0,0,0,0,1, Unit.CH);
+    public static final CalculationUnit CH  = new CalculationUnit(1, 0,0,0,0,0,0,0,0,0,0,0,1,0, Unit.CH);
 
+    /**
+     * Fractional Unit
+     */
+    public static final CalculationUnit FR  = new CalculationUnit(1, 0,0,0,0,0,0,0,0,0,0,0,0,1, Unit.CH);
 
     /**
      * Mapping from a CSS {@link Unit} to the corresponding CalculationUnit.
@@ -178,6 +182,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
         cssToUnitMap.put(Unit.VH, CalculationUnit.VH);
         cssToUnitMap.put(Unit.VM, CalculationUnit.VM);
         cssToUnitMap.put(Unit.CH, CalculationUnit.CH);
+        cssToUnitMap.put(Unit.FR, CalculationUnit.FR);
 
         canonicalUnit.put(None, None);
         canonicalUnit.put(PX, PX);
@@ -194,6 +199,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
         canonicalUnit.put(VH, VH);
         canonicalUnit.put(VM, VM);
         canonicalUnit.put(CH, CH);
+        canonicalUnit.put(FR, FR);
 
         unitToCssMap.put(None, Unit.None);
         unitToCssMap.put(PX, Unit.PX);
@@ -210,6 +216,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
         unitToCssMap.put(VH, Unit.VH);
         unitToCssMap.put(VM, Unit.VM);
         unitToCssMap.put(CH, Unit.CH);
+        unitToCssMap.put(FR, Unit.FR);
     }
 
     private final double scale;
@@ -225,6 +232,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
     private final int vhLength;
     private final int vmLength;
     private final int chLength;
+    private final int fraction;
     private final Unit cssUnit;
 
     /**
@@ -282,9 +290,10 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
      * @param vhLength Viewport-height-relative dimension
      * @param vmLength Viewport-relative dimension
      * @param chLength "0"-character-relative dimension
+     * @param fraction Fractional unit
      * @param cssUnit The corresponding CSS unit, if applicable
      */
-    private CalculationUnit(double scale, int pxLength, int percent, int length, int angle, int time, int fontLength, int gdLength, int remLength, int vwLength, int vhLength, int vmLength, int chLength, Unit cssUnit) {
+    private CalculationUnit(double scale, int pxLength, int percent, int length, int angle, int time, int fontLength, int gdLength, int remLength, int vwLength, int vhLength, int vmLength, int chLength, int fraction, Unit cssUnit) {
         this.scale = scale;
         this.pxLength = pxLength;
         this.percent = percent;
@@ -299,6 +308,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
         this.vmLength = vmLength;
         this.chLength = chLength;
         this.cssUnit = cssUnit;
+        this.fraction = fraction;
     }
 
     /**
@@ -323,7 +333,8 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
                 vwLength == other.vwLength &&
                 vhLength == other.vhLength &&
                 vmLength == other.vmLength &&
-                chLength == other.chLength;
+                chLength == other.chLength &&
+                fraction == other.fraction;
     }
 
     /**
@@ -348,6 +359,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
                 vhLength + other.vhLength,
                 vmLength + other.vmLength,
                 chLength + other.chLength,
+                fraction + other.fraction,
                 null);
     }
 
@@ -373,6 +385,7 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
                 vhLength - other.vhLength,
                 vmLength - other.vmLength,
                 chLength - other.chLength,
+                fraction - other.fraction,
                 null);
     }
 
@@ -427,6 +440,9 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
         if (chLength != other.chLength) {
             return chLength - other.chLength;
         }
+        if (fraction != other.fraction) {
+            return fraction - other.fraction;
+        }
         return 0;
     }
 
@@ -438,7 +454,8 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
      */
     @Override
     public int hashCode() {
-        return  chLength   * 1000000 +
+        return  fraction   * 1000000 +
+                chLength   * 1000000 +
                 vmLength   * 1000000 +
                 vhLength   * 1000000 +
                 vwLength   * 1000000 +
@@ -476,7 +493,8 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
                this.vwLength == other.vwLength &&
                this.vhLength == other.vhLength &&
                this.vmLength == other.vmLength &&
-               this.chLength == other.chLength;
+               this.chLength == other.chLength &&
+               this.fraction == other.fraction;
     }
 
     /**
@@ -580,6 +598,13 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
             sb.append(" ch");
         }
 
+        if (fraction > 1) {
+            sb.append(" fr^").append(fraction);
+        }
+        else if (fraction == 1) {
+            sb.append(" fr");
+        }
+
         sb.append("/");
 
         if (pxLength < -1) {
@@ -664,6 +689,13 @@ public final class CalculationUnit implements Comparable<CalculationUnit> {
         }
         else if (chLength == -1) {
             sb.append("ch ");
+        }
+
+        if (fraction < -1) {
+            sb.append("fr^").append(-fraction).append(" ");
+        }
+        else if (fraction == -1) {
+            sb.append("fr ");
         }
 
         String res = sb.toString().trim();

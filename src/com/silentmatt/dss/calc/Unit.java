@@ -119,7 +119,11 @@ public enum Unit {
     /**
      * Dots per centimeter: dpcm.
      */
-    DPCM;
+    DPCM,
+    /**
+     * Fractional Units: fr.
+     */
+    FR;
 
     /**
      * Gets the unit as a CSS-compatible String.

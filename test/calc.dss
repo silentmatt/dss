@@ -15,6 +15,7 @@ something {
     width3: -moz-calc(2 * (1cm + 5mm) / ((3px+4px - -6px)/1px) + @calc(3pt + 4in));
     width3: -webkit-calc(2 * (1cm + 5mm) / ((3px+4px - -6px)/1px) + @calc(3pt + 4in));
     height: @calc(2 * const(pi));
+    width4: [ 3fr - 1fr ];
 }
 
 circle {
