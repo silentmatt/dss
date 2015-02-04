@@ -1,5 +1,6 @@
 package com.silentmatt.dss.calc;
 
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.declaration.DeclarationList;
 import com.silentmatt.dss.evaluator.EvaluationState;
 
@@ -8,6 +9,7 @@ import com.silentmatt.dss.evaluator.EvaluationState;
  *
  * @author Matthew Crumley
  */
+@Immutable
 public class BinaryExpression implements CalcExpression {
     private final Operation operation;
     private final CalcExpression left;

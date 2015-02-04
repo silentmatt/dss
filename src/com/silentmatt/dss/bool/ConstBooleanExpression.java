@@ -1,13 +1,14 @@
 package com.silentmatt.dss.bool;
 
+import com.silentmatt.dss.Immutable;
 import com.silentmatt.dss.evaluator.EvaluationState;
-
 
 /**
  *
  * @author mcrumley
  */
-class ConstBooleanExpression implements BooleanExpression {
+@Immutable
+final class ConstBooleanExpression implements BooleanExpression {
     private final boolean answer;
 
     ConstBooleanExpression(boolean answer) {
