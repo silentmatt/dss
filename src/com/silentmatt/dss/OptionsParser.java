@@ -4,9 +4,11 @@ import com.martiansoftware.jsap.FlaggedOption;
 import com.martiansoftware.jsap.JSAP;
 import com.martiansoftware.jsap.JSAPException;
 import com.martiansoftware.jsap.ParseException;
+import com.martiansoftware.jsap.StringParser;
 import com.martiansoftware.jsap.Switch;
 import com.martiansoftware.jsap.UnflaggedOption;
 import com.martiansoftware.jsap.stringparsers.FileStringParser;
+import com.martiansoftware.jsap.stringparsers.URLStringParser;
 import java.io.File;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
@@ -103,21 +105,22 @@ public class OptionsParser {
         }
     }
 
-    private static class FileOrURLStringParser extends com.martiansoftware.jsap.stringparsers.URLStringParser {
-        private static FileStringParser fileParser = FileStringParser.getParser();
+    private static class FileOrURLStringParser extends StringParser {
+        private static final FileStringParser fileParser = FileStringParser.getParser();
+        private static final URLStringParser urlParser = URLStringParser.getParser();
 
         private FileOrURLStringParser() {
             fileParser.setMustBeFile(false).setMustExist(true);
         }
 
-        public static FileOrURLStringParser getParser() {
+        static FileOrURLStringParser getParser() {
             return new FileOrURLStringParser();
         }
 
         @Override
         public Object parse(String arg) throws ParseException {
             try {
-                return super.parse(arg);
+                return urlParser.parse(arg);
             } catch (ParseException ex) {
                 fileParser.setUp();
                 File file = (File) fileParser.parse(arg);
