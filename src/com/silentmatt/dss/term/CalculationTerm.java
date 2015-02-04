@@ -79,7 +79,7 @@ public class CalculationTerm extends Term {
                 try {
                     return calc.toTerm().toExpression();
                 } catch (CalculationException ex) {
-                    state.getErrors().SemErr(ex.getMessage());
+                    state.getErrors().semanticError(ex.getMessage());
                     return null;
                 }
             }

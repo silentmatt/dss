@@ -45,7 +45,7 @@ public final class BinaryBooleanExpression implements BooleanExpression {
         case XOR:
             return leftValue ^ rightValue;
         default:
-            state.getErrors().SemErr("Unrecognized operation");
+            state.getErrors().semanticError("Unrecognized operation");
             break;
         }
         return null;

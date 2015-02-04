@@ -33,7 +33,7 @@ public final class ConstTerm extends ReferenceTerm {
     @Override
     public Expression evaluate(EvaluationState state, DeclarationList container) {
         if (state.getVariables() == null) {
-            state.getErrors().SemErr("Invalid scope");
+            state.getErrors().semanticError("Invalid scope");
             return null;
         }
         Expression result = state.getVariables().get(getName());

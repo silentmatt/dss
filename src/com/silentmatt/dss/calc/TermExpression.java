@@ -49,7 +49,7 @@ public class TermExpression implements CalcExpression {
             }
         }
 
-        state.getErrors().SemErr("Invalid term in calculation: '" + value + "'");
+        state.getErrors().semanticError("Invalid term in calculation: '" + value + "'");
         return null;
     }
 
@@ -74,11 +74,11 @@ public class TermExpression implements CalcExpression {
             ReferenceTerm function = (ReferenceTerm) value;
             Expression variable = function.evaluate(state, container);
             if (variable == null) {
-                state.getErrors().SemErr("missing value: " + function.toString());
+                state.getErrors().semanticError("missing value: " + function.toString());
                 return this;
             }
             if (variable.getTerms().size() > 1) {
-                state.getErrors().SemErr("not a single value: " + function.toString());
+                state.getErrors().semanticError("not a single value: " + function.toString());
                 return this;
             }
 
@@ -90,7 +90,7 @@ public class TermExpression implements CalcExpression {
                 try {
                     return new TermExpression(calc.toTerm());
                 } catch (CalculationException ex) {
-                    state.getErrors().SemErr(ex.getMessage());
+                    state.getErrors().semanticError(ex.getMessage());
                     return null;
                 }
             }

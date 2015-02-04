@@ -23,26 +23,26 @@ public interface ErrorReporter {
     int getWarningCount();
 
     /**
-     * Reports a symantic error at a specified line and column.
+     * Reports a semantic error at a specified line and column.
      * Semantic errors are for errors in executing the DSS file.
      *
      * @param line The line where the error occurred.
      * @param col The column where the error occurred.
      * @param s The Error message.
      */
-    void SemErr(int line, int col, String s);
+    void semanticError(int line, int col, String s);
 
     /**
-     * Reports a symantic error with no location information.
+     * Reports a semantic error with no location information.
      * Semantic errors are for errors in executing the DSS file.
      * 
      * @param s The Error message.
      */
-    void SemErr(String s);
+    void semanticError(String s);
 
     /**
      * Reports a syntax error at a specified line and column.
-     * Semantic errors are for errors in parsing the DSS file. This will be called
+     * Syntax errors are for errors in parsing the DSS file. This will be called
      * by the parser.
      *
      * @param line The line where the error occurred.
@@ -50,7 +50,7 @@ public interface ErrorReporter {
      * @param n An integer corresponding to the error message. Call
      *          {@link DSSParser#getErrorMessage(int)} to get the error string.
      */
-    void SynErr(int line, int col, int n);
+    void syntaxError(int line, int col, int n);
 
     /**
      * Reports a warning at a specified line and column.
@@ -60,7 +60,7 @@ public interface ErrorReporter {
      * @param col The column where the error occurred.
      * @param s The Warning message.
      */
-    void Warning(int line, int col, String s);
+    void warning(int line, int col, String s);
 
     /**
      * Reports a warning.
@@ -68,7 +68,7 @@ public interface ErrorReporter {
      * 
      * @param s The Warning message.
      */
-    void Warning(String s);
+    void warning(String s);
 
     /**
      * Report an error.

@@ -84,15 +84,15 @@ class Parser {
 
 	void SynErr(int n) {
 		if (errDist >= minErrDist) {
-            errors.SynErr(la.line, la.col, n);
-        }
+			errors.syntaxError(la.line, la.col, n);
+		}
 		errDist = 0;
 	}
 
 	public void SemErr(String msg) {
 		if (errDist >= minErrDist) {
-            errors.SemErr(t.line, t.col, msg);
-        }
+			errors.semanticError(t.line, t.col, msg);
+		}
 		errDist = 0;
 	}
 	
@@ -1139,7 +1139,7 @@ class Parser {
 						   // TODO: What if trm isn't a NumberTerm?
 						   trm = ((NumberTerm) trm).withUnit(Unit.parse(ident));
 						} catch (IllegalArgumentException ex) {
-						    errors.SemErr(t.line, t.col, "Unrecognized unit '" + ident + "'");
+						    errors.semanticError(t.line, t.col, "Unrecognized unit '" + ident + "'");
 						}
 						
 					}

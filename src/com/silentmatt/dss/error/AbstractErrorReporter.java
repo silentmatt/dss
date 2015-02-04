@@ -11,28 +11,28 @@ import com.silentmatt.dss.parser.DSSParser;
  */
 public abstract class AbstractErrorReporter implements ErrorReporter {
     @Override
-    public void SemErr(int line, int col, String s) {
+    public void semanticError(int line, int col, String s) {
         addError(new ErrorMessage(new Message.Position(line, col), s));
     }
 
     @Override
-    public void SemErr(String s) {
+    public void semanticError(String s) {
         addError(new ErrorMessage(s));
     }
 
     @Override
-    public void SynErr(int line, int col, int n) {
+    public void syntaxError(int line, int col, int n) {
         String s = DSSParser.getErrorMessage(n);
         addError(new SyntaxErrorMessage(new Message.Position(line, col), s));
     }
 
     @Override
-    public void Warning(int line, int col, String s) {
+    public void warning(int line, int col, String s) {
         addWarning(new WarningMessage(new Message.Position(line, col), s));
     }
 
     @Override
-    public void Warning(String s) {
+    public void warning(String s) {
         addWarning(new WarningMessage(s));
     }
 }

@@ -85,7 +85,7 @@ public final class TermBooleanExpression implements BooleanExpression {
             return state.getClasses().containsKey(((ClassReferenceTerm) value).getName());
         }
         else if (value instanceof UrlTerm) {
-            state.getErrors().SemErr("Invalid term in calculation: '" + value + "'");
+            state.getErrors().semanticError("Invalid term in calculation: '" + value + "'");
         }
 
         return evaluateAsString(state, value);

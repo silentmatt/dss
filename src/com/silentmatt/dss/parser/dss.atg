@@ -894,7 +894,7 @@ term<out Term trm> =                        (.  String val = "";
                                                     // TODO: What if trm isn't a NumberTerm?
                                                     trm = ((NumberTerm) trm).withUnit(Unit.parse(ident));
                                                 } catch (IllegalArgumentException ex) {
-                                                    errors.SemErr(t.line, t.col, "Unrecognized unit '" + ident + "'");
+                                                    errors.semanticError(t.line, t.col, "Unrecognized unit '" + ident + "'");
                                                 }
                                             .)
                 ]

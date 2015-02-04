@@ -33,17 +33,17 @@ public final class ParamTerm extends ReferenceTerm {
     @Override
     public Expression evaluate(EvaluationState state, DeclarationList container) {
         if (state.getParameters() == null) {
-            state.getErrors().SemErr("param is only valid inside a class");
+            state.getErrors().semanticError("param is only valid inside a class");
             return null;
         }
         Expression value = state.getParameters().get(getName());
 
         if (value == null) {
             if (state.getParameters().containsKey(getName())) {
-                state.getErrors().SemErr("Missing required class parameter: " + getName());
+                state.getErrors().semanticError("Missing required class parameter: " + getName());
             }
             else {
-                state.getErrors().SemErr("Invalid class parameter: " + getName());
+                state.getErrors().semanticError("Invalid class parameter: " + getName());
             }
         }
         else if (value.getTerms().size() > 0) {

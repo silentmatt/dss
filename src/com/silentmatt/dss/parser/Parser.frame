@@ -49,15 +49,15 @@ class Parser {
 
 	void SynErr(int n) {
 		if (errDist >= minErrDist) {
-            errors.SynErr(la.line, la.col, n);
-        }
+			errors.syntaxError(la.line, la.col, n);
+		}
 		errDist = 0;
 	}
 
 	public void SemErr(String msg) {
 		if (errDist >= minErrDist) {
-            errors.SemErr(t.line, t.col, msg);
-        }
+			errors.semanticError(t.line, t.col, msg);
+		}
 		errDist = 0;
 	}
 	

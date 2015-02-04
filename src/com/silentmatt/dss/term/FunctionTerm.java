@@ -112,7 +112,7 @@ public final class FunctionTerm extends Term {
                 return function.call(this, state);
             }
             catch (Exception ex) {
-                state.getErrors().Warning(ex.getMessage());
+                state.getErrors().warning(ex.getMessage());
             }
         }
         return null;
@@ -472,11 +472,11 @@ public final class FunctionTerm extends Term {
             }
 
             if (!color.isColor()) {
-                state.getErrors().Warning("Not a color: " + color);
+                state.getErrors().warning("Not a color: " + color);
                 return function.toExpression();
             }
             if (!(amount == null || amount instanceof NumberTerm)) {
-                state.getErrors().Warning("Invalid value for " + function.getName() + ": " + amount);
+                state.getErrors().warning("Invalid value for " + function.getName() + ": " + amount);
                 return function.toExpression();
             }
 

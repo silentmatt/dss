@@ -49,11 +49,11 @@ public class BinaryExpression implements CalcExpression {
             case Divide:
                 return leftValue.divide(rightValue);
             default:
-                state.getErrors().SemErr("Unrecognized operation");
+                state.getErrors().semanticError("Unrecognized operation");
                 break;
             }
         } catch (IllegalArgumentException ex) {
-            state.getErrors().SemErr("incompatible units");
+            state.getErrors().semanticError("incompatible units");
         }
         return null;
     }

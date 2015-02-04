@@ -20,7 +20,6 @@ import com.silentmatt.dss.term.Term;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -312,14 +311,14 @@ public final class DeclarationBlock {
             String paramName = arg.getName();
             if (paramName.isEmpty()) {
                 if (argNumber < 0) {
-                    state.getErrors().SemErr("Positional arguments cannot follow named arguments in " + clazz.getClassName());
+                    state.getErrors().semanticError("Positional arguments cannot follow named arguments in " + clazz.getClassName());
                     return parameters;
                 }
                 if (argNumber < formalParameters.size()) {
                     paramName = formalParameters.get(argNumber).getName();
                 }
                 else {
-                    state.getErrors().Warning("Too many arguments to class '" + clazz.getClassName() + "'");
+                    state.getErrors().warning("Too many arguments to class '" + clazz.getClassName() + "'");
                     continue;
                 }
                 ++argNumber;
@@ -332,7 +331,7 @@ public final class DeclarationBlock {
                 parameters.put(paramName, arg.getExpression());
             }
             else {
-                state.getErrors().Warning(clazz.getClassName() + " does not have a parameter '" + arg.getName() + "'");
+                state.getErrors().warning(clazz.getClassName() + " does not have a parameter '" + arg.getName() + "'");
             }
         }
 
@@ -415,7 +414,7 @@ public final class DeclarationBlock {
             }
 
             if (clazz == null) {
-                state.getErrors().SemErr("no such class: " + crt.getName());
+                state.getErrors().semanticError("no such class: " + crt.getName());
                 return;
             }
 

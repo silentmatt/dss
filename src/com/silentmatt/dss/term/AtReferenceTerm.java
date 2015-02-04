@@ -41,7 +41,7 @@ public final class AtReferenceTerm extends ReferenceTerm {
             value = state.getVariables().get(getName());
         }
         else {
-            state.getErrors().SemErr("Invalid scope");
+            state.getErrors().semanticError("Invalid scope");
         }
 
         if (value != null && value.getTerms().size() > 0) {

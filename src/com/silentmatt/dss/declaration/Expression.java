@@ -138,7 +138,7 @@ public final class Expression {
                 }
             }
             else {
-                state.getErrors().SemErr("Error evaluating '" + primitiveValue + "'");
+                state.getErrors().semanticError("Error evaluating '" + primitiveValue + "'");
             }
         }
 

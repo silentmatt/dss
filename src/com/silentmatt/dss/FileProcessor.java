@@ -61,9 +61,9 @@ public class FileProcessor {
                 }
             }
         } catch (MalformedURLException ex) {
-            errors.SemErr("DSS: Invalid URL");
+            errors.semanticError("DSS: Invalid URL");
         } catch (IOException ex) {
-            errors.SemErr("DSS: I/O error: " + ex.getMessage());
+            errors.semanticError("DSS: I/O error: " + ex.getMessage());
         }
 
         return errors;
@@ -73,7 +73,7 @@ public class FileProcessor {
         ErrorReporter errors = new PrintStreamErrorReporter();
 
         if (out == null) {
-            errors.SemErr("watch requires an output file");
+            errors.semanticError("watch requires an output file");
             return errors;
         }
 
@@ -83,7 +83,7 @@ public class FileProcessor {
         try {
             dssFile = new File(url.toURI());
         } catch (URISyntaxException ex) {
-            errors.SemErr("Error converting a URL to a URI.");
+            errors.semanticError("Error converting a URL to a URI.");
             return errors;
         }
 

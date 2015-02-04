@@ -87,7 +87,7 @@ public final class IfDirective extends Rule {
             }
         }
         else {
-            state.getErrors().SemErr("Invalid condition: " + condition);
+            state.getErrors().semanticError("Invalid condition: " + condition);
         }
         return null;
     }

@@ -33,7 +33,7 @@ public final class PropertyTerm extends ReferenceTerm {
     @Override
     public Expression evaluate(EvaluationState state, DeclarationList container) {
         if (container == null) {
-            state.getErrors().SemErr("property reference not valid in this context.");
+            state.getErrors().semanticError("property reference not valid in this context.");
             return null;
         }
         Expression ret = container.get(getName());
