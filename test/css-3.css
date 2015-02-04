@@ -13,10 +13,10 @@
 p:not([class*="lead"]) {
 	color: #000;
 }
-input[type="text"].class#id[attr=32]:not(1) {
+input[type="text"].class#id[attr=value]:not(a) {
 	color: #FFF;
 }
-div#id.class[a=1][b=2].class:not(1) {
+div#id.class[a=aval][b='bval'].class:not(c) {
 	color: #FFF;
 }
 ul.comma > li:not(:only-child)::after {

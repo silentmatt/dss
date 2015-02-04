@@ -1,6 +1,6 @@
-@namespace xml url("http://w3c.org/xml");
-@import url(print.css) print;
 @charset "utf-8";
+@import url(print.css) print;
+@namespace xml url("http://w3c.org/xml");
 @page :first {
 	foo: bar;
 }
