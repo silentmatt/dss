@@ -8,10 +8,6 @@ import java.util.Set;
 /**
  * A Map from Strings to <code>T</code>s, that can inherit from other <code>Scope</scope>s.
  *
- * When storing values, the key must already exist (possibly in a parent Scope),
- * otherwise an {@link UnsupportedOperationException} will be thrown. To add an
- * entry, use the <code>declare</code> method.
- *
  * @author Matthew Crumley
  * @param <T> The type of objects being stored.
  */

@@ -4,11 +4,10 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * A Map from Strings to <code>T</code>s, that can inherit from other <code>Scope</scope>s.
- *
- * When storing values, the key must already exist (possibly in a parent Scope),
- * otherwise an {@link UnsupportedOperationException} will be thrown. To add an
- * entry, use the <code>declare</code> method.
+ * A {@link Scope} that acts as a top-level scope with or without a parent.
+ * 
+ * A <code>GlobalScope</code> hides it's parent/ancestors, but still gives access to
+ * their values, essentially treating itself and its ancestors as a single scope.
  *
  * @author Matthew Crumley
  * @param <T> The type of objects being stored.
