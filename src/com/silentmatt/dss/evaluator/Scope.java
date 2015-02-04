@@ -2,8 +2,6 @@ package com.silentmatt.dss.evaluator;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,7 +15,7 @@ import java.util.Set;
  * @author Matthew Crumley
  * @param <T> The type of objects being stored.
  */
-public class Scope<T> implements Map<String, T> {
+public class Scope<T> {
     /**
      * Constructs a Scope with a given parent.
      *
@@ -40,25 +38,25 @@ public class Scope<T> implements Map<String, T> {
         this(scope);
 
         for (String name : variables) {
-            declare(name);
+            table.put(name, null);
         }
     }
 
     /**
-     * Constructs a top-level Scope with an initial set of entries.
+     * Creates a Scope with an initial set of entries.
      *
+     * @param parent The parent Scope.
      * @param initial A Map<String, T> of entries to pre-declare.
      */
-    public Scope(Map<String, T> initial) {
-        // XXX: Share the Map?
-        this(null);
+    public Scope(Scope<T> parent, Map<String, T> initial) {
+        this(parent);
         table.putAll(initial);
     }
 
     @Override
     public final String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Entry<String, T> e : entrySet()) {
+        for (Map.Entry<String, T> e : entrySet()) {
             sb.append(e.getKey()).append(": ").append(e.getValue()).append("\n");
         }
         return sb.toString();
@@ -88,23 +86,6 @@ public class Scope<T> implements Map<String, T> {
     protected final Map<String, T> table;
 
     /**
-     * Gets the number of entries in the Scope.
-     * keys that exist in <code>this</code> and a parent Scope are only counted
-     * once, i.e. <code>size()</code> returns the number of unique keys.
-     *
-     * @return The number of valid keys in this Scope.
-     */
-    @Override
-    public final int size() {
-        return keySet().size();
-    }
-
-    @Override
-    public final boolean isEmpty() {
-        return table.isEmpty() && (parentScope == null || parentScope.isEmpty());
-    }
-
-    /**
      * Returns <code>true</code> if <code>key</code> is declared in this Scope
      * or any of it's ancestors.
      *
@@ -117,10 +98,8 @@ public class Scope<T> implements Map<String, T> {
      *
      * @see #declaresKey(java.lang.String)
      */
-    @Override
-    public final boolean containsKey(Object key) {
-        String sKey = (String) key;
-        return table.containsKey(sKey) || (parentScope != null && parentScope.containsKey(sKey));
+    public final boolean containsKey(String key) {
+        return table.containsKey(key) || (parentScope != null && parentScope.containsKey(key));
     }
 
     /**
@@ -130,63 +109,22 @@ public class Scope<T> implements Map<String, T> {
      * @param key The key whose presence is being tested.
      * @return <code>true</code> if <code>key</code> is declared in this Scope.
      *
-     * @see #containsKey(java.lang.Object)
+     * @see #containsKey(java.lang.String)
      */
     public boolean declaresKey(String key) {
         return table.containsKey(key);
     }
 
-    @Override
-    public final boolean containsValue(Object value) {
-        if (table.containsValue(value)) {
-            return true;
-        }
-        if (parentScope == null) {
-            return false;
-        }
-        for (String key : parentScope.keySet()) {
-            if (!table.containsKey(key)) {
-                T val = parentScope.get(key);
-                if (val != null && val.equals(value)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public final T get(Object key) {
-        String sKey = (String) key;
-        T value = table.get(sKey);
+    public final T get(String key) {
+        T value = table.get(key);
         if (value != null) {
             return value;
         }
-        else {
-            if (!table.containsKey(sKey) && parentScope != null) {
-                return parentScope.get(sKey);
-            }
+        else if (!table.containsKey(key) && parentScope != null) {
+            return parentScope.get(key);
         }
-        return null;
-    }
 
-    /**
-     * Adds a key to this Scope.
-     * A key must be declared in a Scope before <code>put</code> can set their
-     * value. Trying to put a value in an undeclared key throws an
-     * UnsupportedOperationException.
-     *
-     * Declaring a key that already exists in a parent scope will hide the entry
-     * in the parent. Note that the {@link #size()} of the Scope will not change
-     * in this case.
-     *
-     * @param key The key to declare.
-     *
-     * @see #declare(java.lang.String, java.lang.Object)
-     * @see #declaresKey(java.lang.String)
-     */
-    public final void declare(String key) {
-        table.put(key, null);
+        return null;
     }
 
     /**
@@ -195,79 +133,18 @@ public class Scope<T> implements Map<String, T> {
      * @param key The key to declare.
      * @param value The initial value.
      *
-     * @see #declare(java.lang.String)
      * @see #declaresKey(java.lang.String)
      */
     public final void declare(String key, T value) {
         table.put(key, value);
     }
 
-    @Override
-    public T put(String key, T value) {
-        if (table.containsKey(key)) {
-            return table.put(key, value);
-        }
-        else if (parentScope != null && parentScope.containsKey(key)) {
-            return parentScope.put(key, value);
-        }
-
-        throw new UnsupportedOperationException("undefined variable");
-    }
-
-    /**
-     * Throws an <code>UnsupportedOperationException</code>.
-     * Removing entries is not allowed.
-     *
-     * @param key Ignored key to remove.
-     * @return Does not return.
-     */
-    @Override
-    public final T remove(Object key) {
-        throw new UnsupportedOperationException("cannot remove a variable");
-    }
-
-    @Override
-    public final void putAll(Map<? extends String, ? extends T> map) {
-        for (Entry<? extends String, ? extends T> pair : map.entrySet()) {
-            put(pair.getKey(), pair.getValue());
-        }
-    }
-
-    /**
-     * Throws an <code>UnsupportedOperationException</code>.
-     * Clearing a Scope is not allowed.
-     */
-    @Override
-    public final void clear() {
-        throw new UnsupportedOperationException("cannot clear a scope");
-    }
-
-    @Override
-    public final Set<String> keySet() {
-        Set<String> keys = table.keySet();
-        if (parentScope != null) {
-            keys = new HashSet<>(keys);
-            keys.addAll(parentScope.keySet());
-        }
-        return keys;
-    }
-
-    @Override
-    public final Collection<T> values() {
-        LinkedList<T> result = new LinkedList<>();
-        for (Entry<String, T> entry : entrySet()) {
-            result.add(entry.getValue());
-        }
-        return result;
-    }
-
-    @Override
-    public final Set<Entry<String, T>> entrySet() {
-        Set<Entry<String, T>> entries = table.entrySet();
+    private Set<Map.Entry<String, T>> entrySet() {
+        Set<Map.Entry<String, T>> entries = table.entrySet();
 
         if (parentScope != null) {
             entries = new java.util.HashSet<>(entries);
-            for (Entry<String, T> entry : parentScope.entrySet()) {
+            for (Map.Entry<String, T> entry : parentScope.entrySet()) {
                 if (!table.containsKey(entry.getKey())) {
                     entries.add(entry);
                 }

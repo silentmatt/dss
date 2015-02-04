@@ -1,7 +1,6 @@
 package com.silentmatt.dss.evaluator;
 
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * A Map from Strings to <code>T</code>s, that can inherit from other <code>Scope</scope>s.
@@ -36,15 +35,6 @@ public class GlobalScope<T> extends Scope<T> {
     }
 
     /**
-     * Constructs a top-level Scope with an initial set of entries.
-     *
-     * @param initial A Map<String, T> of entries to pre-declare.
-     */
-    public GlobalScope(Map<String, T> initial) {
-        super(initial);
-    }
-
-    /**
      * Gets the parent Scope.
      *
      * @return The parent Scope, or <code>null</code> if this is a top-level Scope.
@@ -66,17 +56,5 @@ public class GlobalScope<T> extends Scope<T> {
     @Override
     public boolean declaresKey(String key) {
         return containsKey(key);
-    }
-
-    @Override
-    public T put(String key, T value) {
-        if (table.containsKey(key)) {
-            return table.put(key, value);
-        }
-        else if (parentScope != null && parentScope.containsKey(key)) {
-            return table.put(key, value);
-        }
-
-        throw new UnsupportedOperationException("undefined variable");
     }
 }

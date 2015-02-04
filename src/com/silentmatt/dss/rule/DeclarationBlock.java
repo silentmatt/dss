@@ -20,7 +20,10 @@ import com.silentmatt.dss.term.Term;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a block of declarations in a DSS document.
@@ -293,12 +296,14 @@ public final class DeclarationBlock {
         return declaration.getName().equalsIgnoreCase(name);
     }
 
-    private static void setArguments(EvaluationState state, ClassDirective clazz, DeclarationList args) {
+    private static Map<String, Expression> setArguments(EvaluationState state, ClassDirective clazz, DeclarationList args) {
         DeclarationList formalParameters = clazz.getParameters(args);
+
+        Map<String, Expression> parameters = new HashMap<>();
 
         // Defaults
         for (Declaration param : formalParameters) {
-            state.getParameters().declare(param.getName(), param.getExpression());
+            parameters.put(param.getName(), param.getExpression());
         }
 
         // Arguments
@@ -308,7 +313,7 @@ public final class DeclarationBlock {
             if (paramName.isEmpty()) {
                 if (argNumber < 0) {
                     state.getErrors().SemErr("Positional arguments cannot follow named arguments in " + clazz.getClassName());
-                    return;
+                    return parameters;
                 }
                 if (argNumber < formalParameters.size()) {
                     paramName = formalParameters.get(argNumber).getName();
@@ -323,13 +328,15 @@ public final class DeclarationBlock {
                 argNumber = -1;
             }
 
-            if (state.getParameters().declaresKey(paramName)) {
-                state.getParameters().put(paramName, arg.getExpression());
+            if (parameters.containsKey(paramName)) {
+                parameters.put(paramName, arg.getExpression());
             }
             else {
                 state.getErrors().Warning(clazz.getClassName() + " does not have a parameter '" + arg.getName() + "'");
             }
         }
+
+        return parameters;
     }
 
     private static void addInheritedProperties(DeclarationBlock.Builder result, EvaluationState state, ClassDirective clazz, DeclarationList args) throws IOException {
@@ -342,10 +349,8 @@ public final class DeclarationBlock {
             }
         }
 
-        state.pushParameters();
+        state.pushParameters(setArguments(state, clazz, args));
         try {
-            setArguments(state, clazz, args);
-
             for (int i = 0; i < properties.size(); i++) {
                 Declaration dec = properties.get(i);
                 properties.set(i, dec.substituteValues(state, DeclarationList.EMPTY, true, true)); // new DeclarationList(ImmutableList.copyOf(result.getDeclarations()))

@@ -8,6 +8,7 @@ import com.silentmatt.dss.css.CssRule;
 import com.silentmatt.dss.css.CssRuleList;
 import com.silentmatt.dss.declaration.Declaration;
 import com.silentmatt.dss.declaration.DeclarationList;
+import com.silentmatt.dss.declaration.Expression;
 import com.silentmatt.dss.evaluator.EvaluationState;
 import com.silentmatt.dss.rule.DeclarationBlock;
 import com.silentmatt.dss.rule.Rule;
@@ -20,7 +21,9 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -93,9 +96,8 @@ public class IncludeDirective extends ExpressionDirective {
             try {
                 state.pushScope(new ArrayList<RuleSet>()); // Why do this if pushBaseURL already did?
                 try {
+                    state.pushParameters(setArguments(state, parameters));
                     try {
-                        state.pushParameters();
-                        setArguments(state, parameters);
                         if (state.getIncludeCallback() != null) {
                             state.getIncludeCallback().call(url);
                         }
@@ -144,9 +146,11 @@ public class IncludeDirective extends ExpressionDirective {
         return sb.toString();
     }
 
-    private static void setArguments(EvaluationState state, DeclarationList args) {
+    private static Map<String, Expression> setArguments(EvaluationState state, DeclarationList args) {
+        Map<String, Expression> parameters = new HashMap<>();
         for (Declaration arg : args) {
-            state.getParameters().declare(arg.getName(), arg.getExpression());
+            parameters.put(arg.getName(), arg.getExpression());
         }
+        return parameters;
     }
 }

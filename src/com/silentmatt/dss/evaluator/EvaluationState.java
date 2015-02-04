@@ -174,10 +174,10 @@ public final class EvaluationState {
     }
 
     /**
-     * Creates a new level in the parameter scope chain.
+     * Creates a new level in the parameter scope chain with the specified values.
      */
-    public void pushParameters() {
-        parameters = new Scope<>(parameters);
+    public void pushParameters(Map<String, Expression> newParameters) {
+        parameters = new Scope<>(parameters, newParameters);
     }
 
     /**
